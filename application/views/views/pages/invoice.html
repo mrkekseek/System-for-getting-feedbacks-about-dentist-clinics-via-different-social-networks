@@ -1,0 +1,142 @@
+<div class="page page-invoice" data-ng-controller="InvoiceCtrl">
+	<div class="invoice-wrapper">
+		<section class="invoice-container" id="invoice">
+			<div class="invoice-inner">
+				<div class="row">
+					<div class="col-xs-12">
+						<img src="/application/views/images/logo_full.png" alt="" width="200" />
+                    </div>
+					
+					<div class="col-xs-6">
+						<p class="size-h1">Factuur</p>
+                    </div>
+					
+					<div class="col-xs-6 text-right">
+						Patiëntenreview<br />
+						Postbus 6335<br />
+						5600AH Eindhoven
+					</div>
+				</div>
+				
+				<hr />
+
+				<div class="row">
+					<div class="col-xs-6">
+						<p><strong>Geadresseerde</strong></p>
+						<?php echo $user['username']; ?><br />
+						<?php echo $user['address']; ?><br />
+						<?php echo $user['postcode']." ".$user['city']; ?><br />
+                    </div>
+					
+                    <div class="col-xs-6 text-right">
+						<p><strong>Details:</strong></p>
+						<strong>Datum:</strong> <?php echo $invoice['name']; ?><br />
+						<strong>ID:</strong> <?php echo $invoice['code']; ?><br />
+						<strong>Te betalen:</strong> &euro;<?php echo number_format($invoice['amount'], 2, ",", ""); ?>
+					</div>            
+				</div>
+				
+				<div class="divider divider-lg"></div>
+
+				<table class="table table-bordered table-striped">
+                    <thead>
+                        <tr class="bg-primary">
+                            <th class="text-center">#</th>
+                            <th>Product</th>
+                            <th class="text-center">Totaal</th>
+                        </tr>
+                    </thead>
+					<?php if ($invoice['half']) { ?>
+						<tbody>
+							<tr>
+								<td class="text-center"></td>
+								<td>Patiëntenreview Pro <?php echo date("d-m-Y", $user['activation']); ?> t/m <?php echo date("d-m-Y", $user['suspension']); ?></td>
+								<td class="text-center">&euro;<?php echo number_format(round($invoice['info']['half_pro'] / 1.21, 2), 2, ",", ""); ?></td>
+							</tr>
+							<tr>
+								<td class="text-center"></td>
+								<td><?php echo $invoice['info']['days']; ?> ongebruikte dagen Patiëntenreview Basis</td>
+								<td class="text-center">&euro;<?php echo number_format(round($invoice['info']['half_basic'] / 1.21, 2), 2, ",", ""); ?>-</td>
+							</tr>
+						</tbody>
+					<?php } else { ?>
+						<tbody>
+							<?php if ($invoice['base_amount'] > 0) { ?>
+							<tr>
+								<td class="text-center">1</td>
+								<td>Patiëntenreview <?php echo $user['account_type'] == 0 ? "Basis" : "Pro"; ?> <?php echo date("d-m-Y", $user['activation']); ?> t/m <?php echo date("d-m-Y", $user['suspension']); ?></td>
+								<td class="text-center">&euro;<?php echo number_format(round($invoice['amount'] / 1.21, 2), 2, ",", ""); ?></td>
+							</tr>
+							<?php } ?>
+							
+							<?php foreach ($invoice['doctors'] as $key => $doc) { ?>
+							<tr>
+								<td class="text-center"><?php echo $key + 2; ?></td>
+								<?php if ($doc['doctors_pay']) { ?>
+								<td>Verrekening zorgverlener-profiel <?php echo $doc['doctors_title'].' '.$doc['doctors_firstname'].' '.$doc['doctors_lastname']; ?> vorige betaaltermijn</td>
+								<?php } else { ?>
+								<td>Extra zorgverlener: <?php echo $doc['doctors_title'].' '.$doc['doctors_firstname'].' '.$doc['doctors_lastname']; ?></td>
+								<?php } ?>
+								<td class="text-center">&euro;<?php echo number_format(round($doc['free'] ? 0 : ($doc['doctors_amount'] / 1.21), 2), 2, ",", ""); ?></td>
+							</tr>
+							<?php } ?>
+						</tbody>
+					<?php } ?>
+                </table>
+
+                <div class="row">
+                    <div class="col-xs-8">
+                    </div>
+                    <div class="col-xs-4 invoice-sum text-right">
+                        <ul class="list-unstyled">
+                            <li>Subtotaal: &euro;<?php echo number_format(round($invoice['amount'] / 1.21, 2), 2, ",", ""); ?></li>
+                            <li>BTW (21%): &euro;<?php echo number_format(round($invoice['amount'] - ($invoice['amount'] / 1.21), 2), 2, ",", ""); ?></li>
+                            <li><strong>Totaal: &euro;<?php echo number_format($invoice['amount'], 2, ",", ""); ?></strong></li>
+                        </ul>
+                    </div>            
+                </div>
+
+                <div class="row" style="margin-top:50px;">
+                	<p style="text-align:center; margin-bottom:20px;">Wij verzoeken u vriendelijk bovenstaand bedrag binnen 14 dagen na factuurdatum te voldoen.</p>
+					<div class="col-xs-3">
+						<strong>T.n.v.:</strong><br />
+						<strong>Rekeningnummer:</strong><br />
+						<strong>KvK:</strong><br />
+						<strong>BTW-nummer:</strong><br />
+                    </div>
+
+                    <div class="col-xs-3">
+						Patientenreview.nl<br />
+						NL06INGB0006844232<br />
+						57354820<br />
+						NL200024218B01<br/>
+                    </div>
+
+                    <div class="col-xs-3">
+						<strong>Contactpersoon:</strong><br />
+						<strong>Telefoonnummer:</strong><br />
+						<strong>E-mailadres:</strong>
+					</div>      
+
+                    <div class="col-xs-3">
+						Wouter Krusemann<br />
+						+31612765171<br />
+						info@patientenreview.nl<br />
+                    </div>
+					
+                          
+				</div>
+            </div>
+        </section>
+
+		<?php if (empty($print)) { ?>
+        <section class="text-center no-print">
+            <a href="<?php echo $invoice['print']; ?>" target="_blank" class="btn btn-primary btn-lg btn-w-lg"><i class="fa fa-print"></i> Druk af</a>
+        </section>
+		<?php } else { ?>
+		<script>
+			window.print();
+		</script>
+		<?php } ?>
+    </div>
+</div>

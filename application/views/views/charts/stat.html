@@ -1,0 +1,188 @@
+<script>
+	var hash = window.location.hash;
+	if (hash != "#/charts/stat")
+	{
+		window.location.hash = "#/charts/stat";
+	}
+</script>
+
+<div class="page page-charts" ng-controller="StatCtrl">
+    <section class="charts_section show">
+		<div class="row">
+			<div class="col-sm-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body text-center">
+						<div class="row">
+							<div class="col-lg-3 col-lg-offset-1 col-md-4 col-sm-12 col-xs-4">
+								<div class="admin-circle">
+									Proef
+								</div>
+							</div>
+							
+							<div class="col-lg-7 col-md-8 col-sm-12 col-xs-8">
+								<p class="size-h2 nm">{{stat.trial}} <span>gebruikers</span></p>
+								<p class="text-small">met een proefabonnement</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-sm-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body text-center">
+						<div class="row">
+							<div class="col-lg-3 col-lg-offset-1 col-md-4 col-sm-12 col-xs-4">
+								<div class="admin-circle">
+									Basis
+								</div>
+							</div>
+							
+							<div class="col-lg-7 col-md-8 col-sm-12 col-xs-8">
+								<p class="size-h2 nm">{{stat.basic}} <span>gebruikers</span></p>
+								<p class="text-small">met een Basis abonnement</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-sm-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-body text-center">
+						<div class="row">
+							<div class="col-lg-3 col-lg-offset-1 col-md-4 col-sm-12 col-xs-4">
+								<div class="admin-circle blue">
+									Pro
+								</div>
+							</div>
+							
+							<div class="col-lg-7 col-md-8 col-sm-12 col-xs-8">
+								<p class="size-h2 nm">{{stat.pro}} <span>gebruikers</span></p>
+								<p class="text-small">met een Pro abonnement</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-xs-12"></div>
+			
+			<div class="col-sm-6 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+                        <h3 class="panel-title">
+							De nieuwste gebruikers
+						</h3>
+                    </div>
+					
+					<div class="panel-body text-center">
+						<table class="table" ng-if="stat.added14.length">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Praktijknaam</th>
+									<th>Geregistreerd op</th>
+									<th></th>
+								</tr>
+							</thead>
+							
+							<tbody>
+								<tr ng-repeat="item in stat.added14">
+									<td class="text-left">{{item.id}}</td>
+									<td class="text-left">{{item.username}}</td>
+									<td class="text-left">{{item.date}}</td>
+									<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+                        <h3 class="panel-title">
+							De gebruikers waarvan het abonnement bijna verloopt
+						</h3>
+                    </div>
+					
+					<div class="panel-body text-center">
+						<table class="table" ng-if="stat.expire14.length">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Praktijknaam</th>
+									<th>Eindigt op</th>
+									<th></th>
+								</tr>
+							</thead>
+							
+							<tbody>
+								<tr ng-repeat="item in stat.expire14">
+									<td class="text-left">{{item.id}}</td>
+									<td class="text-left">{{item.username}}</td>
+									<td class="text-left">{{item.date}}</td>
+									<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!--div class="panel panel-custom panel-default panel-only-header">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="glyphicon glyphicon-star"></i> Gebruik van de Patiëntenreview app
+				</h3>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+                        <h3 class="panel-title">
+							Gemiddelde sessieduur
+						</h3>
+                    </div>
+					
+					<div class="panel-body text-center">
+						<p class="size-h2">{{stat.spent}}</p>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-sm-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+                        <h3 class="panel-title">
+							Gemiddelde aantal verstuurde uitnodigingen
+						</h3>
+                    </div>
+					
+					<div class="panel-body text-center">
+						<p class="size-h2">{{stat.uploads}}</p>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-sm-4 col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+                        <h3 class="panel-title">
+							Gemiddelde tijd tussen batch uploads
+						</h3>
+                    </div>
+					
+					<div class="panel-body text-center">
+						<p class="size-h2">{{stat.between}}</p>
+					</div>
+				</div>
+			</div>
+		</div-->
+    </section>
+</div>

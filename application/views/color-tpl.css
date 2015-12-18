@@ -1,0 +1,80 @@
+body .btn-primary {
+	background-color: <?php echo $color; ?> !important;
+	border-color: <?php echo $color_d; ?> !important;
+}
+
+body .btn-primary:not(.future) {
+	border-color: <?php echo $color_d; ?> !important;
+}
+
+body .btn-primary:hover {
+	background-color: <?php echo $color_d; ?> !important;
+}
+
+body .header-container > .top-header .top-nav .nav-right > li > a > .top-label {
+	background-color: <?php echo $color; ?> !important;
+}
+
+body span.tag-box {
+	background-color: <?php echo $color; ?> !important;
+}
+
+body .ui-switch *:checked + i {
+	box-shadow: 0 0 1px rgba(0, 0, 0, 0.5) inset, 0 0 50px <?php echo $color; ?> inset !important;
+}
+
+body .icon-dashboard.bg-primary,
+body .icon-dashboard.bg-warning {
+	background-color: <?php echo $color; ?> !important;
+}
+
+body .mail-categories .list-group .list-group-item.active > a,
+body .mail-categories .list-group .list-group-item > a:hover,
+a {
+	color: <?php echo $color; ?>;
+}
+
+body .btn-invoice-label.past {
+    background-color: <?php echo $color_d; ?> !important;
+    border-color: <?php echo $color_d; ?> !important;
+}
+
+body span.pro {
+	background-color: <?php echo $color; ?> !important;
+}
+
+body .ui-radio input[type="radio"]:checked + span:after {
+	background-color: <?php echo $color; ?> !important;
+}
+
+body .ui-radio input[type="radio"]:checked + span:before,
+body .pagination > .active > a,
+body .pagination > .active > a:focus,
+body .pagination > .active > a:hover,
+body .pagination > .active > span,
+body .pagination > .active > span:focus,
+body .pagination > .active > span:hover,
+body .ui-checkbox input[type="checkbox"]:checked + span::before,
+body .ui-checkbox input[type="checkbox"] + span:hover::before {
+	border-color: <?php echo $color; ?> !important;
+}
+
+body .emails-edit:hover,
+body .widget-edit:hover,
+body .ui-checkbox input[type="checkbox"]:checked + span::after {
+	background-color: <?php echo $color; ?> !important;
+}
+
+body .badge-primary,
+body .pagination > .active > a,
+body .pagination > .active > a:focus,
+body .pagination > .active > a:hover,
+body .pagination > .active > span,
+body .pagination > .active > span:focus,
+body .pagination > .active > span:hover {
+	background-color: <?php echo $color; ?> !important;
+}
+
+body .btn-link {
+	color: <?php echo $color; ?> !important;
+}

@@ -1,0 +1,725 @@
+<div class="page page-profile" ng-controller="ProfileCtrl" ng-init="profile_init()">
+	<section class="panel panel-default">
+        <div class="panel-heading"><strong>E-mailuitnodigingen</strong></div>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" name="form">
+				<div class="form-group" id="intro2">
+                    <label class="col-md-4">Onderwerp van e-mail aan patiënten</label>
+                    <div class="col-md-8 hidden-container">
+						<div ng-bind-html="find_tags((user.emails.subject || 'Klik om tekst in te voegen...'), 'subject')" ng-click="emails_edit('subject', $event)" class="subject-edit" ng-if="user.account == '2' || user.account_type == '1'">
+						</div>
+                        <input type="text" class="form-control" ng-if="user.account != '2' && user.account_type != '1'" name="subject" ng-model="user.emails.subject" value="" placeholder="Hoe was uw behandeling?" />
+						<span class="help-block" ng-if="user.account == '2' || user.account_type == '1'">
+							U kunt de volgende variabelen gebruiken: [AANHEF PATIËNT], [VOORNAAM PATIËNT], [ACHTERNAAM PATIËNT], [AANHEF ZORGVERLENER], [VOORNAAM ZORGVERLENER], [ACHTERNAAM ZORGVERLENER], [NAAM PRAKTIJK].
+						</span>
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4 col-xs-12">E-mailherinnering uploaden patiëntenbestand</label>
+					<div class="col-md-1 col-xs-3">
+                        <label class="ui-switch ui-switch-lg"><input type="checkbox" name="reminder_checked" ng-model="user.reminder_checked" ng-checked="user.reminder_checked == '1'" /><i></i></label>
+                    </div>
+                    <div class="col-md-7 col-xs-9 with-time" ng-if="user.reminder_checked">
+                        <label class="ui-radio"><input name="reminder_period" type="radio" value="0" ng-model="user.reminder_period" ng-checked="user.reminder_period == '0'"><span>Elke week</span></label>
+						<label class="ui-radio"><input name="reminder_period" type="radio" value="1" ng-model="user.reminder_period" ng-checked="user.reminder_period == '1'"><span>Elke dag</span></label>
+						<span class="ui-select days" ng-if="user.reminder_period == '0'">
+							<select ng-model="user.reminder_day">
+								<option value="1">Maandag</option>
+								<option value="2">Dinsdag</option>
+								<option value="3">Woensdag</option>
+								<option value="4">Donderdag</option>
+								<option value="5">Vrijdag</option>
+								<option value="6">Zaterdag</option>
+								<option value="7">Zondag</option>
+							</select>
+						</span>
+						om
+						<timepicker ng-model="user.reminder_time" class="ui-timepicker" hour-step="1" minute-step="1" show-meridian="ismeridian"></timepicker>
+                    </div>
+                </div>
+
+                <div class="divider divider-dashed divider-lg pull-in"></div>
+
+				<div class="form-group">
+                    <label class="col-md-4">E-mailherinnering beoordeling patiënt</label>
+                    <div class="col-md-8">
+                        <label class="ui-switch ui-switch-lg">
+							<input type="checkbox" name="patients_reminder" ng-model="user.patients_reminder" ng-checked="user.patients_reminder == '1'" />
+							<i></i>
+						</label>
+						<span class="help-block">
+							Het inschakelen van dit onderdeel zorgt ervoor dat uw patiënt na 3 dagen een eenmalige herinnering ontvangt indien er geen beoordeling is achtergelaten.
+						</span>
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in" ng-if="user.account == '2' || user.account_type == '1'"></div>
+				
+				<div class="form-group" ng-if="user.account == '2' || user.account_type == '1'">
+                    <label class="col-md-4">Promotiecampagne</label>
+                    <div class="col-md-8">
+                        <label class="ui-switch ui-switch-lg">
+							<input type="checkbox" name="promo_checked" ng-model="user.promo_checked" ng-checked="user.promo_checked == '1'" ng-change="user.promo_checked == '1' ? email_text_class = 'open' : ''" />
+							<i></i>
+						</label>
+						<span class="help-block">
+							Het inschakelen van dit onderdeel plaatst een call-to-action blok in uw e-mail. U kunt de inhoud van dit blok aanpassen door op de knop 'Wijzig e-mail...' te klikken.
+						</span>
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group" id="intro3">
+                    <label class="col-md-4">Tekst van e-mail aan patiënten</label>
+                    <div class="col-md-8">
+						<span class="help-block help-first">
+							U kunt de tekst van de e-mail hieronder naar wens aanpassen.
+						</span>
+						
+						<a href="javascript:void(0);" class="btn btn-primary" ng-click="email_text_class = 'open'" ng-show="email_text_class == 'close'">Wijzig e-mail...</a>
+
+						<div class="email-text-container" ng-class="{'open': email_text_class == 'open', 'open_with_intro': intro_open == 'open'}">
+							<div style="margin: 0 auto; min-width: 320px; background: #EAEAEA;">
+								<div style="height: 30px; background: #fff; padding: 10px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);">
+									<table cellpadding="0" cellspacing="0" width="100%">
+										<tr>
+											<td style="text-align: left; padding: 0; margin: 0; font-size: 0; line-height: 0; vertical-align: top;">
+												<a href="javascript:void(0);">
+													<img src="{{ (user.logo != '' && (user.account == '2' || user.account_type == '1')) ? user.logo : '/application/views/images/logo_full.png' }}" height="30" alt="" />
+												</a>
+											</td>
+												<td style="text-align: right; padding: 0; margin: 0; font-size: 0; line-height: 0;">
+													<p style="color: #626262; margin: 0; font: 14px/30px arial, sans-serif; text-align: right;">
+														<span class="tag"><?php echo @$user['username']; ?></span>
+													</p>
+												</td>
+										</tr>
+									</table>
+								</div>
+								
+								<table cellpadding="0" cellspacing="0" width="100%" ng-if="user.emails.header != ''">
+									<tr>
+										<td ng-bind-html="find_tags((user.emails.header || 'Klik om tekst in te voegen...'), 'header')" ng-click="emails_edit('header', $event)" class="emails-edit" style="height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
+											{{ find_tags((user.emails.header || 'Klik om tekst in te voegen...'), 'header') }}
+										</td>
+									</tr>
+								</table>
+								
+								<div style="background: #fff; max-width: 700px; margin: 0 auto;">
+									<div style="padding: 30px;">
+										<p ng-bind-html="find_tags((user.emails.gray || 'Klik om tekst in te voegen...'), 'gray')" ng-click="emails_edit('gray', $event)" class="emails-edit" style="margin: 0 0 20px; font: 14px/1.3 arial, sans-serif; color: #525354; padding: 15px; background-color: #F3F3F3; border: solid #D3D3D3 1px;">
+											{{ find_tags((user.emails.gray || 'Klik om tekst in te voegen...'), 'gray') }}
+										</p>
+										
+										<p ng-bind-html="find_tags((user.emails.text1 || 'Klik om tekst in te voegen...'), 'text1')" ng-click="emails_edit('text1', $event)" class="emails-edit" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
+											{{ find_tags((user.emails.text1 || 'Klik om tekst in te voegen...'), 'text1') }}
+										</p>
+										
+										<p ng-bind-html="find_tags((user.emails.promo || 'Voer hier uw promotietekst in'), 'promo')" ng-click="emails_edit('promo', $event)" class="emails-edit" ng-if="user.promo_checked == '1'" style="padding: 15px; background-color: #F0A400; font: bold 14px/1.3 arial, sans-serif; color: #fff; text-align: center; margin: 0;">
+											{{ find_tags((user.emails.promo || 'Voer hier uw promotietekst in'), 'promo') }}
+										</p>
+										
+										<div ng-click="stars_edit($event)" class="emails-edit">
+											<div ng-if="user.stars_type == 1" style="width: 100%; margin: 0 auto; padding: 20px 0; font-size: 0; white-space: nowrap;">
+												<a href="javascript:void(0);" class="btn btn-primary btn-block" style="padding: 15px 0;">{{user.stars_text || "Klik hier om te beoordelen"}}</a>
+											</div>
+											
+											<div ng-if="user.stars_type == 2" style="width: 100%; margin: 0 auto; padding: 30px 0; font-size: 0; white-space: nowrap;">
+												<table cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+													<tr>
+														<td style="vertical-align: middle; width: 18%; font: 13px/1.3 arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;">
+															Onwaarschijnlijk
+														</td>
+														<td style="vertical-align: middle; width: 12%; text-align: center;">
+															<a href="javascript:void(0);" style="text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
+																<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
+															</a>
+														</td>
+														<td style="vertical-align: middle; width: 12%; text-align: center;">
+															<a href="javascript:void(0);" style="text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
+																<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
+															</a>
+														</td>
+														<td style="vertical-align: middle; width: 12%; text-align: center;">
+															<a href="javascript:void(0);" style="text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
+																<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
+															</a>
+														</td>
+														<td style="vertical-align: middle; width: 12%; text-align: center;">
+															<a href="javascript:void(0);" style="text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
+																<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
+															</a>
+														</td>
+														<td style="vertical-align: middle; width: 12%; text-align: center;">
+															<a href="javascript:void(0);" style="text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
+																<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
+															</a>
+														</td>
+														<td style="vertical-align: middle; width: 18%; font: 13px/1.3 arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;">
+															Waarschijnlijk
+														</td>
+													</tr>
+												</table>
+												<!--span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;">
+													Waarschijnlijk
+												</span>
+												<div class="inner" style="display: inline-block; width: 60%; vertical-align: middle;">
+													<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
+														<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
+															<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
+														</a>
+													</div>
+													<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
+														<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
+															<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
+														</a>
+													</div>
+													<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
+														<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
+															<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
+														</a>
+													</div>
+													<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
+														<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
+															<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
+														</a>
+													</div>
+													<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
+														<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
+															<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
+														</a>
+													</div>
+												</div>
+												<span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;">
+													Waarschijnlijk
+												</span-->
+											</div>
+											
+											<div ng-if="user.stars_type == 0" style="width: 100%; margin: 0 auto; padding: 30px 0; font-size: 0;">
+												<table class="inner" cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+													<tr>
+														<td style="vertical-align: middle; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;">
+															&nbsp;
+														</td>
+														<td class="star" style="vertical-align: middle; width: 12%; text-align: center;">
+															<a href="javascript:void(0);" style="text-decoration: none; opacity: 0.2;">
+																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%; vertical-align: middle;" />
+															</a>
+														</td>
+														<td class="star" style="vertical-align: middle; width: 12%; text-align: center;">
+															<a href="javascript:void(0);" style="text-decoration: none; opacity: 0.4;">
+																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%; vertical-align: middle;" />
+															</a>
+														</td>
+														<td class="star" style="vertical-align: middle; width: 12%; text-align: center;">
+															<a href="javascript:void(0);" style="text-decoration: none; opacity: 0.6;">
+																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%; vertical-align: middle;" />
+															</a>
+														</td>
+														<td class="star" style="vertical-align: middle; width: 12%; text-align: center;">
+															<a href="javascript:void(0);" style="text-decoration: none; opacity: 0.8;">
+																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%; vertical-align: middle;" />
+															</a>
+														</td>
+														<td class="star" style="vertical-align: middle; width: 12%; text-align: center;">
+															<a href="javascript:void(0);" style="text-decoration: none; opacity: 1.0;">
+																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%; vertical-align: middle;" />
+															</a>
+														</td>
+														<td style="vertical-align: middle; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;">
+															&nbsp;
+														</td>
+													</tr>
+													
+													<tr>
+														<td style="padding-top: 10px; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;">
+															Onwaarschijnlijk
+														</td>
+														<td style="width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
+															1
+														</td>
+														<td style="width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
+															2
+														</td>
+														<td style="width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
+															3
+														</td>
+														<td style="width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
+															4
+														</td>
+														<td style="width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
+															5
+														</td>
+														<td style="padding-top: 10px; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;">
+															Waarschijnlijk
+														</td>
+													</tr>
+												</table>
+												<!--div style="white-space: nowrap;">
+													<span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;">
+														&nbsp;
+													</span>
+													<div class="inner" style="display: inline-block; width: 60%; vertical-align: middle;">
+														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
+															<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; opacity: 0.2;">
+																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%;" />
+															</a>
+														</div>
+														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
+															<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; opacity: 0.4;">
+																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%;" />
+															</a>
+														</div>
+														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
+															<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; opacity: 0.6;">
+																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%;" />
+															</a>
+														</div>
+														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
+															<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; opacity: 0.8;">
+																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%;" />
+															</a>
+														</div>
+														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
+															<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; opacity: 1;">
+																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%;" />
+															</a>
+														</div>
+													</div>
+													<span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;">
+														&nbsp;
+													</span>
+												</div>
+												
+												<div style="white-space: nowrap; padding-top: 10px;">
+													<span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;">
+														Onwaarschijnlijk
+													</span>
+													<div class="inner" style="display: inline-block; width: 60%; vertical-align: middle;">
+														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: center;">
+															1
+														</div>
+														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: center;">
+															2
+														</div>
+														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: center;">
+															3
+														</div>
+														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: center;">
+															4
+														</div>
+														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: center;">
+															5
+														</div>
+													</div>
+													<span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;">
+														Waarschijnlijk
+													</span>
+												</div-->
+											</div>
+										</div>
+										
+										<p ng-bind-html="find_tags((user.emails.text2 || 'Klik om tekst in te voegen...'), 'text2')" ng-click="emails_edit('text2', $event)" class="emails-edit" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
+											{{ find_tags((user.emails.text2 || 'Klik om tekst in te voegen...'), 'text2') }}
+										</p>
+									</div>
+								</div>
+								
+								<p ng-bind-html="find_tags((user.emails.footer || 'Klik om tekst in te voegen...'), 'footer')" ng-click="emails_edit('footer', $event)" class="emails-edit" style="max-width: 700px; margin: 0 auto; padding: 15px 0 10px; font: 12px/1.3 arial, sans-serif; color: #999;">
+									{{ find_tags((user.emails.footer || 'Klik om tekst in te voegen...'), 'footer') }}
+								</p>
+							</div>
+						</div>
+						
+						<br />
+						<a href="javascript:void(0);" class="btn btn-primary" ng-click="test_email_modal()" ng-show="email_text_class == 'open' || intro_open == 'open'">Stuur een voorbeeld...</a>
+                    </div>
+                </div>
+			</form>
+		</div>
+	</section>
+	
+	<section class="panel panel-default">
+        <div class="panel-heading"><strong>Gegevens van uw praktijk</strong></div>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" name="form">
+                <div class="form-group">
+                    <label class="col-md-4">Naam praktijk</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="name" ng-model="user.username" value="" required="required" />
+                    </div>
+                </div>
+				
+                <div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">E-mailadres praktijk</label>
+                    <div class="col-md-8">
+                        <input type="email" class="form-control" name="email" ng-model="user.email" value="" required="required" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">E-mailadres feedback patiënten</label>
+                    <div class="col-md-8">
+                        <input type="email" class="form-control" name="email_reply" ng-model="user.email_reply" value="" />
+						<span class="help-block">
+							Met dit onderdeel wijzigt u het e-mailadres waarnaar binnengekomen feedback van patiënten zal worden gestuurd.
+						</span>
+                    </div>
+                </div>
+				
+                <div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">Telefoonnummer praktijk</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="phone" ng-model="user.phone" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">Adresgegevens</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="address" ng-model="user.address" placeholder="Adres" value="" />
+                    </div>
+					<div class="col-md-2">
+                        <input type="text" class="form-control" name="postcode" ng-model="user.postcode" placeholder="Postcode" value="" />
+                    </div>
+					<div class="col-md-3">
+                        <input type="text" class="form-control" name="city" ng-model="user.city" placeholder="Plaats" value="" />
+                    </div>
+                </div>			
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">Beoordelingspagina en Widgets</label>
+					<div class="col-md-1 col-xs-3 margin-bottom">
+						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="short_checked" ng-model="user.short_checked" ng-checked="user.short_checked == '1'" /><i></i></label>
+                    </div>
+                    <div class="col-md-offset-4 col-md-8 col-xs-12" ng-show="user.short_checked == '1'">
+						<div class="input-group">
+							<span class="input-group-addon">app.patientenreview.nl/</span>
+							<input type="text" class="form-control" name="name" ng-model="user.short" value="" ng-change="validate_url()" ng-class="short_class" />
+						</div>
+						
+						<div class="help-block">
+							U kunt een aangepaste link naar de beoordelingspagina van uw praktijk 
+							maken zodat u anonieme beoordelingen kunt ontvangen. Ook kunt u een widget instellen om bezoekers van uw website naar de beoordelingspagina te verwijzen.<br><br>
+						</div>
+						
+						<div class="row">
+							<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+								<p class="help-block">
+									Oriëntatie
+								</p>
+							</div>
+							
+							<div class="col-lg-4 col-md-6 col-sm-5 col-xs-12">
+								<select class="form-control" ng-model="user.widget.widgets_type">
+									<option value="0">Liggend</option>
+									<option value="1">Staand</option>
+								</select>
+							</div>
+						</div>
+						
+						<br />
+						
+						<div class="row">
+							<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+								<p class="help-block">
+									Achtergrondafbeelding
+								</p>
+							</div>
+							
+							<div class="col-lg-9 col-md-8 col-sm-8 col-xs-12 switcher">
+								<label class="ui-switch"><input type="checkbox" name="widgets_bg" ng-model="user.widget.widgets_bg" ng-checked="user.widget.widgets_bg == '1'" /><i></i></label>
+								<button class="btn btn-primary" colorpicker ng-model="user.widget.widgets_color">Wijzig kleur</button>
+								<input type="text" class="form-control color-hex" ng-model="user.widget.widgets_color" />
+							</div>
+						</div>
+						
+						<br />
+						
+						<p class="help-block">
+							Zo komt de widget eruit te zien:
+						</p>
+						
+						<div class="widget-frame" ng-class="{'ver': user.widget.widgets_type == 1}">
+							<div class="widget" ng-class="{'hor': user.widget.widgets_type == 0, 'ver': user.widget.widgets_type == 1, 'pro': user.account == 2 || user.account_type == 1}">
+								<div class="widget-left">
+									<p class="widget-text1 widget-edit" ng-bind-html="user.widget.widgets_text1" ng-click="widget_edit('widgets_text1', $event)">
+										{{user.widget.widgets_text1}}
+									</p>
+									
+									<div class="widget-rating">
+										<div class="widget-star" ng-class="{'empty': rating < 0.5, 'full': rating > 0.5, 'half': rating == 0.5}">
+											<i class="glyphicon glyphicon-star-empty"></i>
+											<i class="glyphicon glyphicon-star"></i>
+										</div>
+										
+										<div class="widget-star" ng-class="{'empty': rating < 1.5, 'full': rating > 1.5, 'half': rating == 1.5}">
+											<i class="glyphicon glyphicon-star-empty"></i>
+											<i class="glyphicon glyphicon-star"></i>
+										</div>
+										
+										<div class="widget-star" ng-class="{'empty': rating < 2.5, 'full': rating > 2.5, 'half': rating == 2.5}">
+											<i class="glyphicon glyphicon-star-empty"></i>
+											<i class="glyphicon glyphicon-star"></i>
+										</div>
+										
+										<div class="widget-star" ng-class="{'empty': rating < 3.5, 'full': rating > 3.5, 'half': rating == 3.5}">
+											<i class="glyphicon glyphicon-star-empty"></i>
+											<i class="glyphicon glyphicon-star"></i>
+										</div>
+										
+										<div class="widget-star" ng-class="{'empty': rating < 4.5, 'full': rating > 4.5, 'half': rating == 4.5}">
+											<i class="glyphicon glyphicon-star-empty"></i>
+											<i class="glyphicon glyphicon-star"></i>
+										</div>
+										
+										<div class="widget-score">
+											{{rating.toFixed(1)}}
+										</div>
+									</div>
+								</div>
+								
+								<div class="widget-center" style=" {{user.widget.widgets_bg == '1' ? 'background: url(/application/views/images/email-back.png) 30% center no-repeat; background-size: cover;' : ''}}background-color: {{user.widget.widgets_color}};">
+									<p class="widget-text2 widget-edit" ng-bind-html="user.widget.widgets_text2" ng-click="widget_edit('widgets_text2', $event)">
+										{{user.widget.widgets_text2}}
+									</p>
+									
+									<div class="btn btn-widget widget-edit" style="background-color: {{user.widget.widgets_button}};" ng-bind-html="user.widget.widgets_textb" ng-click="widget_edit('widgets_textb', $event)">{{user.widget.widgets_textb}}</div>
+								</div>
+								
+								<div class="widget-right">
+									<img src="/application/views/images/{{user.widget.widgets_type == 0 ? 'widget-logo.png' : 'logo_full.png'}}" alt="" class="widget-logo"/>
+								</div>
+							</div>
+						</div>
+						
+						<br />
+						
+						<button type="button" class="btn btn-primary" ng-click="widget_save()">Genereer HTML...</button>
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in" ng-if="user.account == '2' || user.account_type == '1'" id="intro4"></div>
+
+				<div class="form-group" ng-if="user.account == '2' || user.account_type == '1'">
+                    <label class="col-md-4">Logo en huisstijl</label>
+                    <div class="col-md-8">
+						<span class="logo_here"><img src="{{user.logo}}" alt="" ng-if="user.logo != ''" /><a href="javascript:void(0);" class="remove_logo" ng-if="user.logo != ''" ng-click="remove_logo()" ng-class="{show: user.logo != ''}"><i class="glyphicon glyphicon-remove"></i></a></span>
+                        <upload-button class="btn btn-primary btn-upload" url="/pub/upload_logo/" on-success="onLogo(response)">Upload logo</upload-button>
+						<button class="btn btn-primary" colorpicker ng-model="user.color">Wijzig kleur</button>
+						<input type="text" class="form-control color-hex" ng-model="user.color" />
+						<span class="help-block">
+							Dit logo zal worden weergegeven in de emails en beoordelingspagina die klanten te zien krijgen. U kunt een bestand in .jpg of .png formaat uploaden. Aanbevolen resolutie: 300x80. Bovendien kunt u een kleur kiezen die past bij uw logo.
+						</span>
+                    </div>
+                </div>
+				
+                <div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<button class="btn btn-primary" ng-click="save()">Bewaar instellingen</button>
+            </form>
+        </div>
+    </section>
+</div>
+
+<script type="text/ng-template" id="emails_edit.html">
+	<div class="modal-header">
+		<h3>
+			Wijzig tekst
+		</h3>
+	</div>
+	<div class="modal-body">
+		<textarea ng-model="value" class="form-control edit-emails-area"></textarea>
+		<span class="help-block">
+			U kunt de volgende variabelen gebruiken: [AANHEF PATIËNT], [VOORNAAM PATIËNT], [ACHTERNAAM PATIËNT], [AANHEF ZORGVERLENER], [VOORNAAM ZORGVERLENER], [ACHTERNAAM ZORGVERLENER], [NAAM PRAKTIJK].
+		</span>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="save()">Bewaar</button>
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="widget_edit.html">
+	<div class="modal-header">
+		<h3>
+			Wijzig tekst
+		</h3>
+	</div>
+	<div class="modal-body">
+		<div class="form-group">
+			<input type="text" ng-model="value" class="form-control" />
+		</div>
+		
+		<div class="form-group" ng-if="type == 'widgets_textb'">
+			<button class="btn btn-primary" colorpicker colorpicker-fixed-position="true" ng-model="color[0]">Wijzig kleur</button>
+			<input type="text" class="form-control color-hex" ng-model="color[0]" />
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="save()">Bewaar</button>
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="widget_save.html">
+	<div class="modal-header">
+		<h3>
+			HTML
+		</h3>
+	</div>
+	<div class="modal-body">
+		<div class="form-group">
+			<textarea type="text" ng-model="iframe" class="form-control"></textarea>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="save()">Bewaar</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="profile_save.html">
+	<div class="modal-header">
+		<h3>
+			Bewaar uw wijzigingen
+		</h3>
+	</div>
+	<div class="modal-body">
+		U heeft wijzigingen gemaakt die nog niet zijn bewaard. Wilt u de gewijzigde 
+		instellingen bewaren?
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="save_profile()">Bewaar</button>
+		<button class="btn btn-warning" ng-click="discard_profile()">Bewaar niet</button>
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="test_emails.html">
+	<div class="modal-header">
+		<h3>
+			Stuur voorbeeld e-mail
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			U kunt een voorbeeld van de e-mail versturen die uw patiënten te zien zullen krijgen.
+		</p>
+		
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="form-group">
+					<input type="email" class="form-control" ng-model="test.email" placeholder="E-mailadres" />
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12" ng-show="items.title">
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="test.title" placeholder="Aanhef patiënt" />
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12" ng-show="items.name">
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="test.name" placeholder="Voornaam patiënt" />
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12" ng-show="items.sname">
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="test.sname" placeholder="Achternaam patiënt" />
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12" ng-show="items.doctors_title">
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="test.doctors_title" placeholder="Aanhef zorgverlener" />
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12" ng-show="items.doctors_name">
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="test.doctors_name" placeholder="Voornaam zorgverlener" />
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12" ng-show="items.doctors_sname">
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="test.doctors_sname" placeholder="Achternaam zorgverlener" />
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12" ng-show="items.username">
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="test.username" placeholder="Naam praktijk" />
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12" ng-show="items.subject">
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="test.subject" placeholder="Onderwerp van e-mail" />
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+		<button class="btn btn-primary" ng-click="submit()">Stuur</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="stars_edit.html">
+	<div class="modal-header">
+		<h3>
+			Wijzig beoordelingselement
+		</h3>
+	</div>
+	<div class="modal-body">
+		<div class="checkbox">
+			<label>
+				<input type="radio" name="stars_type" value="1" ng-model="type" />
+				Eenvoudig
+			</label>
+		</div>
+		
+		<div class="form-group" ng-if="type == 1">
+			<div class="checkbox">
+				<label>
+					<input type="text" class="form-control" ng-model="text[0]" />
+				</label>
+			</div>
+		</div>
+		
+		<div class="checkbox">
+			<label>
+				<input type="radio" name="stars_type" value="0" ng-model="type" />
+				Sterren
+			</label>
+		</div>
+		
+		<div class="checkbox">
+			<label>
+				<input type="radio" name="stars_type" value="2" ng-model="type" />
+				Dynamische sterren (Experimenteel)
+			</label>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="save()">Bewaar</button>
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>

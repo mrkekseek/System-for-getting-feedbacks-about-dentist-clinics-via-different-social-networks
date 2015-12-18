@@ -1,0 +1,199 @@
+<script>
+	var hash = window.location.hash;
+	if (hash != "#/dashboard")
+	{
+		window.location.hash = "#/dashboard";
+	}
+</script>
+
+<div class="page page-dashboard" ng-controller="DashboardCtrl" ng-init="init('<?php echo $user['facebook_checked'] && empty($user['sites']) ? $user['facebook'] : ""; ?>', '<?php $user['facebook_token']; ?>')">
+    <div class="dashboard-hide" ng-class="{show: ! first_time && ready}">
+		<div class="row">
+			<div class="col-md-6 col-xs-12">
+				<div class="panel panel-custom panel-default">
+					<div class="panel-body text-center dashboard-body">
+						<div class="row">
+							<div class="col-sm-5 col-xs-12 bg-warning icon-dashboard">
+								<span class="ti-email"></span>
+							</div>
+							
+							<div class="col-sm-7 col-xs-12">
+								<div class="box-info info-dashboard">
+									<p class="size-h2">{{stat.average}}</p>
+									<p class="text-muted"><span data-i18n="De gemiddelde waardering van uw praktijk gebaseerd op directe e-mailbeoordelingen."></span></p>
+									<p class="text-small" ng-class="(last.average > 0 && show_difference) ? 'color-success' : ((last.average < 0 && show_difference) ? 'color-danger' : 'hide')"><span data-i18n="Gestegen sinds laatste keer: {{last.average}}%"></span></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-xs-12">
+				<div class="panel panel-custom panel-default">
+					<div class="panel-body text-center dashboard-body">
+						<div class="row">
+							<div class="col-sm-5 col-xs-12 pull-right bg-primary icon-dashboard">
+								<span class="ti-sharethis"></span>
+							</div>
+							
+							<div class="col-sm-7 col-xs-12">
+								<div class="box-info av-online info-dashboard">
+									<div ng-if="show_average_online == '1'">
+										<p class="size-h2">{{stat.average_online}}</p>
+										<p class="text-muted" ng-if="type == 'all'"><span data-i18n="De gemiddelde waardering van uw praktijk op alle online kanalen."></span></p>
+										<p class="text-muted" ng-if="type == 'facebook'"><span data-i18n="De gemiddelde waardering van uw praktijk op Facebook."></span></p>
+										<p class="text-muted" ng-if="type == 'google'"><span data-i18n="De gemiddelde waardering van uw praktijk op Google."></span></p>
+										<p class="text-muted" ng-if="type == 'zorgkaart'"><span data-i18n="De gemiddelde waardering van uw praktijk op Zorgkaart."></span></p>
+										<p class="text-small" ng-class="(last.average_online > 0 && show_difference) ? 'color-success' : ((last.average_online < 0 && show_difference) ? 'color-danger' : 'hide')"><span data-i18n="Gestegen sinds laatste keer: {{last.average_online}}%"></span></p>
+										<!--a href="javascript:void(0);" class="btn btn-primary" ng-click="print_online('facebook')"><i class="ti-facebook"></i> Facebook</a>
+										<a href="javascript:void(0);" class="btn btn-danger" ng-click="print_online('google')"><i class="ti-google"></i> Google+</a>
+										<a href="javascript:void(0);" class="btn btn-default zorgkaart" ng-click="print_online('zorgkaart')"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /> Zorgkaart</a-->
+									</div>
+									
+									<div ng-if="show_fb_login == '1'">
+										<p class="text-center">
+											Log in met het Facebook-account waarmee u de bedrijfspagina van uw praktijk beheert.<br /><br />
+											<a href="javascript:void(0);" class="btn btn-primary" ng-click="fb_login()"><i class="ti-facebook"></i> Log In</a>
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6 col-xs-12">
+				<div class="panel panel-custom panel-default">
+					<div class="panel-body semi-box">
+						<div class="row">
+							<div class="col-md-4 col-sm-5 col-xs-12 text-center-xs">
+								<span class="btn-icon btn-icon-round btn-icon-lg-alt bg-gray">
+									<i class="glyphicon glyphicon-star"></i>
+								</span>
+							</div>
+							
+							<div class="col-md-8 col-sm-7 col-xs-12 text-center-xs">
+								<div class="box-info">
+									<p class="size-h2">{{stat.stars}}</p>
+									<p class="text-muted"><span data-i18n="Nieuwe beoordelingen van patiënten"></span></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-6 col-xs-12">
+				<div class="panel panel-custom panel-default">
+					<div class="panel-body semi-box">
+						<div class="row">
+							<div class="col-md-4 col-sm-5 col-xs-12 text-center-xs">
+								<span class="btn-icon btn-icon-round btn-icon-lg-alt bg-gray">
+									<i class="ti-comments"></i>
+								</span>
+							</div>
+							
+							<div class="col-md-8 col-sm-7 col-xs-12 text-center-xs">
+								<div class="box-info">
+									<p class="size-h2">{{stat.feedbacks}}</p>
+									<p class="text-muted"><span data-i18n="Nieuwe feedback van patiënten"></span></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="<?php echo empty($user['sites']) ? "col-lg-6" : "col-lg-12"; ?> col-xs-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							De laatste 10 waarderingen
+						</h3>
+					</div>
+					
+					<div class="panel-body panel-same-scroll">
+						<table class="table table-hover table-responsive" ng-if="letters.length" ng-init="words = {0: 'Geen reactie', 1: '1 ster', 2: '2 sterren', 3: '3 sterren', 4: '4 sterren', 5: '5 sterren'}">
+							<tr>
+								<!--th>Zorgverlener</th-->
+								<th>E-mail</th>
+								<th>Beoordeling</th>
+								<!--th>Doorgeklikt naar</th-->
+								<th>Datum</th>
+								<th></th>
+							</tr>
+							<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" ng-repeat="l in letters" ng-click="more(l.id, l.feedback != '', l.email)">
+								<!--td ng-class="{'color-danger bold': l.stars <= 2}">{{l.doctor_name}}</td-->
+								<td ng-class="{'color-danger bold': l.email != '' && l.stars <= 2, 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
+								<td>
+									<span ng-if="l.stars == 0">Geen reactie</span>
+									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 0"></i>
+									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 1"></i>
+									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 2"></i>
+									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 3"></i>
+									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 4"></i>
+								</td>
+								<!--td>
+									<span class='socials-inbox-icons' ng-if="l.google == 1"><i class="ti-google"></i></span>
+									<span class='socials-inbox-icons' ng-if="l.zorgkaart == 1"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /></span>
+									<span class='socials-inbox-icons' ng-if="l.facebook == 1"><i class="ti-facebook"></i></span>
+								</td-->
+								<td>{{l.date_time}}</td>
+								<td><i class="ti-marker-alt" ng-if="l.feedback != ''"></i></td>
+							</tr>
+						</table>
+						<p class="no-letters text-center" ng-if=" ! letters.length" ng-class="{show: ready}">
+							Er zijn nog geen waarderingen achtergelaten.
+						</p>
+					</div>
+				</div>
+			</div>
+			
+			<?php if (empty($user['sites'])) { ?>
+				<div class="col-lg-6 col-xs-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								DE LAATSTE RECENSIES OP ONLINE KANALEN
+							</h3>
+						</div>
+						
+						<div class="panel-body panel-same-scroll">
+							<div class="reviews_container" ng-repeat="review in stat.reviews">
+								<div class="divider divider-dashed divider-lg pull-in"></div>
+								<span class="reviews-date">{{review.date}}</span>
+								<i class="ti-star rating-color" ng-if="review.score >= 1"></i>
+								<i class="ti-star rating-color" ng-if="review.score >= 2"></i>
+								<i class="ti-star rating-color" ng-if="review.score >= 3"></i>
+								<i class="ti-star rating-color" ng-if="review.score >= 4"></i>
+								<i class="ti-star rating-color" ng-if="review.score >= 5"></i>
+								<a href="{{review.link}}" class="in-google-text" ng-if="review.text != ''" target="_blank" ng-bind-html="review.text">{{review.text}}</a>
+							</div>
+							
+							<p ng-if="stat.reviews.length == 0" class="text-small empty-feedback">
+								Er zijn nog geen online recensies om te laten zien.
+							</p>
+						</div>
+					</div>
+				</div>
+			<?php } ?>
+		</div>
+    </div>
+	
+	<div class="empty_reviews" ng-class="{show: first_time && ready}">
+		<div class="empty_reviews_inner text-center">
+			<img src="/application/views/images/surgeon2.png" alt="" class="animated bounceIn"/>
+			<p>
+				Zodra we beoordelingen van patiënten hebben ontvangen ziet u hier alle belangrijke informatie in
+				één overzicht.
+			</p>
+			<a href="javascript:void(0);" class="btn btn-primary" ng-click="go_to_compose()">Stuur uitnodigingen</a>
+		</div>
+	</div>
+</div>

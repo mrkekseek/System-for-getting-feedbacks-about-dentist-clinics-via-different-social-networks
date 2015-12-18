@@ -1,0 +1,29 @@
+<div class="page page-lock" ng-controller="authCtrl">
+
+    <div class="lock-centered clearfix">
+        <div class="lock-container">
+            <div class="profile"><img src="application/views/images/logo.png" alt=""></div>
+            <form class="lock-form" name="form">
+                <p class="name"><?php echo $user['username']; ?></p>
+                <input type="password" placeholder="Wachtwoord..." ng-model="password" class="form-control" required="required" />
+                <a href="javascript:void(0);" type="submit" class="btn-icon btn-icon-round btn-icon-lg btn-success btn-submit" ng-click="unlock()">
+					<span class="ti-unlock"></span>
+                </a>
+            </form>
+        </div>
+    </div>
+	
+	<script>
+		var for_remove = {'body-wide': true, 'body-err': true, 'body-lock': true, 'body-auth': true};
+		var classes = document.getElementsByTagName("body")[0].className.split(" ");
+		var new_classes = ['body-wide', 'body-lock'];
+		for (var key in classes)
+		{
+			if ( ! for_remove[classes[key]])
+			{
+				new_classes.push(classes[key]);
+			}
+		}
+		document.getElementsByTagName("body")[0].className = new_classes.join(" ");
+	</script>
+</div>

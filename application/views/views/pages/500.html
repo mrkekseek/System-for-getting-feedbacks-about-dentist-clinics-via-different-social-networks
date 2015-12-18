@@ -1,0 +1,30 @@
+<div class="page-err">
+    <div class="err-container text-center">
+        <div class="err">
+            <h1>500</h1>
+            <h2>Er is een onbekende fout opgetreden.</h2>
+        </div>
+
+        <div class="err-body">
+            <a href="#/" class="btn btn-lg btn-goback">
+                <span class="ti-home"></span>
+                <span class="space"></span>
+                Terug naar het dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+	var for_remove = {'body-wide': true, 'body-err': true, 'body-lock': true, 'body-auth': true};
+	var classes = document.getElementsByTagName("body")[0].className.split(" ");
+	var new_classes = ['body-wide', 'body-err'];
+	for (var key in classes)
+	{
+		if ( ! for_remove[classes[key]])
+		{
+			new_classes.push(classes[key]);
+		}
+	}
+	document.getElementsByTagName("body")[0].className = new_classes.join(" ");
+</script>

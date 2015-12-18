@@ -1,0 +1,243 @@
+<div class="page page-invoice" data-ng-controller="OnlineCtrl">
+	<section class="panel panel-default">
+        <div class="panel-heading"><strong>Online Profielen</strong></div>
+        <div class="panel-body">
+			Onderstaande online profielen worden getoond aan uw patiënten wanneer zij reageren op uw uitnodiging. U kunt naar wens andere online profielen selecteren en de tegels in de gewenste volgorde verslepen.
+		</div>
+	</section>
+	
+	<div class="row" id="online_container" data-as-sortable="sort_options" ng-model="order">
+		<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="o in order" data-as-sortable-item>
+			<div class="panel panel-default panel-online online-{{o.name}}">
+				<div class="panel-heading" data-as-sortable-item-handle>
+					<div class="online-logo">
+						<img src="/application/views/images/online-{{o.name}}.png" alt="" ng-show="o.name != 'own'" />
+						<span ng-show="o.name == 'own'">{{user[o.name + '_name'] || 'Aangepaste doorverwijzing'}}</span>
+					</div>
+				</div>
+				
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-xs-6">
+							<label class="ui-switch ui-switch-success">
+								<input type="checkbox" ng-model="user[o.name + '_checked']" ng-checked="user[o.name + '_checked'] == 1" ng-change="online_check(o.name)" />
+								<i></i>
+							</label>
+						</div>
+						
+						<div class="col-xs-6">
+							<a href="javascript:void(0);" class="online-settings" ng-click="online_modal(o.name)">
+								<i class="glyphicon glyphicon-cog"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/ng-template" id="online.html">
+	<div class="modal-header">
+		<h3>
+			Instellingen voor
+			<span ng-if="system == 'google'">Google</span>
+			<span ng-if="system == 'facebook'">Facebook</span>
+			<span ng-if="system == 'zorgkaart'">Zorgkaart Nederland</span>
+			<span ng-if="system == 'independer'">Independer</span>
+			<span ng-if="system == 'telefoonboek'">Telefoonboek</span>
+			<span ng-if="system == 'vergelijkmondzorg'">Vergelijk Mondzorg</span>
+			<span ng-if="system == 'kliniekoverzicht'">Kliniekoverzicht</span>
+			<span ng-if="system == 'own'">de aangepaste doorverwijzing</span>
+		</h3>
+	</div>
+	<div class="modal-body" ng-if="system == 'google'">
+		<p>
+			Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Google in te vullen.
+		</p>
+		
+		<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="m.url" ng-class="valid" />
+		
+		<div class="well-box" ng-class="{active: show_well}">
+			<div class="well">
+				<strong>De correcte URL voor uw profiel op Google</strong>
+				<br /><br />
+				<ul>
+					<li>Gebruik de zoekbalk op <a href="http://www.googleplus.com/" target="_blank">Google +</a> om de pagina van uw praktijk op te zoeken.</li>
+					<li>Kopieer de URL in de adresbalk van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal-body" ng-if="system == 'zorgkaart'">
+		<p>
+			Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Zorgkaart Nederland in te vullen.
+		</p>
+		
+		<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="m.url" ng-class="valid" />
+		
+		<div class="well-box" ng-class="{active: show_well}">
+			<div class="well">
+				<strong>De correcte URL voor uw profiel op Zorgkaart Nederland</strong>
+				<br /><br />
+				<ul>
+					<li>Gebruik de zoekbalk op <a href="http://www.zorgkaartnederland.nl/" target="_blank">Zorgkaart Nederland</a> om de pagina van uw praktijk op te zoeken.</li>
+					<li>Kopieer de URL in de adresbalk van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal-body" ng-if="system == 'facebook'">
+		<p>
+			Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Facebook in te vullen.
+		</p>
+		
+		<div class="input-group" style="margin-bottom:30px; margin-top:30px;">
+			<input type="text" class="form-control" placeholder="http://" ng-model="m.url" ng-class="valid" />
+			<span class="input-group-btn">
+				<button class="btn btn-primary" type="button" ng-click="fb_login()">{{facebook_button}}</button>
+			</span>
+		</div>
+		
+		<p>
+			Belangrijk: Voor het ontvangen van beoordelingen op Facebook is het belangrijk dat uw account is ingesteld om beoordelingen te kunnen ontvangen. <a href="http://nl-nl.facebook.com/help/community/question/?id=618611984864811" target="_blank">Lees hier</a> hoe u uw Facebook profiel correct kunt instellen.
+		</p>
+		
+		<div class="well-box" ng-class="{active: show_well}">
+			<div class="well">
+				<strong>De correcte URL voor uw profiel op Facebook</strong>
+				<br /><br />
+				<ul>
+					<li>Gebruik de zoekbalk op <a href="http://www.facebook.com/" target="_blank">Facebook</a> om de pagina van uw praktijk op te zoeken.</li>
+					<li>Kopieer de URL in de adresbalk van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal-body" ng-if="system == 'independer'">
+		<p>
+			Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw <strong>reviewpagina</strong> op Independer in te vullen.
+		</p>
+		
+		<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:10px;" ng-model="m.url" />
+		
+		<p>
+			Als u bovendien beoordelingen van Independer wilt tonen in uw dashboard, kunt u hier het internetadres van uw <strong>profielpagina</strong> op Independer invullen.
+		</p>
+		
+		<input type="text" class="form-control" placeholder="http://" style="margin-top:10px; margin-bottom:30px;" ng-model="m.url_scrap" ng-class="valid" />
+		
+		<div class="well-box" ng-class="{active: show_well}">
+			<div class="well">
+				<strong>De correcte URL voor uw reviewpagina op Independer</strong>
+				<br /><br />
+				<ul>
+					<li>Kies op&nbsp;<a href="http://www.independer.nl/" target="_blank">Independer</a>&nbsp;in de navigatiebalk voor 'Gezondheidszorg'.</li>
+					<li>Kies de zorgdiscipline waaronder uw praktijk valt. Bijvoorbeeld: Tandarts</li>
+					<li>Voer de gevraagde adresgegevens in om naar uw praktijk te zoeken.</li>
+					<li>Zoek uw praktijk in de lijst met zoekresultaten en klik op 'Schrijf een review'.</li>
+					<li>Kopieer de URL van de pagina waar u terechtkomt en plak deze in het eerste invoerveld hierboven.</li>
+				</ul>
+				<br /><br />
+				<strong>De correcte URL voor uw profielpagina op Independer</strong>
+				<br /><br />
+				<ul>
+					<li>Kies op&nbsp;<a href="http://www.independer.nl/" target="_blank">Independer</a>&nbsp;in de navigatiebalk voor 'Gezondheidszorg'.</li>
+					<li>Kies de zorgdiscipline waaronder uw praktijk valt. Bijvoorbeeld: Tandarts</li>
+					<li>Voer de gevraagde adresgegevens in om naar uw praktijk te zoeken.</li>
+					<li>Zoek uw praktijk in de lijst met zoekresultaten en klik op de naam van uw praktijk.</li>
+					<li>Kopieer de URL van de pagina waar u terechtkomt en plak deze in het tweede invoerveld hierboven.</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal-body" ng-if="system == 'telefoonboek'">
+		<p>
+			Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Telefoonboek in te vullen.
+		</p>
+		
+		<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="m.url" ng-class="valid" />
+		
+		<div class="well-box" ng-class="{active: show_well}">
+			<div class="well">
+				<strong>De correcte URL voor uw profiel op Telefoonboek</strong>
+				<br /><br />
+				<ul>
+					<li>Gebruik de zoekbalk op&nbsp;<a href="http://www.telefoonboek.nl/" target="_blank">Telefoonboek.nl</a>&nbsp;om uw praktijk te vinden.</li>
+					<li>Selecteer uw praktijk uit de lijst met zoekresultaten.</li>
+					<li>Kopieer de URL van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal-body" ng-if="system == 'vergelijkmondzorg'" target="_blank">
+		<p>
+			Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Vergelijk Mondzorg in te vullen.
+		</p>
+		
+		<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="m.url" ng-class="valid" />
+		
+		<div class="well-box" ng-class="{active: show_well}">
+			<div class="well">
+				<strong>De correcte URL voor uw profiel op Vergelijk Mondzorg</strong>
+				<br /><br />
+				<ul>
+					<li>Kies in de navigatiebalk op <a href="http://www.vergelijkmondzorg.nl/" target="_blank">vergelijkmondzorg.nl</a> voor 'Tandartspraktijken'.</li>
+					<li>Gebruik de zoekbalk om uw praktijk te vinden.</li>
+					<li>Selecteer uw praktijk uit de lijst met zoekresultaten en klik op 'Profiel Pagina'.</li>
+					<li>Kopieer de URL van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal-body" ng-if="system == 'kliniekoverzicht'">
+		<p>
+			Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Kliniekoverzicht in te vullen.
+		</p>
+		
+		<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="m.url" ng-class="valid" />
+		
+		<div class="well-box" ng-class="{active: show_well}">
+			<div class="well">
+				<strong>De correcte URL voor uw profiel op Kliniekoverzicht</strong>
+				<br /><br />
+				<ul>
+					<li>Gebruik de 'Klinieken op Alfabet'-lijst op <a href="http://www.kliniekoverzicht.nl/klinieken-zoeken">Kliniekoverzicht</a> om de pagina van uw praktijk op te zoeken.</li>
+					<li>Op uw praktijkpagina, klik op het tab 'Beoordelingen'.</li>
+					<li>Kopieer de URL in de adresbalk van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal-body" ng-if="system == 'own'">
+		<p>
+			Om uw patiënten door te verwijzen naar uw eigen pagina dient u het internetadres van de webpagina in te vullen.
+		</p>
+		
+		<div class="form-group name-box">
+			<input type="text" class="form-control" placeholder="Titel doorverwijzing (bijv: 'Wilt u onze enquête invullen?')" style="margin-top:30px; margin-bottom:30px;" ng-model="m.name" ng-class="{invalid: (name_limit - m.name.length) < 0}" />
+			<span class="name-limit" ng-class="{invalid: (name_limit - m.name.length) < 0}">{{ name_limit - m.name.length }}</span>
+		</div>
+		
+		<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="m.url" ng-class="valid" />
+	</div>
+	<div class="modal-footer">
+		<div class="row">
+			<div class="col-sm-7 col-xs-12 text-left">
+				<a href="javascript:void(0);" class="online-small-link" ng-click="show_well = ! show_well" ng-show="system != 'own'">Waar vind ik de correcte URL van mijn profiel?</a>
+			</div>
+			
+			<div class="col-sm-5 col-xs-12">
+				<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+				<button class="btn btn-primary" ng-click="save()">Bewaar</button>
+			</div>
+		</div>
+	</div>
+</script>

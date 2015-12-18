@@ -1,0 +1,176 @@
+<div class="page page-profile" ng-controller="AddUserCtrl">
+	<section class="panel panel-default">
+        <div class="panel-heading"><strong>Nieuw abonnement</strong></div>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" name="form">
+                <div class="form-group">
+                    <label class="col-md-4">Naam praktijk</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="name" ng-model="user.username" value="" required="required" />
+                    </div>
+                </div>
+				
+                <div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">E-mailadres praktijk</label>
+                    <div class="col-md-8">
+                        <input type="email" class="form-control" name="email" ng-model="user.email" value="" required="required" />
+                    </div>
+                </div>
+
+                <div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">Startdatum abonnement</label>
+                    <div class="col-md-8">
+                        <div class="input-group ui-datepicker">
+							<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="user.activation" is-open="opened_activation" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+							<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'activation')"><i class="ti-calendar"></i></a>
+						</div>
+                    </div>
+                </div>
+				
+                <div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">Einddatum abonnement</label>
+                    <div class="col-md-8">
+                        <div class="input-group ui-datepicker">
+							<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="user.suspension" is-open="opened_suspension" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+							<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'suspension')"><i class="ti-calendar"></i></a>
+						</div>
+						
+						<div class="help-block">
+							Deze gebruiker zal om verlenging gevraagd worden op: {{user.suspension_str}}
+						</div>
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">Telefoonnummer praktijk</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="phone" ng-model="user.phone" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">Adresgegevens</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="address" ng-model="user.address" placeholder="Adres" value="" />
+                    </div>
+					<div class="col-md-2">
+                        <input type="text" class="form-control" name="postcode" ng-model="user.postcode" placeholder="Postcode" value="" />
+                    </div>
+					<div class="col-md-3">
+                        <input type="text" class="form-control" name="city" ng-model="user.city" placeholder="Plaats" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4 col-xs-7">Facebook</label>
+					<div class="col-md-1 col-xs-5 margin-bottom">
+						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="facebook_checked" ng-model="user.facebook_checked" ng-checked="user.facebook_checked == '1'" /><i></i></label>
+                    </div>
+                    <div class="col-md-7 col-xs-12" ng-show="user.facebook_checked == '1'">
+						<input type="text" class="form-control" name="facebook" ng-model="user.facebook" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4 col-xs-7">Google</label>
+					<div class="col-md-1 col-xs-5 margin-bottom">
+						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="google_checked" ng-model="user.google_checked" ng-checked="user.google_checked == '1'" /><i></i></label>
+                    </div>
+                    <div class="col-md-7 col-xs-12" ng-show="user.google_checked == '1'">
+						<input type="text" class="form-control" name="google" ng-model="user.google" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4 col-xs-7">Zorgkaart</label>
+					<div class="col-md-1 col-xs-5 margin-bottom">
+						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="zorgkaart_checked" ng-model="user.zorgkaart_checked" ng-checked="user.zorgkaart_checked == '1'" /><i></i></label>
+                    </div>
+                    <div class="col-md-7 col-xs-12" ng-show="user.zorgkaart_checked == '1'">
+						<input type="text" class="form-control" name="zorgkaart" ng-model="user.zorgkaart" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4 col-xs-7">Telefoonboek</label>
+					<div class="col-md-1 col-xs-5 margin-bottom">
+						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="telefoonboek_checked" ng-model="user.telefoonboek_checked" ng-checked="user.telefoonboek_checked == '1'" /><i></i></label>
+                    </div>
+                    <div class="col-md-7 col-xs-12" ng-show="user.telefoonboek_checked == '1'">
+						<input type="text" class="form-control" name="telefoonboek" ng-model="user.telefoonboek" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4 col-xs-7">Vergelijk Mondzorg</label>
+					<div class="col-md-1 col-xs-5 margin-bottom">
+						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="vergelijkmondzorg_checked" ng-model="user.vergelijkmondzorg_checked" ng-checked="user.vergelijkmondzorg_checked == '1'" /><i></i></label>
+                    </div>
+                    <div class="col-md-7 col-xs-12" ng-show="user.vergelijkmondzorg_checked == '1'">
+						<input type="text" class="form-control" name="vergelijkmondzorg" ng-model="user.vergelijkmondzorg" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4 col-xs-7">Independer</label>
+					<div class="col-md-1 col-xs-5 margin-bottom">
+						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="independer_checked" ng-model="user.independer_checked" ng-checked="user.independer_checked == '1'" /><i></i></label>
+                    </div>
+                    <div class="col-md-7 col-xs-12" ng-show="user.independer_checked == '1'">
+						<input type="text" class="form-control" name="independer" ng-model="user.independer" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4 col-xs-7">Kliniekoverzicht</label>
+					<div class="col-md-1 col-xs-5 margin-bottom">
+						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="kliniekoverzicht_checked" ng-model="user.kliniekoverzicht_checked" ng-checked="user.kliniekoverzicht_checked == '1'" /><i></i></label>
+                    </div>
+                    <div class="col-md-7 col-xs-12" ng-show="user.kliniekoverzicht_checked == '1'">
+						<input type="text" class="form-control" name="kliniekoverzicht" ng-model="user.kliniekoverzicht" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4 col-xs-7">Aangepaste doorverwijzing</label>
+					<div class="col-md-1 col-xs-5 margin-bottom">
+						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="own_checked" ng-model="user.own_checked" ng-checked="user.own_checked == '1'" /><i></i></label>
+                    </div>
+                    <div class="col-md-7 col-xs-12" ng-show="user.own_checked == '1'">
+						<input type="text" class="form-control" name="own" ng-model="user.own" value="" />
+                    </div>
+                </div>
+				
+                <div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<button class="btn btn-primary" ng-click="save()">Voeg abonnement toe</button>
+            </form>
+        </div>
+    </section>
+</div>

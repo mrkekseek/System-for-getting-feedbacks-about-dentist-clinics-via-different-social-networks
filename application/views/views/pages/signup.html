@@ -1,0 +1,60 @@
+<div class="page-signup" ng-controller="authCtrl">
+
+    <div class="signin-header">
+        <section class="logo">
+			<div class="signin_logo">
+				<h1><a href="#/"><img src="application/views/images/logo_full.png" alt="{{main.brand}}" /></a></h1>
+			</div>
+		</section>
+	</div>
+	
+    <div class="signin-body">
+        <div class="container">
+            <div class="form-container">
+                <section>
+                    <form class="form-horizontal text-center" name="form">
+                        <div class="form-group">
+                            <div class="input-group input-group-first">
+                                <span class="input-group-addon">
+                                    <span class="ti-briefcase"></span>
+                                </span>
+                                <input type="text" class="form-control input-lg" name="username" placeholder="Praktijknaam" ng-model="username" required="required" />
+                            </div>
+                        </div>
+						
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="ti-email"></span>
+                                </span>
+                                <input type="email" class="form-control input-lg" name="email" placeholder="E-mailadres" ng-model="email" required="required" />
+                            </div>
+                        </div>
+						
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="ti-lock"></span>
+                                </span>
+                                <input type="password" class="form-control input-lg" name="password" placeholder="Wachtwoord" ng-model="password" required="required" />
+                            </div>
+                        </div>
+                        
+                        <div class="divider divider-lg"></div>
+                        <div class="form-group">
+                            <!--p class="additional-info text-small">By clicking on sign up, you agree to <a href="javascript:;"><i>terms & conditions</i></a> and <a href="javascript:;"><i>privacy policy</i></a></p>
+                            <div class="divider"></div-->
+                            <button type="submit" class="btn btn-success btn-block btn-lg" ng-click="trial()">Sign up</button>
+                        </div>
+                     </form>
+                </section>
+
+                <div class="divider"></div>
+                <section class="additional-info">
+                    <p class="text-right"><a href="#/pages/signin" >Log in now</a></p>
+                </section>
+
+            </div>
+        </div>
+    </div>
+</div>

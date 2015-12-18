@@ -1,0 +1,65 @@
+body .btn-primary {
+	background-color: #f57b25 !important;
+	border-color: #BC5E1C !important;
+}
+
+body .btn-primary:not(.future) {
+	border-color: #BC5E1C !important;
+}
+
+body .btn-primary:hover {
+	background-color: #BC5E1C !important;
+}
+
+body .header-container > .top-header .top-nav .nav-right > li > a > .top-label {
+	background-color: #f57b25 !important;
+}
+
+body span.tag-box {
+	background-color: #f57b25 !important;
+}
+
+body .ui-switch *:checked + i {
+	box-shadow: 0 0 1px rgba(0, 0, 0, 0.5) inset, 0 0 50px #f57b25 inset !important;
+}
+
+body .icon-dashboard.bg-primary,
+body .icon-dashboard.bg-warning {
+	background-color: #f57b25 !important;
+}
+
+body .mail-categories .list-group .list-group-item.active > a,
+body .mail-categories .list-group .list-group-item > a:hover,
+a {
+	color: #f57b25;
+}
+
+body .btn-invoice-label.past {
+    background-color: #BC5E1C !important;
+    border-color: #BC5E1C !important;
+}
+
+body span.pro {
+	background-color: #f57b25 !important;
+}
+
+body .ui-radio input[type="radio"]:checked + span:after {
+	background-color: #f57b25 !important;
+}
+
+body .ui-radio input[type="radio"]:checked + span:before {
+	border-color: #f57b25 !important;
+}
+
+body .emails-edit:hover,
+body .widget-edit:hover {
+	background-color: #f57b25 !important;
+}
+
+body .badge-primary {
+	background-color: #f57b25 !important;
+}
+
+body .btn-link {
+	color: #f57b25 !important;
+}

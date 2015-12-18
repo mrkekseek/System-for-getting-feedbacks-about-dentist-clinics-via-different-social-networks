@@ -1,0 +1,27 @@
+<?php if ( ! empty($user)) { ?>
+<a href="javascript:void(0);" class="pull-right" ng-click="send_feedback()">Feedback</a>
+<a href="javascript:void(0);" class="pull-right start_intro" ng-if="user.login_count <= 10" ng-click="start_intro()">Herstart introductie</a>
+&copy; <?php echo date("Y"); ?> Patiëntenreview • Alle rechten voorbehouden.
+
+<script type="text/ng-template" id="feedback.html">
+	<div class="modal-header">
+		<h3>
+			Geef feedback over Patiëntenreview
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			We werken hard om de Patiëntenreview app continu te verbeteren en bij te werken.
+			Daarom is het voor ons belangrijk om te weten wat uw ervaringen zijn. Wat werkt er
+			minder goed of wat had u graag anders gezien? Uw feedback is voor ons zeer waardevol.
+		</p>
+		
+		<textarea class="form-control" rows="5" ng-model="feedback"></textarea>
+	</div>
+	<div class="modal-footer">
+		<img src="application/views/images/loader.gif" alt="" ng-if="loader" />
+		<button class="btn btn-primary" ng-click="send()">Stuur</button>
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>
+<?php } ?>

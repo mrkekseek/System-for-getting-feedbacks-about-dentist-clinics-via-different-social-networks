@@ -1,0 +1,107 @@
+<div class="page page-profile" ng-controller="SubscriptionCtrl">
+	<section class="panel panel-default">
+        <div class="panel-heading"><strong>Gegevens van uw abonnement</strong></div>
+        <div class="panel-body">
+			<table class="table table-bordered">
+				<tbody>
+					<tr>
+						<td>Startdatum abonnement</td>
+						<td>{{info.start || 'n.v.t.'}}</td>
+					</tr>
+					<tr>
+						<td>Accountsoort</td>
+						<td>{{user.account_type == 0 && user.account != 2 ? 'Patiëntenreview Basis' : 'Patiëntenreview Pro'}}</td>
+					</tr>
+					<tr>
+						<td>Accountstatus</td>
+						<td>{{info.account_text}}</td>
+					</tr>
+					<tr>
+						<td>Extra zorgverleners</td>
+						<td>{{info.doctors_count}}</td>
+					</tr>
+					<tr>
+						<td>Factuurbedrag</td>
+						<td>{{user.account == 2 ? 'n.v.t.' : ('&euro;' + info.amount.toFixed(2).replace(".", ","))}}</td>
+					</tr>
+					<tr>
+						<td>Startdatum huidige betaaltermijn</td>
+						<td>{{user.account == 2 && info.activation ? 'n.v.t.' : info.activation}}</td>
+					</tr>
+					<tr>
+						<td>Einddatum huidige betaaltermijn</td>
+						<td>{{user.account == 2 && info.suspension ? 'n.v.t.' : info.suspension}}</td>
+					</tr>
+				</tbody>
+			</table>
+			<a href="{{info.account_link}}" ng-if="user.account != 2" ng-click="account_change()" class="btn btn-primary btn-w-md">{{info.account_stop == 1 ? "Activeer abonnement..." : "Beëindig abonnement..."}}</a>
+			<button class="btn btn-danger" ng-click="suspend_account()" ng-if="info.account_stop == 1 || user.account == 2">Verwijder account…</button>
+			<a href="#pages/activate/{{user.id}}" class="btn btn-primary btn-w-md" ng-if="user.account_stop == 0 && user.account_type == 0">Upgrade abonnement...</a>
+		</div>
+	</section>
+	
+	<section class="panel panel-default" ng-if="info.invoices.length > 0">
+        <div class="panel-heading"><strong>Facturenoverzicht</strong></div>
+        <div class="panel-body">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Bedrag</th>
+						<th>Factuur</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="i in info.invoices">
+						<td>{{i.date}}</td>
+						<td>€{{(i.amount * 1).toFixed(2).replace(".", ",")}}</td>
+						<td><a href="#/pages/invoice/{{i.id}}" target="_blank" class="glyphicon glyphicon-new-window"></a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</section>
+</div>
+
+<script type="text/ng-template" id="confirm_suspendion.html">
+	<div class="modal-header">
+		<h3>
+			Uw abonnement beëindigen
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			We vinden het jammer dat u uw abonnement van Patiëntenreview wilt beëindigen. U kunt
+			Patiëntenreview blijven gebruiken tot onderstaande datum. Na deze datum kunt u geen
+			beoordelingen meer verzamelen. U kunt uw abonnement ten alle tijde heractiveren.
+		</p>
+		
+		<p>
+			Datum beëindiging: {{items.suspension}}
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="confirm()">Bevestig beëindiging</button>
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="suspend_account.html">
+	<div class="modal-header">
+		<h3>
+			Uw account verwijderen
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			Het verwijderen van uw account zorgt ervoor dat alle verzamelde beoordelingen,
+			zorgverlener-profielen en andere gegevens gerelateerd aan dit account definitief zullen
+			worden verwijderd. Deze actie kan niet ongedaan worden gemaakt. Indien uw
+			abonnement nog actief is vervalt uw recht op de nog lopende gebruiksperiode.
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="suspend()">Verwijder account</button>
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>

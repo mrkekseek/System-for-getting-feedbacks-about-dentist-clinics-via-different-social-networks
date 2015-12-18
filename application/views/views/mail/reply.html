@@ -1,0 +1,48 @@
+<div class="page page-mail">
+    <div class="row">
+
+        <div class="col-sm-3 mail-categories">
+            <div class="category-heading">
+                <a href="#/mail/compose" class="btn btn-block btn-lg btn-primary">Stuur nieuwe uitnodiging</a>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item"><a href="#/mail/inbox">
+                    <i class="ti-folder"></i>Ontvangen
+                    <span class="badge badge-primary pull-right" ng-if="inbox_count() > 0">{{inbox_count()}}</span>
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9">
+            <section class="panel panel-default mail-container">
+                <div class="panel-heading">BEANTWOORD FEEDBACK</div>
+                <div class="panel-body">
+                    <div class="mail-content">
+                        Aan <strong><?php echo $info['email']; ?></strong>
+                    </div>
+					<div class="mail-content">
+                        <?php echo $info['feedback']; ?>
+                    </div>
+					<!--div class="mail-content">
+                        <?php echo str_replace("\n", "<br />", $user['last_reply']); ?>
+                    </div-->
+
+					<?php $init_text = "Beste ".(empty($info['title']) ? "" : $info['title'])." ".(empty($info['name']) ? "" : $info['name'])." ".(empty($info['sname']) ? "" : $info['sname']).",\n\nMet vriendelijke groet,\n\n".(empty($user['username']) ? "" : $user['username']); ?>
+                    <div class="mail-content">
+                        <textarea ng-model="reply.text" class="form-control" rows="5" ng-init='set_text("<?php echo $init_text; ?>")'></textarea>
+                    </div>
+
+                    <div class="mail-actions">
+						<img src="application/views/images/loader.gif" alt="" ng-if="loader" />
+                        <a href="javascript:void(0);" class="btn btn-sm btn-primary" ng-click="send_reply(<?php echo $info['id']; ?>)">Stuur</a>
+                        <a href="#/mail/inbox" class="btn btn-sm btn-default">Annuleer</a>
+                    </div>
+					<br />
+					<p>
+						Na het beantwoorden van dit bericht zal een eventuele follow-up van deze patiënt naar het e-mailadres van uw praktijk worden gestuurd.
+					</p>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

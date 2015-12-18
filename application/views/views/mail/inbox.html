@@ -1,0 +1,256 @@
+<div class="page page-mail" ng-controller="InboxCtrl">
+    <div class="row hundret">
+        <div class="col-sm-3 mail-categories">
+            <div class="category-heading">
+                <a href="#/mail/compose" class="btn btn-block btn-lg btn-primary">Stuur nieuwe uitnodiging</a>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item" ng-class="{active: filter == 'none'}"><a href="javascript:void(0);" ng-click="reprint('none')">
+                    <i class="ti-folder"></i>Alle ontvangen beoordelingen 
+                    <span class="badge badge-primary pull-right" ng-if="inbox_count() > 0">{{inbox_count()}}</span>
+                </a></li>
+				<li class="list-group-item" ng-class="{active: filter == 'with_feedback'}"><a href="javascript:void(0);" ng-click="reprint('with_feedback')">
+                    <i class="ti-alert"></i>Nog af te handelen
+                    <span class="badge badge-danger pull-right" ng-if="with_feedback_count() > 0">{{with_feedback_count()}}</span>
+                </a></li>
+				<li class="list-group-item" ng-class="{active: filter == 'with_reply'}"><a href="javascript:void(0);" ng-click="reprint('with_reply')">
+                    <i class="ti-archive"></i>Afgehandeld
+                </a></li>
+            </ul>
+            <div class="category-heading">
+                <h4></h4>
+            </div>
+            <ul class="list-group">
+				<li class="list-group-item" ng-class="{active: filter == 'positive'}" ng-click="change_filter('positive')"><a href="javascript:void(0);">
+                    <i class="ti-face-smile color-success"></i>Positieve beoordelingen
+	                </a></li>
+				<li class="list-group-item" ng-class="{active: filter == 'negative'}" ng-click="change_filter('negative')"><a href="javascript:void(0);">
+					<i class="ti-face-sad color-danger"></i>Negatieve beoordelingen	
+                </a></li>
+				<li class="list-group-item" ng-class="{active: filter == 'no_rating'}" ng-click="change_filter('no_rating')"><a href="javascript:void(0);">
+                    Nog niet beoordeeld
+                </a></li>
+				
+				<li class="list-group-item">
+					<div class="doctor-select">
+						<select class="form-control" ng-model="filter" ng-change="reprint()">
+							<option value="none" selected>Filter op beoordeling...</option>
+							<option value="5">5 sterren</option>
+							<option value="4">4 sterren</option>
+							<option value="3">3 sterren</option>
+							<option value="2">2 sterren</option>
+							<option value="1">1 ster</option>
+						</select>
+					</div>
+				</li>
+
+				<li class="list-group-item">
+					<div class="doctor-select">
+						<select class="form-control" ng-model="doctor" ng-change="reprint()">
+							<option value="0">Filter op zorgverlener...</option>
+							<option ng-repeat="d in doctors" value="{{d.id}}">{{d.firstname}} {{d.lastname}}</option>
+						</select>
+					</div>
+				</li>
+				
+				<li class="list-group-item date-filter">
+					<p class="date-text-first">Van:</p>
+					<div class="date-field-first">
+						<div class="input-group ui-datepicker">
+							<input type="text" class="form-control" ng-change="date_change()" datepicker-popup="{{format}}" ng-model="dates.from" is-open="opened_from" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="false" close-text="Close" />
+							<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'from')"><i class="ti-calendar"></i></a>
+						</div>
+					</div>
+				</li>
+				
+				<li class="list-group-item date-filter">
+					<p class="date-text-first">Tot:</p>
+					<div class="date-field-first">
+						<div class="input-group ui-datepicker">
+							<input type="text" class="form-control" ng-change="date_change()" datepicker-popup="{{format}}" ng-model="dates.to" is-open="opened_to" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="false" close-text="Close" />
+							<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'to')"><i class="ti-calendar"></i></a>
+						</div>
+					</div>
+				</li>
+            </ul>
+        </div>
+        <div class="col-sm-9">
+            <section class="panel panel-default mail-container table-dynamic">
+                <div class="panel-heading">Ontvangen beoordelingen van uw praktijk <button type="button" class="btn btn-primary" ng-show="count_letters()" ng-click="bulk_modal()">Stuur bedankje...</button></div>
+                <table class="table table-hover table-responsive" ng-if="letters.length" ng-init="words = {0: 'Geen reactie', 1: '1 ster', 2: '2 sterren', 3: '3 sterren', 4: '4 sterren', 5: '5 sterren'}">
+					<thead>
+						<tr>
+							<th ng-show="filter == 'positive'"><div class="th">
+									<label class="ui-checkbox"><input type="checkbox" ng-model="check_all[0]" ng-change="check_all_letters()" /><span></span></label>
+								</div>
+							</th>
+							<th><div class="th">
+								Datum
+								<span class="fa fa-angle-up"
+									  data-ng-click=" order('date') "
+									  data-ng-class="{active: row == 'date'}"></span>
+								<span class="fa fa-angle-down"
+									  data-ng-click=" order('-date') "
+									  data-ng-class="{active: row == '-date'}"></span>
+							</div></th>
+							<th><div class="th">
+								Beoordeling
+								<span class="fa fa-angle-up"
+									  data-ng-click=" order('stars') "
+									  data-ng-class="{active: row == 'stars'}"></span>
+								<span class="fa fa-angle-down"
+									  data-ng-click=" order('-stars') "
+									  data-ng-class="{active: row == '-stars'}"></span>
+							</div></th>
+							<th></th>
+							<th><div class="th">
+								Voornaam
+								<span class="fa fa-angle-up"
+									  data-ng-click=" order('name') "
+									  data-ng-class="{active: row == 'name'}"></span>
+								<span class="fa fa-angle-down"
+									  data-ng-click=" order('-name') "
+									  data-ng-class="{active: row == '-name'}"></span>
+							</div></th>
+							<th><div class="th">
+								Achternaam
+								<span class="fa fa-angle-up"
+									  data-ng-click=" order('sname') "
+									  data-ng-class="{active: row == 'sname'}"></span>
+								<span class="fa fa-angle-down"
+									  data-ng-click=" order('-sname') "
+									  data-ng-class="{active: row == '-sname'}"></span>
+							</div></th>
+							<th><div class="th">
+								Geboortedatum
+								<span class="fa fa-angle-up"
+									  data-ng-click=" order('birth') "
+									  data-ng-class="{active: row == 'birth'}"></span>
+								<span class="fa fa-angle-down"
+									  data-ng-click=" order('-birth') "
+									  data-ng-class="{active: row == '-birth'}"></span>
+							</div></th>
+							<th><div class="th">
+								Zorgverlener
+								<span class="fa fa-angle-up"
+									  data-ng-click=" order('doctor_name') "
+									  data-ng-class="{active: row == 'doctor_name'}"></span>
+								<span class="fa fa-angle-down"
+									  data-ng-click=" order('-doctor_name') "
+									  data-ng-class="{active: row == '-doctor_name'}"></span>
+							</div></th>
+							<th><div class="th">
+								E-mail
+								<span class="fa fa-angle-up"
+									  data-ng-click=" order('email') "
+									  data-ng-class="{active: row == 'email'}"></span>
+								<span class="fa fa-angle-down"
+									  data-ng-click=" order('-email') "
+									  data-ng-class="{active: row == '-email'}"></span>
+							</div></th>
+							
+							<th><div class="th">Doorgeklikt naar</div></th>
+							
+							
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" data-ng-repeat="l in currentPageStores" ng-click="more(l.id, l.feedback != '', l.email, $event)">
+							<td ng-show="filter == 'positive'">
+								<label class="ui-checkbox"><input type="checkbox" ng-model="check_letter[l.id]" ng-change="check_one_letter(l.id)"/><span></span></label>
+							</td>
+							<td>{{l.date_time}}</td>
+							<td>
+								<span ng-if="l.stars == 0">Niet beoordeeld</span>
+								<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 0"></i>
+								<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 1"></i>
+								<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 2"></i>
+								<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 3"></i>
+								<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 4"></i>
+							</td>
+							<td><i class="ti-comment" ng-if="(l.feedback != '' && l.reply == '') || (l.feedback == '' && l.reply != '')"></i><i class="ti-comments" ng-if="l.feedback != '' && l.reply != ''"></i></td>
+							<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.name}}</td>
+							<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.sname}}</td>
+							<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.birth}}</td>
+							<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.doctor_name}}</td>
+							<td ng-class="{'color-danger bold': l.stars <= 2 && l.email != '', 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
+							<td>
+								<span class='socials-inbox-icons' ng-if="l.google == 1"><i class="ti-google"></i></span>
+								<span class='socials-inbox-icons' ng-if="l.zorgkaart == 1"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /></span>
+								<span class='socials-inbox-icons' ng-if="l.facebook == 1"><i class="ti-facebook"></i></span>
+								<span class='socials-inbox-icons' ng-if="l.independer == 1"><img src="/application/views/images/independer-icon.png" alt="" /></span>
+							</td>
+							
+							
+						</tr>
+					</tbody>
+                </table>
+				
+				<footer class="table-footer" ng-if="letters.length">
+					<div class="row">
+						<div class="col-md-6 page-num-info">
+							<span>
+								Toon 
+								<select data-ng-model="numPerPage"
+										data-ng-options="num for num in numPerPageOpt"
+										data-ng-change="onNumPerPageChange()">
+								</select> 
+								onderdelen per pagina
+							</span>
+						</div>
+						<div class="col-md-6 text-right pagination-container">
+							<pagination class="pagination-sm"
+										ng-model="currentPage"
+										total-items="filteredStores.length"
+										max-size="4"
+										ng-change="select(currentPage)"
+										items-per-page="numPerPage"
+										rotate="false"
+										previous-text="&lsaquo;" next-text="&rsaquo;"
+										boundary-links="true"></pagination>
+						</div>
+					</div>
+				</footer>
+				<p class="no-letters text-center" ng-if=" ! letters.length" ng-class="{show: ready}">
+					Er zijn geen onderdelen om te laten zien.
+				</p>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="bulk.html">
+	<div class="modal-header">
+		<h3>Stuur een bedankje</h3>
+	</div>
+	<div class="modal-body">
+		<p>Bedank uw patiënten voor de gegeven beoordeling. Om het u makkelijker te maken staat hieronder alvast een geschikte tekst die u kunt gebruiken.</p>
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="form-group">
+					<textarea class="form-control" rows="10" ng-model="letter_text"></textarea>
+				</div>
+
+				<span class="help-block">
+					U kunt de volgende variabelen gebruiken: [AANHEF PATIËNT], [VOORNAAM PATIËNT], [ACHTERNAAM PATIËNT], [AANHEF ZORGVERLENER], [VOORNAAM ZORGVERLENER], [ACHTERNAAM ZORGVERLENER], [NAAM PRAKTIJK].<br /><br />
+					Variabelen voor uw online profielen: {{online_tags_str}}
+				</span>
+
+				<div class="form-group">
+					<p>Deze aanhef wordt gebruikt voor beoordelingen waarvoor geen patiëntgegevens beschikbaar zijn:</p>
+					<input type="text" class="form-control" ng-model="first_text" placeholder="bijv. geachte heer/mevrouw," />
+				</div>
+				
+				<div class="form-group">
+					<p>Onderwerp van e-mail aan patiënten:</p>
+					<input type="text" class="form-control" ng-model="subject_text" placeholder="Onderwerp van e-mail aan patiënten" />
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" ng-click="close()">Annuleer</button>
+		<button class="btn btn-primary" ng-click="send()">Stuur</button>
+	</div>
+</script>

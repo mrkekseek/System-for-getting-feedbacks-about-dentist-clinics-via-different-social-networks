@@ -1,0 +1,89 @@
+<!doctype html>
+<!--[if lt IE 8]><html class="no-js lt-ie8"> <![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js"><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Widget</title>
+
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+
+        <!-- Needs images, font... therefore can not be part of main.css -->
+        <link rel="stylesheet" href="/application/views/fonts/themify-icons/themify-icons.min.css" />
+        <!-- end Needs images -->
+		<link rel="stylesheet" href="/application/views/styles/main.css" />
+    </head>
+	
+    <body class="widget-body">
+        <!--[if lt IE 9]>
+            <div class="lt-ie9-bg">
+                <p class="browsehappy">U gebruikt een<strong>verouderde</strong> browser.</p>
+                <p>Download alstublieft <a href="http://browsehappy.com/">hier een nieuwe versie van uw browser</a>.</p>
+            </div>
+        <![endif]-->
+		
+		<?php
+			if ( ! empty($widget))
+			{
+		?>
+				<div class="widget <?php echo ($widget['widgets_type'] == '0' ? 'hor' : 'ver').($widget['pro'] ? ' pro' : ''); ?>">
+					<div class="widget-left">
+						<p class="widget-text1">
+							<?php echo $widget['widgets_text1']; ?>
+						</p>
+						
+						<div class="widget-rating">
+							<div class="widget-star <?php echo ($rating < 0.5 ? 'empty' : ($rating > 0.5 ? 'full' : 'half')); ?>">
+								<i class="glyphicon glyphicon-star-empty"></i>
+								<i class="glyphicon glyphicon-star"></i>
+							</div>
+							
+							<div class="widget-star <?php echo ($rating < 1.5 ? 'empty' : ($rating > 1.5 ? 'full' : 'half')); ?>">
+								<i class="glyphicon glyphicon-star-empty"></i>
+								<i class="glyphicon glyphicon-star"></i>
+							</div>
+							
+							<div class="widget-star <?php echo ($rating < 2.5 ? 'empty' : ($rating > 2.5 ? 'full' : 'half')); ?>">
+								<i class="glyphicon glyphicon-star-empty"></i>
+								<i class="glyphicon glyphicon-star"></i>
+							</div>
+							
+							<div class="widget-star <?php echo ($rating < 3.5 ? 'empty' : ($rating > 3.5 ? 'full' : 'half')); ?>">
+								<i class="glyphicon glyphicon-star-empty"></i>
+								<i class="glyphicon glyphicon-star"></i>
+							</div>
+							
+							<div class="widget-star <?php echo ($rating < 4.5 ? 'empty' : ($rating > 4.5 ? 'full' : 'half')); ?>">
+								<i class="glyphicon glyphicon-star-empty"></i>
+								<i class="glyphicon glyphicon-star"></i>
+							</div>
+							
+							<div class="widget-score">
+								<?php echo number_format($rating, 1, '.', ''); ?>
+							</div>
+						</div>
+					</div>
+					
+					<div class="widget-center" style="<?php echo $widget['widgets_bg'] == '1' ? 'background: url(/application/views/images/email-back.png) 30% center no-repeat; background-size: cover; ' : ''; ?>background-color: <?php echo $widget['widgets_color']; ?>;">
+						<p class="widget-text2">
+							<?php echo $widget['widgets_text2']; ?>
+						</p>
+						
+						<?php if ( ! empty($widget['short'])) { ?>
+						<a href="https://app.patientenreview.nl/<?php echo $widget['short']; ?>" target="_top" class="btn btn-widget" style="background-color: <?php echo $widget['widgets_button']; ?>;"><?php echo $widget['widgets_textb']; ?></a>
+						<?php } else { ?>
+						<div class="btn btn-widget" style="background-color: <?php echo $widget['widgets_button']; ?>;"><?php echo $widget['widgets_textb']; ?></div>
+						<?php }?>
+					</div>
+					
+					<div class="widget-right">
+						<a href="https://patientenreview.nl/" target="_top">
+							<img src="/application/views/images/<?php echo $widget['widgets_type'] == 0 ? 'widget-logo.png' : 'logo_full.png'; ?>" alt="" class="widget-logo" />
+						</a>
+					</div>
+				</div>
+		<?php
+			}
+		?>
+    </body>
+</html>

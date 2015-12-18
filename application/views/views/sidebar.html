@@ -1,0 +1,39 @@
+<?php if ( ! empty($user)) { ?>
+<div class="nav-wrapper">
+    <ul id="nav" class="nav" data-slim-scroll data-collapse-nav data-highlight-active>
+        <!--li class="nav-title">
+            <span data-i18n="Navigation"></span>
+        </li-->
+		<?php if ( ! empty($user['status']) && $user['status'] == 1) { ?>
+        <li><a href="#/dashboard"><i class="ti-home"></i><span data-i18n="Dashboard"></span></a></li>
+		<li>
+            <a href="#/mail"><i class="ti-star"></i><span data-i18n="Beoordelingen"></span></a>
+            <ul>
+                <li><a href="#/mail/inbox"><i class="ti-angle-right"></i><span data-i18n="Ontvangen"></span><!--<span class="badge badge-primary" ng-if="inbox_all() > 0">{{inbox_all()}}</span>!--></a></li>
+                <li><a href="#/mail/compose"><i class="ti-angle-right"></i><span data-i18n="Stuur nieuwe uitnodiging"></span></a></li>
+			</ul>
+		</li>
+		<li><a href="#/charts/charts"><i class="ti-bar-chart"></i><span data-i18n="Statistieken"></span></a></li>
+		<li>
+            <a href="#/pages/profile"><i class="ti-settings"></i><span data-i18n="Instellingen"></span></a>
+            <ul>
+                <li><a href="#/pages/profile"><i class="ti-angle-right"></i><span data-i18n="Algemeen"></span></a></li>
+                <li><a href="#/pages/subscription"><i class="ti-angle-right"></i><span data-i18n="Abonnement"></span></a></li>
+				<li><a href="#/pages/doctors"><i class="ti-angle-right"></i><span data-i18n="Zorgverleners"></span></a></li>
+				<li><a href="#/pages/online"><i class="ti-angle-right"></i><span data-i18n="Online profielen"></span></a></li>
+			</ul>
+		</li>
+		<?php } else { ?>
+		<li><a href="#/charts/stat"><i class="ti-home"></i><span data-i18n="Dashboard"></span></a></li>
+		<li><a href="#/charts/acharts"><i class="ti-bar-chart"></i><span data-i18n="Statistieken"></span></a></li>
+		<li>
+            <a href="#/manage"><i class="ti-user"></i><span data-i18n="Abonnementen"></span></a>
+            <ul>
+                <li><a href="#/manage/add"><i class="ti-angle-right"></i><span data-i18n="Nieuw abonnement"></span></a></li>
+                <li><a href="#/manage/view"><i class="ti-angle-right"></i><span data-i18n="Beheer abonnementen"></span></a></li>
+			</ul>
+		</li>	
+		<?php } ?>
+    </ul>
+</div>
+<?php } ?>

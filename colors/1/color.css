@@ -1,0 +1,80 @@
+body .btn-primary {
+	background-color: #0f75bc !important;
+	border-color: #0B5A90 !important;
+}
+
+body .btn-primary:not(.future) {
+	border-color: #0B5A90 !important;
+}
+
+body .btn-primary:hover {
+	background-color: #0B5A90 !important;
+}
+
+body .header-container > .top-header .top-nav .nav-right > li > a > .top-label {
+	background-color: #0f75bc !important;
+}
+
+body span.tag-box {
+	background-color: #0f75bc !important;
+}
+
+body .ui-switch *:checked + i {
+	box-shadow: 0 0 1px rgba(0, 0, 0, 0.5) inset, 0 0 50px #0f75bc inset !important;
+}
+
+body .icon-dashboard.bg-primary,
+body .icon-dashboard.bg-warning {
+	background-color: #0f75bc !important;
+}
+
+body .mail-categories .list-group .list-group-item.active > a,
+body .mail-categories .list-group .list-group-item > a:hover,
+a {
+	color: #0f75bc;
+}
+
+body .btn-invoice-label.past {
+    background-color: #0B5A90 !important;
+    border-color: #0B5A90 !important;
+}
+
+body span.pro {
+	background-color: #0f75bc !important;
+}
+
+body .ui-radio input[type="radio"]:checked + span:after {
+	background-color: #0f75bc !important;
+}
+
+body .ui-radio input[type="radio"]:checked + span:before,
+body .pagination > .active > a,
+body .pagination > .active > a:focus,
+body .pagination > .active > a:hover,
+body .pagination > .active > span,
+body .pagination > .active > span:focus,
+body .pagination > .active > span:hover,
+body .ui-checkbox input[type="checkbox"]:checked + span::before,
+body .ui-checkbox input[type="checkbox"] + span:hover::before {
+	border-color: #0f75bc !important;
+}
+
+body .emails-edit:hover,
+body .widget-edit:hover,
+body .ui-checkbox input[type="checkbox"]:checked + span::after {
+	background-color: #0f75bc !important;
+}
+
+body .badge-primary,
+body .pagination > .active > a,
+body .pagination > .active > a:focus,
+body .pagination > .active > a:hover,
+body .pagination > .active > span,
+body .pagination > .active > span:focus,
+body .pagination > .active > span:hover {
+	background-color: #0f75bc !important;
+}
+
+body .btn-link {
+	color: #0f75bc !important;
+}

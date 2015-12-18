@@ -1,0 +1,636 @@
+<!doctype html>
+<!--[if lt IE 8]><html class="no-js lt-ie8"> <![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" data-ng-app="app"><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title data-ng-bind="title">Patiëntenreview</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+
+        <!-- Needs images, font... therefore can not be part of main.css -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,600italic,400,600,300,700" type="text/css" />
+        <link rel="stylesheet" href="application/views/fonts/themify-icons/themify-icons.min.css" />
+        <link rel="stylesheet" href="application/views/bower_components/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="application/views/bower_components/weather-icons/css/weather-icons.min.css" />
+		<link rel="stylesheet" href="application/views/styles/ng-sortable.min.css" />
+		<link rel="stylesheet" href="application/views/styles/colorpicker.min.css" />
+        <!-- end Needs images -->
+
+		<link rel="stylesheet" href="application/views/styles/main.css">
+		
+		<?php if (file_exists($path = "./colors/".$this->session->userdata("id")."/color.css")) { ?>
+		<link rel="stylesheet" href="<?php echo $path; ?>" />
+		<?php } ?>
+    </head>
+
+    <body id="app" class="app" data-custom-page data-off-canvas-nav data-ng-controller="AppCtrl" data-ng-class=" { 'layout-boxed': admin.layout === 'boxed', 'nav-collapsed-min': admin.menu === 'collapsed' } ">
+		<script>
+			var FBID = (window.location.host == 'tr.div-art.com.ua' ? '816105301769238' : '642099332584306');
+			window.fbAsyncInit = function() {
+				FB.init({
+				  appId      : FBID,
+				  xfbml      : true,
+				  version    : 'v2.2'
+				});
+			  };
+
+			  (function(d, s, id){
+				 var js, fjs = d.getElementsByTagName(s)[0];
+				 if (d.getElementById(id)) {return;}
+				 js = d.createElement(s); js.id = id;
+				 js.src = "//connect.facebook.net/nl_NL/sdk.js";
+				 fjs.parentNode.insertBefore(js, fjs);
+			   }(document, 'script', 'facebook-jssdk'));
+		</script>
+        <!--[if lt IE 9]>
+            <div class="lt-ie9-bg">
+                <p class="browsehappy">Je gebruikt een <strong>verouderde</strong> internetbrowser.</p>
+                <p><a href="http://browsehappy.com/">Download hier</a> een nieuwe browser voor een optimale gebruikerservaring.</p>
+            </div>
+        <![endif]-->
+
+        <!--header data-ng-include=" 'application/views/views/header.html' " id="header" class="header-container " data-ng-class="{ 'header-fixed': admin.fixedHeader,
+                                  'bg-white': ['11','12','13','14','15','16','21'].indexOf(admin.skin) >= 0,
+                                  'bg-dark': admin.skin === '31',
+                                  'bg-primary': ['22','32'].indexOf(admin.skin) >= 0,
+                                  'bg-success': ['23','33'].indexOf(admin.skin) >= 0,
+                                  'bg-info-alt': ['24','34'].indexOf(admin.skin) >= 0,
+                                  'bg-warning': ['25','35'].indexOf(admin.skin) >= 0,
+                                  'bg-danger': ['26','36'].indexOf(admin.skin) >= 0
+                 }"></header-->
+		<header data-ng-include="'pub/page/header'" id="header" class="header-container header-fixed bg-white"></header>
+		<!-- CHANGED -->
+
+        <div class="main-container" data-ng-class="{ 'app-nav-horizontal': admin.menu === 'horizontal' }">
+            <aside data-ng-include=" 'pub/page/sidebar' " id="nav-container" class="nav-container" data-ng-class="{ 'nav-fixed': admin.fixedSidebar,
+                                    'nav-horizontal': admin.menu === 'horizontal',
+                                    'nav-vertical': admin.menu === 'vertical',
+                                    'bg-white': ['31','32','33','34','35','36'].indexOf(admin.skin) >= 0,
+                                    'bg-dark': ['31','32','33','34','35','36'].indexOf(admin.skin) < 0
+                   }">
+            </aside>
+
+            <div id="content" class="content-container">
+                <section data-ng-view class="view-container {{admin.pageTransition.class}}"></section>
+            </div>
+
+            <footer data-ng-include="'pub/page/footer'" id="footer" class="app-footer">
+            </footer>
+        </div>
+
+        <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+        <script src="application/views/scripts/vendor.js"></script>
+        <script src="application/views/scripts/ui.js"></script>
+		<script src="application/views/scripts/angular-upload.min.js"></script>
+		<script src="application/views/scripts/ng-sortable.min.js"></script>
+		<script src="application/views/scripts/bootstrap-colorpicker-module.min.js"></script>
+		<script src="application/views/scripts/app.js"></script>
+		
+		<script type="text/ng-template" id="suspended.html">
+			<div class="modal-header">
+				<h3>
+					Upgraden naar een betaald abonnement
+				</h3>
+			</div>
+			<div class="modal-body">
+				<p>
+					U heeft als nieuwe gebruiker 14 dagen gratis toegang tot Patiëntenreview Pro. Na deze proefperiode kunt u van Patiëntenreview gebruik blijven maken door te upgraden naar een betaald abonnement.
+				</p>
+			</div>
+			<div class="modal-footer">
+				<img src="application/views/images/loader.gif" alt="" ng-if="loader" />
+				<button class="btn btn-primary" ng-click="renew()">Verleng...</button>
+				<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+			</div>
+		</script>
+		
+		<script type="text/ng-template" id="updates.html">
+			<div class="modal-header">
+				<h3 class="updates-h3">
+					Patiëntenreview is bijgewerkt
+					<span>Bekijk hier wat er nieuw is</span>
+				</h3>
+			</div>
+			<div class="modal-body">
+				<div class="updates-container">
+					<div class="updates-full" ng-repeat="(k, i) in items[1]" ng-class="{prev: slide_step > k, current: slide_step == k, next: slide_step < k}">
+						<h4 class="updates-title">{{i.title}}</h4>
+						<div class="updates-image" style="background-image: url('{{i.image}}');" ng-if="i.image != ''"></div>
+						<div class="updates-text">{{i.text}}</div>
+					</div>
+					
+					<div class="updates-full" ng-if="items[0].length" ng-class="{prev: slide_step > (items[1].length), current: slide_step == (items[1].length), next: slide_step < (items[1].length)}">
+			
+						<div class="updates-short" ng-repeat="i in items[0]">
+							<h4 class="updates-title-short">{{i.title}}</h4>
+							<div class="updates-text-short">{{i.text}}</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="updates-controls" ng-if="(items[1].length - 1 + (!! items[0])) > 0">
+					<a href="javascript:void(0);" ng-repeat="(k, i) in items[1]" ng-class="{active: slide_step == k}" ng-click="change_step(k)"></a>
+					<a href="javascript:void(0);" ng-if="items[0].length" ng-class="{active: slide_step == (items[1].length)}" ng-click="change_step(items[1].length)"></a>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="row">
+					<div class="col-sm-9 col-xs-12">
+						<p class="updates-small-text" ng-show="slide_step == (items[1].length - 1 + (!! items[0]))">
+							Wat ziet u graag terug in een volgende versie van Patiëntenreview?<br />
+							<a href="javascript:void(0);" ng-click="send_feedback()">Laat het ons weten!</a>
+						</p>
+					</div>
+					
+					<div class="col-sm-3 col-xs-12">
+						<button class="btn btn-primary" ng-click="next()" ng-show="slide_step < (items[1].length - 1 + (!! items[0]))">Ga verder</button>
+						<button class="btn btn-primary" ng-click="cancel()" ng-show="slide_step == (items[1].length - 1 + (!! items[0]))">Sluit</button>
+					</div>
+				</div>
+			</div>
+		</script>
+		
+		<!--div id="intro-box" ng-include src="current_tpl" ng-class="intro_close_class">
+		</div>
+		
+		<script type="text/ng-template" id="intro1.html">
+			<div class="intro-container" ng-class="close_class[0]">
+				<div class="intro-header" ng-click="next_intro($event)">
+					<p class="intro-header-text">
+						Reviews ontvangen op online profielen - 1/6
+					</p>
+					
+					<a href="javascript:void(0);" class="intro-close" ng-click="intro_close()"><i class="ti-close"></i></a>
+				</div>
+				
+				<div class="intro-body">
+					<div class="intro-buttons">
+						<a href="javascript:void(0);" class="btn btn-default" ng-click="prev_intro()">Vorige</a>
+						<a href="javascript:void(0);" class="btn btn-primary" ng-click="close_class[0] = 'intro-closed'">Stel In</a>
+					</div>
+					
+					<p class="intro-body-text">
+						Om de reputatie en online vindbaarheid van uw praktijk te verbeteren is het uiteraard van belang 
+						dat we weten op welke online kanalen u als praktijk actief bent.<br />
+						Activeer in dit instellingenmenu de gewenste online profielen door op het tandwieltje te klikken en 
+						de correcte URL in te vullen.
+					</p>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/ng-template" id="intro2.html">
+			<div class="intro-container">
+				<div class="intro-header">
+					<p class="intro-header-text">
+						Het onderwerp van de e-mail aan uw patiënten - 2/6
+					</p>
+					
+					<a href="javascript:void(0);" class="intro-close" ng-click="intro_close()"><i class="ti-close"></i></a>
+				</div>
+				
+				<div class="intro-body">
+					<div class="intro-buttons">
+						<a href="javascript:void(0);" class="btn btn-default" ng-click="prev_intro()">Vorige</a>
+						<a href="javascript:void(0);" class="btn btn-primary" ng-click="next_intro($event, true)">Volgende</a>
+					</div>
+					
+					<p class="intro-body-text">
+						Om ervoor te zorgen dat zoveel mogelijk patiënten op uw e-mailuitnodiging reageren, is het 
+						belangrijk dat deze e-mail gepersonaliseerd wordt.<br />
+						Een eerste stap die u daarbij helpt is het personaliseren van de e-mail onderwerpregel door 
+						gebruik te maken van variabelen. U kunt bijvoorbeeld de voornaam van de patiënt gebruiken.<br/><br/>Houd er rekening mee dat u in dit geval steeds de betreffende variabele(n) in het patiëntenbestand moet kunnen aangeven. Als u geen gebruik wenst te maken van de variabelen, verwijder deze dan uit de bovenstaande onderwerpregel.
+					</p>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/ng-template" id="intro3.html">
+			<div class="intro-container">
+				<div class="intro-header">
+					<p class="intro-header-text">
+						De inhoud van de e-mail aan uw patiënten - 3/6
+					</p>
+					
+					<a href="javascript:void(0);" class="intro-close" ng-click="intro_close()"><i class="ti-close"></i></a>
+				</div>
+				
+				<div class="intro-body">
+					<div class="intro-buttons">
+						<a href="javascript:void(0);" class="btn btn-default" ng-click="prev_intro()">Vorige</a>
+						<a href="javascript:void(0);" class="btn btn-primary" ng-click="next_intro($event, true)">Volgende</a>
+					</div>
+					
+					<p class="intro-body-text">
+						Behalve het onderwerp kunt u ook de inhoud van e-mailuitnodiging aan uw patiënten aanpassen.<br />
+						De patiënt kan zijn of haar beoordeling kenbaar maken door op het aantal sterretjes te klikken. 
+						Vervolgens zal de beoordelingspagina worden geopend.<br/><br/>Houd er rekening mee dat u steeds de betreffende variabele(n) in het patiëntenbestand moet kunnen aangeven. Als u geen gebruik wenst te maken van de variabelen, verwijder deze dan uit de e-mailtekst.
+					</p>
+					</p>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/ng-template" id="intro4.html">
+			<div class="intro-container">
+				<div class="intro-header">
+					<p class="intro-header-text">
+						Het logo van uw praktijk - 4/6
+					</p>
+					
+					<a href="javascript:void(0);" class="intro-close" ng-click="intro_close()"><i class="ti-close"></i></a>
+				</div>
+				
+				<div class="intro-body">
+					<div class="intro-buttons">
+						<a href="javascript:void(0);" class="btn btn-default" ng-click="prev_intro()">Vorige</a>
+						<a href="javascript:void(0);" class="btn btn-primary" ng-click="next_intro($event, true)">Volgende</a>
+					</div>
+					
+					<p class="intro-body-text">
+						U kunt de e-mailuitnodiging en de beoordelingspagina verder personaliseren door het logo van uw 
+						praktijk toe te voegen.
+					</p>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/ng-template" id="intro5.html">
+			<div class="intro-container">
+				<div class="intro-header">
+					<p class="intro-header-text">
+						Uw eerste beoordelingen verzamelen - 5/6
+					</p>
+					
+					<a href="javascript:void(0);" class="intro-close" ng-click="intro_close()"><i class="ti-close"></i></a>
+				</div>
+				
+				<div class="intro-body">
+					<div class="intro-buttons">
+						<a href="javascript:void(0);" class="btn btn-default" ng-click="prev_intro()">Vorige</a>
+						<a href="javascript:void(0);" class="btn btn-primary" ng-click="next_intro($event, true)">Volgende</a>
+					</div>
+					
+					<p class="intro-body-text">
+						Hier kunt u uw eerste uitnodigingen aan uw patiënten versturen. U kunt dit doen door het Excel 
+						bestand te downloaden en het te vullen met e-mailadressen en andere data van uw patiënten.<br />
+						Vervolgens kunt u het patiëntenbestand uploaden en de uitnodigingen versturen.
+					</p>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/ng-template" id="intro6.html">
+			<div class="intro-container">
+				<div class="intro-header">
+					<p class="intro-header-text">
+						Heeft u vragen? We helpen u graag - 6/6
+					</p>
+					
+					<a href="javascript:void(0);" class="intro-close" ng-click="intro_close()"><i class="ti-close"></i></a>
+				</div>
+				
+				<div class="intro-body">
+					<div class="intro-buttons">
+						<a href="javascript:void(0);" class="btn btn-default" ng-click="prev_intro()">Vorige</a>
+						<a href="javascript:void(0);" class="btn btn-primary" ng-click="intro_close()">Sluit</a>
+					</div>
+					
+					<p class="intro-body-text">
+						Heeft u vragen of heeft u meer hulp nodig bij het gebruiken van Patiëntenreview? Neemt u dan 
+						gerust contact op met één van onze medewerkers:<br />
+						E-mail: <a href="mailto:support@patientenreview.nl">support@patientenreview.nl</a><br />
+						Tel: 0403 - 041 596
+					</p>
+				</div>
+			</div>
+		</script-->
+		
+		<script type="text/ng-template" id="intro-popup.html">
+			<div class="modal-header intro-header">
+				
+				
+				<h3 ng-class="intro_class[0]">
+					<span ng-if="step.n == 1">Hallo en welkom!</span>
+					<span ng-if="step.n == 2">Waar bent u te vinden?</span>
+					<span ng-if="step.n == 3">
+						Instellingen voor
+						<span ng-if="step.online == 1">Google</span>
+						<span ng-if="step.online == 2">Facebook</span>
+						<span ng-if="step.online == 3">Zorgkaart Nederland</span>
+						<span ng-if="step.online == 4">Independer</span>
+						<span ng-if="step.online == 5">Telefoonboek</span>
+						<span ng-if="step.online == 6">Vergelijk Mondzorg</span>
+						<span ng-if="step.online == 7">Kliniekoverzicht</span>
+						<span ng-if="step.online == 8">de aangepaste doorverwijzing</span>
+					</span>
+					<span ng-if="step.n == 4">Klaar voor de start?</span>
+					<span ng-if="step.n == 5">Voor als u het vergeet...</span>
+					<span ng-if="step.n == 6">En er is meer!</span>
+					<span ng-if="step.n == 0">Wanneer u hulp nodig heeft...</span>
+				</h3>
+			</div>
+			<div class="modal-body intro-body">
+				<div ng-class="intro_class[0]">
+					<div ng-if="step.n == 1">
+					<p>
+						We kunnen niet wachten om de online reputatie van {{username}} een stevige boost te geven!<br><br> Om ervoor te zorgen dat u zich snel zult thuisvoelen in de Patiëntenreview omgeving helpen we u graag met wat u nodig heeft om aan de slag te kunnen.
+					</p>
+					</div>
+					
+					<div ng-if="step.n == 2">
+						<p>Om uw patiënten door te kunnen verwijzen naar uw online profielen moeten we eerst weten waar uw praktijk actief is:</P>
+						<div class="checkbox" ng-repeat="o in online">
+						
+							<label>
+								<input type="checkbox" ng-model="user_intro[o + '_checked']" ng-checked="user_intro[o + '_checked'] == 1" />
+								{{online_names[o]}}
+							</label>
+						</div>
+					</div>
+					
+					<div ng-if="step.n == 3">
+						<div ng-if="step.online == 1">
+							<p>
+								Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Google in te vullen.
+							</p>
+							
+							<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="user_intro[online[step.online - 1]]" ng-class="valid" />
+							
+							<div class="well-box active">
+								<div class="well">
+									<strong>De correcte URL voor uw profiel op Google</strong>
+									<br /><br />
+									<ul>
+										<li>Gebruik de zoekbalk op <a href="http://www.googleplus.com/" target="_blank">Google +</a> om de pagina van uw praktijk op te zoeken.</li>
+										<li>Kopieer de URL in de adresbalk van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						
+						<div ng-if="step.online == 2">
+							<p>
+								Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Facebook in te vullen.
+							</p>
+							
+							<div class="input-group" style="margin-bottom:30px; margin-top:30px;">
+								<input type="text" class="form-control" placeholder="http://" ng-model="user_intro[online[step.online - 1]]" ng-class="valid" />
+								<span class="input-group-btn">
+									<button class="btn btn-primary" type="button" ng-click="fb_login()">{{facebook_button}}</button>
+								</span>
+							</div>
+							
+							<p>
+								Belangrijk: Voor het ontvangen van beoordelingen op Facebook is het belangrijk dat uw account is ingesteld om beoordelingen te kunnen ontvangen. <a href="http://nl-nl.facebook.com/help/community/question/?id=618611984864811" target="_blank">Lees hier</a> hoe u uw Facebook profiel correct kunt instellen.</br>
+							</p>
+							
+							<div class="well-box active"">
+								<div class="well">
+									<strong>De correcte URL voor uw profiel op Facebook</strong>
+									<br /><br />
+									<ul>
+										<li>Gebruik de zoekbalk op <a href="http://www.facebook.com/" target="_blank">Facebook</a> om de pagina van uw praktijk op te zoeken.</li>
+										<li>Kopieer de URL in de adresbalk van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						
+						<div ng-if="step.online == 3">
+							<p>
+								Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Zorgkaart Nederland in te vullen.
+							</p>
+							
+							<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="user_intro[online[step.online - 1]]" ng-class="valid" />
+							
+							<div class="well-box active">
+								<div class="well">
+									<strong>De correcte URL voor uw profiel op Zorgkaart Nederland</strong>
+									<br /><br />
+									<ul>
+										<li>Gebruik de zoekbalk op <a href="http://www.zorgkaartnederland.nl/" target="_blank">Zorgkaart Nederland</a> om de pagina van uw praktijk op te zoeken.</li>
+										<li>Kopieer de URL in de adresbalk van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						
+						<div ng-if="step.online == 4">
+							<p>
+								Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Independer in te vullen.
+							</p>
+							
+							<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="user_intro[online[step.online - 1]]" ng-class="valid" />
+							
+							<div class="well-box active">
+								<div class="well">
+									<strong>De correcte URL voor uw profiel op Independer</strong>
+									<br /><br />
+									<ul>
+										<li>Kies op&nbsp;<a href="http://www.independer.nl/" target="_blank">Independer</a>&nbsp;in de navigatiebalk voor 'Gezondheidszorg'.</li>
+										<li>Kies de zorgdiscipline waaronder uw praktijk valt. Bijvoorbeeld: Tandarts</li>
+										<li>Voer de gevraagde adresgegevens in om naar uw praktijk te zoeken.</li>
+										<li>Zoek uw praktijk in de lijst met zoekresultaten en klik op 'Schrijf een review'.</li>
+										<li>Kopieer de URL van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						
+						<div ng-if="step.online == 5">
+							<p>
+								Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Telefoonboek in te vullen.
+							</p>
+							
+							<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="user_intro[online[step.online - 1]]" ng-class="valid" />
+							
+							<div class="well-box active">
+								<div class="well">
+									<strong>De correcte URL voor uw profiel op Telefoonboek</strong>
+									<br /><br />
+									<ul>
+										<li>Gebruik de zoekbalk op&nbsp;<a href="http://www.telefoonboek.nl/" target="_blank">Telefoonboek.nl</a>&nbsp;om uw praktijk te vinden.</li>
+										<li>Selecteer uw praktijk uit de lijst met zoekresultaten.</li>
+										<li>Kopieer de URL van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						
+						<div ng-if="step.online == 6">
+							<p>
+								Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Vergelijk Mondzorg in te vullen.
+							</p>
+							
+							<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="user_intro[online[step.online - 1]]" ng-class="valid" />
+							
+							<div class="well-box active">
+								<div class="well">
+									<strong>De correcte URL voor uw profiel op Vergelijk Mondzorg</strong>
+									<br /><br />
+									<ul>
+										<li>Kies in de navigatiebalk op <a href="http://www.vergelijkmondzorg.nl/" target="_blank">vergelijkmondzorg.nl</a> voor 'Tandartspraktijken'.</li>
+										<li>Gebruik de zoekbalk om uw praktijk te vinden.</li>
+										<li>Selecteer uw praktijk uit de lijst met zoekresultaten en klik op 'Profiel Pagina'.</li>
+										<li>Kopieer de URL van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						
+						<div ng-if="step.online == 7">
+							<p>
+								Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Kliniekoverzicht in te vullen.
+							</p>
+							
+							<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="user_intro[online[step.online - 1]]" ng-class="valid" />
+							
+							<div class="well-box active">
+								<div class="well">
+									<strong>De correcte URL voor uw profiel op Kliniekoverzicht</strong>
+									<br /><br />
+									<ul>
+										<li>Gebruik de 'Klinieken op Alfabet'-lijst op <a href="http://www.kliniekoverzicht.nl/klinieken-zoeken">Kliniekoverzicht</a> om de pagina van uw praktijk op te zoeken.</li>
+										<li>Op uw praktijkpagina, klik op het tab 'Beoordelingen'.</li>
+										<li>Kopieer de URL in de adresbalk van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						
+						<div ng-if="step.online == 8">
+							<p>
+								Om uw patiënten door te verwijzen naar uw eigen pagina dient u het internetadres van de webpagina in te vullen.
+							</p>
+							
+							<div class="form-group name-box">
+								<input type="text" class="form-control" placeholder="Titel doorverwijzing (bijv: 'Wilt u onze enquête invullen?')" style="margin-top:30px; margin-bottom:30px;" ng-model="user_intro[online[step.online - 1] + '_name']" ng-class="{invalid: (name_limit - user_intro[online[step.online - 1] + '_name'].length) < 0}" />
+								<span class="name-limit" ng-class="{invalid: (name_limit - user_intro[online[step.online - 1] + '_name'].length) < 0}">{{ name_limit - user_intro[online[step.online - 1] + '_name'].length }}</span>
+							</div>
+							
+							<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="user_intro[online[step.online - 1]]" ng-class="valid" />
+						</div>
+					</div>
+					
+					<div ng-if="step.n == 4">
+						<p>
+							Uw instellingen zien er goed uit! Op de achtergrond van dit venster ziet u de omgeving waar u uw patiënten kunt uitnodigen. U kunt dat doen door Excel-bestanden te uploaden met de e-mailadressen van uw patiënten.<br><br>
+
+							Voordat u aan de slag gaat wilt u wellicht weten hoe de e-mail aan uw patiënten eruit komt te zien. We sturen u graag een voorbeeldbericht: <br><br>
+						</p>
+						
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="form-group">
+									<input type="email" class="form-control" ng-model="test.email" placeholder="E-mailadres" />
+								</div>
+							</div>
+							
+							<div class="col-sm-6 col-xs-12" ng-show="items.title">
+								<div class="form-group">
+									<input type="text" class="form-control" ng-model="test.title" placeholder="Aanhef patiënt" />
+								</div>
+							</div>
+							
+							<div class="col-sm-6 col-xs-12" ng-show="items.name">
+								<div class="form-group">
+									<input type="text" class="form-control" ng-model="test.name" placeholder="Voornaam patiënt" />
+								</div>
+							</div>
+							
+							<div class="col-sm-6 col-xs-12" ng-show="items.sname">
+								<div class="form-group">
+									<input type="text" class="form-control" ng-model="test.sname" placeholder="Achternaam patiënt" />
+								</div>
+							</div>
+							
+							<div class="col-sm-6 col-xs-12" ng-show="items.doctors_title">
+								<div class="form-group">
+									<input type="text" class="form-control" ng-model="test.doctors_title" placeholder="Aanhef zorgverlener" />
+								</div>
+							</div>
+							
+							<div class="col-sm-6 col-xs-12" ng-show="items.doctors_name">
+								<div class="form-group">
+									<input type="text" class="form-control" ng-model="test.doctors_name" placeholder="Voornaam zorgverlener" />
+								</div>
+							</div>
+							
+							<div class="col-sm-6 col-xs-12" ng-show="items.doctors_sname">
+								<div class="form-group">
+									<input type="text" class="form-control" ng-model="test.doctors_sname" placeholder="Achternaam zorgverlener" />
+								</div>
+							</div>
+							
+							<div class="col-sm-6 col-xs-12" ng-show="items.username">
+								<div class="form-group">
+									<input type="text" class="form-control" ng-model="test.username" placeholder="Naam praktijk" />
+								</div>
+							</div>
+							
+							<div class="col-sm-6 col-xs-12" ng-show="items.subject">
+								<div class="form-group">
+									<input type="text" class="form-control" ng-model="test.subject" placeholder="Onderwerp van e-mail" />
+								</div>
+							</div>
+						</div>
+						
+						<div class="text-right">
+							<button class="btn btn-primary" ng-click="send_test_email()">Stuur voorbeeld</button>
+						</div>
+					</div>
+					
+					<div ng-if="step.n == 5">
+						<p>
+							Voor het opbouwen van uw reputatie is het belangrijk dat u met vaste regelmaat uitnodigingen verstuurt aan uw behandelde patiënten. We herinneren u daar graag aan. Klik op de schakelaar om een e-mailherinnering in te schakelen:
+						</p>
+						<br />
+						<br />
+						<div class="row">
+							<div class="col-md-12 col-xs-12" style="margin-bottom:30px;">
+								<label class="ui-switch ui-switch-lg"><input type="checkbox" name="reminder_checked" ng-model="user_intro.reminder_checked" ng-checked="user_intro.reminder_checked == '1'" /><i></i></label>
+							</div>
+							<div class="col-md-12 col-xs-12 with-time" ng-if="user_intro.reminder_checked">
+
+								<label class="ui-radio"><input name="reminder_period" type="radio" value="0" ng-model="user_intro.reminder_period" ng-checked="user_intro.reminder_period == '0'"><span>Elke week</span></label>
+								<label class="ui-radio"><input name="reminder_period" type="radio" value="1" ng-model="user_intro.reminder_period" ng-checked="user_intro.reminder_period == '1'"><span>Elke dag</span></label>
+								<span class="ui-select days" ng-if="user_intro.reminder_period == '0'">
+									<select ng-model="user_intro.reminder_day">
+										<option value="1">Maandag</option>
+										<option value="2">Dinsdag</option>
+										<option value="3">Woensdag</option>
+										<option value="4">Donderdag</option>
+										<option value="5">Vrijdag</option>
+										<option value="6">Zaterdag</option>
+										<option value="7">Zondag</option>
+									</select>
+								</span>
+								om
+								<timepicker ng-model="user_intro.reminder_time" class="ui-timepicker" hour-step="1" minute-step="1" show-meridian="ismeridian"></timepicker>
+							</div>
+						</div>
+					</div>
+					
+					<p ng-if="step.n == 6">
+						Uw patiënten bij de naam noemen, beoordelingen verzamelen per zorgverlener of uw e-mails versturen in een stijl die past bij uw praktijk. Patiëntenreview zit vol met functies!</br></br>
+
+						U kunt nu aan de slag met het versturen van uitnodigingen. Wanneer u er klaar voor bent, kijk dan eens rond in het instellingenmenu. Daar vindt u alle functies op een rijtje.
+					</p>
+					
+					<p ng-if="step.n == 0">
+						U kunt deze introductie opnieuw bekijken wanneer u daar behoefte aan heeft. Klik op 'Herstart introductie' in de rechterbenedenhoek van uw dashboard.
+					</p>
+				</div>
+			</div>
+			<div class="modal-footer">
+
+				<button class="btn btn-default" ng-if="step.btn > 1" ng-click="prev()">Vorige</button>
+				<button class="btn btn-primary" ng-if="step.btn < 6 && step.btn > 0" ng-click="next($event)">Volgende</button>
+				<button class="btn btn-primary" ng-if="step.btn == 6" ng-click="settings()">Instellingen...</button>
+				<button class="btn btn-primary" ng-if="step.btn == 0 || step.btn == 6" ng-click="close()">Sluit</button>
+				<a href="javascript:void(0);" class="intro-popup-close" ng-click="pre_close()" ng-if="step.n > 0">Sla introductie over</a>
+			</div>
+		</script>
+    </body>
+</html>

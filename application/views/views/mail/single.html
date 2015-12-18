@@ -1,0 +1,94 @@
+<div class="page page-mail">
+    <div class="row">
+
+        <div class="col-sm-3 mail-categories">
+            <div class="category-heading">
+                <a href="#/mail/compose" class="btn btn-block btn-lg btn-primary">Stuur nieuwe uitnodiging</a>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item"><a href="#/mail/inbox">
+                    <i class="ti-folder"></i>Ontvangen
+                    <span class="badge badge-primary pull-right" ng-if="inbox_count() > 0">{{inbox_count()}}</span>
+                </a></li>
+                <!--li class="list-group-item"><a href="javascript:;">
+                    <i class="ti-email"></i>Send mail
+                </a></li>
+                <li class="list-group-item"><a href="javascript:;">
+                    <i class="ti-star"></i>Starred
+                    <span class="badge badge-danger pull-right">3</span>
+                </a></li>
+                <li class="list-group-item"><a href="javascript:;">
+                    <i class="ti-comment"></i>Chat
+                    <span class="badge badge-success pull-right">9</span>
+                </a></li>
+                <li class="list-group-item"><a href="javascript:;">
+                    <i class="ti-pencil"></i>Draft
+                    <span class="badge badge-warning pull-right">1</span>
+                </a></li>
+                <li class="list-group-item"><a href="javascript:;">
+                    <i class="ti-trash"></i>Spam
+                </a></li-->
+            </ul>
+        </div>
+
+        <div class="col-sm-9">
+            <section class="panel panel-default mail-container">
+                <div class="panel-heading">Bekijk feedback</div>
+                <div class="panel-body">
+                    <div class="mail-header row">
+                        <div class="col-md-8">
+							<?php $words = array('Geen reactie', '1 ster', '2 sterren', '3 sterren', '4 sterren', '5 sterren'); ?>
+                            <h3><?php echo $words[$info['stars']]; ?></h3>
+                        </div>
+                        <div class="col-md-4">
+							<?php if (empty($info['reply'])) { ?>
+                            <div class="pull-right">
+                                <a href="#/mail/reply/<?php echo $info['id']; ?>" class="btn btn-sm btn-primary">Beantwoord</a>
+                            </div>
+							<?php } ?>
+                        </div>
+                    </div>
+                    <div class="mail-info">
+                        <div class="row">
+                            <div class="col-md-8">
+								<?php if ( ! empty($info['email'])) { ?>
+                                Van: <strong><?php echo $info['name'].' '.$info['sname']; ?></strong> (<?php echo $info['email']; ?>)
+								<?php } ?>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="pull-right">
+                                    <?php echo $info['date_time']; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mail-content">
+                        <p class="mail-content-reply"><?php echo str_replace("\n", "<br />", $info['feedback']); ?></p>
+                    </div>
+					
+					<?php if (empty($info['reply'])) { ?>
+                    <div class="mail-actions">
+                        <a href="#/mail/reply/<?php echo $info['id']; ?>" class="btn btn-sm btn-primary">Beantwoord</a>
+                    </div>
+					<?php } else { ?>
+					<div class="mail-info">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <strong>Uw reactie aan de patiënt</strong>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="pull-right">
+                                    <?php echo $info['reply_time']; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mail-content">
+                        <p class="mail-content-reply"><?php echo str_replace("\n", "<br />", $info['reply']); ?></p>
+                    </div>
+					<?php } ?>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

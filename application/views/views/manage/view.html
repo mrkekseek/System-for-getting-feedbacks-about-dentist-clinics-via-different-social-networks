@@ -1,0 +1,214 @@
+<div class="page page-profile" ng-controller="UsersCtrl">
+	<section class="panel panel-default table-dynamic">
+		<div class="table-filters">
+			<div class="row">
+				<div class="col-sm-4 col-xs-6">
+					<form>
+						<input type="text"
+							   placeholder="Zoek..."
+							   class="form-control"
+							   data-ng-model="searchKeywords"
+							   data-ng-keyup="search()">
+					</form>
+				</div>
+				<div class="col-sm-3 col-xs-6 filter-result-info">
+					<span>
+					{{filteredStores.length}} van {{users.length}} onderdelen getoond
+					</span>              
+				</div>
+				
+				<div class="col-sm-3 col-xs-6">
+					<button type="button" class="btn btn-primary" ng-show="checks.length > 0" ng-click="print_invoices()">Print factuur...</button>           
+				</div>
+			</div>
+		</div>
+
+		<table class="table table-bordered table-striped table-responsive">
+			<thead>
+				<tr>
+					<th><div class="th"></div></th>
+					<th><div class="th">
+						ID
+						<span class="fa fa-angle-up"
+							  data-ng-click=" order('id') "
+							  data-ng-class="{active: row == 'id'}"></span>
+						<span class="fa fa-angle-down"
+							  data-ng-click=" order('-id') "
+							  data-ng-class="{active: row == '-id'}"></span>
+					</div></th>
+					<th><div class="th">
+						Praktijk
+						<span class="fa fa-angle-up"
+							  data-ng-click=" order('username') "
+							  data-ng-class="{active: row == 'username'}"></span>
+						<span class="fa fa-angle-down"
+							  data-ng-click=" order('-username') "
+							  data-ng-class="{active: row == '-username'}"></span>
+					</div></th>
+					<th><div class="th">
+						Status
+						<span class="fa fa-angle-up"
+							  data-ng-click=" order('type') "
+							  data-ng-class="{active: row == 'type'}"></span>
+						<span class="fa fa-angle-down"
+							  data-ng-click=" order('-type') "
+							  data-ng-class="{active: row == '-type'}"></span>
+					</div></th>
+					<th><div class="th">
+						Emailadres praktijk
+						<span class="fa fa-angle-up"
+							  data-ng-click=" order('email') "
+							  data-ng-class="{active: row == 'email'}"></span>
+						<span class="fa fa-angle-down"
+							  data-ng-click=" order('-email') "
+							  data-ng-class="{active: row == '-email'}"></span>
+					</div></th>
+					<th><div class="th">
+						Geregistreerd op
+						<span class="fa fa-angle-up"
+							  data-ng-click=" order('signup') "
+							  data-ng-class="{active: row == 'signup'}"></span>
+						<span class="fa fa-angle-down"
+							  data-ng-click=" order('-signup') "
+							  data-ng-class="{active: row == '-signup'}"></span>
+					</div></th>
+					<th><div class="th">
+						Begindatum
+						<span class="fa fa-angle-up"
+							  data-ng-click=" order('activation') "
+							  data-ng-class="{active: row == 'activation'}"></span>
+						<span class="fa fa-angle-down"
+							  data-ng-click=" order('-activation') "
+							  data-ng-class="{active: row == '-activation'}"></span>
+					</div></th>
+					<th><div class="th">
+						Einddatum
+						<span class="fa fa-angle-up"
+							  data-ng-click=" order('suspension') "
+							  data-ng-class="{active: row == 'suspension'}"></span>
+						<span class="fa fa-angle-down"
+							  data-ng-click=" order('-suspension') "
+							  data-ng-class="{active: row == '-suspension'}"></span>
+					</div></th>
+					<th><div class="th">
+						Versie
+						<span class="fa fa-angle-up"
+							  data-ng-click=" order('suspension') "
+							  data-ng-class="{active: row == 'suspension'}"></span>
+						<span class="fa fa-angle-down"
+							  data-ng-click=" order('-suspension') "
+							  data-ng-class="{active: row == '-suspension'}"></span>
+					</div></th>
+					<th><div class="th">Account</div></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="user in currentPageStores">
+					<td><label class="ui-checkbox"><input type="checkbox" ng-model="checks_model" ng-change="check_checks(user.id)" /><span></span></label></td>
+					<td>{{user.id}}</td>
+					<td>{{user.username}}</td>
+					<td>
+						<a ng-if="user.admin_stop == '1'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Geblokkeerd</a>
+						<a ng-if="user.admin_stop == '0' && (user.account == '1' || user.account == '2') && user.type != '2'" href="javascript:void(0);" class="label label-success" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Actief</a>
+						<a ng-if="user.admin_stop == '0' && user.type == '2'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Gestopt</a>
+					</td>
+					<td>{{user.email}}</td>
+					<td>{{user.signup_str}}</td>
+					<td>{{user.activation_str}}</td>
+					<td>{{user.suspension_str}}</td>
+					<td>
+						<span ng-if="user.account == '2'">Proefperiode</span>
+						<span ng-if="user.account != '2' && user.account_type == '0'">Basis</span>
+						<span ng-if="user.account != '2' && user.account_type == '1'">Pro</span>
+					</td>
+					<td><a class="label label-primary" ng-click="login_as_user(user.id)">Log In</a></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<footer class="table-footer">
+			<div class="row">
+				<div class="col-md-6 page-num-info">
+					<span>
+						Toon 
+						<select data-ng-model="numPerPage"
+								data-ng-options="num for num in numPerPageOpt"
+								data-ng-change="onNumPerPageChange()">
+						</select> 
+						onderdelen per pagina
+					</span>
+				</div>
+				<div class="col-md-6 text-right pagination-container">
+					<pagination class="pagination-sm"
+								ng-model="currentPage"
+								total-items="filteredStores.length"
+								max-size="4"
+								ng-change="select(currentPage)"
+								items-per-page="numPerPage"
+								rotate="false"
+								previous-text="&lsaquo;" next-text="&rsaquo;"
+								boundary-links="true"></pagination>
+				</div>
+			</div>
+		</footer>
+	</section>
+</div>
+
+<script type="text/ng-template" id="changeType.html">
+	<div class="modal-header">
+		<h3>Wijzig abonnement</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			Laatste login: {{user.last_str}}
+		</p>
+		<div class="row">
+            <div class="col-sm-6 col-xs-12">
+				<label>Startdatum abonnement</label>
+				<div class="input-group ui-datepicker">
+					<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="activation" is-open="opened_activation" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+					<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'activation')"><i class="ti-calendar"></i></a>
+				</div>
+			</div>
+			
+			<div class="col-sm-6">
+				<label>Einddatum abonnement</label>
+				<div class="input-group ui-datepicker">
+					<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="suspension" is-open="opened_suspension" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+					<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'suspension')"><i class="ti-calendar"></i></a>
+				</div>
+				<div class="help-block">
+					Deze gebruiker zal om verlenging gevraagd worden op: {{suspension_str}}
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12">
+				<label>&nbsp;</label><br />
+				<a href="javascript:void(0);" class="btn btn-primary" ng-if="type == 2" ng-click="change_trial()">Verleng proefperiode</a>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="ok()">OK</button>
+		<button class="btn btn-danger" ng-click="remove()" ng-if="stop == 0">Beëindig direct</button>
+		<button class="btn btn-success" ng-click="activate()" ng-if="stop == 1">Activeer</button>
+		<button class="btn btn-danger" ng-click="delete_modal(id)">Verwijder</button>
+		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="delete.html">
+	<!--div class="modal-header">
+		<h3>Wijzig abonnement</h3>
+	</div-->
+	<div class="modal-body">
+		<p>
+			Het verwijderen van dit abonnement zorgt ervoor dat alle beoordelingen en andere gegevens gerelateerd aan dit gebruikersaccount
+			definitief worden verwijderd. Deze actie kan niet ongedaan worden gemaakt. Wil u doorgaan?
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="del()">Ja</button>
+		<button class="btn btn-warning" ng-click="cancel()">Nee</button>
+	</div>
+</script>
