@@ -2954,7 +2954,7 @@
 
 			if ( ! empty($row))
 			{
-				if (($row['date'] + 2 * 24 * 60 * 60) >= time())
+				if (empty($row['stars']) || ( ! empty($row['stars']) && ($row['date'] + 2 * 24 * 60 * 60) >= time()))
 				{
 					if ( ! $ex)
 					{
