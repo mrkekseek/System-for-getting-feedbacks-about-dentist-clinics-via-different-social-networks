@@ -2399,8 +2399,7 @@
 									
 									$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
 
-									$subject = empty($subject) ? $email_data['texts']['subject'] : $subject;
-									if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], $row['email']))
+									if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], $row['email']))
 									{
 										$error = FALSE;
 										$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
