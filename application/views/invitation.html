@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title><?php echo empty($unsubscribe) ? "Beoordeel ".$user['username'] : "We hebben uw verzoek ontvangen."; ?></title>
+        <title><?php echo empty($unsubscribe) ? (empty($user['username']) ? "Oeps..." : "Beoordeel ".$user['username']) : "We hebben uw verzoek ontvangen."; ?></title>
 
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
 
@@ -162,7 +162,8 @@
 									
 									if ($cols > 0)
 									{
-										$boot_cols = 12 / $cols;
+										$boot_cols = round(12 / $cols);
+										$boot_cols = $boot_cols < 3 ? 3 : $boot_cols;
 										ksort($online);
 							?>
 										<div class="row">
@@ -172,7 +173,7 @@
 											?>
 													<div class="col-sm-<?php echo $boot_cols; ?> col-xs-12">
 														<div class="panel panel-default panel-online online-<?php echo $row['system']; ?>">
-															<div class="panel-heading">
+															<a href="<?php echo $row['url']; ?>" class="panel-heading">
 																<div class="online-logo">
 																	<?php
 																		if ($row['system'] != "own")
@@ -194,7 +195,7 @@
 																		}
 																	?>
 																</div>
-															</div>
+															</a>
 															
 															<div class="panel-body text-center">
 																<a href="<?php echo $row['url']; ?>" target="_blank" class="btn btn-danger" ng-click="click('<?php echo $row['system']; ?>')">Schrijf review</a>
@@ -333,7 +334,8 @@
 									
 									if ($cols > 0)
 									{
-										$boot_cols = 12 / $cols;
+										$boot_cols = round(12 / $cols);
+										$boot_cols = $boot_cols < 3 ? 3 : $boot_cols;
 										ksort($online);
 							?>
 										<div class="row">
@@ -343,7 +345,7 @@
 											?>
 													<div class="col-sm-<?php echo $boot_cols; ?> col-xs-12">
 														<div class="panel panel-default panel-online online-<?php echo $row['system']; ?>">
-															<div class="panel-heading">
+															<a href="<?php echo $row['url']; ?>" class="panel-heading">
 																<div class="online-logo">
 																	<?php
 																		if ($row['system'] != "own")
@@ -365,7 +367,7 @@
 																		}
 																	?>
 																</div>
-															</div>
+															</a>
 															
 															<div class="panel-body text-center">
 																<a href="<?php echo $row['url']; ?>" target="_blank" class="btn btn-danger" ng-click="click('<?php echo $row['system']; ?>')">Schrijf review</a>
@@ -609,7 +611,8 @@
 									
 									if ($cols > 0)
 									{
-										$boot_cols = 12 / $cols;
+										$boot_cols = round(12 / $cols);
+										$boot_cols = $boot_cols < 3 ? 3 : $boot_cols;
 										ksort($online);
 							?>
 										<div class="row">
@@ -619,7 +622,7 @@
 											?>
 													<div class="col-sm-<?php echo $boot_cols; ?> col-xs-12">
 														<div class="panel panel-default panel-online online-<?php echo $row['system']; ?>">
-															<div class="panel-heading">
+															<a href="<?php echo $row['url']; ?>" class="panel-heading">
 																<div class="online-logo">
 																	<?php
 																		if ($row['system'] != "own")
@@ -641,7 +644,7 @@
 																		}
 																	?>
 																</div>
-															</div>
+															</a>
 															
 															<div class="panel-body text-center">
 																<a href="<?php echo $row['url']; ?>" target="_blank" class="btn btn-danger" ng-click="click('<?php echo $row['system']; ?>')">Schrijf review</a>
