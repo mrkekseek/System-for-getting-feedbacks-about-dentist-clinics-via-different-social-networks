@@ -64,6 +64,14 @@ $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
+if ( ! empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] == 'pr.my')
+{
+	$db['default']['hostname'] = 'localhost';
+	$db['default']['username'] = 'root';
+	$db['default']['password'] = '';
+	$db['default']['database'] = 'pr';
+}
+
 
 /* End of file database.php */
 /* Location: ./application/config/database.php */

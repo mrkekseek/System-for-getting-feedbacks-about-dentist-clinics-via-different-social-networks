@@ -763,8 +763,10 @@
 			$scope.ready = true;
 			$scope.show_average_online = false;
 			$scope.show_fb_login = false;
+
 			if ($scope.stat.average)
 			{
+				$scope.stat.average = ($scope.stat.average * 1).toFixed(1);
 				$scope.first_time = false;
 				for (var key in $scope.stat.diagram)
 				{
@@ -993,7 +995,12 @@
 					$scope.last = logger.check(data);
 				});
 			}
-
+			
+			if ($scope.stat.average_online)
+			{
+				$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
+			}
+			
 			$scope.show_average_online = '1';
 			$scope.show_fb_login = false;
 			
@@ -1172,6 +1179,8 @@
 
 				if ($scope.stat.average)
 				{
+					$scope.stat.average = ($scope.stat.average * 1).toFixed(1);
+					
 					for (var key in $scope.stat.diagram)
 					{
 						$scope.donutChart2.data[key].data = $scope.stat.diagram[key];
@@ -1389,6 +1398,11 @@
 				});
 			}
 
+			if ($scope.stat.average_online)
+			{
+				$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
+			}
+			
 			$scope.show_average_online = '1';
 			$scope.show_fb_login = false;
 		};
@@ -1576,6 +1590,11 @@
 			$http.post("/pub/stat_achart/", $scope.filter).success(function(data, status, headers, config) {
 				var average_online = $scope.stat.average_online ? $scope.stat.average_online : 0;
 				$scope.stat = logger.check(data);
+				if ($scope.stat.average)
+				{
+					$scope.stat.average = ($scope.stat.average * 1).toFixed(1);
+				}
+				
 				for (var key in $scope.stat.diagram)
 				{
 					$scope.donutChart2.data[key].data = $scope.stat.diagram[key];

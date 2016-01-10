@@ -1370,6 +1370,11 @@ section.logo {
 	cursor: default;
 }
 
+.invitation-box .panel-online a.panel-heading,
+.invitation-box .panel-online a.panel-heading.grabbing {
+	cursor: pointer;
+}
+
 .panel-online .panel-heading:before {
 	content: "";
 	display: block;
