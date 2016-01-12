@@ -1088,6 +1088,7 @@
 
 		function get_users()
 		{
+			$this->db->order_by("username");
 			$this->db->where("status", 1);
 			$result = $this->db->get("users")->result_array();
 			foreach ($result as $key => $row)
