@@ -974,21 +974,21 @@
 
 			if (all_count > 0)
 			{
-				$scope.stat.average_online = Math.floor(Math.round($scope.stat.average_online / all_count * 100) / 100 * 2) / 2
+				$scope.stat.average_online = Math.round($scope.stat.average_online / all_count * 100) / 100;
 			}
 
 			switch ($scope.type)
 			{
-				case "facebook": $scope.stat.average_online = Math.floor($scope.facebook * 2) / 2; break;
-				case "google": $scope.stat.average_online = Math.floor($scope.stat.google.rating * 2) / 2; break;
-				case "zorgkaart": $scope.stat.average_online = Math.floor($scope.stat.zorgkaart.rating * 2) / 2; break;
-				case "independer": $scope.stat.average_online = Math.floor($scope.stat.independer.rating * 2) / 2; break;
-				case "telefoonboek": $scope.stat.average_online = Math.floor($scope.stat.telefoonboek.rating * 2) / 2; break;
+				case "facebook": $scope.stat.average_online = $scope.facebook; break;
+				case "google": $scope.stat.average_online = $scope.stat.google.rating; break;
+				case "zorgkaart": $scope.stat.average_online = $scope.stat.zorgkaart.rating; break;
+				case "independer": $scope.stat.average_online = $scope.stat.independer.rating; break;
+				case "telefoonboek": $scope.stat.average_online = $scope.stat.telefoonboek.rating; break;
 			}
 
 			if ($scope.first_time_init)
 			{
-				$scope.stat.average_online = $scope.stat.average_online;
+				$scope.stat.average_online = Math.round($scope.stat.average_online * 1).toFixed(1);
 				$scope.first_time_init = false;
 
 				$http.post("/pub/last_dashboard/", {average: $scope.stat.average, average_online: $scope.stat.average_online}).success(function(data, status, headers, config) {
@@ -1377,15 +1377,15 @@
 				all_count++;
 			}
 
-			$scope.stat.average_online = Math.floor(Math.round($scope.stat.average_online / all_count * 100) / 100 * 2) / 2
+			$scope.stat.average_online = Math.round($scope.stat.average_online / all_count * 100) / 100;
 
 			switch ($scope.type)
 			{
-				case "facebook": $scope.stat.average_online = Math.floor($scope.facebook * 2) / 2; break;
-				case "google": $scope.stat.average_online = Math.floor($scope.stat.google.rating * 2) / 2; break;
-				case "zorgkaart": $scope.stat.average_online = Math.floor($scope.stat.zorgkaart.rating * 2) / 2; break;
-				case "independer": $scope.stat.average_online = Math.floor($scope.stat.independer.rating * 2) / 2; break;
-				case "telefoonboek": $scope.stat.average_online = Math.floor($scope.stat.telefoonboek.rating * 2) / 2; break;
+				case "facebook": $scope.stat.average_online = $scope.facebook; break;
+				case "google": $scope.stat.average_online = $scope.stat.google.rating; break;
+				case "zorgkaart": $scope.stat.average_online = $scope.stat.zorgkaart.rating; break;
+				case "independer": $scope.stat.average_online = $scope.stat.independer.rating; break;
+				case "telefoonboek": $scope.stat.average_online = $scope.stat.telefoonboek.rating; break;
 			}
 
 			if ($scope.first_time_init)
@@ -1400,7 +1400,7 @@
 
 			if ($scope.stat.average_online)
 			{
-				$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
+				$scope.stat.average_online = Math.round($scope.stat.average_online * 1).toFixed(1);
 			}
 			
 			$scope.show_average_online = '1';
@@ -1687,7 +1687,7 @@
 
 			if ($scope.first_time_init)
 			{
-				$scope.stat.average_online = $scope.stat.average_online;
+				$scope.stat.average_online = Math.round($scope.stat.average_online * 1).toFixed(1);
 				$scope.first_time_init = false;
 
 				$http.post("/pub/last_dashboard/", {average: $scope.stat.average, average_online: $scope.stat.average_online}).success(function(data, status, headers, config) {
