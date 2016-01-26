@@ -835,7 +835,7 @@
 										"firstname" => $post['firstname'],
 										"lastname" => $post['lastname'],
 										"title" => $post['title'],
-										"zorgkaart" => $post['zorgkaart'],
+										"zorgkaart" => strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer',
 										"short" => ! empty($post['short']) ? $post['short'] : "",
 										"short_checked" => ! empty($post['short_checked']) ? $post['short_checked'] : 0);
 
