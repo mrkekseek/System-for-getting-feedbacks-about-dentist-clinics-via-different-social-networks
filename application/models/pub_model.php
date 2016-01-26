@@ -739,6 +739,14 @@
 			
 			$this->db->where("users_id", $this->session->userdata("id"));
 			$result['doctors'] = $this->db->get("doctors")->result_array();
+			$result['doctors_pay'] = array();
+			foreach ($result['doctors'] as $doc)
+			{
+				if (empty($doc['free']))
+				{
+					$result['doctors_pay'][] = $doc;
+				}
+			}
 			
 			return $result;
 		}
@@ -1006,7 +1014,7 @@
 				if ( ! empty($all))
 				{
 					//$average = floor(round($average / $all, 2) * 2) / 2;
-					$average = round($average / $all);
+					$average = round($average / $all, 1);
 				}
 			}
 			
@@ -3235,25 +3243,25 @@
 					if ($stat['all'] > 0)
 					{
 						//$stat['average'] = floor(round($stat['average'] / $stat['all'], 2) * 2) / 2;
-						$stat['average'] = round($stat['average'] / $stat['all']);
+						$stat['average'] = round($stat['average'] / $stat['all'], 1);
 						if ($stat['all_before'] > 0)
 						{
 							//$stat['average_before'] = floor(round($stat['average_before'] / $stat['all_before'], 2) * 2) / 2;
-							$stat['average_before'] = round($stat['average_before'] / $stat['all_before']);
+							$stat['average_before'] = round($stat['average_before'] / $stat['all_before'], 1);
 						}
 					}
 
 					foreach ($stat['diagram'] as $key => $val)
 					{
 						//$stat['diagram'][$key] = $stat['all'] > 0 ? floor(round($val * 100 / $stat['all']) * 2) / 2 : 0;
-						$stat['diagram'][$key] = $stat['all'] > 0 ? round($val * 100 / $stat['all']) : 0;
+						$stat['diagram'][$key] = $stat['all'] > 0 ? round($val * 100 / $stat['all'], 1) : 0;
 					}
 
 					$percent = $stat['average'] / 100;
 					if ($percent > 0)
 					{
 						//$stat['delta'] = floor(round(($stat['average'] - $stat['average_before']) / $percent, 2) * 2) / 2;
-						$stat['delta'] = round(($stat['average'] - $stat['average_before']) / $percent);
+						$stat['delta'] = round(($stat['average'] - $stat['average_before']) / $percent, 1);
 					}
 
 					$empty = array("rating" => 0, "reviews" => array());
@@ -3390,7 +3398,7 @@
 							$days_all += $row['stars'];
 							$days_count_all++;
 							//$stat['days'][date('d.m.Y', $row['last'])] = floor(round($days_all / $days_count_all, 2) * 2) / 2;
-							$stat['days'][date('d.m.Y', $row['last'])] = round($days_all / $days_count_all);
+							$stat['days'][date('d.m.Y', $row['last'])] = round($days_all / $days_count_all, 1);
 						}
 
 						if ($row['stars'] == 5)
@@ -3431,13 +3439,13 @@
 					if ($average_all > 0)
 					{
 						//$stat['average'] = floor(round($stat['average'] / $average_all, 2) * 2) / 2;
-						$stat['average'] = round($stat['average'] / $average_all);
+						$stat['average'] = round($stat['average'] / $average_all, 1);
 					}
 
 					foreach ($stat['diagram'] as $key => $val)
 					{
 						//$stat['diagram'][$key] = floor(round($val * 100 / $diagram_all) * 2) / 2;
-						$stat['diagram'][$key] = round($val * 100 / $diagram_all);
+						$stat['diagram'][$key] = round($val * 100 / $diagram_all, 1);
 					}
 					
 					$this->db->where("id", $this->session->userdata("id"));
@@ -3468,7 +3476,7 @@
 						//$online_array[] = array('label' => $val,
 						//						'data' => floor(round($stat['online'][$key] * 100 / $online_all) * 2) / 2);
 						$online_array[] = array('label' => $val,
-												'data' => round($stat['online'][$key] * 100 / $online_all));
+												'data' => round($stat['online'][$key] * 100 / $online_all, 1));
 					}
 					$stat['online'] = $online_array;
 					
@@ -3493,13 +3501,13 @@
 								//$doctors_array[] = array('label' => $doc['firstname'].' '.$doc['lastname'],
 								//						 'data' => floor(round($stat['doctors'][$key] * 100 / $doctors_all) * 2) / 2);
 								$doctors_array[] = array('label' => $doc['firstname'].' '.$doc['lastname'],
-														 'data' => round($stat['doctors'][$key] * 100 / $doctors_all));
+														 'data' => round($stat['doctors'][$key] * 100 / $doctors_all, 1));
 							}
 							
 							//$doctors_array[] = array('label' => 'Beoordeeld op praktijk',
 							//						 'data' => floor(round($stat['doctors'][0] * 100 / $doctors_all) * 2) / 2);
 							$doctors_array[] = array('label' => 'Beoordeeld op praktijk',
-													 'data' => round($stat['doctors'][0] * 100 / $doctors_all));
+													 'data' => round($stat['doctors'][0] * 100 / $doctors_all, 1));
 						}
 						$stat['doctors'] = $doctors_array;
 					}
@@ -3507,7 +3515,7 @@
 					if ($vs_all > 0)
 					{
 						//$stat['vs'] = floor(round($vs_stars * 100 / $vs_all, 2) * 2) / 2;
-						$stat['vs'] = round($vs_stars * 100 / $vs_all);
+						$stat['vs'] = round($vs_stars * 100 / $vs_all, 1);
 					}
 
 					$start = $now;
@@ -3713,7 +3721,7 @@
 							$days_all += $row['stars'];
 							$days_count_all++;
 							//$stat['days'][date('d.m.Y', $row['last'])] = floor(round($days_all / $days_count_all, 2) * 2) / 2;
-							$stat['days'][date('d.m.Y', $row['last'])] = round($days_all / $days_count_all);
+							$stat['days'][date('d.m.Y', $row['last'])] = round($days_all / $days_count_all, 1);
 						}
 
 						if ($row['stars'] == 5)
@@ -3832,11 +3840,11 @@
 					$stat['nps']['delta_doc'] = $stat['nps']['good_doc'] - $stat['nps']['bad_doc'];
 
 					//$stat['average'] = floor(round($stat['average'] / $average_all, 2) * 2) / 2;
-					$stat['average'] = round($stat['average'] / $average_all);
+					$stat['average'] = round($stat['average'] / $average_all, 1);
 					foreach ($stat['diagram'] as $key => $val)
 					{
 						//$stat['diagram'][$key] = floor(round($val * 100 / $diagram_all) * 2) / 2;
-						$stat['diagram'][$key] = round($val * 100 / $diagram_all);
+						$stat['diagram'][$key] = round($val * 100 / $diagram_all, 1);
 					}
 
 					$onlines = array('none' => 'Niet doorgeklikt',
@@ -3855,7 +3863,7 @@
 						//$online_array[] = array('label' => $val,
 						//						'data' => floor(round($stat['online'][$key] * 100 / $online_all) * 2) / 2);
 						$online_array[] = array('label' => $val,
-												'data' => round($stat['online'][$key] * 100 / $online_all));
+												'data' => round($stat['online'][$key] * 100 / $online_all, 1));
 					}
 					$stat['online'] = $online_array;
 					
@@ -3900,14 +3908,14 @@
 						//$doctors_array[] = array('label' => 'Beoordeeld op zorgverlener',
 						//						 'data' => floor(round($only_doctors * 100 / $doctors_all) * 2) / 2);
 						$doctors_array[] = array('label' => 'Beoordeeld op zorgverlener',
-												 'data' => round($only_doctors * 100 / $doctors_all));
+												 'data' => round($only_doctors * 100 / $doctors_all, 1));
 						
 						if (isset($stat['doctors'][0]))
 						{
 							//$doctors_array[] = array('label' => 'Beoordeeld op praktijk',
 							//						 'data' => floor(round($stat['doctors'][0] * 100 / $doctors_all) * 2) / 2);
 							$doctors_array[] = array('label' => 'Beoordeeld op praktijk',
-													 'data' => round($stat['doctors'][0] * 100 / $doctors_all));
+													 'data' => round($stat['doctors'][0] * 100 / $doctors_all, 1));
 						}
 						$stat['doctors'] = $doctors_array;
 					}
@@ -3915,7 +3923,7 @@
 					if ($vs_all > 0)
 					{
 						//$stat['vs'] = floor(round($vs_stars * 100 / $vs_all, 2) * 2) / 2;
-						$stat['vs'] = round($vs_stars * 100 / $vs_all);
+						$stat['vs'] = round($vs_stars * 100 / $vs_all, 1);
 					}
 
 					$start = $now;
@@ -4189,7 +4197,7 @@
 					if ($percent > 0)
 					{
 						//$items['average'] = floor(round(($row['average_now'] - $row['average_last']) / $percent, 2) * 2) / 2;
-						$items['average'] = round(($row['average_now'] - $row['average_last']) / $percent);
+						$items['average'] = round(($row['average_now'] - $row['average_last']) / $percent, 1);
 					}
 					else
 					{
@@ -4200,7 +4208,7 @@
 					if ($percent > 0)
 					{
 						//$items['average_online'] = floor(round(($row['average_online_now'] - $row['average_online_last']) / $percent, 2) * 2) / 2;
-						$items['average_online'] = round(($row['average_online_now'] - $row['average_online_last']) / $percent);
+						$items['average_online'] = round(($row['average_online_now'] - $row['average_online_last']) / $percent, 1);
 					}
 					else
 					{
