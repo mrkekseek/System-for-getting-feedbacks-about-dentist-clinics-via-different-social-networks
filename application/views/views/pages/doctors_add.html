@@ -111,12 +111,12 @@
 													{{d.firstname}} {{d.lastname}}{{index < (amount.doctors.length - 1) ? "," : ""}}
 												</span>
 												</strong></td>
-												<td><strong>€{{(amount.doctor_amount * (amount.doctors.length + 1)).toFixed(2).replace(".", ",")}}</strong></td>
+												<td><strong>€{{(amount.doctor_amount * (amount.doctors_pay.length + 1)).toFixed(2).replace(".", ",")}}</strong></td>
 											</tr>
 											
 											<tr>
 												<td>Totaal INCL. BTW</td>
-												<td>€{{((user.account_type == 0 ? amount.base_amount : amount.pro_amount) + (amount.doctor_amount * (amount.doctors.length + 1))).toFixed(2).replace(".", ",")}}</td>
+												<td>€{{((user.account_type == 0 ? amount.base_amount : amount.pro_amount) + (amount.doctor_amount * (amount.doctors_pay.length + 1))).toFixed(2).replace(".", ",")}}</td>
 											</tr>
 										</tbody>
 									</table>
