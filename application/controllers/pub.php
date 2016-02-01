@@ -365,6 +365,17 @@
 			$this->load->view('widget.html', $this->data);
 		}
 
+		function rating_page()
+		{
+			$this->load->view('invitation2.html', $this->data);
+		}
+		
+		function rating_page_get()
+		{
+			$result = $this->pub->rating_page_get($this->post['segments']);
+			$this->response($result);
+		}
+		
 		function invitation($hash)
 		{
 			$this->data['short'] = FALSE;
@@ -396,6 +407,14 @@
 			$this->load->view('invitation.html', $this->data);
 		}
 		
+		function unsubscribe_ajax()
+		{
+			$temp = explode("-", $this->post['hash']);
+			$hash = substr($this->post['hash'], 1);
+			$result = $this->pub->unsubscribe($hash);
+			$this->response(array('hash' => $hash));
+		}
+		
 		function undo()
 		{
 			$result = $this->pub->undo($this->post['hash']);
@@ -407,7 +426,7 @@
 			$result = $this->pub->check_url(strtolower($short));
 			if ( ! empty($result['users_id']))
 			{
-				$this->data['short'] = TRUE;
+				/*$this->data['short'] = TRUE;
 				$this->data['info'] = $this->pub->check_short_results($result['users_id'], $result['doctors_id']);
 				$this->data['user'] = $this->pub->user_info($result['users_id']);
 				if ( ! empty($this->data['user']['promo_checked']))
@@ -421,8 +440,8 @@
 				else
 				{
 					$this->data['doctors'] = $this->pub->get_doctors($result['users_id']);
-				}
-				$this->load->view('invitation.html', $this->data);
+				}*/
+				$this->load->view('invitation2.html', $this->data);
 			}
 			else
 			{
@@ -586,7 +605,7 @@
 				$response['errors'] = $this->pub->errors;
 			}
 			
-			if ( ! empty($result))
+			if (isset($result))
 			{
 				$response['result'] = $result;
 			}

@@ -2082,8 +2082,20 @@
 			}
 			else
 			{
+				$data_array = array('feedback' => $post['feedback'],
+									'status' => 2,
+									'last' => time());
+									
+				if ( ! empty($post['anonymus']))
+				{
+					$data_array['title'] = '';
+					$data_array['name'] = '';
+					$data_array['sname'] = '';
+					$data_array['email'] = '';
+				}
+				
 				$this->db->where("id", $post['id']);
-				if ($this->db->update("sent", array('feedback' => $post['feedback'], 'status' => 2, 'last' => time())))
+				if ($this->db->update("sent", $data_array))
 				{
 					$this->errors[] = array("Success" => "Feedback verstuurd.");
 					return $post;
@@ -2907,6 +2919,58 @@
 			return TRUE;
 		}
 		
+		function rating_page_get($segments)
+		{
+			$return = array('short' => FALSE);
+			$segments = array_values(array_diff($segments, array('')));
+			if (count($segments) == 1)
+			{
+				$return['short'] = TRUE;
+				$check = $this->check_url(strtolower($segments[0]));
+				if ( ! empty($check))
+				{
+					$return['info'] = $this->check_short_results($check['users_id'], $check['doctors_id']);
+					$return['user'] = $this->user_info($check['users_id']);
+					if ( ! empty($return['user']['promo_checked']))
+					{
+						$return['promo'] = $this->get_promo($check['users_id']);
+					}
+
+					if ( ! empty($check['doctors_id']))
+					{
+						$return['doctor'] = $this->doctor_info($check['doctors_id']);
+					}
+					else
+					{
+						$return['doctors'] = $this->get_doctors($check['users_id']);
+					}
+				}
+			}
+			else
+			{
+				if ($segments[0] == 'invitation')
+				{
+					$return['info'] = $this->invitation($segments[1]);
+					$return['user'] = $this->user_info($return['info']['users_id']);
+					if ( ! empty($return['user']['promo_checked']))
+					{
+						$return['promo'] = $this->get_promo($return['info']['users_id']);
+					}
+					
+					if ( ! empty($return['info']['doctor']))
+					{
+						$return['doctor'] = $this->doctor_info($return['info']['doctor']);
+					}
+					else
+					{
+						$return['doctors'] = $this->get_doctors($return['info']['users_id']);
+					}
+				}
+			}
+			
+			return $return;
+		}
+		
 		function unsubscribe($hash)
 		{
 			$this->db->where("MD5(id)", $hash);
@@ -2976,6 +3040,8 @@
 						}
 						$this->db->update("sent", $data_array);
 						$row['stars'] = $stars;
+						$row['last_date'] = date("d-m-Y", $row['last'] + 48 * 3600);
+						$row['last_time'] = date("H:i", $row['last'] + 48 * 3600);
 					}
 
 					$row['ex'] = $ex;
@@ -3002,6 +3068,7 @@
 			{
 				$this->db->where("short", $short);
 				$this->db->where("short_checked", TRUE);
+				$this->db->or_where("MD5(id) =", $short);
 				$this->db->limit(1);
 				$row = $this->db->get("doctors")->row_array();
 				if ( ! empty($row))
@@ -3019,9 +3086,12 @@
 			$ip = $_SERVER['REMOTE_ADDR'];
 
 			$this->db->where("users_id", $users_id);
-			$this->db->where("doctor", $doctors_id);
+			if ( ! empty($doctors_id))
+			{
+				$this->db->where("doctor", $doctors_id);
+			}
 			$this->db->where("ip", $ip);
-			$this->db->where("last <=", time() + 48 * 3600);
+			$this->db->where("last >=", time() - 48 * 3600);
 			$this->db->where("status <>", 3);
 			$this->db->limit(1);
 			$row = $this->db->get("sent")->row_array();
@@ -3029,16 +3099,16 @@
 			if ( ! empty($row))
 			{
 				$row['ex'] = FALSE;
-				if (($row['date'] + 21 * 24 * 60 * 60) < time())
-				{
-					return FALSE;
-				}
+				$row['last_date'] = date("d-m-Y", $row['last'] + 48 * 3600);
+				$row['last_time'] = date("H:i", $row['last'] + 48 * 3600);
 			}
 			else
 			{
 				$row = array('stars' => 0,
 							 'feedback' => '',
 							 'id' => 0,
+							 'last_date' => '',
+							 'last_time' => '',
 							 'ex' => FALSE);
 			}
 
@@ -4110,6 +4180,11 @@
 		{
 			if ($tmp_file['type'] == "image/jpeg" || $tmp_file['type'] == "image/png")
 			{
+				if ( ! file_exists('./logos/tmp/'))
+				{
+					mkdir('./logos/tmp/', 0755, TRUE);
+				}
+				
 				$part = explode('.', $tmp_file['name']);
 				$ext = strtolower(array_pop($part));
 				$file = time().mt_rand(1000, 9999).'.'.$ext;
