@@ -1,0 +1,296 @@
+<!doctype html>
+<!--[if lt IE 8]><html class="no-js lt-ie8"> <![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" data-ng-app="app" data-ng-controller="AppCtrl"><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title ng-bind="apps.title">Patiëntenreview.nl</title>
+
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+
+        <!-- Needs images, font... therefore can not be part of main.css -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,600italic,400,600,300,700" type="text/css" />
+        <link rel="stylesheet" href="/application/views/fonts/themify-icons/themify-icons.min.css" />
+        <link rel="stylesheet" href="/application/views/bower_components/font-awesome/css/font-awesome.min.css" />
+
+        <!-- end Needs images -->
+		<link rel="stylesheet" href="/application/views/styles/main.css" />
+    </head>
+	
+    <body id="app" class="app body-wide" data-custom-page data-off-canvas-nav>
+        <!--[if lt IE 9]>
+            <div class="lt-ie9-bg">
+                <p class="browsehappy">U gebruikt een<strong>verouderde</strong> browser.</p>
+                <p>Download alstublieft <a href="http://browsehappy.com/">hier een nieuwe versie van uw browser</a>.</p>
+            </div>
+        <![endif]-->
+
+		<div class="invitation-box" ng-controller="InvitationCtrl" ng-class="{'shown': apps.ready}">
+			<div class="main-container rating-page-back">
+				<div class="rating-page-grad" style="background: linear-gradient({{color}}, whitesmoke);">
+				</div>
+				
+				<div class="top-box bg-white text-center">
+					<img src="{{logo}}" height="32" alt="" />
+				</div>
+
+				<div class="cards-container">
+					<div class="cards-box">
+						<div class="cards-box-top" ng-if="is_vote" ng-class="{'negative-rating': vote <= 2, 'positive-rating': vote > 2}">
+							<span class="cards-top-text" ng-if="vote <= 2">Nee, ik zou Praktijknaam niet aanbevelen.</span>
+							<span class="cards-top-text" ng-if="vote > 2">Ja, ik zou Praktijknaam aanbevelen.</span>
+							<i class="fa fa-star" style="color: {{color}};"></i>
+							<span class="cards-top-text">{{vote}}</span>
+							<a href="javascript:void(0);" class="fa fa-chevron-down" style="color: {{color}};" ng-click="change_revote()"></a>
+						</div>
+						
+						<div class="cards-collapse" ng-class="{'closed': is_vote, 'opening': revote}">
+							<div class="cards-box-content">
+								<div class="cards-number" ng-if=" ! is_vote">
+									Stap 1
+								</div>
+								
+								<h2>Zou u onze praktijk aanbevelen bij familie of vrienden?</h2>
+								
+								<h3 class="sub">Gemeten op een schaal van 1 tot en met 5.</h3>
+								
+								<div class="stars-box" ng-init="stars_list = [1, 2, 3, 4, 5]">
+									<div class="stars-item" ng-repeat="(key, star) in stars_list" ng-click="click_star(star)" ng-class="{active: star <= vote}">
+										<i class="fa fa-star-o" style="color: {{color}};"></i>
+										<i class="fa fa-star" style="color: {{color}};"></i>
+									</div>
+								</div>
+								
+								<div class="stars-number-box clearfix">
+									<div class="stars-number-item" ng-repeat="(key, star) in stars_list">
+										<div class="stars-number">{{star}}</div>
+									</div>
+								</div>
+								
+								<div class="doctors-box" ng-if="i.doctors.length">
+									<h3 class="sub">Door wie bent u geholpen?</h3>
+									<select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
+										<option value="0">Kies een zorgverlener...</option>
+										<option ng-repeat="d in i.doctors" value="{{d.id}}" ng-selected="d.id == doc.id">{{[d.title, d.firstname, d.lastname].join(' ')}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row rating-row">
+						<div class="col-xs-12" ng-class="{'col-md-6 pull-right': vote <= 2 && vote > 0}">
+							<div class="cards-box" ng-if="onlines_col > 0"  ng-class="{active: vote > 0}">
+								<div class="cards-box-content">
+									<div class="cards-number" ng-if="vote == 0 || vote > 2">
+										Stap <span ng-if=" ! is_vote">2</span><span ng-if="is_vote">1</span>
+									</div>
+									
+									<h2>Deel uw mening met anderen</h2>
+									
+									<h3 class="sub">Zo helpt u mee met het verbeteren van de gezondheidszorg.</h3>
+									
+									<div class="row rating-row">
+										<div class="col-sm-{{onlines_col}} col-xs-12" ng-repeat="o in onlines">
+											<div class="rating-panel rating-{{o.system}}">
+												<div class="rating-heading">
+													<div class="rating-logo">
+														<img src="/application/views/images/online-{{o.system}}.png" alt="" ng-if="o.system != 'own'" />
+														<span ng-if="o.system == 'own' && i.user.own_name != ''">{{i.user.own_name}}</span>
+														<span ng-if="o.system == 'own' && i.user.own_name == ''">Aangepaste doorverwijzing</span>
+													</div>
+												</div>
+												
+												<a href="{{o.url}}" target="_blank" class="rating-btn" ng-click="click(o.system)">Schrijf review</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<div class="cards-lock">
+									<i class="fa fa-lock"></i>
+								</div>
+							</div>
+						</div>
+					
+						<div class="col-xs-12" ng-class="{'col-md-6': vote <= 2 && vote > 0}">
+							<div class="cards-box no-bottom-marging" ng-if="onlines_col > 0"  ng-class="{active: vote > 0}">
+								<div class="cards-box-content">
+									<div class="cards-number" ng-if="vote == 0 || vote > 2">
+										Stap <span ng-if=" ! is_vote">3</span><span ng-if="is_vote">2</span>
+									</div>
+									
+									<h2>Wilt u iets aan ons kwijt?</h2>
+									
+									<h3 class="sub">Wat ging er goed en wat kan beter?</h3>
+									
+									<form role="form" name="form.formOne">
+										<div class="row">
+											<div class="col-xs-12" ng-class="{'col-sm-8': vote == 0 || vote > 2}">
+												<div class="form-group">
+													<textarea class="form-control feedback-area" ng-model="feedback.one" required="required" ng-disabled="feedback.init != ''" placeholder="Typ hier uw feedback. Deze is alleen zichtbaar voor de praktijk en wordt niet openbaar gemaakt."></textarea>
+												</div>
+												
+												<div class="row">
+													<div class="col-sm-8 col-xs-12">
+														<div class="checkbox">
+															<label>
+																<input type="checkbox" ng-model="anonymus[0]" />
+																Verstuur mijn feedback anoniem.
+															</label>
+														</div>
+														
+														<div class="small">
+															Als de praktijk reageert op uw feedback zal u deze ontvangen op uw e-mailadres.
+														</div>
+													</div>
+													
+													<div class="col-sm-4 col-xs-12 button-xs">
+														<button type="button" class="btn btn-primary btn-block" ng-click="save_feedback()" ng-disabled="feedback.init != ''" style="background-color: {{color}}; border-color: {{color}} !important;"><span ng-if="feedback.init != ''">Feedback verstuurd</span><span ng-if="feedback.init == ''">Stuur <i class="fa fa-paper-plane"></i></span></button>
+													</div>
+												</div>
+											</div>
+											
+											<div class="col-xs-12" ng-class="{'col-sm-4': vote == 0 || vote > 2, 'list-top': vote > 0 && vote <= 2}">
+												<h5>Tips voor goede feedback</h5>
+												<ul class="list">
+													<li>Geef opbouwende kritiek.</li>
+													<li>Wees duidelijk in de omschrijving van de situatie of klacht.</li>
+													<li>Vergeet niet de noodzakelijke achtergrondinformatie.</li>
+												</ul>
+											</div>
+										</div>
+									</form>
+								</div>
+								
+								<div class="cards-lock">
+									<i class="fa fa-lock"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="cards-box thanks" ng-class="{'shown': feedback_sent}">
+						<div class="cards-box-content">
+							<div class="cards-number">
+								Klaar
+							</div>
+							
+							<h2>U bent klaar!</h2>
+							
+							<h3 class="sub">
+								Bedankt dat u meedeed aan ons patiënttevredenheidsonderzoek.<br />
+								U kunt nu het venster sluiten.
+							</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="rating-footer">
+				<div class="container">
+					<div class="footer-wrapper">
+						<img src="./application/views/images/logo_bw.png" alt="" />
+						<p>Dit patiënttevredenheidsonderzoek wordt uitgevoerd met Patiëntenreview door {{i.user.username}}.</p>
+						<div>Geadresseerd aan: {{i.user.email}}</div>
+						<div>Beoordeling te wijizgen tot: {{i.info.last_date}} om {{i.info.last_time}}</div>
+						<a href="javascript:void(0);" ng-if=" ! short" ng-click="unsubscribe()" class="unsubscribe">Ik wil geen e-mails van Patiëntenreview meer ontvangen.</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/ng-template" id="exinv.html">
+			<div class="modal-body">
+				<p>
+					Dit is een voorbeeld van de pagina die uw patiënten te zien
+					krijgen. Uw beoordeling zal niet worden verwerkt.
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="cancel()">Prima</button>
+			</div>
+		</script>
+		
+		<script type="text/ng-template" id="negative.html">
+			<div class="modal-header">
+				<h4>Bevestig uw beoordeling</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					<b>U gaf de volgende beoordeling:</b>&nbsp;
+					<i class="glyphicon glyphicon-star color-warning" ng-if="vote >= 1"></i>
+					<i class="glyphicon glyphicon-star color-warning" ng-if="vote >= 2"></i>
+					<i class="glyphicon glyphicon-star color-warning" ng-if="vote >= 3"></i>
+					<i class="glyphicon glyphicon-star color-warning" ng-if="vote >= 4"></i>
+					<i class="glyphicon glyphicon-star color-warning" ng-if="vote >= 5"></i>
+					<b class="color-danger" ng-if="vote < 2">{{vote}} ster</b>
+					<b class="color-danger" ng-if="vote == 2">{{vote}} sterren</b>
+					<b ng-if="vote >= 3">{{vote}} sterren</b>
+				</p>
+				
+				<p>
+					Bevestig uw beoordeling door op 'Bevestig' te klikken. Als deze beoordeling niet klopt kunt u deze wijzigen.
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-default" ng-click="cancel()">Wijzig</button>
+				<button class="btn btn-primary" ng-click="close()">Bevestig</button>
+			</div>
+		</script>
+		
+		<script type="text/ng-template" id="unsubscribe.html">
+			<div class="modal-header">
+				<h4>Uitschrijven gelukt</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					U zult vanaf nu geen e-mailuitnodigingen van Patiëntenreview meer ontvangen.
+				</p>
+				
+				<p>
+					<a href="javascript:void(0);" ng-click="undo()">Maak uitschrijven ongedaan</a>
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="cancel()">Ok</button>
+			</div>
+		</script>
+		
+		<script type="text/ng-template" id="undo.html">
+			<div class="modal-header">
+				<h4>Uitschrijven ongedaan gemaakt</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					U ontvangt mogelijk in de toekomst weer een e-mailuitnodiging van uw zorgverlener.
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="cancel()">Ok</button>
+			</div>
+		</script>
+		
+		<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+        <script src="/application/views/scripts/vendor.js"></script>
+        <script src="/application/views/scripts/ui.js"></script>
+		<script src="/application/views/scripts/angular-upload.min.js"></script>
+		<script src="/application/views/scripts/ng-sortable.min.js"></script>
+		<script src="/application/views/scripts/bootstrap-colorpicker-module.min.js"></script>
+		<script src="/application/views/scripts/app.js"></script>
+		
+		<!-- Begin Inspectlet Embed Code -->
+		<script type="text/javascript" id="inspectletjs">
+		if (window.location.host != "pr.my")
+		{
+			window.__insp = window.__insp || [];
+			__insp.push(['wid', 1110849190]);
+			(function() {
+			function ldinsp(){if(typeof window.__inspld != "undefined") return; window.__inspld = 1; var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); };
+			setTimeout(ldinsp, 500); document.readyState != "complete" ? (window.attachEvent ? window.attachEvent('onload', ldinsp) : window.addEventListener('load', ldinsp, false)) : ldinsp();
+			})();
+		}
+		</script>
+		<!-- End Inspectlet Embed Code -->
+    </body>
+</html>

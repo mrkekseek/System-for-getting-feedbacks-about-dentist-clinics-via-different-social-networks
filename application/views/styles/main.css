@@ -107,13 +107,6 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 	max-height: 40px;
 }
 
-.top-box {
-	padding: 9px 0;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-	position: relative;
-	z-index: 1;
-}
-
 .username-text {
 	color: #626262;
 	margin: 0;
@@ -1539,23 +1532,9 @@ label.ui-switch {
 
 .invitation-header {
 	padding: 50px 0;
-	background: url("../images/back.jpg") center;
-	background-size: cover;
 	position: relative;
 	z-index: 0;
 	margin-bottom: 30px;
-}
-
-.invitation-header:before {
-	content: "";
-	display: block;
-	position: absolute;
-	z-index: -1;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	background: rgba(255, 255, 255, 0.9);
 }
 
 .invitation-header .callout {
@@ -2142,4 +2121,473 @@ span.pro {
 
 .widget-body {
 	background: transparent;
+}
+
+
+
+
+
+
+
+
+
+.top-box {
+	padding: 20px;
+	position: absolute;
+	z-index: 1;
+	left: 0;
+	right: 0;
+	top: -72px;
+}
+
+.invitation-box {
+	margin-top: 72px;
+	opacity: 0;
+	transition: all 0.2s ease 0s;
+}
+
+.invitation-box.shown {
+	opacity: 1;
+}
+
+.rating-page-back {
+	padding-top: 130px;
+	position: relative;
+	z-index: 0;
+	background: url("../images/back.jpg") center top no-repeat;
+	background-size: 100% auto;
+}
+
+.app > .main-container.rating-page-back:before {
+	background: transparent;
+}
+
+.rating-page-grad {
+	position: absolute;
+	z-index: 0;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0.9;
+}
+
+.cards-container {
+	max-width: 940px;
+	margin: 0 auto;
+	position: relative;
+	z-index: 1;
+	font-family: arial, sans-serif;
+}
+
+.cards-box {
+	background: #fff;
+	border-radius: 2px;
+	box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.29);
+	overflow: hidden;
+	padding: 0;
+	position: relative;
+	z-index: 0;
+	margin-bottom: 20px;
+}
+
+.cards-box.no-bottom-marging {
+	margin-bottom: 0;
+}
+
+.cards-lock {
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(255, 255, 255, 0.98);
+	border-radius: 2px;
+}
+
+.cards-box.active .cards-lock {
+	display: none;
+}
+
+.cards-lock .fa-lock {
+	bottom: 0;
+    color: #b1b1b1;
+    display: block;
+    font-size: 54px;
+    height: 30px;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    width: 39px;
+}
+
+.cards-box-content {
+	padding: 40px 50px 50px;
+	position: relative;
+	z-index: 0;
+}
+
+.cards-number {
+	background-color: lightgrey;
+    border-radius: 2px;
+    color: white;
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    height: 18px;
+    line-height: 14px;
+    margin-bottom: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2px;
+    text-align: center;
+    width: 57px;
+	text-transform: uppercase;
+}
+
+.cards-box-content h2 {
+	color: #575757;
+    font-size: 21px;
+    font-weight: 100;
+    line-height: 36px;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: center;
+}
+
+.cards-box-content h3.sub {
+	color: #757575;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 21px;
+    margin-bottom: 50px;
+    margin-top: 0;
+    text-align: center;
+}
+
+.stars-box,
+.stars-number-box {
+    display: block;
+    font-size: 59px;
+    line-height: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 320px;
+}
+
+.stars-item {
+	float: left;
+    height: 64px;
+    position: relative;
+    width: 64px;
+}
+
+.stars-number-item {
+	float: left;
+    height: 16px;
+    position: relative;
+    width: 64px;
+}
+
+.stars-item .fa-star,
+.stars-item .fa-star-o {
+	font-size: 67px;
+    height: 52px;
+    line-height: 51px;
+    margin: 5px 1px;
+    position: absolute;
+    text-align: center;
+    width: 60px;
+}
+
+.stars-item .fa-star {
+	cursor: pointer;
+    font-size: 67px;
+    opacity: 0;
+}
+
+.stars-number {
+	bottom: 0;
+    color: #adadad;
+    font-family: Lato, sans-serif;
+    font-size: 16px;
+    left: 0;
+    line-height: 16px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    width: 100%;
+}
+
+.stars-box:hover .stars-item .fa-star,
+.stars-box .stars-item.active .fa-star {
+	opacity: 1;
+}
+
+.stars-box:hover .stars-item:hover + .stars-item .fa-star,
+.stars-box:hover .stars-item:hover + .stars-item + .stars-item .fa-star,
+.stars-box:hover .stars-item:hover + .stars-item + .stars-item + .stars-item .fa-star,
+.stars-box:hover .stars-item:hover + .stars-item + .stars-item + .stars-item + .stars-item .fa-star {
+	opacity: 0;
+}
+
+.cards-box-content .doctors-box h3.sub {
+	margin-bottom: 15px;
+    margin-top: 30px;
+}
+
+.doctors-list {
+	display: block;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+	background-image: linear-gradient(white 0px, #f3f3f3 100%);
+}
+
+.rating-row {
+	margin: 0 -10px -20px -10px;
+}
+
+.rating-row > div {
+	padding: 0 10px;
+}
+
+.rating-panel {
+	margin-bottom: 20px;
+}
+
+.rating-heading {
+	padding: 20px 20px 80px;
+}
+
+.rating-logo {
+	background-color: white;
+    border-radius: 2px;
+    height: 80px;
+    padding: 10px;
+	text-align: center;
+	line-height: 60px;
+}
+
+.rating-logo img {
+	max-width: 160px;
+	max-height: 40px;
+}
+
+.rating-btn {
+	display: block;
+	background-color: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    cursor: pointer;
+    padding: 25px;
+    text-align: center;
+    text-decoration: underline;
+    transition: background-color 200ms ease 0s;
+    width: 100%;
+}
+
+.rating-btn:hover,
+.rating-btn:focus {
+	background-color: rgba(0, 0, 0, 0.5);
+	color: #fff;
+}
+
+.rating-google {
+	background: #34A954;
+}
+
+.rating-zorgkaart {
+	background: #F29619;
+}
+
+.rating-facebook {
+	background: #3B589E;
+}
+
+.rating-independer {
+	background: #825F87;
+}
+
+.rating-telefoonboek {
+	background: #8CC746;
+}
+
+.rating-vergelijkmondzorg {
+	background: #006599;
+}
+
+.rating-kliniekoverzicht {
+	background: #BDF7E8;
+}
+
+.rating-own {
+	background: #757575;
+}
+
+.cards-box-content h5 {
+	color: #4d4d4d;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+.list {
+	color: #5e5e5e;
+    font-size: 13px;
+    line-height: 18px;
+    margin-bottom: 0;
+    padding-left: 20px;
+}
+
+.form-control.feedback-area {
+	height: 90px;
+}
+
+.small {
+	color: #757575;
+    font-size: 11px;
+}
+
+.cards-box .checkbox {
+	margin: 0 0 5px;
+}
+
+.cards-box-content .btn {
+	white-space: normal;
+}
+
+.cards-box.thanks {
+	display: none;
+	overflow: visible;
+	margin: 40px 0 0;
+}
+
+.cards-box.thanks.shown {
+	display: block;
+}
+
+.rating-footer {
+	background: whitesmoke;
+	font-size: 12px;
+    padding: 50px;
+    text-align: center;
+	color: #9e9e9e;
+}
+
+.footer-wrapper {
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 500px;
+}
+
+.footer-wrapper img {
+	height: 30px;
+	margin-bottom: 30px;
+}
+
+.unsubscribe {
+	color: #747474;
+    display: block;
+    margin-top: 10px;
+	text-decoration: underline;
+}
+
+.unsubscribe:hover,
+.unsubscribe:focus,
+.unsubscribe:active {
+	color: #747474;
+	text-decoration: none;
+}
+
+.list-top {
+	margin-top: 15px;
+}
+
+.cards-box-top {
+	color: #636363;
+    padding: 10px;
+    text-align: center;
+}
+
+.cards-box-top.negative-rating {
+	color: #cc5050;
+}
+
+.cards-box-top .fa,
+.cards-box-top .fa:hover,
+.cards-box-top .fa:focus {
+    font-size: 15px;
+	text-decoration: none;
+}
+
+.cards-collapse {
+	max-height: auto;
+	overflow: hidden;
+	transition: all 0.2s ease 0s;
+}
+
+.cards-collapse.closed {
+	max-height: 0;
+}
+
+.cards-collapse.opening {
+	max-height: 1000px;
+}
+
+@media (max-width: 991px) {
+	.rating-page-back {
+		padding: 20px;
+	}
+}
+
+@media (max-width: 768px) {
+	.cards-box-content {
+		padding: 15px;
+	}
+	
+	.stars-item {
+		height: 50px;
+	}
+	
+	.stars-item,
+	.stars-number-item {
+		width: 40px;
+	}
+	
+	.stars-item .fa-star,
+	.stars-item .fa-star-o {
+		width: 40px;
+		height: 35px;
+		line-height: 35px;
+	}
+	
+	.stars-box,
+	.stars-number-box {
+		width: 200px;
+	}
+	
+	.stars-item .fa-star,
+	.stars-item .fa-star-o {
+		font-size: 40px;
+	}
+	
+	.doctors-list {
+		width: 100%;
+	}
+	
+	.button-xs {
+		margin: 15px 0;
+	}
+	
+	.rating-footer {
+		padding: 20px;
+	}
 }

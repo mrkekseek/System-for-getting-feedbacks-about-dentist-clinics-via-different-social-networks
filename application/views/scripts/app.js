@@ -201,6 +201,11 @@
             brand: 'Patiëntenreview.nl',
             name: 'Lisa Doe' // those which use i18n directive will not be updated for now
         };
+		
+		$scope.apps = {};
+		$scope.apps.title = 'Patiëntenreview.nl';
+		$scope.apps.ready = false;
+		
 		$scope.loader = false;
 
         $scope.pageTransitionOpts = [
@@ -445,7 +450,7 @@
                 console.log("Modal dismissed at: " + new Date());
             });
 		};
-				
+
 		$scope.after_logged_in = function() {
 			$http.post("/pub/check_updates/").success(function(data, status, headers, config) {
 				var result = logger.check(data);
@@ -479,7 +484,10 @@
 			});
 		};
 		
-		$scope.after_logged_in();
+		if ($location.path() != '')
+		{
+			$scope.after_logged_in();
+		}
 		
 		$scope.users_list = "";
 		$scope.user = {};
@@ -2780,6 +2788,8 @@
     function InvitationCtrl($scope, $rootScope, $window, $http, $location, $modal, logger) {
 		$scope.ex = false;
 		$scope.vote = 0;
+		$scope.is_vote = false;
+		$scope.revote = false;
 		$scope.id = 0;
 		$scope.doc = {};
 		$scope.doc.id = 0;
@@ -2787,29 +2797,101 @@
 		$scope.feedback_success = false;
 		$scope.feedback = {};
 		$scope.feedback_success2 = false;
-		$scope.init_end = false;
+		
+		$scope.i = {};
+		$scope.logo = '/application/views/images/logo_full.png';
+		$scope.color = '#0f75bc';
+		$scope.onlines_keys = ['google', 'facebook', 'zorgkaart', 'independer'];
+		$scope.onlines = [];
+		$scope.onlines_col = 12;
+		$scope.anonymus = [];
+		$scope.anonymus[0] = false;
+		
+		$scope.feedback_sent = false;
 
-		$scope.init = function(vote, feedback, id, ex, users_id, doctors_id, short_var)
+		$scope.init = function()
 		{
-			$scope.short = short_var;
-			$scope.id = id;
-			$scope.users_id = users_id;
-			$scope.doctors_id = doctors_id;
-			$scope.doc.id = $scope.doctors_id;
-			$scope.vote = vote;
-			$scope.feedback.one = feedback;
-			$scope.feedback.two = feedback;
-			$scope.init_end = true;
-			$scope.ex = ex;
-			
-			if ($scope.ex)
+			var segments = $window.location.pathname.split('/');
+			$http.post("/pub/rating_page_get/", {segments: segments}).success(function(data, status, headers, config) {
+				$scope.i = logger.check(data);
+				if ($scope.i)
+				{
+					$scope.short = $scope.i.short;
+					$scope.id = $scope.i.info.id || 0;
+					$scope.vote = $scope.i.info.stars;
+					$scope.is_vote = $scope.vote > 0 ? true : false;
+					$scope.feedback.one = $scope.i.info.feedback;
+					$scope.feedback.init = $scope.i.info.feedback;
+					$scope.users_id = $scope.i.user ? $scope.i.user.id : 0;
+					$scope.doctors_id = $scope.i.info ? $scope.i.info.doctor : 0;
+					$scope.doc.id = $scope.doctors_id * 1;
+					$scope.ex = $scope.i.info ? $scope.i.info.ex : $scope.ex;
+
+					if ($scope.i.user)
+					{
+						$scope.logo = $scope.i.user.logo ? $scope.i.user.logo : $scope.logo;
+						$scope.color = $scope.i.user.color ? $scope.i.user.color : $scope.color;
+						
+						if ($scope.i.user.account_type == "1" || $scope.i.user.account == "2")
+						{
+							$scope.onlines_keys = ['google', 'facebook', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own'];
+						}
+						
+						if ($scope.vote > 0 && $scope.vote <= 2)
+						{
+							$scope.onlines_keys = ['zorgkaart'];
+						}
+						
+						$scope.rebuild_onlines();
+					}
+					
+					if ($scope.ex)
+					{
+						$scope.open_modal();
+					}
+					
+					if ($scope.vote <= 2 && $scope.vote > 0)
+					{
+						$scope.negative_modal();
+					}
+				}
+				
+				$scope.apps.title = ! $scope.unsubscribe ? ( ! $scope.i.user.username ? "Oeps..." : ("Beoordeel " + $scope.i.user.username)) : "We hebben uw verzoek ontvangen.";
+				$scope.apps.ready = true;
+			});
+		};
+		
+		$scope.init();
+		
+		$scope.rebuild_onlines = function() {
+			var cols = 0;
+			var onlines = [];
+			for (var key in $scope.onlines_keys)
 			{
-				$scope.open_modal();
+				var s = $scope.onlines_keys[key];
+				if ($scope.i.user[s + '_checked'] == '1' && $scope.i.user[s] != '')
+				{
+					cols++;
+					var temp = {"system": s,
+								"url": $scope.i.user[s],
+								"pos": $scope.i.user[s + '_pos'] * 1};
+
+					if (s == "zorgkaart" && $scope.i.doctor && $scope.i.doctor.zorgkaart != '')
+					{
+						temp.url = $scope.i.doctor.zorgkaart;
+					}
+					
+					onlines.push(temp);
+				}
 			}
 			
-			if ($scope.vote <= 2 && $scope.vote > 0 && ! $scope.short)
+			onlines.sort(function(a, b) { return a.pos - b.pos; });
+			$scope.onlines = onlines;
+			
+			if (cols > 0)
 			{
-				$scope.negative_modal();
+				cols = Math.round(12 / cols);
+				$scope.onlines_col = cols < 4 ? 4 : cols;
 			}
 		};
 		
@@ -2839,6 +2921,59 @@
             });
         };
 		
+		$scope.hash = "";
+		$scope.unsubscribe = function() {
+			var segments = $window.location.pathname.split('/');
+			$http.post("/pub/unsubscribe_ajax/", {hash: segments[2]}).success(function(data, status, headers, config) {
+				var result = {};
+				if (result = logger.check(data))
+				{
+					$scope.hash = result.hash;
+					var modalInstance;
+					modalInstance = $modal.open({
+						templateUrl: "unsubscribe.html",
+						controller: 'ModalUnsubscribeCtrl',
+						resolve: {
+							items: function() {
+								return [];
+							}
+						}
+					});
+					
+					modalInstance.result.then((function(result) {
+						if (result == 'undo')
+						{
+							$scope.undo();
+						}
+					}), function() {
+						console.log("Modal dismissed at: " + new Date());
+					});
+				}
+			});
+		};
+		
+		$scope.undo = function() {
+			$http.post("/pub/undo/", {hash: $scope.hash}).success(function(data, status, headers, config) {
+				var modalInstance;
+				modalInstance = $modal.open({
+					templateUrl: "undo.html",
+					controller: 'ModalUndoCtrl',
+					resolve: {
+						items: function() {
+							return [];
+						}
+					}
+				});
+				
+				modalInstance.result.then((function(result) {
+					console.log(result);
+				}), function() {
+					console.log("Modal dismissed at: " + new Date());
+				});
+			});
+		};
+		
+		$scope.vote_tmp = 0;
 		$scope.negative_modal = function() {
             var modalInstance;
             modalInstance = $modal.open({
@@ -2846,18 +2981,37 @@
                 controller: 'ModalExampleNegativeCtrl',
                 resolve: {
                     items: function() {
-						return $scope.vote;
+						return $scope.vote_tmp;
 					}
                 }
             });
 			
 			modalInstance.result.then((function(vote) {
-				$scope.vote = vote == "zero" ? 0 : $scope.vote;
-				$http.post("/pub/vote/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, stars: $scope.vote}).success(function(data, status, headers, config) {
+				vote = vote == "zero" ? 0 : $scope.vote_tmp;
+				$http.post("/pub/vote/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, stars: vote}).success(function(data, status, headers, config) {
 					var result = {};
 					if (result = logger.check(data))
 					{
 						$scope.id = result.id;
+						$scope.vote = result.stars;
+						$scope.change_revote( ! $scope.is_vote);
+						
+						if ($scope.vote <= 2 && $scope.vote > 0)
+						{
+							$scope.onlines_keys = ['zorgkaart'];
+						}
+						else
+						{
+							if ($scope.i.user && ($scope.i.user.account_type == "1" || $scope.i.user.account == "2"))
+							{
+								$scope.onlines_keys = ['google', 'facebook', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own'];
+							}
+							else
+							{
+								$scope.onlines_keys = ['google', 'facebook', 'zorgkaart', 'independer'];
+							}
+						}
+						$scope.rebuild_onlines();
 					}
 				});
             }), function() {
@@ -2869,8 +3023,8 @@
 		{
 			if ( ! $scope.ex)
 			{
-				$scope.vote = num;
-				if ($scope.vote <= 2 && $scope.vote > 0 && ! $scope.short)
+				$scope.vote_tmp = num;
+				if (num <= 2 && num > 0)
 				{
 					$scope.negative_modal();
 				}
@@ -2882,24 +3036,50 @@
 						{
 							$scope.vote = result.stars;
 							$scope.id = result.id;
+							$scope.change_revote( ! $scope.is_vote);
+							
+							if ($scope.vote <= 2 && $scope.vote > 0)
+							{
+								$scope.onlines_keys = ['zorgkaart'];
+							}
+							else
+							{
+								if ($scope.i.user && ($scope.i.user.account_type == "1" || $scope.i.user.account == "2"))
+								{
+									$scope.onlines_keys = ['google', 'facebook', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own'];
+								}
+								else
+								{
+									$scope.onlines_keys = ['google', 'facebook', 'zorgkaart', 'independer'];
+								}
+							}
+							$scope.rebuild_onlines();
 						}
 					});
 				}
 			}
 		};
+		
+		$scope.change_revote = function(value) {
+			$scope.revote = value || (! $scope.revote);
+		};
 
+		$scope.form = {};
 		$scope.save_feedback = function()
 		{
 			if ( ! $scope.ex)
 			{
 				if ( ! $scope.form.formOne.$error.required)
 				{
-					$http.post("/pub/feedback/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, feedback: $scope.feedback.one}).success(function(data, status, headers, config) {
+					$http.post("/pub/feedback/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, feedback: $scope.feedback.one, anonymus: $scope.anonymus[0]}).success(function(data, status, headers, config) {
 						var result = {};
 						if (result = logger.check(data))
 						{
 							$scope.id = result.id;
 							$scope.feedback_success = true;
+							
+							$scope.feedback_sent = true;
+							$scope.feedback.init = $scope.feedback.one;
 						}
 					});
 				}
@@ -2909,7 +3089,7 @@
 				}
 			}
 		};
-		$scope.form = {};
+		
 		$scope.save_feedback2 = function()
 		{
 			if ( ! $scope.ex)
@@ -2944,16 +3124,6 @@
 					});
 				}
 			}
-		};
-		
-		$scope.undo_check = false;
-		$scope.undo = function()
-		{
-			var hash = $window.location.href.split("/");
-			$http.post("/pub/undo/", {hash: hash[hash.length - 2]}).success(function(data, status, headers, config) {
-				logger.check(data);
-				$scope.undo_check = true;
-			});
 		};
     }
 
@@ -5781,6 +5951,8 @@
 		.controller('ModalExampleInvCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalExampleInvCtrl])
 		.controller('ModalExampleNegativeCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalExampleNegativeCtrl])
 		.controller('ModalInstanceBulkCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceBulkCtrl])
+		.controller('ModalUnsubscribeCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUnsubscribeCtrl])
+		.controller('ModalUndoCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUndoCtrl])
         .controller('PaginationDemoCtrl', ['$scope', PaginationDemoCtrl])
         .controller('TabsDemoCtrl', ['$scope', TabsDemoCtrl])
         .controller('TreeDemoCtrl', ['$scope', TreeDemoCtrl])
@@ -6759,6 +6931,22 @@
         };
 		
 		$scope.close = function() {
+            $modalInstance.dismiss("cancel");
+        };
+    };
+	
+	function ModalUnsubscribeCtrl($scope, $modalInstance, $http, logger, items) {
+		$scope.cancel = function() {
+            $modalInstance.dismiss("cancel");
+        };
+		
+		$scope.undo = function() {
+            $modalInstance.close("undo");
+        };
+    };
+	
+	function ModalUndoCtrl($scope, $modalInstance, $http, logger, items) {
+		$scope.cancel = function() {
             $modalInstance.dismiss("cancel");
         };
     };
