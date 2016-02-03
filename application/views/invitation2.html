@@ -43,9 +43,9 @@
 							<span class="cards-top-text">{{vote}}</span>
 							<a href="javascript:void(0);" class="fa fa-chevron-down" style="color: {{color}};" ng-click="change_revote()"></a>
 						</div>
-						
-						<div class="cards-collapse" ng-class="{'closed': is_vote, 'opening': revote}">
-							<div class="cards-box-content">
+
+						<div class="cards-box-content">
+							<div class="cards-collapse" ng-class="{'closed': is_vote, 'opening': revote}">
 								<div class="cards-number" ng-if=" ! is_vote">
 									Stap 1
 								</div>
@@ -66,14 +66,14 @@
 										<div class="stars-number">{{star}}</div>
 									</div>
 								</div>
-								
-								<div class="doctors-box" ng-if="i.doctors.length">
-									<h3 class="sub">Door wie bent u geholpen?</h3>
-									<select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
-										<option value="0">Kies een zorgverlener...</option>
-										<option ng-repeat="d in i.doctors" value="{{d.id}}" ng-selected="d.id == doc.id">{{[d.title, d.firstname, d.lastname].join(' ')}}</option>
-									</select>
-								</div>
+							</div>
+							
+							<div class="doctors-box" ng-if="i.doctors.length">
+								<h3 class="sub">Door wie bent u geholpen?</h3>
+								<select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
+									<option value="0">Kies een zorgverlener...</option>
+									<option ng-repeat="d in i.doctors" value="{{d.id}}" ng-selected="d.id == doc.id">{{[d.title, d.firstname, d.lastname].join(' ')}}</option>
+								</select>
 							</div>
 						</div>
 					</div>

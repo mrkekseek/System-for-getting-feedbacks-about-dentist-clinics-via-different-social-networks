@@ -2823,7 +2823,7 @@
 					$scope.feedback.one = $scope.i.info.feedback;
 					$scope.feedback.init = $scope.i.info.feedback;
 					$scope.users_id = $scope.i.user ? $scope.i.user.id : 0;
-					$scope.doctors_id = $scope.i.info ? $scope.i.info.doctor : 0;
+					$scope.doctors_id = ($scope.i.info && $scope.i.info.doctor) ? $scope.i.info.doctor : 0;
 					$scope.doc.id = $scope.doctors_id * 1;
 					$scope.ex = $scope.i.info ? $scope.i.info.ex : $scope.ex;
 
