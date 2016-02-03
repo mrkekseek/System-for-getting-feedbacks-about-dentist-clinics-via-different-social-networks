@@ -192,7 +192,7 @@
 					<div class="footer-wrapper">
 						<img src="/application/views/images/logo_bw.png" alt="" />
 						<p>Dit patiënttevredenheidsonderzoek wordt uitgevoerd met Patiëntenreview door {{i.user.username}}.</p>
-						<div>Geadresseerd aan: {{i.user.email}}</div>
+						<div ng-if="i.info.email != ''">Geadresseerd aan: {{i.info.email}}</div>
 						<div>Beoordeling te wijizgen tot: {{i.info.last_date}} om {{i.info.last_time}}</div>
 						<a href="javascript:void(0);" ng-if=" ! short" ng-click="unsubscribe()" class="unsubscribe">Ik wil geen e-mails van Patiëntenreview meer ontvangen.</a>
 					</div>
