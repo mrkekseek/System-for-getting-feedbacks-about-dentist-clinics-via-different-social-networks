@@ -2856,7 +2856,7 @@
 					}
 				}
 				
-				$scope.apps.title = ! $scope.unsubscribe ? ( ! $scope.i.user.username ? "Oeps..." : ("Beoordeel " + $scope.i.user.username)) : "We hebben uw verzoek ontvangen.";
+				$scope.apps.title =  ! $scope.i.user.username ? "Oeps..." : ("Beoordeel " + $scope.i.user.username + " - Patiëntenreview");
 				$scope.apps.ready = true;
 			});
 		};
