@@ -2995,7 +2995,10 @@
 					{
 						$scope.id = result.id;
 						$scope.vote = result.stars;
-						console.log( ! $scope.is_vote);
+						if ($scope.vote == 0)
+						{
+							$scope.is_vote = false;
+						}
 						$scope.change_revote( ! $scope.is_vote);
 						
 						if ($scope.vote <= 2 && $scope.vote > 0)
