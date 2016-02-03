@@ -36,16 +36,16 @@
 
 				<div class="cards-container">
 					<div class="cards-box">
-						<div class="cards-box-top" ng-if="is_vote" ng-class="{'negative-rating': vote <= 2, 'positive-rating': vote > 2}">
+						<div class="cards-box-top" ng-if="is_vote" ng-class="{'negative-rating': vote <= 2, 'positive-rating': vote > 2}" ng-click="change_revote( ! revote)">
 							<span class="cards-top-text" ng-if="vote <= 2">Nee, ik zou Praktijknaam niet aanbevelen.</span>
 							<span class="cards-top-text" ng-if="vote > 2">Ja, ik zou Praktijknaam aanbevelen.</span>
 							<i class="fa fa-star" style="color: {{color}};"></i>
 							<span class="cards-top-text">{{vote}}</span>
-							<a href="javascript:void(0);" class="fa fa-chevron-down" style="color: {{color}};" ng-click="change_revote()"></a>
+							<a href="javascript:void(0);" class="fa fa-chevron-down" style="color: {{color}};"></a>
 						</div>
-						
-						<div class="cards-collapse" ng-class="{'closed': is_vote, 'opening': revote}">
-							<div class="cards-box-content">
+
+						<div class="cards-box-content">
+							<div class="cards-collapse" ng-class="{'closed': is_vote, 'opening': revote}">
 								<div class="cards-number" ng-if=" ! is_vote">
 									Stap 1
 								</div>
@@ -66,14 +66,14 @@
 										<div class="stars-number">{{star}}</div>
 									</div>
 								</div>
-								
-								<div class="doctors-box" ng-if="i.doctors.length">
-									<h3 class="sub">Door wie bent u geholpen?</h3>
-									<select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
-										<option value="0">Kies een zorgverlener...</option>
-										<option ng-repeat="d in i.doctors" value="{{d.id}}" ng-selected="d.id == doc.id">{{[d.title, d.firstname, d.lastname].join(' ')}}</option>
-									</select>
-								</div>
+							</div>
+							
+							<div class="doctors-box" ng-if="i.doctors.length">
+								<h3 class="sub">Door wie bent u geholpen?</h3>
+								<select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
+									<option value="0">Kies een zorgverlener...</option>
+									<option ng-repeat="d in i.doctors" value="{{d.id}}" ng-selected="d.id == doc.id">{{[d.title, d.firstname, d.lastname].join(' ')}}</option>
+								</select>
 							</div>
 						</div>
 					</div>
@@ -190,9 +190,9 @@
 			<div class="rating-footer">
 				<div class="container">
 					<div class="footer-wrapper">
-						<img src="./application/views/images/logo_bw.png" alt="" />
+						<img src="/application/views/images/logo_bw.png" alt="" />
 						<p>Dit patiënttevredenheidsonderzoek wordt uitgevoerd met Patiëntenreview door {{i.user.username}}.</p>
-						<div>Geadresseerd aan: {{i.user.email}}</div>
+						<div ng-if="i.info.email != ''">Geadresseerd aan: {{i.info.email}}</div>
 						<div>Beoordeling te wijizgen tot: {{i.info.last_date}} om {{i.info.last_time}}</div>
 						<a href="javascript:void(0);" ng-if=" ! short" ng-click="unsubscribe()" class="unsubscribe">Ik wil geen e-mails van Patiëntenreview meer ontvangen.</a>
 					</div>

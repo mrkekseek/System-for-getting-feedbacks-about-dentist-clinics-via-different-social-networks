@@ -2810,6 +2810,10 @@
 				$email = "support@cloudrocket.co";
 				$data_array = array('domain' => (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/',
 									'feedback' => $post['text'],
+									'first' => $post['first'],
+									'second' => $post['second'],
+									'third' => $post['third'],
+									'feedback' => $post['text'],
 									'date' => date("H:i d.m.Y"),
 									'email' => $row['email'],
 									'username' => $row['username']);

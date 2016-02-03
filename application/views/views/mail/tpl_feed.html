@@ -32,9 +32,27 @@
 							Praktijk: <?php echo $username; ?>
 						</p>
 						
+						<?php if ( ! empty($first)) { ?>
+						<p style="margin: 0; font: 13px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
+							Waarvoor wilt u een melding doen?: <?php echo $first; ?>
+						</p>
+						<?php } ?>
+						
+						<?php if ($first == 'Ik heb een fout of probleem ontdekt' && ! empty($second)) { ?>
+						<p style="margin: 0; font: 13px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
+							In welke categorie zou u deze melding indelen?: <?php echo $second; ?>
+						</p>
+						<?php } ?>
+						
 						<p style="margin: 0; font: 13px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
 							<?php echo $feedback; ?>
 						</p>
+						
+						<?php if ( ! empty($third)) { ?>
+						<p style="margin: 0; font: 13px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
+							Important: This client requested to be informed about the status of this bug per email! <?php echo $email; ?>
+						</p>
+						<?php } ?>
 					</div>
 				</div>
 				
