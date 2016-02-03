@@ -454,7 +454,7 @@
 		$scope.after_logged_in = function() {
 			$http.post("/pub/check_updates/").success(function(data, status, headers, config) {
 				var result = logger.check(data);
-				if (result)
+				if (result && result.length)
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
@@ -6244,10 +6244,15 @@
 	function ModalInstanceFeedbackCtrl($scope, $modalInstance, $http, logger, items) {
         $scope.items = items;
 		$scope.loader = false;
+		
+		$scope.feedback = '';
+		$scope.feedback_1 = '';
+		$scope.feedback_2 = '';
+		$scope.feedback_3 = false;
 
         $scope.send = function() {
 			$scope.loader = true;
-            $http.post("/pub/send_feedback/", {text: $scope.feedback}).success(function(data, status, headers, config) {
+            $http.post("/pub/send_feedback/", {first: $scope.feedback_1, second: $scope.feedback_2, text: $scope.feedback, third: $scope.feedback_3}).success(function(data, status, headers, config) {
 				$scope.loader = false;
 				if (logger.check(data))
 				{
