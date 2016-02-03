@@ -2819,6 +2819,7 @@
 					$scope.short = $scope.i.short;
 					$scope.id = $scope.i.info.id || 0;
 					$scope.vote = $scope.i.info.stars;
+					$scope.vote_tmp = $scope.vote;
 					$scope.is_vote = $scope.vote > 0 ? true : false;
 					$scope.feedback.one = $scope.i.info.feedback;
 					$scope.feedback.init = $scope.i.info.feedback;
@@ -2994,6 +2995,7 @@
 					{
 						$scope.id = result.id;
 						$scope.vote = result.stars;
+						console.log( ! $scope.is_vote);
 						$scope.change_revote( ! $scope.is_vote);
 						
 						if ($scope.vote <= 2 && $scope.vote > 0)
@@ -3061,7 +3063,7 @@
 		};
 		
 		$scope.change_revote = function(value) {
-			$scope.revote = value || (! $scope.revote);
+			$scope.revote = value;
 		};
 
 		$scope.form = {};
