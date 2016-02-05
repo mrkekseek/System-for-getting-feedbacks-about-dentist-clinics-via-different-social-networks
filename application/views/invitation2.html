@@ -35,7 +35,19 @@
 				</div>
 
 				<div class="cards-container">
-					<div class="cards-box">
+					<div class="cards-box promo-box" ng-if="short && ! limit && ! errors">
+						<div class="cards-box-content">
+							<div class="cards-number">
+								PROMOTIECAMPAGNE
+							</div>
+							
+							<h2>Win een ... t.w.v. €69,99!</h2>
+							
+							<h3 class="sub">Om mee te doen aan deze promotie dient u alle stappen van deze beoordelingspagina te volgen. De winnaar(s) word(en) willekeurig gekozen uit het bestand van alle uitgenodigden. U ontvangt hierover per e-mail of telefoon bericht.</h3>
+						</div>
+					</div>
+							
+					<div class="cards-box" ng-if=" ! limit && ! errors">
 						<div class="cards-box-top" ng-if="is_vote" ng-class="{'negative-rating': vote <= 2, 'positive-rating': vote > 2}" ng-click="change_revote( ! revote)">
 							<span class="cards-top-text" ng-if="vote <= 2">Nee, ik zou Praktijknaam niet aanbevelen.</span>
 							<span class="cards-top-text" ng-if="vote > 2">Ja, ik zou Praktijknaam aanbevelen.</span>
@@ -78,7 +90,7 @@
 						</div>
 					</div>
 					
-					<div class="row rating-row">
+					<div class="row rating-row" ng-if=" ! limit && ! errors">
 						<div class="col-xs-12" ng-class="{'col-md-6 pull-right': vote <= 2 && vote > 0}">
 							<div class="cards-box" ng-if="onlines_col > 0"  ng-class="{active: vote > 0}">
 								<div class="cards-box-content">
@@ -170,7 +182,7 @@
 						</div>
 					</div>
 					
-					<div class="cards-box thanks" ng-class="{'shown': feedback_sent}">
+					<div class="cards-box thanks" ng-if=" ! limit && ! errors" ng-class="{'shown': feedback_sent}">
 						<div class="cards-box-content">
 							<div class="cards-number">
 								Klaar
@@ -184,6 +196,34 @@
 							</h3>
 						</div>
 					</div>
+					
+					<div class="cards-box" ng-if="limit && ! errors">
+						<div class="cards-box-content">
+							<div class="cards-number">
+								Klaar!
+							</div>
+							
+							<h2>U heeft deze praktijk recentelijk al beoordeeld!</h2>
+							
+							<h3 class="sub">
+								Om spam te voorkomen kunt u slechts één keer in 48 uur voor dezelfde praktijk een beoordeling en feedback achterlaten.
+							</h3>
+						</div>
+					</div>
+					
+					<div class="cards-box" ng-if="errors && ! limit">
+						<div class="cards-box-content">
+							<div class="cards-number red">
+								HET SPIJT ONS...
+							</div>
+							
+							<h2>Dit patiënttevredenheidsonderzoek is niet meer beschikbaar.</h2>
+							
+							<h3 class="sub">
+								Uw e-mailuitnodiging is verlopen of de praktijk heeft het onderzoek beëindigd.
+							</h3>
+						</div>
+					</div>
 				</div>
 			</div>
 			
@@ -193,7 +233,7 @@
 						<img src="/application/views/images/logo_bw.png" alt="" />
 						<p>Dit patiënttevredenheidsonderzoek wordt uitgevoerd met Patiëntenreview door {{i.user.username}}.</p>
 						<div ng-if="i.info.email != ''">Geadresseerd aan: {{i.info.email}}</div>
-						<div>Beoordeling te wijizgen tot: {{i.info.last_date}} om {{i.info.last_time}}</div>
+						<div ng-if="i.info.last > 0">Beoordeling te wijizgen tot: {{i.info.last_date}} om {{i.info.last_time}}</div>
 						<a href="javascript:void(0);" ng-if=" ! short" ng-click="unsubscribe()" class="unsubscribe">Ik wil geen e-mails van Patiëntenreview meer ontvangen.</a>
 					</div>
 				</div>
