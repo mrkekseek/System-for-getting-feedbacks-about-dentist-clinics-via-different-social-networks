@@ -2834,7 +2834,7 @@
 
 					if ($scope.i.user)
 					{
-						$scope.logo = $scope.i.user.logo ? $scope.i.user.logo : $scope.logo;
+						$scope.logo = ($scope.i.user.logo ? $scope.i.user.logo : $scope.logo).replace('./', '/');
 						$scope.color = $scope.i.user.color ? $scope.i.user.color : $scope.color;
 						
 						if ($scope.i.user.account_type == "1" || $scope.i.user.account == "2")
@@ -2855,7 +2855,7 @@
 						$scope.open_modal();
 					}
 					
-					if ($scope.vote <= 2 && $scope.vote > 0)
+					if ($scope.vote <= 2 && $scope.vote > 0 && ! $scope.limit && ! $scope.errors)
 					{
 						$scope.negative_modal();
 					}
