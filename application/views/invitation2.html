@@ -49,8 +49,8 @@
 							
 					<div class="cards-box" ng-if=" ! limit && ! errors">
 						<div class="cards-box-top" ng-if="is_vote" ng-class="{'negative-rating': vote <= 2, 'positive-rating': vote > 2}" ng-click="change_revote( ! revote)">
-							<span class="cards-top-text" ng-if="vote <= 2">Nee, ik zou Praktijknaam niet aanbevelen.</span>
-							<span class="cards-top-text" ng-if="vote > 2">Ja, ik zou Praktijknaam aanbevelen.</span>
+							<span class="cards-top-text" ng-if="vote <= 2">Nee, ik zou {{i.user.username}} niet aanbevelen.</span>
+							<span class="cards-top-text" ng-if="vote > 2">Ja, ik zou {{i.user.username}} aanbevelen.</span>
 							<i class="fa fa-star" style="color: {{color}};"></i>
 							<span class="cards-top-text">{{vote}}</span>
 							<a href="javascript:void(0);" class="fa fa-chevron-down" style="color: {{color}};"></a>
