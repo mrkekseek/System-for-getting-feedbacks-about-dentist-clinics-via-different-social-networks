@@ -3133,7 +3133,7 @@
 				if ( ! empty($row['stars']))
 				{
 					$row['ex'] = FALSE;
-					if ($row['last'] <= (time() - 48 * 3600))
+					if ($row['last'] >= (time() - 48 * 3600))
 					{
 						$row['limit'] = TRUE;
 					}
