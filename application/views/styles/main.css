@@ -2174,6 +2174,7 @@ span.pro {
 
 .cards-container {
 	max-width: 940px;
+	min-height: 500px;
 	margin: 0 auto;
 	position: relative;
 	z-index: 1;
@@ -2193,6 +2194,10 @@ span.pro {
 
 .cards-box.no-bottom-marging {
 	margin-bottom: 0;
+}
+
+.cards-box.promo-box {
+	background-color: #FAD200;
 }
 
 .cards-lock {
@@ -2235,7 +2240,7 @@ span.pro {
 	background-color: lightgrey;
     border-radius: 2px;
     color: white;
-    display: block;
+    display: table;
     font-size: 10px;
     font-weight: 700;
     height: 18px;
@@ -2243,10 +2248,27 @@ span.pro {
     margin-bottom: 25px;
     margin-left: auto;
     margin-right: auto;
-    padding: 2px;
+    padding: 2px 5px;
     text-align: center;
-    width: 57px;
 	text-transform: uppercase;
+}
+
+.promo-box .cards-box-content .cards-number {
+	background-color: #c7a005;
+}
+
+.cards-box-content .cards-number.red {
+	background-color: #ca2b2b;
+}
+
+.promo-box .cards-box-content h2 {
+	color: #5f4100;
+}
+
+.promo-box .cards-box-content h3.sub {
+	color: #5a4008;
+	margin-bottom: 0;
+	
 }
 
 .cards-box-content h2 {

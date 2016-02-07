@@ -2806,6 +2806,8 @@
 		$scope.onlines_col = 12;
 		$scope.anonymus = [];
 		$scope.anonymus[0] = false;
+		$scope.limit = false;
+		$scope.errors = false;
 		
 		$scope.feedback_sent = false;
 
@@ -2827,6 +2829,8 @@
 					$scope.doctors_id = ($scope.i.info && $scope.i.info.doctor) ? $scope.i.info.doctor : 0;
 					$scope.doc.id = $scope.doctors_id * 1;
 					$scope.ex = $scope.i.info ? $scope.i.info.ex : $scope.ex;
+					$scope.limit = $scope.i.info ? $scope.i.info.limit : $scope.limit;
+					$scope.errors = $scope.i.info ? $scope.i.info.errors : $scope.errors;
 
 					if ($scope.i.user)
 					{
@@ -2899,7 +2903,7 @@
 		$scope.set_doctor = function() {
 			$scope.doctors_id = $scope.doc.id;
 			$http.post("/pub/vote_doc/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id}).success(function(data, status, headers, config) {
-				logger.check(data)
+				logger.check(data);
 			});
 		};
 		
@@ -3041,6 +3045,9 @@
 						{
 							$scope.vote = result.stars;
 							$scope.id = result.id;
+							$scope.i.info.last = result.last;
+							$scope.i.info.last_date = result.last_date;
+							$scope.i.info.last_time = result.last_time;
 							$scope.change_revote( ! $scope.is_vote);
 							
 							if ($scope.vote <= 2 && $scope.vote > 0)
@@ -3081,6 +3088,9 @@
 						if (result = logger.check(data))
 						{
 							$scope.id = result.id;
+							$scope.i.info.last = result.last;
+							$scope.i.info.last_date = result.last_date;
+							$scope.i.info.last_time = result.last_time;
 							$scope.feedback_success = true;
 							
 							$scope.feedback_sent = true;

@@ -1995,6 +1995,10 @@
 					if ($this->db->insert("sent", $data_array))
 					{
 						$post['id'] = $this->db->insert_id();
+						$post['last'] = $data_array['last'];
+						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+				
 						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
 						return $post;
 					}
@@ -2009,6 +2013,9 @@
 					if ($this->db->update("sent", array('stars' => $post['stars'], 'status' => 2, 'last' => time())))
 					{
 						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						$post['last'] = time();
+						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
 						return $post;
 					}
 					else
@@ -2042,6 +2049,9 @@
 					if ($this->db->insert("sent", $data_array))
 					{
 						$post['id'] = $this->db->insert_id();
+						$post['last'] = $data_array['last'];
+						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
 						return $post;
 					}
 				}
@@ -2050,6 +2060,9 @@
 					$this->db->where("id", $post['id']);
 					if ($this->db->update("sent", array('doctor' => $post['doctors_id'], 'last' => time())))
 					{
+						$post['last'] = time();
+						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
 						return $post;
 					}
 				}
@@ -2072,6 +2085,10 @@
 				if ($this->db->insert("sent", $data_array))
 				{
 					$post['id'] = $this->db->insert_id();
+					$post['last'] = $data_array['last'];
+					$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+					$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+						
 					$this->errors[] = array("Success" => "Feedback verstuurd.");
 					return $post;
 				}
@@ -2097,6 +2114,9 @@
 				$this->db->where("id", $post['id']);
 				if ($this->db->update("sent", $data_array))
 				{
+					$post['last'] = $data_array['last'];
+					$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+					$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
 					$this->errors[] = array("Success" => "Feedback verstuurd.");
 					return $post;
 				}
@@ -3032,7 +3052,7 @@
 
 			if ( ! empty($row))
 			{
-				if (empty($row['stars']) || ( ! empty($row['stars']) && ($row['date'] + 2 * 24 * 60 * 60) >= time()))
+				if (empty($row['stars']) || ! empty($row['stars']) && ($row['date'] + 48 * 3600) >= time())
 				{
 					if ( ! $ex)
 					{
@@ -3049,8 +3069,17 @@
 					}
 
 					$row['ex'] = $ex;
-					return $row;
 				}
+				else
+				{
+					if ( ! empty($row['stars']) && ($row['date'] + 48 * 3600) < time())
+					{
+						$row['stars'] = 5;
+						$row['errors'] = TRUE;
+					}
+				}
+				
+				return $row;
 			}
 
 			return FALSE;
@@ -3095,25 +3124,34 @@
 				$this->db->where("doctor", $doctors_id);
 			}
 			$this->db->where("ip", $ip);
-			$this->db->where("last >=", time() - 48 * 3600);
 			$this->db->where("status <>", 3);
 			$this->db->limit(1);
 			$row = $this->db->get("sent")->row_array();
 
 			if ( ! empty($row))
 			{
-				$row['ex'] = FALSE;
-				$row['last_date'] = date("d-m-Y", $row['last'] + 48 * 3600);
-				$row['last_time'] = date("H:i", $row['last'] + 48 * 3600);
-			}
-			else
-			{
-				$row = array('stars' => 0,
-							 'feedback' => '',
-							 'id' => 0,
-							 'last_date' => '',
-							 'last_time' => '',
-							 'ex' => FALSE);
+				if ( ! empty($row['stars']))
+				{
+					$row['ex'] = FALSE;
+					if ($row['last'] <= (time() - 48 * 3600))
+					{
+						$row['limit'] = TRUE;
+					}
+					else
+					{
+						$row['last_date'] = date("d-m-Y", $row['last'] + 48 * 3600);
+						$row['last_time'] = date("H:i", $row['last'] + 48 * 3600);
+					}
+				}
+				else
+				{
+					$row = array('stars' => 0,
+								 'feedback' => '',
+								 'id' => 0,
+								 'last_date' => '',
+								 'last_time' => '',
+								 'ex' => FALSE);
+				}
 			}
 
 			return $row;
