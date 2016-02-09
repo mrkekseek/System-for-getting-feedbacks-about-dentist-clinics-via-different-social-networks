@@ -1151,11 +1151,11 @@
 		{
 			if (empty($post['email']))
 			{
-				$this->errors[] = array("Empty email");
+				$this->errors[] = array("U heeft geen e-mailadres ingevuld");
 			}
 			elseif (empty($post['password']))
 			{
-				$this->errors[] = array("Empty password");
+				$this->errors[] = array("U heeft geen wachtwoord ingevuld");
 			}
 			else
 			{
