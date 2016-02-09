@@ -454,7 +454,7 @@
 		$scope.after_logged_in = function() {
 			$http.post("/pub/check_updates/").success(function(data, status, headers, config) {
 				var result = logger.check(data);
-				if (result && result.length)
+				if (result && (result[0] || result[1]))
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
@@ -2844,7 +2844,7 @@
 						
 						if ($scope.vote > 0 && $scope.vote <= 2)
 						{
-							$scope.onlines_keys = ['zorgkaart'];
+							$scope.onlines_keys = ['zorgkaart', 'google', 'facebook', 'independer'];
 						}
 						
 						$scope.rebuild_onlines();
@@ -2876,7 +2876,6 @@
 				var s = $scope.onlines_keys[key];
 				if ($scope.i.user[s + '_checked'] == '1' && $scope.i.user[s] != '')
 				{
-					cols++;
 					var temp = {"system": s,
 								"url": $scope.i.user[s],
 								"pos": $scope.i.user[s + '_pos'] * 1};
@@ -2886,7 +2885,11 @@
 						temp.url = $scope.i.doctor.zorgkaart;
 					}
 					
-					onlines.push(temp);
+					if ($scope.vote <= 2 && $scope.vote > 0 && ! onlines.length || $scope.vote > 2)
+					{
+						cols++;
+						onlines.push(temp);
+					}
 				}
 			}
 			
@@ -3007,7 +3010,7 @@
 						
 						if ($scope.vote <= 2 && $scope.vote > 0)
 						{
-							$scope.onlines_keys = ['zorgkaart'];
+							$scope.onlines_keys = ['zorgkaart', 'google', 'facebook', 'independer'];
 						}
 						else
 						{
@@ -6292,7 +6295,7 @@
 	
 	function ModalInstanceUpdatesCtrl($scope, $modalInstance, $http, $location, logger, items) {
         $scope.items = items;
-		
+
 		$scope.slide_step = 0;
 		$scope.change_step = function(step)
 		{

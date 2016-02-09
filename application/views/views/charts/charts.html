@@ -101,9 +101,10 @@
                     </div>
 					
 					<div class="panel-body nps">
-						<p class="size-h2" ng-if="filter.doctor == 0">{{stat.nps.bad}}%</p>
+						<p class="size-h2" ng-if="filter.doctor == 0 && filter.compare == 0">{{stat.nps.bad}}%</p>
+						<p class="size-h2" ng-if="filter.doctor == 0 && filter.compare == 1">{{stat.nps.bad}}% <span class="vs">vs</span> {{stat.nps.bad_all}}%</p>
 						<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 0">{{stat.nps.bad_doc}}%</p>
-						<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare != 0">{{stat.nps.bad_doc}}% <span class="vs">vs</span> {{stat.nps.bad}}%</p>
+						<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 1">{{stat.nps.bad_doc}}% <span class="vs">vs</span> {{stat.nps.bad}}%</p>
 						<p class="text-muted"><span data-i18n="Criticasters"></span> <span tooltip="De criticasters is het percentage van patiënten dat u met minder dan 3 sterren heeft beoordeeld. Van deze groep patiënten is het waarschijnlijk dat zij u en/of uw praktijk niet zullen aanbevelen bij familie of vrienden." tooltip-placement="bottom" tooltip-append-to-body="true">[?]</span></p>
 					</div>
 				</div>
@@ -116,9 +117,10 @@
                     </div>
 					
 					<div class="panel-body nps">
-						<p class="size-h2" ng-if="filter.doctor == 0">{{stat.nps.delta > 0 ? '+' : ''}}{{stat.nps.delta}}</p>
+						<p class="size-h2" ng-if="filter.doctor == 0 && filter.compare == 0">{{stat.nps.delta > 0 ? '+' : ''}}{{stat.nps.delta}}</p>
+						<p class="size-h2" ng-if="filter.doctor == 0 && filter.compare == 1">{{stat.nps.delta > 0 ? '+' : ''}}{{stat.nps.delta}} <span class="vs">vs</span> {{stat.nps.delta_all > 0 ? '+' : ''}}{{stat.nps.delta_all}}</p>
 						<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 0">{{stat.nps.delta_doc > 0 ? '+' : ''}}{{stat.nps.delta_doc}}</p>
-						<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare != 0">{{stat.nps.delta_doc > 0 ? '+' : ''}}{{stat.nps.delta_doc}} <span class="vs">vs</span> {{stat.nps.delta > 0 ? '+' : ''}}{{stat.nps.delta}}</p>
+						<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 1">{{stat.nps.delta_doc > 0 ? '+' : ''}}{{stat.nps.delta_doc}} <span class="vs">vs</span> {{stat.nps.delta > 0 ? '+' : ''}}{{stat.nps.delta}}</p>
 						<p class="text-muted"><span data-i18n="Net Promotor Score"></span> <span tooltip="De Net Promotor Score geeft op een schaal van 0 tot 100 weer hoe u scoort als het gaat om de loyaliteit van patiënten. De score wordt berekend door het percentage Criticasters af te trekken van het percentage Promotors. Een score hoger dan 0 kan als positief gezien worden. Een score van +50 kan als uitstekend gezien worden." tooltip-placement="bottom" tooltip-append-to-body="true">[?]</span></p>
 					</div>
 				</div>
@@ -131,9 +133,10 @@
                     </div>
 					
 					<div class="panel-body nps">
-						<p class="size-h2" ng-if="filter.doctor == 0">{{stat.nps.good}}%</p>
+						<p class="size-h2" ng-if="filter.doctor == 0 && filter.compare == 0">{{stat.nps.good}}%</p>
+						<p class="size-h2" ng-if="filter.doctor == 0 && filter.compare == 1">{{stat.nps.good}}% <span class="vs">vs</span> {{stat.nps.good_all}}%</p>
 						<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 0">{{stat.nps.good_doc}}%</p>
-						<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare != 0">{{stat.nps.good_doc}}% <span class="vs">vs</span> {{stat.nps.good}}%</p>
+						<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 1">{{stat.nps.good_doc}}% <span class="vs">vs</span> {{stat.nps.good}}%</p>
 						<p class="text-muted"><span data-i18n="Promotors"></span> <span tooltip="De promotors is het percentage van patiënten dat u met meer dan 3 sterren heeft beoordeeld. Van deze groep patiënten is het waarschijnlijk dat zij u en/of uw praktijk zullen aanbevelen bij familie of vrienden." tooltip-placement="bottom" tooltip-append-to-body="true">[?]</span></p>
 					</div>
 				</div>

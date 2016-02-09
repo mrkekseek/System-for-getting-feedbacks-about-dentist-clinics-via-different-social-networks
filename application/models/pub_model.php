@@ -873,6 +873,8 @@
 											"title" => $post['title'],
 											"amount" => $amount);
 						$this->db->insert("doctors_pay", $data_array);
+						
+						$this->doctors_invoice($doctors_id, $amount);
 					}
 					
 					return TRUE;
@@ -881,6 +883,101 @@
 				{
 					$this->errors[] = array("URL already exists");
 				}
+			}
+			
+			return FALSE;
+		}
+		
+		function doctors_invoice($doctors_id, $amount)
+		{
+			if ($this->logged_in())
+			{
+				$name = date("d-m-Y").'-D';
+				
+				$this->db->where("id", $this->session->userdata("id"));
+				$this->db->limit(1);
+				$row = $this->db->get("users")->row_array();
+				if ( ! empty($row))
+				{
+					$this->db->where("users_id", $this->session->userdata("id"));
+					$this->db->where("name", $name);
+					$this->db->limit(1);
+					$in = $this->db->get("invoices")->row_array();
+					if ( ! empty($in))
+					{
+						$this->db->where("id", $in['id']);
+						$this->db->delete("invoices");
+						
+						if (file_exists("./invoices/".$in['code'].".pdf"))
+						{
+							unlink("./invoices/".$in['code'].".pdf");
+						}
+					}
+					
+					$doc = $this->doctor_info($doctors_id);
+					
+					$time = time();
+					$year = date("Y", $time);
+					$month = date("m", $time);
+					
+					$this->db->where("date >", mktime(0, 0, 0, $month, 1, $year));
+					$count = $this->db->count_all_results("invoices") + 1;
+					
+					$code = $year.$month.str_pad($count, 3, '0', STR_PAD_LEFT);
+					$data_array = array("users_id" => $this->session->userdata("id"),
+										"name" => $name,
+										"code" => $code,
+										"base_amount" => 0,
+										"amount" => $amount,
+										"info" => json_encode(array("doctors" => $doc, "doctors_amount" => $this->doctor_amount, "amount" => $amount)),
+										"half" => 0,
+										"date" => $time);
+					if ($this->db->insert("invoices", $data_array))
+					{
+						$invoices_id = $this->db->insert_id();
+						$data_array = array('invoices_id' => $invoices_id,
+											'doctors_id' => $doc['id'],
+											'doctors_title' => $doc['title'],
+											'doctors_firstname' => $doc['firstname'],
+											'doctors_lastname' => $doc['lastname'],
+											'doctors_amount' => $amount,
+											'doctors_pay' => TRUE,
+											'free' => FALSE);
+						$this->db->insert("invoices_doctors", $data_array);
+						
+						$this->db->where("doctors_id", $doc['id']);
+						$this->db->where("users_id", $this->session->userdata("id"));
+						$this->db->delete("doctors_pay");
+
+						$domain = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+						$curlconnect = curl_init();
+						curl_setopt($curlconnect, CURLOPT_URL, 'http://www.spurdoc.com/api/make?url='.urlencode($domain.'pub/invoice/'.md5($invoices_id.$time).'/'));
+						curl_setopt($curlconnect, CURLOPT_RETURNTRANSFER, TRUE); 
+						$pdf = curl_exec($curlconnect);
+						$attach = FALSE;
+						if ( ! empty($pdf))
+						{
+							if (file_put_contents("./invoices/".$code.".pdf", $pdf))
+							{
+								$attach = "./invoices/".$code.".pdf";
+							}
+						}
+
+						$response = file_get_contents("https://www.mollie.com/xml/ideal?a=createlink&partnerid=1959041&amount=".round($amount * 100)."&description=".$invoices_id);
+						$xml = simplexml_load_string($response);
+						$data = array("email" => $row['email'],
+									  "username" => $row['username'],
+									  "color" => empty($user['color']) ? "#0f75bc" : $user['color'],
+									  "current_date" => date("d-m-Y", $row['activation']),
+									  "end_date" => date("d-m-Y", $row['suspension']),
+									  "payment_link" => (string)$xml->link->URL,
+									  "attach" => $attach);
+						$this->send_payment($data);
+					}
+				}
+				
+				$this->errors[] = array("Success" => "Uw abonnement is geactiveerd.");
+				return TRUE;
 			}
 			
 			return FALSE;
@@ -3395,7 +3492,7 @@
 			if ($this->logged_in())
 			{
 				$this->db->order_by("last", "asc");
-				$this->db->where("users_id", $this->session->userdata("id"));
+				//$this->db->where("users_id", $this->session->userdata("id"));
 				$this->db->where("status <>", 3);
 				$result = $this->db->get("sent")->result_array();
 
@@ -3416,7 +3513,7 @@
 								  'doctors' => array(),
 								  'vs' => 0,
 								  'days' => array(),
-								  'nps' => array('bad' => 0, 'good' => 0, 'delta' => 0, 'bad_doc' => 0, 'good_doc' => 0, 'delta_doc' => 0));
+								  'nps' => array('bad' => 0, 'good' => 0, 'delta' => 0, 'bad_doc' => 0, 'good_doc' => 0, 'delta_doc' => 0, 'bad_all' => 0, 'good_all' => 0, 'delta_all' => 0));
 
 					$average_all = 0;
 					$diagram_all = 0;
@@ -3435,108 +3532,131 @@
 					$nps_doc_5 = 0;
 					$nps_doc_1 = 0;
 					$nps_doc_all = 0;
+					$nps_all_5 = 0;
+					$nps_all_1 = 0;
+					$nps_all_all = 0;
 
 					foreach ($result as $row)
 					{
-						$stat['all']++;
-						if ($row['last'] >= $filter[$post['average']] && $row['stars'] > 0)
+						if ($row['users_id'] == $this->session->userdata("id"))
 						{
-							$stat['average'] += $row['stars'];
-							$average_all++;
-						}
-
-						if ($row['last'] >= $filter[$post['diagram']])
-						{
-							$stat['diagram'][$row['stars']]++;
-							$diagram_all++;
-						}
-						
-						if ($row['last'] >= $filter[$post['doctors']])
-						{
-							if ( ! isset($stat['doctors'][$row['doctor']]))
+							$stat['all']++;
+							if ($row['last'] >= $filter[$post['average']] && $row['stars'] > 0)
 							{
-								$stat['doctors'][$row['doctor']] = 0;
+								$stat['average'] += $row['stars'];
+								$average_all++;
+							}
+
+							if ($row['last'] >= $filter[$post['diagram']])
+							{
+								$stat['diagram'][$row['stars']]++;
+								$diagram_all++;
 							}
 							
-							$stat['doctors'][$row['doctor']]++;
-							$doctors_all++;
-						}
-						
-						if ($row['last'] >= $filter[$post['online']])
-						{
-							$none = 0;
-							foreach ($stat['online'] as $key => $val)
+							if ($row['last'] >= $filter[$post['doctors']])
 							{
-								if (isset($row[$key]))
+								if ( ! isset($stat['doctors'][$row['doctor']]))
 								{
-									$stat['online'][$key] += $row[$key];
-									$none += $row[$key];
+									$stat['doctors'][$row['doctor']] = 0;
+								}
+								
+								$stat['doctors'][$row['doctor']]++;
+								$doctors_all++;
+							}
+							
+							if ($row['last'] >= $filter[$post['online']])
+							{
+								$none = 0;
+								foreach ($stat['online'] as $key => $val)
+								{
+									if (isset($row[$key]))
+									{
+										$stat['online'][$key] += $row[$key];
+										$none += $row[$key];
+									}
+								}
+								$online_all++;
+								if (empty($none))
+								{
+									$stat['online']['none'] += 1;
 								}
 							}
-							$online_all++;
-							if (empty($none))
-							{
-								$stat['online']['none'] += 1;
-							}
-						}
 
-						if ($row['last'] >= $filter[$post['stars']])
-						{
+							if ($row['last'] >= $filter[$post['stars']])
+							{
+								if ($row['stars'] > 0)
+								{
+									$stat['stars']++;
+								}
+							}
+
+							if ($row['last'] >= $filter[$post['feedbacks']])
+							{
+								if ($row['feedback'] != "")
+								{
+									$stat['feedbacks']++;
+								}
+							}
+
+							if ($row['last'] >= $filter[$post['vs']])
+							{
+								if ($row['stars'] == 0)
+								{
+									$vs_stars++;
+								}
+								$vs_all++;
+							}
+
+							if ($row['last'] > 0)
+							{
+								$days_all += $row['stars'];
+								$days_count_all++;
+								//$stat['days'][date('d.m.Y', $row['last'])] = floor(round($days_all / $days_count_all, 2) * 2) / 2;
+								$stat['days'][date('d.m.Y', $row['last'])] = round($days_all / $days_count_all, 1);
+							}
+
+							if ($row['stars'] == 5)
+							{
+								$nps_5++;
+								if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
+								{
+									$nps_doc_5++;
+								}
+							}
+
+							if ($row['stars'] == 1 || $row['stars'] == 2)
+							{
+								$nps_1++;
+								if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
+								{
+									$nps_doc_1++;
+								}
+							}
+
 							if ($row['stars'] > 0)
 							{
-								$stat['stars']++;
+								$nps_all++;
+								if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
+								{
+									$nps_doc_all++;
+								}
 							}
 						}
-
-						if ($row['last'] >= $filter[$post['feedbacks']])
+						else
 						{
-							if ($row['feedback'] != "")
+							if ($row['stars'] == 5)
 							{
-								$stat['feedbacks']++;
+								$nps_all_5++;
 							}
-						}
 
-						if ($row['last'] >= $filter[$post['vs']])
-						{
-							if ($row['stars'] == 0)
+							if ($row['stars'] == 1 || $row['stars'] == 2)
 							{
-								$vs_stars++;
+								$nps_all_1++;
 							}
-							$vs_all++;
-						}
 
-						if ($row['last'] > 0)
-						{
-							$days_all += $row['stars'];
-							$days_count_all++;
-							//$stat['days'][date('d.m.Y', $row['last'])] = floor(round($days_all / $days_count_all, 2) * 2) / 2;
-							$stat['days'][date('d.m.Y', $row['last'])] = round($days_all / $days_count_all, 1);
-						}
-
-						if ($row['stars'] == 5)
-						{
-							$nps_5++;
-							if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
+							if ($row['stars'] > 0)
 							{
-								$nps_doc_5++;
-							}
-						}
-
-						if ($row['stars'] == 1 || $row['stars'] == 2)
-						{
-							$nps_1++;
-							if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
-							{
-								$nps_doc_1++;
-							}
-						}
-
-						if ($row['stars'] > 0)
-						{
-							$nps_all++;
-							if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
-							{
-								$nps_doc_all++;
+								$nps_all_all++;
 							}
 						}
 					}
@@ -3547,6 +3667,9 @@
 					$stat['nps']['bad_doc'] = $nps_doc_all > 0 ? round($nps_doc_1 / $nps_doc_all * 100) : 0;
 					$stat['nps']['good_doc'] = $nps_doc_all > 0 ? round($nps_doc_5 / $nps_doc_all * 100) : 0;
 					$stat['nps']['delta_doc'] = $stat['nps']['good_doc'] - $stat['nps']['bad_doc'];
+					$stat['nps']['bad_all'] = $nps_all_all > 0 ? round($nps_all_1 / $nps_all_all * 100) : 0;
+					$stat['nps']['good_all'] = $nps_all_all > 0 ? round($nps_all_5 / $nps_all_all * 100) : 0;
+					$stat['nps']['delta_all'] = $stat['nps']['good_all'] - $stat['nps']['bad_all'];
 
 					if ($average_all > 0)
 					{

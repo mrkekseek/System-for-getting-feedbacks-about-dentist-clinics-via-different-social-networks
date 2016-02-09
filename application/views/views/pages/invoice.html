@@ -71,7 +71,7 @@
 							
 							<?php foreach ($invoice['doctors'] as $key => $doc) { ?>
 							<tr>
-								<td class="text-center"><?php echo $key + 2; ?></td>
+								<td class="text-center"><?php echo $key + ($invoice['base_amount'] > 0 ? 2 : 1); ?></td>
 								<?php if ($doc['doctors_pay']) { ?>
 								<td>Verrekening zorgverlener-profiel <?php echo $doc['doctors_title'].' '.$doc['doctors_firstname'].' '.$doc['doctors_lastname']; ?> vorige betaaltermijn</td>
 								<?php } else { ?>
