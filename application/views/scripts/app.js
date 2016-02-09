@@ -2844,7 +2844,7 @@
 						
 						if ($scope.vote > 0 && $scope.vote <= 2)
 						{
-							$scope.onlines_keys = ['zorgkaart'];
+							$scope.onlines_keys = ['zorgkaart', 'google', 'facebook', 'independer'];
 						}
 						
 						$scope.rebuild_onlines();
@@ -2876,7 +2876,6 @@
 				var s = $scope.onlines_keys[key];
 				if ($scope.i.user[s + '_checked'] == '1' && $scope.i.user[s] != '')
 				{
-					cols++;
 					var temp = {"system": s,
 								"url": $scope.i.user[s],
 								"pos": $scope.i.user[s + '_pos'] * 1};
@@ -2886,7 +2885,11 @@
 						temp.url = $scope.i.doctor.zorgkaart;
 					}
 					
-					onlines.push(temp);
+					if ($scope.vote <= 2 && $scope.vote > 0 && ! onlines.length || $scope.vote > 2)
+					{
+						cols++;
+						onlines.push(temp);
+					}
 				}
 			}
 			
@@ -3007,7 +3010,7 @@
 						
 						if ($scope.vote <= 2 && $scope.vote > 0)
 						{
-							$scope.onlines_keys = ['zorgkaart'];
+							$scope.onlines_keys = ['zorgkaart', 'google', 'facebook', 'independer'];
 						}
 						else
 						{
