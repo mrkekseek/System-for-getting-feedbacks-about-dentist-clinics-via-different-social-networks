@@ -454,7 +454,7 @@
 		$scope.after_logged_in = function() {
 			$http.post("/pub/check_updates/").success(function(data, status, headers, config) {
 				var result = logger.check(data);
-				if (result && result.length)
+				if (result && (result[0] || result[1]))
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
@@ -6292,7 +6292,7 @@
 	
 	function ModalInstanceUpdatesCtrl($scope, $modalInstance, $http, $location, logger, items) {
         $scope.items = items;
-		
+
 		$scope.slide_step = 0;
 		$scope.change_step = function(step)
 		{
