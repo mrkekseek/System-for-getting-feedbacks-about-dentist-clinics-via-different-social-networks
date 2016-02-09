@@ -3492,7 +3492,7 @@
 			if ($this->logged_in())
 			{
 				$this->db->order_by("last", "asc");
-				$this->db->where("users_id", $this->session->userdata("id"));
+				//$this->db->where("users_id", $this->session->userdata("id"));
 				$this->db->where("status <>", 3);
 				$result = $this->db->get("sent")->result_array();
 
@@ -3513,7 +3513,7 @@
 								  'doctors' => array(),
 								  'vs' => 0,
 								  'days' => array(),
-								  'nps' => array('bad' => 0, 'good' => 0, 'delta' => 0, 'bad_doc' => 0, 'good_doc' => 0, 'delta_doc' => 0));
+								  'nps' => array('bad' => 0, 'good' => 0, 'delta' => 0, 'bad_doc' => 0, 'good_doc' => 0, 'delta_doc' => 0, 'bad_all' => 0, 'good_all' => 0, 'delta_all' => 0));
 
 					$average_all = 0;
 					$diagram_all = 0;
@@ -3532,108 +3532,131 @@
 					$nps_doc_5 = 0;
 					$nps_doc_1 = 0;
 					$nps_doc_all = 0;
+					$nps_all_5 = 0;
+					$nps_all_1 = 0;
+					$nps_all_all = 0;
 
 					foreach ($result as $row)
 					{
-						$stat['all']++;
-						if ($row['last'] >= $filter[$post['average']] && $row['stars'] > 0)
+						if ($row['users_id'] == $this->session->userdata("id"))
 						{
-							$stat['average'] += $row['stars'];
-							$average_all++;
-						}
-
-						if ($row['last'] >= $filter[$post['diagram']])
-						{
-							$stat['diagram'][$row['stars']]++;
-							$diagram_all++;
-						}
-						
-						if ($row['last'] >= $filter[$post['doctors']])
-						{
-							if ( ! isset($stat['doctors'][$row['doctor']]))
+							$stat['all']++;
+							if ($row['last'] >= $filter[$post['average']] && $row['stars'] > 0)
 							{
-								$stat['doctors'][$row['doctor']] = 0;
+								$stat['average'] += $row['stars'];
+								$average_all++;
+							}
+
+							if ($row['last'] >= $filter[$post['diagram']])
+							{
+								$stat['diagram'][$row['stars']]++;
+								$diagram_all++;
 							}
 							
-							$stat['doctors'][$row['doctor']]++;
-							$doctors_all++;
-						}
-						
-						if ($row['last'] >= $filter[$post['online']])
-						{
-							$none = 0;
-							foreach ($stat['online'] as $key => $val)
+							if ($row['last'] >= $filter[$post['doctors']])
 							{
-								if (isset($row[$key]))
+								if ( ! isset($stat['doctors'][$row['doctor']]))
 								{
-									$stat['online'][$key] += $row[$key];
-									$none += $row[$key];
+									$stat['doctors'][$row['doctor']] = 0;
+								}
+								
+								$stat['doctors'][$row['doctor']]++;
+								$doctors_all++;
+							}
+							
+							if ($row['last'] >= $filter[$post['online']])
+							{
+								$none = 0;
+								foreach ($stat['online'] as $key => $val)
+								{
+									if (isset($row[$key]))
+									{
+										$stat['online'][$key] += $row[$key];
+										$none += $row[$key];
+									}
+								}
+								$online_all++;
+								if (empty($none))
+								{
+									$stat['online']['none'] += 1;
 								}
 							}
-							$online_all++;
-							if (empty($none))
-							{
-								$stat['online']['none'] += 1;
-							}
-						}
 
-						if ($row['last'] >= $filter[$post['stars']])
-						{
+							if ($row['last'] >= $filter[$post['stars']])
+							{
+								if ($row['stars'] > 0)
+								{
+									$stat['stars']++;
+								}
+							}
+
+							if ($row['last'] >= $filter[$post['feedbacks']])
+							{
+								if ($row['feedback'] != "")
+								{
+									$stat['feedbacks']++;
+								}
+							}
+
+							if ($row['last'] >= $filter[$post['vs']])
+							{
+								if ($row['stars'] == 0)
+								{
+									$vs_stars++;
+								}
+								$vs_all++;
+							}
+
+							if ($row['last'] > 0)
+							{
+								$days_all += $row['stars'];
+								$days_count_all++;
+								//$stat['days'][date('d.m.Y', $row['last'])] = floor(round($days_all / $days_count_all, 2) * 2) / 2;
+								$stat['days'][date('d.m.Y', $row['last'])] = round($days_all / $days_count_all, 1);
+							}
+
+							if ($row['stars'] == 5)
+							{
+								$nps_5++;
+								if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
+								{
+									$nps_doc_5++;
+								}
+							}
+
+							if ($row['stars'] == 1 || $row['stars'] == 2)
+							{
+								$nps_1++;
+								if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
+								{
+									$nps_doc_1++;
+								}
+							}
+
 							if ($row['stars'] > 0)
 							{
-								$stat['stars']++;
+								$nps_all++;
+								if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
+								{
+									$nps_doc_all++;
+								}
 							}
 						}
-
-						if ($row['last'] >= $filter[$post['feedbacks']])
+						else
 						{
-							if ($row['feedback'] != "")
+							if ($row['stars'] == 5)
 							{
-								$stat['feedbacks']++;
+								$nps_all_5++;
 							}
-						}
 
-						if ($row['last'] >= $filter[$post['vs']])
-						{
-							if ($row['stars'] == 0)
+							if ($row['stars'] == 1 || $row['stars'] == 2)
 							{
-								$vs_stars++;
+								$nps_all_1++;
 							}
-							$vs_all++;
-						}
 
-						if ($row['last'] > 0)
-						{
-							$days_all += $row['stars'];
-							$days_count_all++;
-							//$stat['days'][date('d.m.Y', $row['last'])] = floor(round($days_all / $days_count_all, 2) * 2) / 2;
-							$stat['days'][date('d.m.Y', $row['last'])] = round($days_all / $days_count_all, 1);
-						}
-
-						if ($row['stars'] == 5)
-						{
-							$nps_5++;
-							if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
+							if ($row['stars'] > 0)
 							{
-								$nps_doc_5++;
-							}
-						}
-
-						if ($row['stars'] == 1 || $row['stars'] == 2)
-						{
-							$nps_1++;
-							if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
-							{
-								$nps_doc_1++;
-							}
-						}
-
-						if ($row['stars'] > 0)
-						{
-							$nps_all++;
-							if ( ! empty($post['doctor']) && $post['doctor'] == $row['doctor'])
-							{
-								$nps_doc_all++;
+								$nps_all_all++;
 							}
 						}
 					}
@@ -3644,6 +3667,9 @@
 					$stat['nps']['bad_doc'] = $nps_doc_all > 0 ? round($nps_doc_1 / $nps_doc_all * 100) : 0;
 					$stat['nps']['good_doc'] = $nps_doc_all > 0 ? round($nps_doc_5 / $nps_doc_all * 100) : 0;
 					$stat['nps']['delta_doc'] = $stat['nps']['good_doc'] - $stat['nps']['bad_doc'];
+					$stat['nps']['bad_all'] = $nps_all_all > 0 ? round($nps_all_1 / $nps_all_all * 100) : 0;
+					$stat['nps']['good_all'] = $nps_all_all > 0 ? round($nps_all_5 / $nps_all_all * 100) : 0;
+					$stat['nps']['delta_all'] = $stat['nps']['good_all'] - $stat['nps']['bad_all'];
 
 					if ($average_all > 0)
 					{
