@@ -864,15 +864,18 @@
 						$this->send_notifications($row, "add_doctor");
 					}
 					
-					if ( ! empty($doctors_id) && ! empty($amount))
+					if ( ! empty($doctors_id))
 					{
-						$data_array = array("doctors_id" => $doctors_id,
-											"users_id" => $this->session->userdata("id"),
-											"firstname" => $post['firstname'],
-											"lastname" => $post['lastname'],
-											"title" => $post['title'],
-											"amount" => $amount);
-						$this->db->insert("doctors_pay", $data_array);
+						if ( ! empty($amount))
+						{
+							$data_array = array("doctors_id" => $doctors_id,
+												"users_id" => $this->session->userdata("id"),
+												"firstname" => $post['firstname'],
+												"lastname" => $post['lastname'],
+												"title" => $post['title'],
+												"amount" => $amount);
+							$this->db->insert("doctors_pay", $data_array);
+						}
 						
 						$this->doctors_invoice($doctors_id, $amount);
 					}
@@ -892,7 +895,7 @@
 		{
 			if ($this->logged_in())
 			{
-				$name = date("d-m-Y").'-D';
+				$name = date("d-m-Y").'-'.$doctors_id;
 				
 				$this->db->where("id", $this->session->userdata("id"));
 				$this->db->limit(1);
