@@ -3481,6 +3481,40 @@
 })();
 ;
 (function () {
+    'use strict';
+
+    angular.module('app')
+        .controller('SingleCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', 'logger', SingleCtrl]); // overall control
+
+    function SingleCtrl($scope, $rootScope, $window, $http, $location, $modal, logger) {
+		$scope.id = false;
+		$scope.info = {};
+		$scope.words = ['Geen reactie', '1 ster', '2 sterren', '3 sterren', '4 sterren', '5 sterren'];
+
+		$scope.init = function(id)
+		{
+			$scope.id = id;
+			if ($scope.id)
+			{
+				$scope.feedback_info();
+			}
+		};
+		
+		$scope.feedback_info = function() {
+			$http.post("/pub/feedback_info/", {id: $scope.id}).success(function(data, status, headers, config) {
+				$scope.result = logger.check(data);
+				if ($scope.result)
+				{
+					$scope.info = $scope.result;
+					$scope.info.feedback.replace(/\n/gi, "<br />");
+					$scope.info.reply.replace(/\n/gi, "<br />");
+				}
+			});
+		};
+    }
+})();
+;
+(function () {
     'use strict'
 
     angular.module('app.localization', [])

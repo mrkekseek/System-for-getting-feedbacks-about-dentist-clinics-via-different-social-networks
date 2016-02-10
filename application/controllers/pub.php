@@ -85,11 +85,16 @@
 							$this->data['users'] = $this->pub->get_users();
 						}
 						
-						if ($part == "mail/single" || $part == "mail/reply")
+						if ($part == "mail/single")
+						{
+							$this->data['id'] = $id;
+						}
+						
+						if ($part == "mail/reply")
 						{
 							$this->data['info'] = $this->pub->feedback_info($id);
 						}
-
+						
 						if ($part == "pages/invoice")
 						{
 							$this->data['invoice'] = $this->pub->get_invoice($id);
@@ -301,6 +306,12 @@
 					$result = $this->pub->save_logo($_FILES['file']);
 				}
 			}
+			$this->response($result);
+		}
+		
+		function feedback_info()
+		{
+			$result = $this->pub->feedback_info($this->post['id']);
 			$this->response($result);
 		}
 		
