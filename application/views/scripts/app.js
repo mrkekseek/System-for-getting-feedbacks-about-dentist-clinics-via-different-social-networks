@@ -454,7 +454,7 @@
 		$scope.after_logged_in = function() {
 			$http.post("/pub/check_updates/").success(function(data, status, headers, config) {
 				var result = logger.check(data);
-				if (result && result.length)
+				if (result && (result[0] || result[1]))
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
@@ -2844,7 +2844,7 @@
 						
 						if ($scope.vote > 0 && $scope.vote <= 2)
 						{
-							$scope.onlines_keys = ['zorgkaart'];
+							$scope.onlines_keys = ['zorgkaart', 'google', 'facebook', 'independer'];
 						}
 						
 						$scope.rebuild_onlines();
@@ -2876,7 +2876,6 @@
 				var s = $scope.onlines_keys[key];
 				if ($scope.i.user[s + '_checked'] == '1' && $scope.i.user[s] != '')
 				{
-					cols++;
 					var temp = {"system": s,
 								"url": $scope.i.user[s],
 								"pos": $scope.i.user[s + '_pos'] * 1};
@@ -2886,7 +2885,11 @@
 						temp.url = $scope.i.doctor.zorgkaart;
 					}
 					
-					onlines.push(temp);
+					if ($scope.vote <= 2 && $scope.vote > 0 && ! onlines.length || $scope.vote > 2)
+					{
+						cols++;
+						onlines.push(temp);
+					}
 				}
 			}
 			
@@ -3007,7 +3010,7 @@
 						
 						if ($scope.vote <= 2 && $scope.vote > 0)
 						{
-							$scope.onlines_keys = ['zorgkaart'];
+							$scope.onlines_keys = ['zorgkaart', 'google', 'facebook', 'independer'];
 						}
 						else
 						{
@@ -3474,6 +3477,40 @@
                 console.log("Modal dismissed at: " + new Date());
             });*/
         };
+    }
+})();
+;
+(function () {
+    'use strict';
+
+    angular.module('app')
+        .controller('SingleCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', 'logger', SingleCtrl]); // overall control
+
+    function SingleCtrl($scope, $rootScope, $window, $http, $location, $modal, logger) {
+		$scope.id = false;
+		$scope.info = {};
+		$scope.words = ['Geen reactie', '1 ster', '2 sterren', '3 sterren', '4 sterren', '5 sterren'];
+
+		$scope.init = function(id)
+		{
+			$scope.id = id;
+			if ($scope.id)
+			{
+				$scope.feedback_info();
+			}
+		};
+		
+		$scope.feedback_info = function() {
+			$http.post("/pub/feedback_info/", {id: $scope.id}).success(function(data, status, headers, config) {
+				$scope.result = logger.check(data);
+				if ($scope.result)
+				{
+					$scope.info = $scope.result;
+					$scope.info.feedback.replace(/\n/gi, "<br />");
+					$scope.info.reply.replace(/\n/gi, "<br />");
+				}
+			});
+		};
     }
 })();
 ;
@@ -6292,7 +6329,7 @@
 	
 	function ModalInstanceUpdatesCtrl($scope, $modalInstance, $http, $location, logger, items) {
         $scope.items = items;
-		
+
 		$scope.slide_step = 0;
 		$scope.change_step = function(step)
 		{
