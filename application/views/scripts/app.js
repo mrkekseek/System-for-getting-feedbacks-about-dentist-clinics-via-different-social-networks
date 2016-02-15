@@ -3103,7 +3103,7 @@
 				}
 				else
 				{
-					logger.check({'errors': [['Empty feedback']]});
+					logger.check({'errors': [['U heeft geen feedback ingevuld']]});
 				}
 			}
 		};
@@ -3125,7 +3125,7 @@
 				}
 				else
 				{
-					logger.check({'errors': [['Empty feedback']]});
+					logger.check({'errors': [['U heeft geen feedback ingevuld']]});
 				}
 			}
 		};
