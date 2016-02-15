@@ -73,7 +73,11 @@
 							<tr>
 								<td class="text-center"><?php echo $key + ($invoice['base_amount'] > 0 ? 2 : 1); ?></td>
 								<?php if ($doc['doctors_pay']) { ?>
+								<?php if ($invoice['base_amount'] > 0) { ?>
 								<td>Verrekening zorgverlener-profiel <?php echo $doc['doctors_title'].' '.$doc['doctors_firstname'].' '.$doc['doctors_lastname']; ?> vorige betaaltermijn</td>
+								<?php } else { ?>
+								<td>Zorgverlener: <?php echo $doc['doctors_title'].' '.$doc['doctors_firstname'].' '.$doc['doctors_lastname']; ?> t/m <?php echo date("d-m-Y", $user['suspension']); ?></td>
+								<?php } ?>
 								<?php } else { ?>
 								<td>Extra zorgverlener: <?php echo $doc['doctors_title'].' '.$doc['doctors_firstname'].' '.$doc['doctors_lastname']; ?></td>
 								<?php } ?>
