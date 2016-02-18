@@ -975,7 +975,11 @@
 									  "end_date" => date("d-m-Y", $row['suspension']),
 									  "payment_link" => (string)$xml->link->URL,
 									  "attach" => $attach);
-						$this->send_payment($data);
+
+						if ( ! empty($amount))
+						{
+							$this->send_payment($data);
+						}
 					}
 				}
 				
