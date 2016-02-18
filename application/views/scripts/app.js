@@ -2440,7 +2440,9 @@
 					if (error)
 					{
 						$http.get("/pub/get_doctors_price/").success(function(data, status, headers, config) {
-							$scope.amount.doctor_amount = logger.check(data).price;
+							var result = logger.check(data);
+							$scope.amount.doctor_amount = result.price.price;
+							$scope.amount.doctor_days = result.price.days;
 							$scope.step = 2;
 						});
 					}
