@@ -3130,7 +3130,7 @@
 			}
 		};
 
-		$scope.click = function(type)
+		$scope.click = function(type, url)
 		{
 			if ( ! $scope.ex)
 			{
@@ -3139,8 +3139,13 @@
 				{
 					$http.post("/pub/click/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, type: type}).success(function(data, status, headers, config) {
 						$scope.id = logger.check(data);
+						$window.location.href = url;
 					});
 				}
+			}
+			else
+			{
+				$window.location.href = url;
 			}
 		};
     }
