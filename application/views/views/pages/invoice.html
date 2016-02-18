@@ -30,7 +30,7 @@
 					
                     <div class="col-xs-6 text-right">
 						<p><strong>Details:</strong></p>
-						<strong>Datum:</strong> <?php echo $invoice['name']; ?><br />
+						<strong>Datum:</strong> <?php echo date("d-m-Y", $invoice['date']); ?><br />
 						<strong>ID:</strong> <?php echo $invoice['code']; ?><br />
 						<strong>Te betalen:</strong> &euro;<?php echo number_format($invoice['amount'], 2, ",", ""); ?>
 					</div>            
