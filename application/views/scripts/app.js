@@ -2440,7 +2440,9 @@
 					if (error)
 					{
 						$http.get("/pub/get_doctors_price/").success(function(data, status, headers, config) {
-							$scope.amount.doctor_amount = logger.check(data).price;
+							var result = logger.check(data);
+							$scope.amount.doctor_amount = result.price.price;
+							$scope.amount.doctor_days = result.price.days;
 							$scope.step = 2;
 						});
 					}
@@ -3130,7 +3132,7 @@
 			}
 		};
 
-		$scope.click = function(type)
+		$scope.click = function(type, url)
 		{
 			if ( ! $scope.ex)
 			{
@@ -3139,8 +3141,13 @@
 				{
 					$http.post("/pub/click/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, type: type}).success(function(data, status, headers, config) {
 						$scope.id = logger.check(data);
+						$window.location.href = url;
 					});
 				}
+			}
+			else
+			{
+				$window.location.href = url;
 			}
 		};
     }

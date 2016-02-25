@@ -755,10 +755,13 @@
 		{
 			$id = $id ? $id : $this->session->userdata("id");
 			$price = $this->doctor_amount;
+			$days = 0;
 			
 			$this->db->where("id", $id);
 			$this->db->where("account_type", 1);
-			if ($this->db->count_all_results("users"))
+			$this->db->limit(1);
+			$row = $this->db->get("users")->row_array();
+			if ( ! empty($row))
 			{
 				$this->db->where("users_id", $id);
 				$this->db->where("free", 1);
@@ -766,9 +769,16 @@
 				{
 					$price = 0;
 				}
+				else
+				{
+					$time = time();
+					$days = ($row['suspension'] - mktime(0, 0, 0, date("m", $time), date("j", $time), date("Y", $time))) / (3600 * 24) % $this->period + 1;
+					$day_amount = $price / $this->period;
+					$price = round($days * $day_amount, 2);
+				}
 			}
 			
-			return $price;
+			return array("price" => $price, "days" => $days);
 		}
 		
 		function save_doctor($post)
@@ -975,7 +985,11 @@
 									  "end_date" => date("d-m-Y", $row['suspension']),
 									  "payment_link" => (string)$xml->link->URL,
 									  "attach" => $attach);
-						$this->send_payment($data);
+
+						if ( ! empty($amount))
+						{
+							$this->send_payment($data);
+						}
 					}
 				}
 				
