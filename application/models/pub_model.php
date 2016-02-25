@@ -3000,10 +3000,10 @@
 			{
 				$config = array();
 				$config['protocol'] = 'smtp';
-				$config['smtp_user'] = 'info@patientenreview.nl';
-				$config['smtp_pass'] = '1001reviews$#WK';
-				$config['smtp_host'] = 'mail.patientenreview.nl';
-				$config['smtp_port'] = '2525';
+				$config['smtp_user'] = 'hallo@cloudrocket.co';
+				$config['smtp_pass'] = 'mango1906';
+				$config['smtp_host'] = 'mail.cloudrocket.co';
+				$config['smtp_port'] = '25';
 				$config['charset'] = 'utf-8';
 				$config['mailtype'] = 'html';
 				$config['newline'] = "\r\n";
