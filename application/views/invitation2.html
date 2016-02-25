@@ -125,7 +125,7 @@
 							</div>
 						</div>
 					
-						<div class="col-xs-12" ng-class="{'col-md-6': vote <= 2 && vote > 0}">
+						<div class="col-xs-12" ng-if="vote <= 2" ng-class="{'col-md-6': vote <= 2 && vote > 0}">
 							<div class="cards-box no-bottom-marging" ng-if="onlines_col > 0"  ng-class="{active: vote > 0}">
 								<div class="cards-box-content">
 									<div class="cards-number" ng-if="vote == 0 || vote > 2">
