@@ -1091,6 +1091,11 @@
 			{
 				$row['activation_date'] = date("d-m-Y", $row['activation']);
 				$row['suspension_date'] = date("d-m-Y", $row['suspension']);
+				
+				if ( ! empty($row['zorgkaart']) && strpos($row['zorgkaart'], '/waardeer') === FALSE)
+				{
+					$row['zorgkaart'] = rtrim($row['zorgkaart'], '/').'/waardeer';
+				}
 			}
 			$row['admin_id'] = $this->session->userdata("admin_id");
 			$row['intro'] = $this->session->userdata("intro");
