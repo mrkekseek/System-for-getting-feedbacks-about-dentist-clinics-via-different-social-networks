@@ -2385,6 +2385,7 @@ span.pro {
 
 .rating-heading {
 	padding: 20px 20px 80px;
+	cursor: pointer;
 }
 
 .rating-logo {

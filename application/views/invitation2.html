@@ -105,7 +105,7 @@
 									<div class="row rating-row">
 										<div class="col-sm-{{onlines_col}} col-xs-12" ng-repeat="o in onlines">
 											<div class="rating-panel rating-{{o.system}}">
-												<div class="rating-heading">
+												<div class="rating-heading" ng-click="click(o.system, o.url)">
 													<div class="rating-logo">
 														<img src="/application/views/images/online-{{o.system}}.png" alt="" ng-if="o.system != 'own'" />
 														<span ng-if="o.system == 'own' && i.user.own_name != ''">{{i.user.own_name}}</span>

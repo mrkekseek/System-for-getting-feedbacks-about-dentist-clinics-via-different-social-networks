@@ -1091,6 +1091,11 @@
 			{
 				$row['activation_date'] = date("d-m-Y", $row['activation']);
 				$row['suspension_date'] = date("d-m-Y", $row['suspension']);
+				
+				if ( ! empty($row['zorgkaart']) && strpos($row['zorgkaart'], '/waardeer') === FALSE)
+				{
+					$row['zorgkaart'] = rtrim($row['zorgkaart'], '/').'/waardeer';
+				}
 			}
 			$row['admin_id'] = $this->session->userdata("admin_id");
 			$row['intro'] = $this->session->userdata("intro");
@@ -3008,9 +3013,19 @@
 				$config['mailtype'] = 'html';
 				$config['newline'] = "\r\n";
 				$config['crlf'] = "\r\n";
+				
+				/*$config['protocol'] = 'smtp';
+				$config['smtp_user'] = 'postmaster@mg.patientenreview.nl';
+				$config['smtp_pass'] = '4add968a0a17e23db8752874334c9ae2';
+				$config['smtp_host'] = 'ssl://smtp.mailgun.org';
+				$config['smtp_port'] = '465';
+				$config['smtp_timeout'] = '4';
+				$config['charset'] = 'utf-8';
+				$config['mailtype'] = 'html';
+				$config['newline'] = "\r\n";
+				$config['crlf'] = "\n";*/
 
 				$this->load->library('email', $config);
-				//$this->email->set_newline("\r\n");
 
 				foreach ($result as $row)
 				{
@@ -3390,6 +3405,7 @@
 					{
 						$row['new_letter'] = ($row['last'] >= $user['last']) ? 1 : 0;
 						$row['date_time'] = date("d-m-y H:i", ($row['last'] > 0 ? $row['last'] : $row['date']));
+						$row['date'] = $row['last'] > 0 ? $row['last'] : $row['date'];
 						$row['doctor_name'] = "";
 						if ( ! empty($doctors[$row['doctor']]))
 						{

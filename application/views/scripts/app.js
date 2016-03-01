@@ -2577,6 +2577,7 @@
 
 					$http.post("/pub/change_times/", post_mas).success(function(data, status, headers, config) {
 						$scope.users = logger.check(data);
+						$scope.order('-date');
 					});
 				}
 				else
@@ -2584,8 +2585,8 @@
 					if (times.users)
 					{
 						$scope.users = times.users;
-						$scope.order('-id');
-						$scope.order('id');
+						$scope.order('-date');
+						$scope.order('date');
 					}
 					else
 					{
