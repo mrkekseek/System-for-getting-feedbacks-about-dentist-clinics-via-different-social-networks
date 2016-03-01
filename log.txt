@@ -1,0 +1,430 @@
+220 ak47 ESMTP ready
+<br /><pre>hello: 250-ak47
+250-AUTH PLAIN LOGIN
+250-SIZE 52428800
+250-8BITMIME
+250 ENHANCEDSTATUSCODES
+</pre><pre>from: 250 Sender address accepted
+</pre><pre>to: 250 Recipient address accepted
+</pre><pre>data: 354 Continue
+</pre>554 The domain is unverified and requires DNS configuration. Log in to your control panel to view required DNS records
+<br />The following SMTP error was encountered: 554 The domain is unverified and requires DNS configuration. Log in to your control panel to view required DNS records
+<br />Unable to send email using PHP SMTP.  Your server might not be configured to send mail using this method.<br /><pre>User-Agent: CodeIgniter
+Date: Tue, 1 Mar 2016 13:22:17 +0100
+From: &quot;Fysiotherapeut Marendijk&quot; &lt;info@patientenreview.nl&gt;
+Return-Path: &lt;info@patientenreview.nl&gt;
+To: deejayy@yandex.ua
+Reply-To: =?utf-8?Q?&quot;Fysiotherapeut_Marendijk&quot;?= &lt;info@div-art.com&gt;
+Subject: =?utf-8?Q?1222_Hoe_was_uw_behandeling_bij_Tandheelkunde_Oss?=
+X-Sender: info@patientenreview.nl
+X-Mailer: CodeIgniter
+X-Priority: 3 (Normal)
+Message-ID: &lt;56d58979465cd@patientenreview.nl&gt;
+Mime-Version: 1.0
+
+
+Content-Type: multipart/alternative; boundary=&quot;B_ALT_56d58979465e0&quot;
+
+This is a multi-part message in MIME format.
+Your email application may not support this format.
+
+--B_ALT_56d58979465e0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+Fysiotherapeut Marendijk
+
+Hoe was uw behandeling?
+
+Zou u Fysiotherapeut Marendijk aanbevelen?
+
+Geachte heer/mevrouw,U bent onlangs behandeld in onze praktijk. We sturen u
+deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw
+mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u
+bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw
+beoordeling te plaatsen op online kanalen.Op een schaal van 1 tot 5 sterren,
+hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of
+vrienden?
+
+&amp;nbsp;
+
+&amp;nbsp;
+
+Onwaarschijnlijk
+
+1
+
+2
+
+3
+
+4
+
+5
+
+Waarschijnlijk
+
+Beweeg met uw muis over het aantal sterretjes hierboven en klik om aan te
+geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt
+u uw mening delen met anderen of ons team van feedback voorzien.Bedankt voor
+het delen van uw mening!Met vriendelijke groet,Fysiotherapeut Marendijk
+
+U ontvangt deze e-mail omdat uw e-mailadres is opgenomen in het
+patiëntenbestand van Fysiotherapeut Marendijk. Het verzoek tot deelname aan
+dit is een eenmalige e-mail volgend op uw behandeling.Deze e-mailuitnodiging
+wordt verzorgd door Patiëntenreview.
+
+Ik wil geen e-mails meer van Patiëntenreview ontvangen.
+
+.inner:hover td.star &gt; div {
+background-position: 0 100% !important;
+}
+
+.inner:hover td.star:hover + td.star &gt; div,
+.inner:hover td.star:hover + td.star + td.star &gt; div,
+.inner:hover td.star:hover + td.star + td.star + td.star &gt; div,
+.inner:hover td.star:hover + td.star + td.star + td.star + td.star &gt; div {
+background-position: 0 0 !important;
+}
+
+@media (max-width: 768px) {
+.inner td {
+font-size: 0;
+}
+
+.outer-box {
+padding: 10px !important;
+}
+}
+
+
+--B_ALT_56d58979465e0
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;style&gt;
+			.inner:hover td.star &gt; div {
+				background-position: 0 100% !important;
+			}
+		=09
+			.inner:hover td.star:hover + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star + td.star + td.star &gt; div=
+ {
+				background-position: 0 0 !important;
+			}
+		=09
+			@media (max-width: 768px) {
+				.inner td {
+					font-size: 0;
+				}
+			=09
+				.outer-box {
+					padding: 10px !important;
+				}
+			}
+		&lt;/style&gt;
+	&lt;/head&gt;
+=09
+	&lt;body style=3D&quot;padding: 0; margin: 0;&quot;&gt;
+		&lt;div style=3D&quot;margin: 0 auto; min-width: 320px; background: #EAEAEA;&quot;&gt;
+			&lt;div style=3D&quot;height: 30px; background: #fff; padding: 10px; box-shadow:=
+ 0 1px 2px rgba(0, 0, 0, 0.15);&quot;&gt;
+				&lt;table cellpadding=3D&quot;0&quot; cellspacing=3D&quot;0&quot; width=3D&quot;100%&quot;&gt;
+										&lt;tr&gt;
+						&lt;td style=3D&quot;text-align: left; padding: 0; margin: 0; font-size: 0; l=
+ine-height: 0; vertical-align: top;&quot;&gt;
+							&lt;a href=3D&quot;javascript:void(0);&quot;&gt;
+								&lt;img src=3D&quot;http://pr.da/application/views/images/logo_full.png&quot; he=
+ight=3D&quot;30&quot; alt=3D&quot;&quot; /&gt;
+							&lt;/a&gt;
+						&lt;/td&gt;
+							&lt;td style=3D&quot;text-align: right; padding: 0; margin: 0; font-size: 0;=
+ line-height: 0;&quot;&gt;
+								&lt;p style=3D&quot;color: #626262; margin: 0; font: 14px/30px arial, sans-=
+serif; text-align: right;&quot;&gt;
+									Fysiotherapeut Marendijk								&lt;/p&gt;
+							&lt;/td&gt;
+					&lt;/tr&gt;
+									&lt;/table&gt;
+			&lt;/div&gt;
+		=09
+						&lt;table cellpadding=3D&quot;0&quot; cellspacing=3D&quot;0&quot; width=3D&quot;100%&quot;&gt;
+				&lt;tr&gt;
+					&lt;td style=3D&quot;height: 150px; vertical-align: middle; text-align: center=
+; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('htt=
+p://pr.da//application/views/images/email-back.png'); background-repeat: no=
+-repeat; background-position: center; background-color: #bc0f0f; background=
+-size: cover;&quot;&gt;
+						Hoe was uw behandeling?					&lt;/td&gt;
+				&lt;/tr&gt;
+			&lt;/table&gt;
+					=09
+			&lt;div style=3D&quot;text-align: center;&quot;&gt;
+				&lt;div style=3D&quot;background: #fff; max-width: 700px; display: inline-block=
+;&quot;&gt;
+					&lt;div class=3D&quot;outer-box&quot; style=3D&quot;padding: 30px; text-align: left;&quot;&gt;
+												&lt;p style=3D&quot;margin: 0 0 20px; font: 14px/1.3 arial, sans-serif;=
+ color: #525354; padding: 15px; background-color: #F3F3F3; border: solid #D=
+3D3D3 1px;&quot;&gt;
+							Zou u Fysiotherapeut Marendijk aanbevelen?						&lt;/p&gt;
+											=09
+												&lt;p style=3D&quot;margin: 0; font: 14px/1.3 arial, sans-serif; color:=
+ #525354; padding-bottom: 15px;&quot;&gt;
+							Geachte heer/mevrouw,&lt;br /&gt;&lt;br /&gt;U bent onlangs behandeld in onze pr=
+aktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling=
+ heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bov=
+endien kunt u bijdragen aan het bevorderen van transparantie in de gezondhe=
+idszorg door uw beoordeling te plaatsen op online kanalen.&lt;br /&gt;&lt;br /&gt;Op ee=
+n schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk=
+ zou aanbevelen bij familie of vrienden?						&lt;/p&gt;
+											=09
+											=09
+											=09
+											=09
+												&lt;table class=3D&quot;inner&quot; cellpadding=3D&quot;0&quot; cellspacing=3D&quot;0&quot; styl=
+e=3D&quot;width: 100%; border-collapse: collapse; margin: 20px 0;&quot;&gt;
+							&lt;tr&gt;
+								&lt;td style=3D&quot;vertical-align: middle; font: 13px/1.3 arial, sans-ser=
+if; color: #6E6E6E; text-align: right; padding-right: 2%;&quot;&gt;
+									&amp;nbsp;
+								&lt;/td&gt;
+								&lt;td class=3D&quot;star&quot; style=3D&quot;vertical-align: middle; width: 12%; tex=
+t-align: center;&quot;&gt;
+									&lt;a href=3D&quot;http://pr.da/invitation/15dd9db5e033da9c6fb5ba83c7a7ebe=
+a9&quot; style=3D&quot;text-decoration: none; opacity: 0.2;&quot;&gt;
+										&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png&quot;=
+ alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
+									&lt;/a&gt;
+								&lt;/td&gt;
+								&lt;td class=3D&quot;star&quot; style=3D&quot;vertical-align: middle; width: 12%; tex=
+t-align: center;&quot;&gt;
+									&lt;a href=3D&quot;http://pr.da/invitation/25dd9db5e033da9c6fb5ba83c7a7ebe=
+a9&quot; style=3D&quot;text-decoration: none; opacity: 0.4;&quot;&gt;
+										&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png&quot;=
+ alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
+									&lt;/a&gt;
+								&lt;/td&gt;
+								&lt;td class=3D&quot;star&quot; style=3D&quot;vertical-align: middle; width: 12%; tex=
+t-align: center;&quot;&gt;
+									&lt;a href=3D&quot;http://pr.da/invitation/35dd9db5e033da9c6fb5ba83c7a7ebe=
+a9&quot; style=3D&quot;text-decoration: none; opacity: 0.6;&quot;&gt;
+										&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png&quot;=
+ alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
+									&lt;/a&gt;
+								&lt;/td&gt;
+								&lt;td class=3D&quot;star&quot; style=3D&quot;vertical-align: middle; width: 12%; tex=
+t-align: center;&quot;&gt;
+									&lt;a href=3D&quot;http://pr.da/invitation/45dd9db5e033da9c6fb5ba83c7a7ebe=
+a9&quot; style=3D&quot;text-decoration: none; opacity: 0.8;&quot;&gt;
+										&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png&quot;=
+ alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
+									&lt;/a&gt;
+								&lt;/td&gt;
+								&lt;td class=3D&quot;star&quot; style=3D&quot;vertical-align: middle; width: 12%; tex=
+t-align: center;&quot;&gt;
+									&lt;a href=3D&quot;http://pr.da/invitation/55dd9db5e033da9c6fb5ba83c7a7ebe=
+a9&quot; style=3D&quot;text-decoration: none; opacity: 1.0;&quot;&gt;
+										&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png&quot;=
+ alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
+									&lt;/a&gt;
+								&lt;/td&gt;
+								&lt;td style=3D&quot;vertical-align: middle; font: 13px/1.3 arial, sans-ser=
+if; color: #6E6E6E; text-align: left; padding-left: 2%;&quot;&gt;
+									&amp;nbsp;
+								&lt;/td&gt;
+							&lt;/tr&gt;
+						=09
+							&lt;tr&gt;
+								&lt;td style=3D&quot;padding-top: 10px; font: 13px/1.3 arial, sans-serif; c=
+olor: #6E6E6E; text-align: right; padding-right: 2%;&quot;&gt;
+									Onwaarschijnlijk
+								&lt;/td&gt;
+								&lt;td style=3D&quot;width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;&quot;&gt;
+									1
+								&lt;/td&gt;
+								&lt;td style=3D&quot;width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;&quot;&gt;
+									2
+								&lt;/td&gt;
+								&lt;td style=3D&quot;width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;&quot;&gt;
+									3
+								&lt;/td&gt;
+								&lt;td style=3D&quot;width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;&quot;&gt;
+									4
+								&lt;/td&gt;
+								&lt;td style=3D&quot;width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;&quot;&gt;
+									5
+								&lt;/td&gt;
+								&lt;td style=3D&quot;padding-top: 10px; font: 13px/1.3 arial, sans-serif; c=
+olor: #6E6E6E; text-align: left; padding-left: 2%;&quot;&gt;
+									Waarschijnlijk
+								&lt;/td&gt;
+							&lt;/tr&gt;
+						&lt;/table&gt;
+						&lt;!--div style=3D&quot;width: 100%; margin: 0 auto; padding: 30px 0; font-s=
+ize: 0;&quot;&gt;
+							&lt;div class=3D&quot;white-space: nowrap;&quot;&gt;
+								&lt;span class=3D&quot;stars-text&quot; style=3D&quot;display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;&quot;&gt;
+									&amp;nbsp;
+								&lt;/span&gt;
+								&lt;div class=3D&quot;inner&quot; style=3D&quot;display: inline-block; width: 60%; ve=
+rtical-align: middle;&quot;&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;&quot;&gt;
+										&lt;a href=3D&quot;http://pr.da/invitation/15dd9db5e033da9c6fb5ba83c7a7eb=
+ea9&quot; style=3D&quot;display: inline-block; text-decoration: none; opacity: 0.2;&quot;&gt;
+											&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png=
+&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
+										&lt;/a&gt;
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;&quot;&gt;
+										&lt;a href=3D&quot;http://pr.da/invitation/25dd9db5e033da9c6fb5ba83c7a7eb=
+ea9&quot; style=3D&quot;display: inline-block; text-decoration: none; opacity: 0.4;&quot;&gt;
+											&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png=
+&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
+										&lt;/a&gt;
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;&quot;&gt;
+										&lt;a href=3D&quot;http://pr.da/invitation/35dd9db5e033da9c6fb5ba83c7a7eb=
+ea9&quot; style=3D&quot;display: inline-block; text-decoration: none; opacity: 0.6;&quot;&gt;
+											&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png=
+&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
+										&lt;/a&gt;
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;&quot;&gt;
+										&lt;a href=3D&quot;http://pr.da/invitation/45dd9db5e033da9c6fb5ba83c7a7eb=
+ea9&quot; style=3D&quot;display: inline-block; text-decoration: none; opacity: 0.8;&quot;&gt;
+											&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png=
+&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
+										&lt;/a&gt;
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;&quot;&gt;
+										&lt;a href=3D&quot;http://pr.da/invitation/55dd9db5e033da9c6fb5ba83c7a7eb=
+ea9&quot; style=3D&quot;display: inline-block; text-decoration: none; opacity: 1.0;&quot;&gt;
+											&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png=
+&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
+										&lt;/a&gt;
+									&lt;/div&gt;
+								&lt;/div&gt;
+								&lt;span class=3D&quot;stars-text&quot; style=3D&quot;display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;&quot;&gt;
+									&amp;nbsp;
+								&lt;/span&gt;
+							&lt;/div&gt;
+						=09
+							&lt;div class=3D&quot;white-space: nowrap; padding-top: 10px;&quot;&gt;
+								&lt;span class=3D&quot;stars-text&quot; style=3D&quot;display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;&quot;&gt;
+									Onwaarschijnlijk
+								&lt;/span&gt;
+								&lt;div class=3D&quot;inner&quot; style=3D&quot;display: inline-block; width: 60%; ve=
+rtical-align: middle;&quot;&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;&quot;&gt;
+										1
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;&quot;&gt;
+										2
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;&quot;&gt;
+										3
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;&quot;&gt;
+										4
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;&quot;&gt;
+										5
+									&lt;/div&gt;
+								&lt;/div&gt;
+								&lt;span class=3D&quot;stars-text&quot; style=3D&quot;display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;&quot;&gt;
+									Waarschijnlijk
+								&lt;/span&gt;
+							&lt;/div&gt;
+						&lt;/div--&gt;
+					=09
+												&lt;p class=3D&quot;in-text&quot;style=3D&quot;margin: 0; font: 14px/1.3 arial, s=
+ans-serif; color: #525354; padding-bottom: 15px;&quot;&gt;
+							Beweeg met uw muis over het aantal sterretjes hierboven en klik om a=
+an te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopen=
+d kunt u uw mening delen met anderen of ons team van feedback voorzien.&lt;br =
+/&gt;&lt;br /&gt;Bedankt voor het delen van uw mening!&lt;br /&gt;&lt;br /&gt;Met vriendelijke g=
+roet,&lt;br /&gt;&lt;br /&gt;Fysiotherapeut Marendijk						&lt;/p&gt;
+											&lt;/div&gt;
+				&lt;/div&gt;
+		=09
+								&lt;p style=3D&quot;text-align: left; max-width: 700px; margin: 0 auto; pad=
+ding: 15px 10px 10px; font: 12px/1.3 arial, sans-serif; color: #999; displa=
+y: inline-block;&quot;&gt;
+					U ontvangt deze e-mail omdat uw e-mailadres is opgenomen in het patië=
+ntenbestand van Fysiotherapeut Marendijk. Het verzoek tot deelname aan dit =
+is een eenmalige e-mail volgend op uw behandeling.&lt;br /&gt;Deze e-mailuitnodig=
+ing wordt verzorgd door &lt;a href=3D'http://www.patientenreview.nl/'&gt;Patiënt=
+enreview&lt;/a&gt;.				&lt;/p&gt;
+							=09
+							=09
+							=09
+				&lt;p style=3D&quot;max-width: 700px; margin: 0 auto; text-align: center; paddi=
+ng: 15px 0; font: 12px/1.5 arial, sans-serif; color: #aaa;&quot;&gt;
+					&lt;a href=3D&quot;http://pr.da/unsubscribe/5dd9db5e033da9c6fb5ba83c7a7ebea9/&quot;=
+&gt;
+						Ik wil geen e-mails meer van Patiëntenreview ontvangen.
+					&lt;/a&gt;
+				&lt;/p&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;style&gt;
+			.inner:hover td.star &gt; div {
+				background-position: 0 100% !important;
+			}
+		=09
+			.inner:hover td.star:hover + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star + td.star + td.star &gt; div=
+ {
+				background-position: 0 0 !important;
+			}
+		=09
+			@media (max-width: 768px) {
+				.inner td {
+					font-size: 0;
+				}
+			=09
+				.outer-box {
+					padding: 10px !important;
+				}
+			}
+		&lt;/style&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+
+--B_ALT_56d58979465e0--</pre>
