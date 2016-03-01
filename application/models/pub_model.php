@@ -3390,6 +3390,7 @@
 					{
 						$row['new_letter'] = ($row['last'] >= $user['last']) ? 1 : 0;
 						$row['date_time'] = date("d-m-y H:i", ($row['last'] > 0 ? $row['last'] : $row['date']));
+						$row['date'] = $row['last'] > 0 ? $row['last'] : $row['date'];
 						$row['doctor_name'] = "";
 						if ( ! empty($doctors[$row['doctor']]))
 						{
