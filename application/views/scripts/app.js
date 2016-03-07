@@ -202,6 +202,11 @@
             name: 'Lisa Doe' // those which use i18n directive will not be updated for now
         };
 		
+		$scope.$on('$viewContentLoaded', function(event) {
+			//$window._gaq.push(['_trackPageview', $location.url()]);
+			//$window.ga('send', 'pageview', { page: $location.url() });
+		});
+		
 		$scope.apps = {};
 		$scope.apps.title = 'Patiëntenreview.nl';
 		$scope.apps.ready = false;
@@ -6583,7 +6588,7 @@
 		{
 			$scope.iframe += " style='width: 100%; height: 302px; border: 0;' ";
 		}
-		$scope.iframe += "src='https://app.patientenreview.nl/widget/" + $scope.code + "/'></iframe>";
+		$scope.iframe += "src='http://app.patientenreview.nl/widget/" + $scope.code + "/'></iframe>";
 		
 		$scope.save = function() {
 			$modalInstance.close("save");
