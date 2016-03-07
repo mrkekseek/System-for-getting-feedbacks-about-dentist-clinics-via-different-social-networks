@@ -202,6 +202,11 @@
             name: 'Lisa Doe' // those which use i18n directive will not be updated for now
         };
 		
+		$scope.$on('$viewContentLoaded', function(event) {
+			//$window._gaq.push(['_trackPageview', $location.url()]);
+			//$window.ga('send', 'pageview', { page: $location.url() });
+		});
+		
 		$scope.apps = {};
 		$scope.apps.title = 'Patiëntenreview.nl';
 		$scope.apps.ready = false;
