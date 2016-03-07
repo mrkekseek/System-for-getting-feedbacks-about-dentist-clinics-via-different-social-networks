@@ -85,27 +85,29 @@
 						</div>
 						
 						<div class="panel-body text-center">
-							<table class="table" ng-if="stat.max.length">
-								<thead>
-									<tr>
-										<th>Gebruikersnaam</th>
-										<th>Laatst ingelogd</th>
-										<th>Aantal keer ingelogd</th>
-										<th>Aantal uitnodigingen verstuurd</th>
-										<th>Account</th>
-									</tr>
-								</thead>
-								
-								<tbody>
-									<tr ng-repeat="item in stat.max">
-										<td class="text-left">{{item.username}}</td>
-										<td class="text-left">{{item.login_date}}</td>
-										<td class="text-left">{{item.login_number}}</td>
-										<td class="text-left">{{item.sent_number}}</td>
-										<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
-									</tr>
-								</tbody>
-							</table>
+							<div class="table-responsive">
+								<table class="table" ng-if="stat.max.length">
+									<thead>
+										<tr>
+											<th>Gebruikersnaam</th>
+											<th>Laatst ingelogd</th>
+											<th>Aantal keer ingelogd</th>
+											<th>Aantal uitnodigingen verstuurd</th>
+											<th>Account</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										<tr ng-repeat="item in stat.max">
+											<td class="text-left">{{item.username}}</td>
+											<td class="text-left">{{item.login_date}}</td>
+											<td class="text-left">{{item.login_number}}</td>
+											<td class="text-left">{{item.sent_number}}</td>
+											<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -119,27 +121,29 @@
 						</div>
 						
 						<div class="panel-body text-center">
-							<table class="table" ng-if="stat.min.length">
-								<thead>
-									<tr>
-										<th>Gebruikersnaam</th>
-										<th>Laatst ingelogd</th>
-										<th>Aantal keer ingelogd</th>
-										<th>Aantal uitnodigingen verstuurd</th>
-										<th>Account</th>
-									</tr>
-								</thead>
-								
-								<tbody>
-									<tr ng-repeat="item in stat.min">
-										<td class="text-left">{{item.username}}</td>
-										<td class="text-left">{{item.login_date}}</td>
-										<td class="text-left">{{item.login_number}}</td>
-										<td class="text-left">{{item.sent_number}}</td>
-										<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
-									</tr>
-								</tbody>
-							</table>
+							<div class="table-responsive">
+								<table class="table" ng-if="stat.min.length">
+									<thead>
+										<tr>
+											<th>Gebruikersnaam</th>
+											<th>Laatst ingelogd</th>
+											<th>Aantal keer ingelogd</th>
+											<th>Aantal uitnodigingen verstuurd</th>
+											<th>Account</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										<tr ng-repeat="item in stat.min">
+											<td class="text-left">{{item.username}}</td>
+											<td class="text-left">{{item.login_date}}</td>
+											<td class="text-left">{{item.login_number}}</td>
+											<td class="text-left">{{item.sent_number}}</td>
+											<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -452,7 +456,9 @@
 						</div>
                     </div>
                     <div class="panel-body">
-                        <div id="days_chart"></div>
+						<div class="table-responsive">
+							<div id="days_chart"></div>
+						</div>
                     </div>
                 </div>
             </div>

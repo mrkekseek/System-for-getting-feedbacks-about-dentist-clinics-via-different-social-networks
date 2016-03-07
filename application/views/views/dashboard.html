@@ -119,35 +119,37 @@
 					</div>
 					
 					<div class="panel-body panel-same-scroll">
-						<table class="table table-hover table-responsive" ng-if="letters.length" ng-init="words = {0: 'Geen reactie', 1: '1 ster', 2: '2 sterren', 3: '3 sterren', 4: '4 sterren', 5: '5 sterren'}">
-							<tr>
-								<!--th>Zorgverlener</th-->
-								<th>E-mail</th>
-								<th>Beoordeling</th>
-								<!--th>Doorgeklikt naar</th-->
-								<th>Datum</th>
-								<th></th>
-							</tr>
-							<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" ng-repeat="l in letters" ng-click="more(l.id, l.feedback != '', l.email)">
-								<!--td ng-class="{'color-danger bold': l.stars <= 2}">{{l.doctor_name}}</td-->
-								<td ng-class="{'color-danger bold': l.email != '' && l.stars <= 2, 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
-								<td>
-									<span ng-if="l.stars == 0">Geen reactie</span>
-									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 0"></i>
-									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 1"></i>
-									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 2"></i>
-									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 3"></i>
-									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 4"></i>
-								</td>
-								<!--td>
-									<span class='socials-inbox-icons' ng-if="l.google == 1"><i class="ti-google"></i></span>
-									<span class='socials-inbox-icons' ng-if="l.zorgkaart == 1"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /></span>
-									<span class='socials-inbox-icons' ng-if="l.facebook == 1"><i class="ti-facebook"></i></span>
-								</td-->
-								<td>{{l.date_time}}</td>
-								<td><i class="ti-marker-alt" ng-if="l.feedback != ''"></i></td>
-							</tr>
-						</table>
+						<div class="table-responsive" ng-if="letters.length">
+							<table class="table table-hover table-responsive" ng-init="words = {0: 'Geen reactie', 1: '1 ster', 2: '2 sterren', 3: '3 sterren', 4: '4 sterren', 5: '5 sterren'}">
+								<tr>
+									<!--th>Zorgverlener</th-->
+									<th>E-mail</th>
+									<th>Beoordeling</th>
+									<!--th>Doorgeklikt naar</th-->
+									<th>Datum</th>
+									<th></th>
+								</tr>
+								<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" ng-repeat="l in letters" ng-click="more(l.id, l.feedback != '', l.email)">
+									<!--td ng-class="{'color-danger bold': l.stars <= 2}">{{l.doctor_name}}</td-->
+									<td ng-class="{'color-danger bold': l.email != '' && l.stars <= 2, 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
+									<td>
+										<span ng-if="l.stars == 0">Geen reactie</span>
+										<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 0"></i>
+										<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 1"></i>
+										<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 2"></i>
+										<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 3"></i>
+										<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 4"></i>
+									</td>
+									<!--td>
+										<span class='socials-inbox-icons' ng-if="l.google == 1"><i class="ti-google"></i></span>
+										<span class='socials-inbox-icons' ng-if="l.zorgkaart == 1"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /></span>
+										<span class='socials-inbox-icons' ng-if="l.facebook == 1"><i class="ti-facebook"></i></span>
+									</td-->
+									<td>{{l.date_time}}</td>
+									<td><i class="ti-marker-alt" ng-if="l.feedback != ''"></i></td>
+								</tr>
+							</table>
+						</div>
 						<p class="no-letters text-center" ng-if=" ! letters.length" ng-class="{show: ready}">
 							Er zijn nog geen waarderingen achtergelaten.
 						</p>

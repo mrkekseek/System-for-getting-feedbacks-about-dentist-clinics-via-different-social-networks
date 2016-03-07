@@ -1,1 +1,5 @@
 invoices/*
+logos/*
+colors/*
+application/config/database.php
+log.txt
