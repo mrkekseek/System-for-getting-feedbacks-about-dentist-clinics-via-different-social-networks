@@ -90,50 +90,52 @@
 										Voor de huidige abbonementstermijn wordt het te betalen bedrag uitgerekend aan de hand van de resterende dagen.
 									</p>
 									
-									<table class="table table-bordered">
-										<thead>
-											<tr>
-												<th>Beschrijving</th>
-												<th>Bedrag</th>
-											</tr>
-										</thead>
-										
-										<!--tbody>
-											<tr>
-												<td>Patiëntenreview {{user.account_type == 0 ? 'Basis' : 'Pro'}}</td>
-												<td>€{{ (user.account_type == 0 ? amount.base_amount : amount.pro_amount).toFixed(2).replace(".", ",")}}</td>
-											</tr>
+									<div class="table-responsive">
+										<table class="table table-bordered">
+											<thead>
+												<tr>
+													<th>Beschrijving</th>
+													<th>Bedrag</th>
+												</tr>
+											</thead>
 											
-											<tr>
-												<td><strong>Zorgverlener:
-												<span>{{doctor.firstname}} {{doctor.lastname}}{{amount.doctors.length ? "," : ""}}<span>
-												<span ng-repeat="(index, d) in amount.doctors">
-													{{d.firstname}} {{d.lastname}}{{index < (amount.doctors.length - 1) ? "," : ""}}
-												</span>
-												</strong></td>
-												<td><strong>€{{(amount.doctor_amount * (amount.doctors_pay.length + 1)).toFixed(2).replace(".", ",")}}</strong></td>
-											</tr>
+											<!--tbody>
+												<tr>
+													<td>Patiëntenreview {{user.account_type == 0 ? 'Basis' : 'Pro'}}</td>
+													<td>€{{ (user.account_type == 0 ? amount.base_amount : amount.pro_amount).toFixed(2).replace(".", ",")}}</td>
+												</tr>
+												
+												<tr>
+													<td><strong>Zorgverlener:
+													<span>{{doctor.firstname}} {{doctor.lastname}}{{amount.doctors.length ? "," : ""}}<span>
+													<span ng-repeat="(index, d) in amount.doctors">
+														{{d.firstname}} {{d.lastname}}{{index < (amount.doctors.length - 1) ? "," : ""}}
+													</span>
+													</strong></td>
+													<td><strong>€{{(amount.doctor_amount * (amount.doctors_pay.length + 1)).toFixed(2).replace(".", ",")}}</strong></td>
+												</tr>
+												
+												<tr>
+													<td>Totaal incl. BTW</td>
+													<td>€{{((user.account_type == 0 ? amount.base_amount : amount.pro_amount) + (amount.doctor_amount * (amount.doctors_pay.length + 1))).toFixed(2).replace(".", ",")}}</td>
+												</tr>
+											</tbody-->
 											
-											<tr>
-												<td>Totaal incl. BTW</td>
-												<td>€{{((user.account_type == 0 ? amount.base_amount : amount.pro_amount) + (amount.doctor_amount * (amount.doctors_pay.length + 1))).toFixed(2).replace(".", ",")}}</td>
-											</tr>
-										</tbody-->
-										
-										<tbody>
-											<tr>
-												<td><strong>Zorgverlener:
-												<span>{{doctor.firstname}} {{doctor.lastname}} t/m {{amount.doctor_days}}<span>
-												</td>
-												<td><strong>€{{(amount.doctor_amount).toFixed(2).replace(".", ",")}}</strong></td>
-											</tr>
-											
-											<tr>
-												<td>Totaal INCL. BTW</td>
-												<td>€{{(amount.doctor_amount).toFixed(2).replace(".", ",")}}</td>
-											</tr>
-										</tbody>
-									</table>
+											<tbody>
+												<tr>
+													<td><strong>Zorgverlener:
+													<span>{{doctor.firstname}} {{doctor.lastname}} t/m {{amount.doctor_days}}<span>
+													</td>
+													<td><strong>€{{(amount.doctor_amount).toFixed(2).replace(".", ",")}}</strong></td>
+												</tr>
+												
+												<tr>
+													<td>Totaal INCL. BTW</td>
+													<td>€{{(amount.doctor_amount).toFixed(2).replace(".", ",")}}</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
 								</div>
 								
 								<p ng-if="amount.doctor_amount == 0 && user.account == 1">

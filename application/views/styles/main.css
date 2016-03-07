@@ -2614,4 +2614,13 @@ span.pro {
 	.rating-footer {
 		padding: 20px;
 	}
+	
+	.page-num-info {
+		margin-bottom: 20px;
+		text-align: right;
+	}
+	
+	.nav-right:last-of-type {
+		display: none;
+	}
 }

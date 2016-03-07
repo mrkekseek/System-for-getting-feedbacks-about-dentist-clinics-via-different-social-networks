@@ -1,6 +1,6 @@
 <div class="page page-mail" ng-controller="InboxCtrl">
     <div class="row hundret">
-        <div class="col-sm-3 mail-categories">
+        <div class="col-sm-3 col-xs-12 mail-categories">
             <div class="category-heading">
                 <a href="#/mail/compose" class="btn btn-block btn-lg btn-primary">Stuur nieuwe uitnodiging</a>
             </div>
@@ -74,7 +74,7 @@
 				</li>
             </ul>
         </div>
-        <div class="col-sm-9">
+        <div class="col-sm-9 col-xs-12">
             <section class="panel panel-default mail-container table-dynamic">
                 <div class="panel-heading">Ontvangen beoordelingen van uw praktijk <button type="button" class="btn btn-primary" ng-show="count_letters()" ng-click="bulk_modal()">Stuur bedankje...</button></div>
                 <table class="table table-hover table-responsive" ng-if="letters.length" ng-init="words = {0: 'Geen reactie', 1: '1 ster', 2: '2 sterren', 3: '3 sterren', 4: '4 sterren', 5: '5 sterren'}">

@@ -23,108 +23,110 @@
 			</div>
 		</div>
 
-		<table class="table table-bordered table-striped table-responsive">
-			<thead>
-				<tr>
-					<th><div class="th"></div></th>
-					<th><div class="th">
-						ID
-						<span class="fa fa-angle-up"
-							  data-ng-click=" order('id') "
-							  data-ng-class="{active: row == 'id'}"></span>
-						<span class="fa fa-angle-down"
-							  data-ng-click=" order('-id') "
-							  data-ng-class="{active: row == '-id'}"></span>
-					</div></th>
-					<th><div class="th">
-						Praktijk
-						<span class="fa fa-angle-up"
-							  data-ng-click=" order('username') "
-							  data-ng-class="{active: row == 'username'}"></span>
-						<span class="fa fa-angle-down"
-							  data-ng-click=" order('-username') "
-							  data-ng-class="{active: row == '-username'}"></span>
-					</div></th>
-					<th><div class="th">
-						Status
-						<span class="fa fa-angle-up"
-							  data-ng-click=" order('type') "
-							  data-ng-class="{active: row == 'type'}"></span>
-						<span class="fa fa-angle-down"
-							  data-ng-click=" order('-type') "
-							  data-ng-class="{active: row == '-type'}"></span>
-					</div></th>
-					<th><div class="th">
-						Emailadres praktijk
-						<span class="fa fa-angle-up"
-							  data-ng-click=" order('email') "
-							  data-ng-class="{active: row == 'email'}"></span>
-						<span class="fa fa-angle-down"
-							  data-ng-click=" order('-email') "
-							  data-ng-class="{active: row == '-email'}"></span>
-					</div></th>
-					<th><div class="th">
-						Geregistreerd op
-						<span class="fa fa-angle-up"
-							  data-ng-click=" order('signup') "
-							  data-ng-class="{active: row == 'signup'}"></span>
-						<span class="fa fa-angle-down"
-							  data-ng-click=" order('-signup') "
-							  data-ng-class="{active: row == '-signup'}"></span>
-					</div></th>
-					<th><div class="th">
-						Begindatum
-						<span class="fa fa-angle-up"
-							  data-ng-click=" order('activation') "
-							  data-ng-class="{active: row == 'activation'}"></span>
-						<span class="fa fa-angle-down"
-							  data-ng-click=" order('-activation') "
-							  data-ng-class="{active: row == '-activation'}"></span>
-					</div></th>
-					<th><div class="th">
-						Einddatum
-						<span class="fa fa-angle-up"
-							  data-ng-click=" order('suspension') "
-							  data-ng-class="{active: row == 'suspension'}"></span>
-						<span class="fa fa-angle-down"
-							  data-ng-click=" order('-suspension') "
-							  data-ng-class="{active: row == '-suspension'}"></span>
-					</div></th>
-					<th><div class="th">
-						Versie
-						<span class="fa fa-angle-up"
-							  data-ng-click=" order('suspension') "
-							  data-ng-class="{active: row == 'suspension'}"></span>
-						<span class="fa fa-angle-down"
-							  data-ng-click=" order('-suspension') "
-							  data-ng-class="{active: row == '-suspension'}"></span>
-					</div></th>
-					<th><div class="th">Account</div></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr data-ng-repeat="user in currentPageStores">
-					<td><label class="ui-checkbox"><input type="checkbox" ng-model="checks_model" ng-change="check_checks(user.id)" /><span></span></label></td>
-					<td>{{user.id}}</td>
-					<td>{{user.username}}</td>
-					<td>
-						<a ng-if="user.admin_stop == '1'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Geblokkeerd</a>
-						<a ng-if="user.admin_stop == '0' && (user.account == '1' || user.account == '2') && user.type != '2'" href="javascript:void(0);" class="label label-success" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Actief</a>
-						<a ng-if="user.admin_stop == '0' && user.type == '2'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Gestopt</a>
-					</td>
-					<td>{{user.email}}</td>
-					<td>{{user.signup_str}}</td>
-					<td>{{user.activation_str}}</td>
-					<td>{{user.suspension_str}}</td>
-					<td>
-						<span ng-if="user.account == '2'">Proefperiode</span>
-						<span ng-if="user.account != '2' && user.account_type == '0'">Basis</span>
-						<span ng-if="user.account != '2' && user.account_type == '1'">Pro</span>
-					</td>
-					<td><a class="label label-primary" ng-click="login_as_user(user.id)">Log In</a></td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="table-responsive">
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th><div class="th"></div></th>
+						<th><div class="th">
+							ID
+							<span class="fa fa-angle-up"
+								  data-ng-click=" order('id') "
+								  data-ng-class="{active: row == 'id'}"></span>
+							<span class="fa fa-angle-down"
+								  data-ng-click=" order('-id') "
+								  data-ng-class="{active: row == '-id'}"></span>
+						</div></th>
+						<th><div class="th">
+							Praktijk
+							<span class="fa fa-angle-up"
+								  data-ng-click=" order('username') "
+								  data-ng-class="{active: row == 'username'}"></span>
+							<span class="fa fa-angle-down"
+								  data-ng-click=" order('-username') "
+								  data-ng-class="{active: row == '-username'}"></span>
+						</div></th>
+						<th><div class="th">
+							Status
+							<span class="fa fa-angle-up"
+								  data-ng-click=" order('type') "
+								  data-ng-class="{active: row == 'type'}"></span>
+							<span class="fa fa-angle-down"
+								  data-ng-click=" order('-type') "
+								  data-ng-class="{active: row == '-type'}"></span>
+						</div></th>
+						<th><div class="th">
+							Emailadres praktijk
+							<span class="fa fa-angle-up"
+								  data-ng-click=" order('email') "
+								  data-ng-class="{active: row == 'email'}"></span>
+							<span class="fa fa-angle-down"
+								  data-ng-click=" order('-email') "
+								  data-ng-class="{active: row == '-email'}"></span>
+						</div></th>
+						<th><div class="th">
+							Geregistreerd op
+							<span class="fa fa-angle-up"
+								  data-ng-click=" order('signup') "
+								  data-ng-class="{active: row == 'signup'}"></span>
+							<span class="fa fa-angle-down"
+								  data-ng-click=" order('-signup') "
+								  data-ng-class="{active: row == '-signup'}"></span>
+						</div></th>
+						<th><div class="th">
+							Begindatum
+							<span class="fa fa-angle-up"
+								  data-ng-click=" order('activation') "
+								  data-ng-class="{active: row == 'activation'}"></span>
+							<span class="fa fa-angle-down"
+								  data-ng-click=" order('-activation') "
+								  data-ng-class="{active: row == '-activation'}"></span>
+						</div></th>
+						<th><div class="th">
+							Einddatum
+							<span class="fa fa-angle-up"
+								  data-ng-click=" order('suspension') "
+								  data-ng-class="{active: row == 'suspension'}"></span>
+							<span class="fa fa-angle-down"
+								  data-ng-click=" order('-suspension') "
+								  data-ng-class="{active: row == '-suspension'}"></span>
+						</div></th>
+						<th><div class="th">
+							Versie
+							<span class="fa fa-angle-up"
+								  data-ng-click=" order('suspension') "
+								  data-ng-class="{active: row == 'suspension'}"></span>
+							<span class="fa fa-angle-down"
+								  data-ng-click=" order('-suspension') "
+								  data-ng-class="{active: row == '-suspension'}"></span>
+						</div></th>
+						<th><div class="th">Account</div></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr data-ng-repeat="user in currentPageStores">
+						<td><label class="ui-checkbox"><input type="checkbox" ng-model="checks_model" ng-change="check_checks(user.id)" /><span></span></label></td>
+						<td>{{user.id}}</td>
+						<td>{{user.username}}</td>
+						<td>
+							<a ng-if="user.admin_stop == '1'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Geblokkeerd</a>
+							<a ng-if="user.admin_stop == '0' && (user.account == '1' || user.account == '2') && user.type != '2'" href="javascript:void(0);" class="label label-success" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Actief</a>
+							<a ng-if="user.admin_stop == '0' && user.type == '2'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Gestopt</a>
+						</td>
+						<td>{{user.email}}</td>
+						<td>{{user.signup_str}}</td>
+						<td>{{user.activation_str}}</td>
+						<td>{{user.suspension_str}}</td>
+						<td>
+							<span ng-if="user.account == '2'">Proefperiode</span>
+							<span ng-if="user.account != '2' && user.account_type == '0'">Basis</span>
+							<span ng-if="user.account != '2' && user.account_type == '1'">Pro</span>
+						</td>
+						<td><a class="label label-primary" ng-click="login_as_user(user.id)">Log In</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 
 		<footer class="table-footer">
 			<div class="row">

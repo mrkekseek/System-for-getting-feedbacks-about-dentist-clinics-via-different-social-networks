@@ -77,25 +77,27 @@
                     </div>
 					
 					<div class="panel-body text-center">
-						<table class="table" ng-if="stat.added14.length">
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Praktijknaam</th>
-									<th>Geregistreerd op</th>
-									<th></th>
-								</tr>
-							</thead>
-							
-							<tbody>
-								<tr ng-repeat="item in stat.added14">
-									<td class="text-left">{{item.id}}</td>
-									<td class="text-left">{{item.username}}</td>
-									<td class="text-left">{{item.date}}</td>
-									<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
-								</tr>
-							</tbody>
-						</table>
+						<div class="table-responsive">
+							<table class="table" ng-if="stat.added14.length">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Praktijknaam</th>
+										<th>Geregistreerd op</th>
+										<th></th>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr ng-repeat="item in stat.added14">
+										<td class="text-left">{{item.id}}</td>
+										<td class="text-left">{{item.username}}</td>
+										<td class="text-left">{{item.date}}</td>
+										<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -109,25 +111,27 @@
                     </div>
 					
 					<div class="panel-body text-center">
-						<table class="table" ng-if="stat.expire14.length">
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Praktijknaam</th>
-									<th>Eindigt op</th>
-									<th></th>
-								</tr>
-							</thead>
-							
-							<tbody>
-								<tr ng-repeat="item in stat.expire14">
-									<td class="text-left">{{item.id}}</td>
-									<td class="text-left">{{item.username}}</td>
-									<td class="text-left">{{item.date}}</td>
-									<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
-								</tr>
-							</tbody>
-						</table>
+						<div class="table-responsive">
+							<table class="table" ng-if="stat.expire14.length">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Praktijknaam</th>
+										<th>Eindigt op</th>
+										<th></th>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr ng-repeat="item in stat.expire14">
+										<td class="text-left">{{item.id}}</td>
+										<td class="text-left">{{item.username}}</td>
+										<td class="text-left">{{item.date}}</td>
+										<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
