@@ -488,12 +488,12 @@
 				}
 			});
 		};
-		
-		if ($location.path() != '')
+
+		if ($window.location.pathname == '/')
 		{
 			$scope.after_logged_in();
 		}
-		
+			
 		$scope.users_list = "";
 		$scope.user = {};
 		$scope.users_select = [];

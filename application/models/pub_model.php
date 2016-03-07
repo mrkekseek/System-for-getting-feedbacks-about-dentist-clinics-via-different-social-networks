@@ -3014,16 +3014,16 @@
 				$config['newline'] = "\r\n";
 				$config['crlf'] = "\r\n";
 				
-				/*$config['protocol'] = 'smtp';
-				$config['smtp_user'] = 'postmaster@mg.patientenreview.nl';
-				$config['smtp_pass'] = '4add968a0a17e23db8752874334c9ae2';
-				$config['smtp_host'] = 'ssl://smtp.mailgun.org';
-				$config['smtp_port'] = '465';
-				$config['smtp_timeout'] = '4';
-				$config['charset'] = 'utf-8';
-				$config['mailtype'] = 'html';
-				$config['newline'] = "\r\n";
-				$config['crlf'] = "\n";*/
+				// $config['protocol'] = 'smtp';
+				// $config['smtp_user'] = 'postmaster@mg.patientenreview.nl';
+				// $config['smtp_pass'] = '4add968a0a17e23db8752874334c9ae2';
+				// $config['smtp_host'] = 'ssl://smtp.mailgun.org';
+				// $config['smtp_port'] = '465';
+				// $config['smtp_timeout'] = '4';
+				// $config['charset'] = 'utf-8';
+				// $config['mailtype'] = 'html';
+				// $config['newline'] = "\r\n";
+				// $config['crlf'] = "\n";
 
 				$this->load->library('email', $config);
 
@@ -3246,7 +3246,7 @@
 		function check_short_results($users_id, $doctors_id)
 		{
 			$ip = $_SERVER['REMOTE_ADDR'];
-
+			$this->db->order_by("id", "desc");
 			$this->db->where("users_id", $users_id);
 			if ( ! empty($doctors_id))
 			{
@@ -3268,8 +3268,21 @@
 					}
 					else
 					{
-						$row['last_date'] = date("d-m-Y", $row['last'] + 48 * 3600);
-						$row['last_time'] = date("H:i", $row['last'] + 48 * 3600);
+						$finish = $row['last'] + 48 * 3600;
+						if ($finish < time())
+						{
+							$row = array('stars' => 0,
+										 'feedback' => '',
+										 'id' => 0,
+										 'last_date' => '',
+										 'last_time' => '',
+										 'ex' => FALSE);
+						}
+						else
+						{
+							$row['last_date'] = date("d-m-Y", $finish);
+							$row['last_time'] = date("H:i", $finish);
+						}
 					}
 				}
 				else
