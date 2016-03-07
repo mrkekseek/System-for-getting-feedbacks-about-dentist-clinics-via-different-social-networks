@@ -204,7 +204,7 @@
 		
 		$scope.$on('$viewContentLoaded', function(event) {
 			//$window._gaq.push(['_trackPageview', $location.url()]);
-			//$window.ga('send', 'pageview', { page: $location.url() });
+			$window.ga('send', 'pageview', {page: $location.url()});
 		});
 		
 		$scope.apps = {};
