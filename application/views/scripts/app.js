@@ -6588,7 +6588,7 @@
 		{
 			$scope.iframe += " style='width: 100%; height: 302px; border: 0;' ";
 		}
-		$scope.iframe += "src='https://app.patientenreview.nl/widget/" + $scope.code + "/'></iframe>";
+		$scope.iframe += "src='http://app.patientenreview.nl/widget/" + $scope.code + "/'></iframe>";
 		
 		$scope.save = function() {
 			$modalInstance.close("save");
