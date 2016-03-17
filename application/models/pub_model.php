@@ -2246,15 +2246,18 @@
 			}
 		}
 
-		function parse_xls($file)
+		function parse_xls($file, $first = FALSE)
 		{
 			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
 			{
 				mkdir($path, 0755, TRUE);
 			}
 			
-			$this->load->helper("file");
-			delete_files($path);
+			if ($first)
+			{
+				$this->load->helper("file");
+				delete_files($path);
+			}
 			
 			$tags = $this->get_emails_tags();
 			$fields = array('title' => 'Aanhef Patiënt',
@@ -2300,8 +2303,12 @@
 						{
 							$result['empty'] = TRUE;
 						}
+						
 						$result['headers'][$tag] = $fields[$tag];
-						$result['cols'] = array_diff($result['cols'], array($rows[0][$col]));
+						if ($col !== FALSE)
+						{
+							$result['cols'] = array_diff($result['cols'], array($rows[0][$col]));
+						}
 					}
 					$result['cols'] = array_values($result['cols']);
 					
@@ -2379,7 +2386,7 @@
 			$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 			$message = $this->load->view('views/mail/tpl_help.html', $post, TRUE);
 			$attach = $file."&&".(($row['account'] == 1 && $row['account_type'] == 0) ? './excel-basis-tpl.xls' : './excel-tpl.xls');
-			$this->send("help", $row['email'], 'Hulpverzoek upload patiëntenbestand '.$row['username'], $message, 'Patiëntenreview', 'info@patientenreview.nl', $attach);
+			$this->send("help", 'support@patientenreview.nl', 'Hulpverzoek upload patiëntenbestand '.$row['username'], $message, 'Patiëntenreview', 'info@patientenreview.nl', $attach);
 			$this->errors[] = array("Success" => "Patiëntenbestand verstuurd");
 			return $this->real_send(array('help'), $this->db->insert_id());
 		}
@@ -2388,6 +2395,7 @@
 		{
 			if ($this->logged_in())
 			{
+				return array('title', 'name', 'sname', 'birth', 'email', 'doctor');
 				$requred = array();
 				$texts = $this->user_emails();
 				foreach ($texts as $text)

@@ -279,7 +279,7 @@
 			{
 				if ( ! empty($_FILES['file']['tmp_name']) && (strpos($_FILES['file']['name'], 'xls') !== FALSE))
 				{
-					$result = $this->pub->parse_xls($_FILES['file']['tmp_name']);
+					$result = $this->pub->parse_xls($_FILES['file']['tmp_name'], TRUE);
 				}
 				else
 				{
