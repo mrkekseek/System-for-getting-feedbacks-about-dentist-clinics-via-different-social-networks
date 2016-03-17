@@ -277,22 +277,28 @@
 			$result = array();
 			if ($this->pub->logged_in())
 			{
-				if ( ! empty($_FILES['file']['tmp_name']))
+				if ( ! empty($_FILES['file']['tmp_name']) && (strpos($_FILES['file']['type'], 'excel') !== FALSE || strpos($_FILES['file']['type'], 'stream') !== FALSE))
 				{
-					$emails = $this->pub->parse_xls($_FILES['file']['tmp_name']);
-					if ( ! empty($emails))
-					{
-						if ($this->pub->check_emails_tags($emails))
-						{
-							$result = $this->pub->today_emails($emails);
-						}
-					}
-					else
-					{
-						$this->pub->errors[] = array("Het verwerken van emailadressen is niet gelukt.");
-					}
+					$result = $this->pub->parse_xls($_FILES['file']['tmp_name']);
+				}
+				else
+				{
+					$result['error'] = TRUE;
 				}
 			}
+			$this->response($result);
+		}
+		
+		function save_field()
+		{
+			$this->pub->save_field($this->post);
+			$result = $this->pub->parse_xls($this->post['file']);
+			$this->response($result);
+		}
+		
+		function upload_help()
+		{
+			$result = $this->pub->upload_help($this->post['file']);
 			$this->response($result);
 		}
 		

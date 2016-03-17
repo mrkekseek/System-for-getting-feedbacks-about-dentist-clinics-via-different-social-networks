@@ -1,179 +1,187 @@
-<div class="page page-mail" ng-controller="ComposeCtrl">
-    <div class="row hundret">
-
-        <div class="col-sm-3 mail-categories">
-            <div class="category-heading">
-                <!--a href="#/mail/compose" class="btn btn-block btn-lg btn-primary">Compose</a-->
-				<a href="#/mail/compose" class="btn btn-block btn-lg btn-primary">Stuur nieuwe uitnodiging</a>
-            </div>
-            <ul class="list-group">
-                <li class="list-group-item"><a href="#/mail/inbox">
-                    <i class="ti-folder"></i>Ontvangen
-					<span class="badge badge-primary pull-right" ng-if="inbox_count() > 0">{{inbox_count()}}</span>
-                </a></li>
-            </ul>
-        </div>
-
-        <div class="col-sm-9">
-            <section class="panel panel-default mail-container mail-compose">
-                <div class="panel-heading">Stuur nieuwe uitnodiging aan uw patiënten</div>
-                <div class="panel-body">
-                    <form class="form-horizontal" enctype="multipart/form-data">
-						<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-                        <div class="form-group">
-                            <!--div class="col-lg-9 col-md-7 col-sm-12 col-xs-12">
-                                <tags-input ng-model="tags" class="ui-tags-input" add-on-space="true"></tags-input>
-                            </div-->
-							<div class="col-xs-12">
-								<upload-button class="btn btn-primary btn-lg btn-upload btn-block" url="/pub/upload/" on-upload="setUploading()" on-success="onGlobalSuccess(response)">Upload Excel Patiëntenbestand</upload-button>
-								<p class="emails_count" ng-if="tags.length > 0 || uploading"><img src="application/views/images/loader.gif" alt="" ng-if="uploading" /> E-mailadressen: {{ tags.length }}</p>
-								<p class="text-center" ng-if="tags.length == 0">
-									<a href="/excel-tpl" class="link-excel-tpl">Download Excel sjabloon</a>
-								</p>
-                            </div>
-							<div class="col-xs-12 text-center">
-								<a href="javascript:void(0);" class="clear-emails btn btn-link" ng-class="{show_link: tags.length}" ng-click="clear()">Wis alle</a>
-							</div>
-                        </div>
-						<div class="well">
-							<p style="margin: 0; font: 13px/1.3 arial, sans-serif; color: #525354;">
-								<strong>Belangrijk:</strong> Het patiëntenbestand dient geüpload te worden in Excel-formaat, en dient tenminste het e-mailadres van uw patiënten te bevatten. We willen u graag aanbevelen om het Excel-sjabloon te gebruiken dat u hierboven kunt downloaden.
-							</p>
-						</div>
-						<p style="margin: 0; font: 13px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;" ng-if="last_date != '' && last_date != '0'">
-							Datum laatst verstuurde uitnodigingen: {{last_date}}
-						</p>
-                    </form>
-                    <div class="mail-actions">
-						<img src="application/views/images/loader.gif" alt="" ng-if="loader" />
-                        <a href="javascript:void(0);" class="btn btn-sm btn-primary" ng-click="send()">Stuur</a>
-                        <!--div class="btn btn-sm btn-default">Draft</div-->
-                        <a href="#/mail/inbox" class="btn btn-sm btn-default">Annuleer</a>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </div>
-
-	<script type="text/ng-template" id="isToday.html">
-		<div class="modal-header">
-			<p>
-				Eén of meerdere patiënten uit dit bestand zijn dubbel of zijn vandaag al door u uitgenodigd. Wilt u de betreffende e-mailadressen uit deze batch weglaten?
-			</p>
+<div class="page page-profile" ng-controller="ComposeCtrl">
+	<section class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				Stuur nieuwe uitnodigingen
+			</h3>
 		</div>
-		<div class="modal-body">
-			<span class="list-unstyled">
-				<span ng-repeat="item in items" class="list-unstyled">
-					<label class="ui-radio"><input name="today" type="radio" value="{{ item }}"  ng-checked="selected.item === item" ng-click="selected.item = item"><span>{{ item }}</span></label>
-				</span>
-			</span>
-		</div>
-		<div class="modal-footer">
-			<button class="btn btn-primary" ng-click="ok()">OK</button>
-			<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
-		</div>
-	</script>
-	
-	<script type="text/ng-template" id="example-old.html">
-		<div class="modal-body">
-			<p>
-				Omdat dit de eerste keer is dat u hier bent wilt u wellicht een voorbeeld bekijken van het emailbericht
-				dat we aan uw patiënten zullen sturen.
-			</p>
+		
+		<div class="panel-body">
+			<div class="compose-steps-box">
+				<div class="row">
+					<div class="col-lg-3 col-md-4 col-xs-12">
+						<span ng-class="{active: (step == 0), future: (step < 0), past: (step > 0)}" class="btn btn-round btn-primary btn-lg btn-block btn-invoice-label">1. <span>Upload patiëntenbestard</span></span>
+					</div>
+					
+					<div class="col-lg-3 col-md-4 col-xs-12">
+						<span ng-class="{active: (step == 1), future: (step < 1), past: (step > 1)}" class="btn btn-round btn-primary btn-lg btn-block btn-invoice-label">2. <span>Controleer verzendlijst</span></span>
+					</div>
+					
+					<div class="col-lg-3 col-md-4 col-xs-12">
+						<span ng-class="{active: (step == 2), future: (step < 2), past: (step > 2)}" class="btn btn-round btn-primary btn-lg btn-block btn-invoice-label">3. <span>Stuur uitnodigingen</span></span>
+					</div>
+				</div>
+			</div>
 			
-			<p>
-				Wilt u een voorbeeld e-mailbericht ontvangen op: {{email}}?
-			</p>
+			<div class="well well-white">
+				<div class="compose-steps-item" ng-show="step == 0">
+					<form class="form-horizontal" enctype="multipart/form-data">
+						<div class="drag-area btn-upload text-center">
+							<div class="inner-upload-box" ng-show="status == 0">
+								<i class="fa fa-cloud-upload"></i><br />
+								Sleep een patiëntenbestand hiernaartoe
+								<span class="drag-span">We ondersteunen .xls en .xlsx Excel-bestanden</span>
+							</div>
+							
+							<div class="inner-upload-box" ng-show="status > 0">
+								<div class="top-upload-box">
+								</div>
+								
+								<div class="progress progress-bar-default">
+									<div class="progress-bar" ng-class="{'progress-bar-success': status == 2, 'progress-bar-danger': status == 3}" role="progressbar" aria-valuenow="{{xlsFile.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{xlsFile.progress}}%;">
+										<i class="fa fa-check"></i>
+										<i class="fa fa-times"></i>
+									</div>
+								</div>
+								
+								<div ng-show="status == 1">
+									Uw patiëntenbestand wordt verwerkt.
+									<span class="drag-span">Een ogenblik geduld...</span>
+								</div>
+								
+								<div ng-show="status == 2">
+									Het verwerken van uw patiëntenbestand is gelukt.
+									<span class="drag-span">U kunt nu doorgaan naar de volgende stap.</span>
+								</div>
+								
+								<div ng-show="status == 3">
+									Het verwerken van uw patiëntenbestand is mislukt.
+									<span class="drag-span">Wellicht heeft u een onjuist bestandsformaat geüpload. <a href="javascript:void(0);" ng-click="help()">Heeft u hulp nodig?</a></span>
+								</div>
+							</div>
+							
+							<input type="file" ng-show="status == 0" ngf-select ng-model="xlsFile" ng-change="uploadFile(xlsFile)" name="file" required ngf-model-invalid="errorFile" />
+						</div>
+
+						<div class="mail-actions">
+							<span type="button" class="btn btn-primary btn-upload" ng-disabled="status == 1">
+								<span>Kies bestand...</span>
+								<input type="file" ngf-select ng-model="xlsFile" ng-change="uploadFile(xlsFile)" name="file" required ngf-model-invalid="errorFile" />
+							</span>
+							&nbsp;
+							<a href="/excel-tpl" class="btn btn-default" ng-disabled="status == 1">Download sjabloon <i class="fa fa-file-o"></i></a>
+						</div>
+					</form>
+				</div>
+				
+				<div class="compose-steps-item" ng-show="step == 1">
+					<div class="alert alert-success" ng-if="check">
+						<p>De verzendlijst is gecontroleerd en er zijn geen problemen gevonden.</p>
+					</div>
+					
+					<div class="alert alert-warning" ng-if=" ! check">
+						<p>De onderdelen met waarschuwingen zullen worden overgeslagen.</p>
+					</div>
+					
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered">
+							<thead>
+								<tr>
+									<th>Controle</th>
+									<th ng-repeat="(key, val) in headers">
+										{{val}}
+									</th>
+								</tr>
+								
+								<tr ng-if="empty">
+									<td>&nbsp;</td>
+									<td ng-repeat="(key, val) in headers">
+										<select class="form-control" ng-if=" ! cols_check[key]" ng-model="column[key]" ng-change="save_col(key)">
+											<option value="0">Kies een kolom</option>
+											<option value="{{c}}" ng-repeat="c in cols">{{c}}</option>
+										</select>
+									</td>
+								</tr>
+							</thead>
+							
+							<tbody>
+								<tr ng-repeat="d in page_data">
+									<td>
+										<span class="btn btn-sm btn-success" ng-if="d.error == 0">In orde</span>
+										<span class="btn btn-sm btn-warning" ng-if="d.error == 1">Dubbel</span>
+										<span class="btn btn-sm btn-danger" ng-if="d.error == 2">Mist gegevens</span>
+									</td>
+									<td ng-repeat="(key, val) in headers">
+										{{d[key]}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+					<nav class="uploads-nav" ng-if="pages > 1">
+						<ul class="pagination">
+							<li ng-class="{'disabled': page == 1}">
+								<a href="javascript:void(0);" aria-label="Previous" ng-click="change_page(page - 1)">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+							<li ng-class="{'active': page == i}" ng-repeat="i in get_array(pages)">
+								<a href="javascript:void(0);" ng-click="change_page(i)">{{i}}</a>
+							</li>
+							<li ng-class="{'disabled': page == pages}">
+								<a href="javascript:void(0);" aria-label="Next" ng-click="change_page(page + 1)">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+				
+				<div class="compose-steps-item" ng-show="step == 2">
+					<div class="compose-finish">
+						<img src="/application/views/images/compose.svg" alt="" class="compose-icon" />
+						U staat op het punt om {{send_emails.length}} patiënten een uitnodiging te sturen.
+						<div class="compose-buttons">
+							<button class="btn btn-danger" ng-click="send()" ng-disabled=" ! send_emails.length">Stuur uitnodigingen</button><br />
+							<button class="btn btn-sm btn-default" ng-click="compose_prev()">Annuleer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row" ng-id="step < 2">
+				<div class="col-sm-5 col-xs-12">
+					<a href="javascript:void(0);" class="link-upload-help" ng-show="status > 1" ng-click="help()">Heeft u hulp nodig?</a><br /><br />
+				</div>
+				
+				<div class="col-sm-7 col-xs-12 text-right">
+					<button class="btn btn-primary compose-prev" ng-disabled="step == 0" ng-click="compose_prev()">Vorige</button>
+					&nbsp;
+					<button class="btn btn-primary compose-next" ng-disabled="status != 2" ng-click="compose_next()">Volgende</button>
+				</div>
+			</div>
 		</div>
-		<div class="modal-footer">
-			<button class="btn btn-default" ng-click="cancel()">Nee</button>
-			<button class="btn btn-primary" ng-click="ok()">Stuur voorbeeld</button>
-		</div>
-	</script>
-	
-	<script type="text/ng-template" id="example.html">
+	</section>
+
+	<script type="text/ng-template" id="help_upload.html">
 		<div class="modal-header">
 			<h3>
-				Stuur voorbeeld e-mail
+				Hulp bij het uploaden van uw patiëntenbestand
 			</h3>
 		</div>
 		<div class="modal-body">
 			<p>
-				U kunt een voorbeeld van de e-mail versturen die uw patiënten te zien zullen krijgen.
+				Als u problemen ervaart met het uploaden van uw patiëntenbestand kunt u onze Support-afdeling opdracht geven om het patiëntenbestand voor u te versturen.
 			</p>
 			
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="form-group">
-						<input type="email" class="form-control" ng-model="test.email" placeholder="E-mailadres" />
-					</div>
-				</div>
-				
-				<div class="col-sm-6 col-xs-12" ng-show="items.title">
-					<div class="form-group">
-						<input type="text" class="form-control" ng-model="test.title" placeholder="Aanhef patiënt" />
-					</div>
-				</div>
-				
-				<div class="col-sm-6 col-xs-12" ng-show="items.name">
-					<div class="form-group">
-						<input type="text" class="form-control" ng-model="test.name" placeholder="Voornaam patiënt" />
-					</div>
-				</div>
-				
-				<div class="col-sm-6 col-xs-12" ng-show="items.sname">
-					<div class="form-group">
-						<input type="text" class="form-control" ng-model="test.sname" placeholder="Achternaam patiënt" />
-					</div>
-				</div>
-				
-				<div class="col-sm-6 col-xs-12" ng-show="items.doctors_title">
-					<div class="form-group">
-						<input type="text" class="form-control" ng-model="test.doctors_title" placeholder="Aanhef zorgverlener" />
-					</div>
-				</div>
-				
-				<div class="col-sm-6 col-xs-12" ng-show="items.doctors_name">
-					<div class="form-group">
-						<input type="text" class="form-control" ng-model="test.doctors_name" placeholder="Voornaam zorgverlener" />
-					</div>
-				</div>
-				
-				<div class="col-sm-6 col-xs-12" ng-show="items.doctors_sname">
-					<div class="form-group">
-						<input type="text" class="form-control" ng-model="test.doctors_sname" placeholder="Achternaam zorgverlener" />
-					</div>
-				</div>
-				
-				<div class="col-sm-6 col-xs-12" ng-show="items.username">
-					<div class="form-group">
-						<input type="text" class="form-control" ng-model="test.username" placeholder="Naam praktijk" />
-					</div>
-				</div>
-				
-				<div class="col-sm-6 col-xs-12" ng-show="items.subject">
-					<div class="form-group">
-						<input type="text" class="form-control" ng-model="test.subject" placeholder="Onderwerp van e-mail" />
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal-footer">
-			<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
-			<button class="btn btn-primary" ng-click="submit()">Stuur</button>
-		</div>
-	</script>
-	
-	<script type="text/ng-template" id="emptyTags.html">
-		<div class="modal-body">
 			<p>
-				Het geüploade patiëntenbestand kan niet worden verstuurd omdat één of meer door u
-				ingestelde variabelen ontbreken. Controleer het Patiëntenbestand of wijzig uw instellingen en
-				probeer het opnieuw.
+				Wanneer u dit wenst, zullen wij uw patiëntenbestand controleren en voor u versturen. U ontvangt hiervan binnen één werkdag per e-mail een bevestiging.
 			</p>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-primary" ng-click="cancel()">Sluit</button>
+			<button class="btn btn-primary" ng-click="confirm()">Geef toestemming</button>
+			<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
 		</div>
 	</script>
 </div>

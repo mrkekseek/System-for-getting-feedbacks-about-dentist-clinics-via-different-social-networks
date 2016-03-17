@@ -30,6 +30,7 @@
         'app.calendar',
 
 		'lr.upload',
+		'ngFileUpload',
 		'as.sortable',
 		'colorpicker.module'
     ]);
@@ -279,105 +280,6 @@
 			});
         };
 
-		$scope.tags = [];
-		$scope.uploading = false;
-
-		$scope.setUploading = function()
-		{
-			$scope.uploading = true;
-		};
-
-		$scope.onGlobalSuccess = function(response)
-		{
-			$scope.uploading = false;
-			var data = response.data;
-			if (data.errors)
-			{
-				var errors = [];
-				for (var key in data.errors)
-				{
-					for (var type in data.errors[key])
-					{
-						if (type == "modal")
-						{
-							$scope.modal_open(data.errors[key][type]);
-						}
-						else
-						{
-							errors.push({type: (type == 0 ? "danger" : type), msg: data.errors[key][type]});
-						}
-					}
-				}
-				$scope.alerts = errors;
-			}
-
-			var emails = [];
-			var unique_emails = [];
-			for (var key in $scope.tags)
-			{
-				emails.push($scope.tags[key]);
-				unique_emails.push($scope.tags[key].text.toLowerCase());
-			}
-
-			for (var key in data.result)
-			{
-				var check = true;
-				for (var k in unique_emails)
-				{
-					if (unique_emails[k] == data.result[key].email.toLowerCase())
-					{
-						check = false;
-					}
-				}
-
-				if (check)
-				{
-					emails.push({text: data.result[key].email, today: data.result[key].today, name: data.result[key].name, sname: data.result[key].sname, doctor: data.result[key].doctor, birth: data.result[key].birth, title: data.result[key].title});
-					unique_emails.push(data.result[key].email.toLowerCase());
-				}
-			}
-
-			$scope.tags = emails;
-		};
-
-		$scope.send = function()
-		{
-			var emails = [];
-			/*var tag = document.getElementsByTagName("tags-input")[0];
-			var input = tag.getElementsByTagName("input")[0];
-			if (input.value)
-			{
-				emails.push({text: input.value});
-			}*/
-
-			for (var key in $scope.tags)
-			{
-				emails.push($scope.tags[key]);
-			}
-
-			if (emails.length > 0)
-			{
-				$scope.loader = true;
-				$http.post("/pub/send/", {emails: emails}).success(function(data, status, headers, config) {
-					$scope.loader = false;
-					var result = logger.check(data);
-					$scope.clear();
-					if (result.first)
-					{
-						$window.location.href = "/send_new";
-					}
-					else
-					{
-						$location.url("/mail/inbox");
-					}
-				});
-			}
-			else
-			{
-				logger.check({errors: [['U heeft geen e-mailadres ingevuld.']]});
-			}
-		};
-
 		$scope.reply = {};
 		$scope.send_reply = function(id)
 		{
@@ -392,43 +294,6 @@
 		
 		$scope.set_text = function(text) {
 			$scope.reply.text = text;
-		};
-
-		$scope.clear = function()
-		{
-			$scope.tags = [];
-			document.getElementsByClassName("btn-upload")[0].getElementsByTagName("input")[0].value = "";
-		};
-
-		$scope.modal_open = function(script)
-		{
-			var modalInstance;
-			modalInstance = $modal.open({
-				templateUrl: script,
-				controller: 'ModalInstanceCtrl',
-				resolve: {
-					items: function() {
-						return ["Behoud alle e-mailadressen", "Laat e-mailadressen weg"];
-					}
-				}
-			});
-
-			modalInstance.result.then((function(selectedItem) {
-                if (selectedItem == "Laat e-mailadressen weg")
-				{
-					var emails = [];
-					for (var key in $scope.tags)
-					{
-						if ( ! $scope.tags[key].today)
-						{
-							emails.push($scope.tags[key]);
-						}
-					}
-					$scope.tags = emails;
-				}
-            }), function() {
-                console.log("Modal dismissed at: " + new Date());
-            });
 		};
 
 		$scope.closeAlert = function(index)
@@ -3408,9 +3273,336 @@
     'use strict';
 
     angular.module('app')
-        .controller('ComposeCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', 'logger', ComposeCtrl]); // overall control
+        .controller('ComposeCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', 'logger', 'Upload', '$timeout', ComposeCtrl]); // overall control
 
-    function ComposeCtrl($scope, $rootScope, $window, $http, $location, $modal, logger) {
+    function ComposeCtrl($scope, $rootScope, $window, $http, $location, $modal, logger, Upload, $timeout) {
+		$scope.step = 0;
+		$scope.status = 0;
+		
+		$scope.compose_next = function() {
+			$scope.step++;
+		};
+		
+		$scope.compose_prev = function() {
+			$scope.step--;
+		};
+		
+		$scope.uploadFile = function(file) {
+			$scope.status = 1;
+			$scope.timer = 0;
+			file.progress = 0;
+			$scope.result = [];
+			
+			file.upload = Upload.upload({
+				url: '/pub/upload/',
+				data: {file: file}
+			});
+
+			file.upload.then(function (response)
+			{
+				$timeout(function () {
+					file.result = response.data;
+					file.progress = 100;
+					clearInterval($scope.timer);
+					
+					$scope.result = logger.check(file.result);
+					if ($scope.result.error)
+					{
+						$scope.status = 3;
+					}
+					else
+					{
+						$timeout(function() {
+							file.progress = 100;
+							$scope.status = 2;
+						}, 1100);
+						if ($scope.result.data && $scope.result.data.length)
+						{
+							$scope.result.data.sort(function(a, b) { return b.error - a.error});
+							$scope.print($scope.result);
+						}
+					}
+				});
+			}, function (response)
+			{
+				if (response.status > 0)
+				{
+					$scope.status = 3;
+				}
+			}, function (evt)
+			{
+				file.progress = Math.ceil(Math.min(100, parseInt(100.0 * evt.loaded / evt.total)) / 2);
+				if (file.progress >= 50 && file.progress < 95)
+				{
+					$scope.timer = setInterval(function() {
+						if (file.progress <= 98)
+						{
+							file.progress += 2;
+						}
+					}, 300);
+				}
+			});
+		};
+		
+		$scope.page = 1;
+		$scope.pages = 0;
+		$scope.on_page = 30;
+		
+		$scope.headers = {};
+		$scope.data = [];
+		$scope.cols = [];
+		$scope.cols_check = {};
+		$scope.empty = false;
+		$scope.check = true;
+		$scope.file = false;
+		$scope.print = function(result) {
+			$scope.headers = result.headers;
+			$scope.data = result.data;
+			$scope.cols = result.cols;
+			$scope.cols_check = result.cols_check;
+			$scope.empty = result.empty;
+			$scope.check = result.check;
+			$scope.file = result.file;
+			
+			for (var key in $scope.headers)
+			{
+				if ( ! $scope.cols_check[key])
+				{
+					$scope.column[key] = 0;
+				}
+			}
+			
+			$scope.send_emails = [];
+			for (var key in $scope.data)
+			{
+				if ($scope.data[key].error < 1)
+				{
+					$scope.data[key].text = $scope.data[key].email;
+					$scope.send_emails.push($scope.data[key]);
+				}
+			}
+			
+			$scope.pages = Math.ceil($scope.data.length / $scope.on_page);
+			$scope.change_page(1);
+		};
+		
+		$scope.page_data = [];
+		$scope.change_page = function(page) {
+			$scope.page = page;
+			var start = ($scope.page - 1) * $scope.on_page;
+			var end = start + $scope.on_page;
+			$scope.page_data = $scope.data.slice(start, end);
+		};
+		
+		$scope.get_array = function(num) {
+			var result = [];
+			var delta = 2;
+			
+			var start = $scope.page - delta;
+			var end = $scope.page + delta;
+			if (start < 1)
+			{
+				end = end - start + 1;
+				start = 1;
+			}
+			
+			if (end > num)
+			{
+				start = start - (end - num);
+				if (start < 1)
+				{
+					start = 1;
+				}
+				end = num;
+			}
+			
+			for (var i = start; i <= end; i++)
+			{
+				result.push(i);
+			}
+			return result;
+		};
+		
+		$scope.column = {};
+		$scope.save_col = function(field) {
+			$http.post("/pub/save_field/", {file: $scope.file, field: field, value: $scope.column[field]}).success(function(data, status, headers, config) {
+				$scope.result = logger.check(data);
+				if ($scope.result.data && $scope.result.data.length)
+				{
+					$scope.result.data.sort(function(a, b) { return b.error - a.error});
+					$scope.print($scope.result);
+				}
+			});
+		};
+		
+		$scope.send_emails = [];
+		$scope.send = function()
+		{
+			if ($scope.send_emails.length)
+			{
+				$http.post("/pub/send/", {emails: $scope.send_emails, file: $scope.file}).success(function(data, status, headers, config) {
+					logger.check(data);
+					$location.url("/mail/inbox");
+				});
+			}
+			else
+			{
+				logger.check({errors: [['U heeft geen e-mailadres ingevuld.']]});
+			}
+		};
+		
+		$scope.help = function() {
+			var modalInstance;
+			modalInstance = $modal.open({
+				templateUrl: 'help_upload.html',
+				controller: 'ModalInstanceHelpCtrl',
+				resolve: {
+					items: function() {
+						return [];
+					}
+				}
+			});
+
+			modalInstance.result.then((function(result) {
+                $http.post("/pub/upload_help/", {file: $scope.file}).success(function(data, status, headers, config) {
+					logger.check(data);
+				});
+            }), function() {
+                console.log("Modal dismissed at: " + new Date());
+            });
+		};
+		
+		/*
+		
+		$scope.tags = [];
+		$scope.uploading = false;
+
+		$scope.setUploading = function()
+		{
+			$scope.uploading = true;
+		};
+
+		$scope.onGlobalSuccess = function(response)
+		{
+			$scope.uploading = false;
+			var data = response.data;
+			if (data.errors)
+			{
+				var errors = [];
+				for (var key in data.errors)
+				{
+					for (var type in data.errors[key])
+					{
+						if (type == "modal")
+						{
+							$scope.modal_open(data.errors[key][type]);
+						}
+						else
+						{
+							errors.push({type: (type == 0 ? "danger" : type), msg: data.errors[key][type]});
+						}
+					}
+				}
+				$scope.alerts = errors;
+			}
+
+			var emails = [];
+			var unique_emails = [];
+			for (var key in $scope.tags)
+			{
+				emails.push($scope.tags[key]);
+				unique_emails.push($scope.tags[key].text.toLowerCase());
+			}
+
+			for (var key in data.result)
+			{
+				var check = true;
+				for (var k in unique_emails)
+				{
+					if (unique_emails[k] == data.result[key].email.toLowerCase())
+					{
+						check = false;
+					}
+				}
+
+				if (check)
+				{
+					emails.push({text: data.result[key].email, today: data.result[key].today, name: data.result[key].name, sname: data.result[key].sname, doctor: data.result[key].doctor, birth: data.result[key].birth, title: data.result[key].title});
+					unique_emails.push(data.result[key].email.toLowerCase());
+				}
+			}
+
+			$scope.tags = emails;
+		};
+
+		$scope.send = function()
+		{
+			var emails = [];
+			for (var key in $scope.tags)
+			{
+				emails.push($scope.tags[key]);
+			}
+
+			if (emails.length > 0)
+			{
+				$scope.loader = true;
+				$http.post("/pub/send/", {emails: emails}).success(function(data, status, headers, config) {
+					$scope.loader = false;
+					var result = logger.check(data);
+					$scope.clear();
+					if (result.first)
+					{
+						$window.location.href = "/send_new";
+					}
+					else
+					{
+						$location.url("/mail/inbox");
+					}
+				});
+			}
+			else
+			{
+				logger.check({errors: [['U heeft geen e-mailadres ingevuld.']]});
+			}
+		};
+
+		$scope.clear = function()
+		{
+			$scope.tags = [];
+			document.getElementsByClassName("btn-upload")[0].getElementsByTagName("input")[0].value = "";
+		};
+
+		$scope.modal_open = function(script)
+		{
+			var modalInstance;
+			modalInstance = $modal.open({
+				templateUrl: script,
+				controller: 'ModalInstanceCtrl',
+				resolve: {
+					items: function() {
+						return ["Behoud alle e-mailadressen", "Laat e-mailadressen weg"];
+					}
+				}
+			});
+
+			modalInstance.result.then((function(selectedItem) {
+                if (selectedItem == "Laat e-mailadressen weg")
+				{
+					var emails = [];
+					for (var key in $scope.tags)
+					{
+						if ( ! $scope.tags[key].today)
+						{
+							emails.push($scope.tags[key]);
+						}
+					}
+					$scope.tags = emails;
+				}
+            }), function() {
+                console.log("Modal dismissed at: " + new Date());
+            });
+		};
+		
 		$scope.emails = {};
 		$scope.last_date = "";
 		$scope.check_login_times = function(stars) {
@@ -3470,26 +3662,7 @@
 			}), function() {
 				console.log("Modal dismissed at: " + new Date());
 			});
-			
-            /*var modalInstance;
-            modalInstance = $modal.open({
-                templateUrl: "example.html",
-                controller: 'ModalExampleCtrl',
-                resolve: {
-                    items: function() {
-						return [email];
-					}
-                }
-            });
-			
-            modalInstance.result.then((function() {
-				$http.post("/pub/send_example/").success(function(data, status, headers, config) {
-					logger.check(data);
-				});
-            }), function() {
-                console.log("Modal dismissed at: " + new Date());
-            });*/
-        };
+        };*/
     }
 })();
 ;
@@ -6018,6 +6191,7 @@
 		.controller('ModalInstanceBulkCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceBulkCtrl])
 		.controller('ModalUnsubscribeCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUnsubscribeCtrl])
 		.controller('ModalUndoCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUndoCtrl])
+		.controller('ModalInstanceHelpCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceHelpCtrl])
         .controller('PaginationDemoCtrl', ['$scope', PaginationDemoCtrl])
         .controller('TabsDemoCtrl', ['$scope', TabsDemoCtrl])
         .controller('TreeDemoCtrl', ['$scope', TreeDemoCtrl])
@@ -7018,6 +7192,16 @@
 	function ModalUndoCtrl($scope, $modalInstance, $http, logger, items) {
 		$scope.cancel = function() {
             $modalInstance.dismiss("cancel");
+        };
+    };
+	
+	function ModalInstanceHelpCtrl($scope, $modalInstance, $http, logger, items) {
+		$scope.cancel = function() {
+            $modalInstance.dismiss("cancel");
+        };
+		
+		$scope.confirm = function() {
+            $modalInstance.close("confirm");
         };
     };
 

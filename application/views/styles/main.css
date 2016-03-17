@@ -71,9 +71,14 @@ html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:1
 	z-index: 0;
 }
 
+.btn-upload > * {
+	position: relative;
+	z-index: 0;
+}
+
 .btn-upload input[type=file] {
 	position: absolute;
-	z-index: 0;
+	z-index: 1;
 	top: 0;
 	right: 0;
 	font-size: 150px;
@@ -1151,19 +1156,22 @@ section.logo {
 	font-size: 14px;
 }
 
-.btn-invoice-label.active {
+.btn-invoice-label.active,
+.btn-invoice-label.active:hover {
 	background-color: #0F75BD;
 	border-color: #0F75BD;
 	color: #fff;
 }
 
-.btn-invoice-label.future {
+.btn-invoice-label.future,
+.btn-invoice-label.future:hover {
 	background-color: #eee !important;
 	border-color: #eee !important;
 	color: #BDBDBD !important;
 }
 
-.btn-invoice-label.past {
+.btn-invoice-label.past,
+.btn-invoice-label.past:hover {
 	background-color: #6FACD8;
 	border-color: #6FACD8;
 	color: #fff;
@@ -2622,5 +2630,144 @@ span.pro {
 	
 	.nav-right:last-of-type {
 		display: none;
+	}
+}
+
+
+
+
+.compose-steps-box .row > div {
+	margin-bottom: 15px;
+}
+
+.well-white {
+	background: #fff;
+	padding: 14px;
+}
+
+.drag-area {
+	background: #EAEAEA;
+	padding: 50px;
+	border: dashed 3px #DFDFDF;
+	display: block;
+	margin-bottom: 15px;
+	border-radius: 4px;
+}
+
+.drag-area .fa-cloud-upload {
+	font-size: 60px;
+	color: #A3A3A3;
+}
+
+.drag-span {
+	display: block;
+	font-size: 12px;
+}
+
+body .btn-primary.compose-prev:disabled {
+	background-color: #eee !important;
+    border-color: #ddd !important;
+    color: #bdbdbd !important;
+}
+
+.inner-upload-box {
+	height: 100px;
+	position: relative;
+	z-index: 0;
+}
+
+.progress-bar-default {
+	height: 15px;
+	border-radius: 8px;
+	background: #D7D7D7;
+	width: 250px;
+	margin: 0 auto 15px;
+}
+
+.progress-bar-default .progress-bar {
+	line-height: 15px;
+	background: #838383;
+	border-radius: 8px;
+}
+
+.progress-bar-default .progress-bar .fa {
+	display: none;
+}
+
+.progress-bar-default .progress-bar.progress-bar-success {
+	background: #81CA80;
+}
+
+.progress-bar-default .progress-bar.progress-bar-success .fa.fa-check {
+	display: inline;
+}
+
+.progress-bar-default .progress-bar.progress-bar-danger {
+	background: #E86464;
+}
+
+.progress-bar-default .progress-bar.progress-bar-danger .fa.fa-times {
+	display: inline;
+}
+
+.top-upload-box {
+	height: 30px;
+}
+
+.link-upload-help {
+	font-size: 12px;
+}
+
+.compose-finish {
+	text-align: center;
+	position: relative;
+	z-index: 0;
+	padding-top: 120px;
+}
+
+.compose-finish img {
+	position: absolute;
+	z-index: 0;
+	left: 50%;
+	top: -15px;
+	margin-left: -46px;
+}
+
+.compose-buttons {
+	padding-top: 30px;
+}
+
+.compose-buttons .btn-danger {
+	padding: 12px 24px;
+}
+
+.compose-buttons .btn-default {
+	margin-top: 15px;
+}
+
+.uploads-nav .pagination > li > a,
+.uploads-nav .pagination > li > span {
+	margin: 0;
+}
+
+@media (max-width: 768px) {
+	.drag-area {
+		padding: 30px 10px;
+	}
+	
+	.inner-upload-box {
+		height: auto;
+	}
+	
+	.progress-bar-default {
+		width: 100%;
+	}
+	
+	.mail-actions {
+		margin: 0;
+	}
+	
+	.mail-actions .btn {
+		display: block;
 	}
 }
