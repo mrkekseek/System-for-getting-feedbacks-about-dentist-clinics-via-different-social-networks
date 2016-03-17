@@ -2248,80 +2248,143 @@
 
 		function parse_xls($file)
 		{
-			$this->load->library('excel');
-
-			$obj = $this->excel->load($file);
-
-			$emails = array();
-			$rows = $this->excel->rows($obj);
-			if ( ! empty($rows))
+			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
 			{
-				$title = FALSE;
-				$name = FALSE;
-				$sname = FALSE;
-				$doctor = FALSE;
-				$birth = FALSE;
-				foreach ($rows[0] as $key => $row)
+				mkdir($path, 0755, TRUE);
+			}
+			
+			$this->load->helper("file");
+			delete_files($path);
+			
+			$tags = $this->get_emails_tags();
+			$fields = array('title' => 'Aanhef Patiënt',
+							'name' => 'Voornaam Patiënt',
+							'sname' => 'Achternaam Patiënt',
+							'doctor' => 'Zorgverlenernummer',
+							'birth' => 'Geboortedatum',
+							'email' => 'E-mailadres');
+			$users_fields = $this->get_users_fields();
+			$cols = array();
+			$result = array('file' => '', 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
+				
+			mt_srand();
+			$dest = $path.time().mt_rand(100, 999).".xls";
+			if (copy($file, $dest))
+			{
+				$result['file'] = $dest;
+				$this->load->library('excel');
+				$obj = $this->excel->load($dest);
+				$rows = $this->excel->rows($obj);
+				if ( ! empty($rows))
 				{
-					if (strtolower($row) == "aanhef patiënt")
+					$first = 0;
+					$result['cols'] = $rows[0];
+					foreach ($tags as $tag)
 					{
-						$title = $key;
-					}
-					
-					if (strtolower($row) == "voornaam patiënt")
-					{
-						$name = $key;
-					}
-
-					if (strtolower($row) == "achternaam patiënt")
-					{
-						$sname = $key;
-					}
-					
-					if (strtolower($row) == "zorgverlenernummer")
-					{
-						$doctor = $key;
-					}
-					
-					if (strtolower($row) == "geboortedatum")
-					{
-						$birth = $key;
-					}
-				}
-
-				$added = array();
-				$pattern = '/[a-z\d._%+-]+@[a-z\d.-]+\.[a-z]{2,4}\b/i';
-				for ($i = 1; $i < count($rows); $i++)
-				{
-					$email = "";
-					foreach ($rows[$i] as $cell)
-					{
-						$res = array();
-						preg_match_all($pattern, $cell, $res);
-						if ( ! empty($res[0]))
+						$col = FALSE;
+						foreach ($rows[0] as $key => $row)
 						{
-							$email = strtolower($res[0][0]);
+							if (( ! empty($users_fields[$tag]) && strtolower($row) == $users_fields[$tag]) || (strtolower($row) == strtolower($fields[$tag])))
+							{
+								$col = $key;
+							}
+							
+							if (strpos($row, '@') === FALSE)
+							{
+								$first = 1;
+							}
+						}
+						
+						$cols[$tag] = ($col !== FALSE) ? $col : FALSE;
+						if (empty($cols[$tag]))
+						{
+							$result['empty'] = TRUE;
+						}
+						$result['headers'][$tag] = $fields[$tag];
+						$result['cols'] = array_diff($result['cols'], array($rows[0][$col]));
+					}
+					$result['cols'] = array_values($result['cols']);
+					
+					if ( ! empty($cols))
+					{
+						$result['cols_check'] = $cols;
+						$emails = array();
+						for ($i = $first, $count = count($rows); $i < $count; $i++)
+						{
+							$line = array('error' => 0);
+							
+							foreach ($tags as $tag)
+							{
+								if ($cols[$tag] !== FALSE)
+								{
+									$line[$tag] = $rows[$i][$cols[$tag]];
+									if ($tag == 'email')
+									{
+										$email = strtolower($rows[$i][$cols[$tag]]);
+										if (in_array($email, $emails) && $line['error'] < 2)
+										{
+											$line['error'] = 1;
+											$result['check'] = FALSE;
+										}
+										$emails[] = $email;
+									}
+									
+									if (empty($rows[$i][$cols[$tag]]))
+									{
+										$line['error'] = 2;
+									}
+								}
+								else
+								{
+									$line[$tag] = "";
+									$line['error'] = 2;
+									$result['check'] = FALSE;
+								}							
+							}
+
+							$result['data'][] = $line;
 						}
 					}
-
-					if ( ! empty($email) && ! in_array($email, $added))
-					{
-						$added[] = $email;
-						$temp = array("title" => ($title !== FALSE ? $rows[$i][$title] : ""),
-									  "name" => ($name !== FALSE ? $rows[$i][$name] : ""),
-									  "sname" => ($sname !== FALSE ? $rows[$i][$sname] : ""),
-									  "doctor" => ($doctor !== FALSE ? $rows[$i][$doctor] : ""),
-									  "birth" => ($birth !== FALSE ? $rows[$i][$birth] : ""),
-									  "email" => $email);
-						$emails[] = $temp;
-					}
+				}
+				else
+				{
+					$result['error'] = TRUE;
 				}
 			}
 
-			return $emails;
+			return $result;
 		}
 		
-		function check_emails_tags($emails)
+		function save_field($post)
+		{
+			if ($this->logged_in())
+			{
+				$this->db->where("users_id", $this->session->userdata("id"));
+				$this->db->where("field", $post['field']);
+				$this->db->delete("sheet_variables");
+				
+				$data_array = array("users_id" => $this->session->userdata("id"),
+									"field" => $post['field'],
+									"users_field" => strtolower($post['value']));
+				$this->db->insert("sheet_variables", $data_array);
+			}
+		}
+		
+		function upload_help($file)
+		{
+			$this->db->where("id", $this->session->userdata("id"));
+			$this->db->limit(1);
+			$row = $this->db->get("users")->row_array();
+			
+			$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+			$message = $this->load->view('views/mail/tpl_help.html', $post, TRUE);
+			$attach = $file."&&".(($row['account'] == 1 && $row['account_type'] == 0) ? './excel-basis-tpl.xls' : './excel-tpl.xls');
+			$this->send("help", $row['email'], 'Hulpverzoek upload patiëntenbestand '.$row['username'], $message, 'Patiëntenreview', 'info@patientenreview.nl', $attach);
+			$this->errors[] = array("Success" => "Patiëntenbestand verstuurd");
+			return $this->real_send(array('help'), $this->db->insert_id());
+		}
+		
+		function get_emails_tags()
 		{
 			if ($this->logged_in())
 			{
@@ -2331,91 +2394,37 @@
 				{
 					foreach ($this->tags as $key => $tag)
 					{
-						if (strpos($text, $tag) !== FALSE)
+						if (strpos($text, $tag) !== FALSE && $key != 'username' && $key != 'subject')
 						{
-							$requred[] = $key;
+							$requred[] = (strpos($key, 'doctor') !== FALSE) ? 'doctor' : $key;
 						}
 					}
 				}
 				
-				$error = FALSE;
 				$requred = array_unique($requred);
-				foreach (array('title', 'name', 'sname') as $i)
-				{
-					if (in_array($i, $requred))
-					{
-						$check = FALSE;
-						foreach ($emails as $email)
-						{
-							if (empty($email[$i]))
-							{
-								$check = TRUE;
-							}
-						}
-						
-						if ($check)
-						{
-							$error = TRUE;
-						}
-					}
-				}
-				
-				if (in_array('doctors_title', $requred) || in_array('doctors_name', $requred) || in_array('doctors_sname', $requred))
-				{
-					$check = FALSE;
-					$ids = array();
-					foreach ($emails as $email)
-					{
-						if (empty($email['doctor']))
-						{
-							$check = TRUE;
-						}
-						else
-						{
-							$ids[] = $email['doctor'];
-						}
-					}
-					
-					if ( ! empty($ids))
-					{
-						$this->db->where_in("id", $ids);
-						$doctors = $this->db->get("doctors")->result_array();
-						foreach ($doctors as $doc)
-						{
-							if (in_array('doctors_title', $requred) && empty($doc['title']))
-							{
-								$check = TRUE;
-							}
-							
-							if (in_array('doctors_name', $requred) && empty($doc['firstname']))
-							{
-								$check = TRUE;
-							}
-							
-							if (in_array('doctors_sname', $requred) && empty($doc['lastname']))
-							{
-								$check = TRUE;
-							}
-						}
-					}
-					
-					if ($check)
-					{
-						$error = TRUE;
-					}
-				}
-				
-				if ($error)
-				{
-					$this->errors[] = array("modal" => "emptyTags.html");
-				}
-				else
-				{
-					return TRUE;
-				}
+				$requred[] = 'email';
+				$requred[] = 'birth';
+				return $requred;
 			}
 			
 			return FALSE;
+		}
+		
+		function get_users_fields()
+		{
+			$result = array();
+
+			$this->db->where("users_id", $this->session->userdata("id"));
+			$result = $this->db->get("sheet_variables")->result_array();
+			if ( ! empty($result))
+			{
+				foreach ($result as $row)
+				{
+					$result[$row['field']] = $row['users_field'];
+				}
+			}
+			
+			return $result;
 		}
 
 		function today_emails($emails)
@@ -2569,6 +2578,11 @@
 							}
 						}
 					}
+				}
+				
+				if ( ! empty($post['file']) && file_exists($post['file']))
+				{
+					unlink($post['file']);
 				}
 
 				if ($error)
@@ -3054,7 +3068,11 @@
 					
 					if ( ! empty($row['letters_attach']))
 					{
-						$this->email->attach($row['letters_attach']);
+						$attach = explode('&&', $row['letters_attach']);
+						foreach ($attach as $file)
+						{
+							$this->email->attach($file);
+						}
 					}
 
 					if ($this->email->send())

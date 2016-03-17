@@ -35,13 +35,13 @@
 				</div>
 
 				<div class="cards-container">
-					<div class="cards-box promo-box" ng-if="short && ! limit && ! errors">
+					<div class="cards-box promo-box" ng-if="short && ! limit && ! errors && i.user.promo_checked">
 						<div class="cards-box-content">
 							<div class="cards-number">
 								PROMOTIECAMPAGNE
 							</div>
 							
-							<h2>Win een ... t.w.v. €69,99!</h2>
+							<h2>{{i.promo}}</h2>
 							
 							<h3 class="sub">Om mee te doen aan deze promotie dient u alle stappen van deze beoordelingspagina te volgen. De winnaar(s) word(en) willekeurig gekozen uit het bestand van alle uitgenodigden. U ontvangt hierover per e-mail of telefoon bericht.</h3>
 						</div>
@@ -315,6 +315,8 @@
         <script src="/application/views/scripts/vendor.js"></script>
         <script src="/application/views/scripts/ui.js"></script>
 		<script src="/application/views/scripts/angular-upload.min.js"></script>
+		<script src="application/views/scripts/ng-file-upload.min.js"></script>
+		<script src="application/views/scripts/ng-file-upload-shim.min.js"></script>
 		<script src="/application/views/scripts/ng-sortable.min.js"></script>
 		<script src="/application/views/scripts/bootstrap-colorpicker-module.min.js"></script>
 		<script src="/application/views/scripts/app.js"></script>
