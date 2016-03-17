@@ -277,7 +277,7 @@
 			$result = array();
 			if ($this->pub->logged_in())
 			{
-				if ( ! empty($_FILES['file']['tmp_name']) && (strpos($_FILES['file']['type'], 'excel') !== FALSE || strpos($_FILES['file']['type'], 'stream') !== FALSE))
+				if ( ! empty($_FILES['file']['tmp_name']) && (strpos($_FILES['file']['name'], 'xls') !== FALSE))
 				{
 					$result = $this->pub->parse_xls($_FILES['file']['tmp_name']);
 				}
