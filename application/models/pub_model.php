@@ -3342,6 +3342,21 @@
 			$row = $this->db->get("emails")->row_array();
 			return $row['promo'];
 		}
+		
+		function read_letters()
+		{
+			if ($this->logged_in())
+			{
+				$users_id = $this->session->userdata("id");
+				$this->db->where("users_id", $users_id);
+				$this->db->where("(`stars` IN (1, 2) OR `feedback` <> '')");
+				$this->db->where("reply", "");
+				$this->db->where("email <>", "");
+				$this->db->where("read", 0);
+				$this->db->update("sent", array('read' => TRUE));
+				
+			}
+		}
 
 		function inbox($post)
 		{
@@ -3380,6 +3395,7 @@
 									$this->db->where("(`stars` IN (1, 2) OR `feedback` <> '')");
 									$this->db->where("reply", "");
 									$this->db->where("email <>", "");
+									$this->db->where("read", 0);
 								}
 								else
 								{

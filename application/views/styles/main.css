@@ -2762,6 +2762,14 @@ body .btn-primary.compose-prev:disabled {
 	border-color: #d43f3a;
 }
 
+.panel-heading > .dropdown .dropdown-toggle#inbox_actions {
+	color: #fff;
+}
+
+#inbox_actions + ul {
+	text-transform: none;
+}
+
 @media (max-width: 768px) {
 	.drag-area {
 		padding: 30px 10px;

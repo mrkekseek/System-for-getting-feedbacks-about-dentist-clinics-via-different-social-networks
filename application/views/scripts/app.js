@@ -158,7 +158,7 @@
 				{
 					for (var key in result)
 					{
-						if (result[key].reply == "" && result[key].email != "" && (result[key].feedback != "" || (result[key].stars > 0 && result[key].stars <= 2)))
+						if (result[key].read == "0" && result[key].reply == "" && result[key].email != "" && (result[key].feedback != "" || (result[key].stars > 0 && result[key].stars <= 2)))
 						{
 							self.count++;
 						}
@@ -3049,6 +3049,44 @@
 				$scope.doctors.push(result[key]);
 			}
 		});
+		
+		$scope.hide_badge = false;
+		$scope.read_letters = function() {
+			var filter = {stars: $scope.filter};
+
+			if ($scope.dates.from)
+			{
+				var date = new Date($scope.dates.from);
+				filter.from = date.getTime() / 1000;
+			}
+
+			if ($scope.dates.to)
+			{
+				var date = new Date($scope.dates.to);
+				filter.to = date.getTime() / 1000;
+			}
+			
+			if ($scope.doctor)
+			{
+				filter.doctor = $scope.doctor;
+			}
+
+			$http.post("/pub/read_letters/", {filter: filter}).success(function(data, status, headers, config) {
+				$scope.hide_badge = true;
+				$scope.letters = logger.check(data);
+				for (var key in $scope.letters)
+				{
+					$scope.letters[key].date *= 1;
+				}
+				$scope.ready = true;
+				init();
+				
+				$scope.check_letter = {};
+				$scope.check_all[0] = false;
+				
+				with_feedback_count.get_ajax();
+			});
+		};
 
 		$scope.reprint = function(stars) {
 			$scope.filter = (stars || $scope.filter);
