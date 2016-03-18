@@ -3278,6 +3278,8 @@
     function ComposeCtrl($scope, $rootScope, $window, $http, $location, $modal, logger, Upload, $timeout) {
 		$scope.step = 0;
 		$scope.status = 0;
+		$scope.too_long_time = false;
+		$scope.too_long_text = 'Uw patiëntenbestand wordt verwerkt.';
 		
 		$scope.compose_next = function() {
 			$scope.step++;
@@ -3287,11 +3289,24 @@
 			$scope.step--;
 		};
 		
+		$scope.too_long = function() {
+			$scope.too_long_time = true;
+			$timeout(function() {
+				$scope.too_long_text = 'Het uploaden van grote bestanden duurt wat langer...';
+				$scope.too_long_time = false;
+			}, 400);
+		};
+		
+		$scope.upload_timer = 0;
 		$scope.uploadFile = function(file) {
 			$scope.status = 1;
 			$scope.timer = 0;
 			file.progress = 0;
 			$scope.result = [];
+			
+			$scope.upload_timer = setTimeout(function() {
+				$scope.too_long();
+			}, 10000);
 			
 			file.upload = Upload.upload({
 				url: '/pub/upload/',
@@ -3348,30 +3363,27 @@
 		$scope.pages = 0;
 		$scope.on_page = 30;
 		
+		$scope.column = {};
 		$scope.headers = {};
+		$scope.keys = [];
 		$scope.data = [];
 		$scope.cols = [];
-		$scope.cols_check = {};
+		$scope.dont_use = [];
 		$scope.empty = false;
 		$scope.check = true;
 		$scope.file = false;
 		$scope.print = function(result) {
+			$scope.column = result.cols_check;
+			$scope.dont_use = result.dont_use;
 			$scope.headers = result.headers;
 			$scope.data = result.data;
 			$scope.cols = result.cols;
-			$scope.cols_check = result.cols_check;
 			$scope.empty = result.empty;
 			$scope.check = result.check;
 			$scope.file = result.file;
-			
-			for (var key in $scope.headers)
-			{
-				if ( ! $scope.cols_check[key])
-				{
-					$scope.column[key] = 0;
-				}
-			}
-			
+
+			$scope.keys = Object.keys($scope.headers);
+
 			$scope.send_emails = [];
 			for (var key in $scope.data)
 			{
@@ -3422,17 +3434,19 @@
 			}
 			return result;
 		};
-		
-		$scope.column = {};
+
 		$scope.save_col = function(field) {
-			$http.post("/pub/save_field/", {file: $scope.file, field: field, value: $scope.column[field]}).success(function(data, status, headers, config) {
-				$scope.result = logger.check(data);
-				if ($scope.result.data && $scope.result.data.length)
-				{
-					$scope.result.data.sort(function(a, b) { return b.error - a.error});
-					$scope.print($scope.result);
-				}
-			});
+			if ($scope.column[field] != '0')
+			{
+				$http.post("/pub/save_field/", {file: $scope.file, field: field, value: $scope.column[field]}).success(function(data, status, headers, config) {
+					$scope.result = logger.check(data);
+					if ($scope.result.data && $scope.result.data.length)
+					{
+						$scope.result.data.sort(function(a, b) { return b.error - a.error});
+						$scope.print($scope.result);
+					}
+				});
+			}
 		};
 		
 		$scope.send_emails = [];
@@ -3466,6 +3480,7 @@
 			modalInstance.result.then((function(result) {
                 $http.post("/pub/upload_help/", {file: $scope.file}).success(function(data, status, headers, config) {
 					logger.check(data);
+					$location.url("/dashboard");
 				});
             }), function() {
                 console.log("Modal dismissed at: " + new Date());

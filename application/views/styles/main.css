@@ -2750,6 +2750,18 @@ body .btn-primary.compose-prev:disabled {
 	margin: 0;
 }
 
+.too_long {
+	transition: all 0.3s ease 0s;
+}
+
+.too_long.fade-out {
+	opacity: 0;
+}
+
+.border-red {
+	border-color: #d43f3a;
+}
+
 @media (max-width: 768px) {
 	.drag-area {
 		padding: 30px 10px;

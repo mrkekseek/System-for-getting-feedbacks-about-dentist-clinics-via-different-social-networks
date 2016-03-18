@@ -45,7 +45,7 @@
 								</div>
 								
 								<div ng-show="status == 1">
-									Uw patiëntenbestand wordt verwerkt.
+									<div class="too_long" ng-class="{'fade-out': too_long_time}">{{too_long_text}}</div>
 									<span class="drag-span">Een ogenblik geduld...</span>
 								</div>
 								
@@ -88,17 +88,17 @@
 							<thead>
 								<tr>
 									<th>Controle</th>
-									<th ng-repeat="(key, val) in headers">
-										{{val}}
+									<th ng-repeat="key in keys">
+										{{headers[key]}}
 									</th>
 								</tr>
 								
-								<tr ng-if="empty">
+								<tr>
 									<td>&nbsp;</td>
-									<td ng-repeat="(key, val) in headers">
-										<select class="form-control" ng-if=" ! cols_check[key]" ng-model="column[key]" ng-change="save_col(key)">
-											<option value="0">Kies een kolom</option>
-											<option value="{{c}}" ng-repeat="c in cols">{{c}}</option>
+									<td ng-repeat="key in keys">
+										<select class="form-control" ng-model="column[key]" ng-change="save_col(key)" ng-class="{'border-red': column[key] == 0 && ! dont_use[key]}">
+											<option value="0" ng-selected="column[key] == 0 || dont_use[key]">{{dont_use[key] ? 'Niet gebruiken' : 'Kies een kolom'}}</option>
+											<option value="{{c}}" ng-repeat="c in cols" ng-selected="column[key] == c && ! dont_use[key]">{{c}}</option>
 										</select>
 									</td>
 								</tr>
@@ -111,7 +111,7 @@
 										<span class="btn btn-sm btn-warning" ng-if="d.error == 1">Dubbel</span>
 										<span class="btn btn-sm btn-danger" ng-if="d.error == 2">Mist gegevens</span>
 									</td>
-									<td ng-repeat="(key, val) in headers">
+									<td ng-repeat="key in keys">
 										{{d[key]}}
 									</td>
 								</tr>
