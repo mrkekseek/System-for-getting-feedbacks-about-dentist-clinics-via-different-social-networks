@@ -2259,16 +2259,17 @@
 				delete_files($path);
 			}
 			
-			$tags = $this->get_emails_tags();
+			$tags_required = $this->get_emails_tags();
+			$tags = array('title', 'name', 'sname', 'email', 'birth', 'doctor');
 			$fields = array('title' => 'Aanhef Patiënt',
 							'name' => 'Voornaam Patiënt',
 							'sname' => 'Achternaam Patiënt',
-							'doctor' => 'Zorgverlenernummer',
+							'email' => 'E-mailadres',
 							'birth' => 'Geboortedatum',
-							'email' => 'E-mailadres');
+							'doctor' => 'Zorgverlenernummer');
 			$users_fields = $this->get_users_fields();
 			$cols = array();
-			$result = array('file' => '', 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
+			$result = array('dont_use' => array(), 'file' => '', 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
 				
 			mt_srand();
 			$dest = $path.time().mt_rand(100, 999).".xls";
@@ -2297,24 +2298,28 @@
 								$first = 1;
 							}
 						}
-						
+
 						$cols[$tag] = ($col !== FALSE) ? $col : FALSE;
-						if (empty($cols[$tag]))
+						if ($cols[$tag] === FALSE)
 						{
 							$result['empty'] = TRUE;
+							$result['cols_check'][$tag] = 0;
+						}
+						else
+						{
+							$result['cols_check'][$tag] = $result['cols'][$col];
 						}
 						
 						$result['headers'][$tag] = $fields[$tag];
-						if ($col !== FALSE)
+						/*if ($col !== FALSE)
 						{
 							$result['cols'] = array_diff($result['cols'], array($rows[0][$col]));
-						}
+						}*/
 					}
 					$result['cols'] = array_values($result['cols']);
 					
 					if ( ! empty($cols))
 					{
-						$result['cols_check'] = $cols;
 						$emails = array();
 						for ($i = $first, $count = count($rows); $i < $count; $i++)
 						{
@@ -2322,6 +2327,11 @@
 							
 							foreach ($tags as $tag)
 							{
+								if (in_array($tag, array('birth', 'doctor')) && ! in_array($tag, $tags_required))
+								{
+									$result['dont_use'][$tag] = TRUE;
+								}
+								
 								if ($cols[$tag] !== FALSE)
 								{
 									$line[$tag] = $rows[$i][$cols[$tag]];
@@ -2336,7 +2346,7 @@
 										$emails[] = $email;
 									}
 									
-									if (empty($rows[$i][$cols[$tag]]))
+									if (empty($rows[$i][$cols[$tag]]) && in_array($tag, $tags_required))
 									{
 										$line['error'] = 2;
 									}
@@ -2344,7 +2354,10 @@
 								else
 								{
 									$line[$tag] = "";
-									$line['error'] = 2;
+									if (in_array($tag, $tags_required))
+									{
+										$line['error'] = 2;
+									}
 									$result['check'] = FALSE;
 								}							
 							}
@@ -2395,14 +2408,13 @@
 		{
 			if ($this->logged_in())
 			{
-				return array('title', 'name', 'sname', 'birth', 'email', 'doctor');
 				$requred = array();
 				$texts = $this->user_emails();
 				foreach ($texts as $text)
 				{
 					foreach ($this->tags as $key => $tag)
 					{
-						if (strpos($text, $tag) !== FALSE && $key != 'username' && $key != 'subject')
+						if (strpos($text, $tag) !== FALSE)
 						{
 							$requred[] = (strpos($key, 'doctor') !== FALSE) ? 'doctor' : $key;
 						}
@@ -2410,8 +2422,6 @@
 				}
 				
 				$requred = array_unique($requred);
-				$requred[] = 'email';
-				$requred[] = 'birth';
 				return $requred;
 			}
 			
@@ -3332,6 +3342,21 @@
 			$row = $this->db->get("emails")->row_array();
 			return $row['promo'];
 		}
+		
+		function read_letters()
+		{
+			if ($this->logged_in())
+			{
+				$users_id = $this->session->userdata("id");
+				$this->db->where("users_id", $users_id);
+				$this->db->where("(`stars` IN (1, 2) OR `feedback` <> '')");
+				$this->db->where("reply", "");
+				$this->db->where("email <>", "");
+				$this->db->where("read", 0);
+				$this->db->update("sent", array('read' => TRUE));
+				
+			}
+		}
 
 		function inbox($post)
 		{
@@ -3370,6 +3395,7 @@
 									$this->db->where("(`stars` IN (1, 2) OR `feedback` <> '')");
 									$this->db->where("reply", "");
 									$this->db->where("email <>", "");
+									$this->db->where("read", 0);
 								}
 								else
 								{

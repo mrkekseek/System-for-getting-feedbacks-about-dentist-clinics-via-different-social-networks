@@ -473,6 +473,13 @@
 			$this->response($result);
 		}
 		
+		function read_letters()
+		{
+			$this->pub->read_letters();
+			$result = $this->pub->inbox($this->post);
+			$this->response($result);
+		}
+		
 		function inbox_count()
 		{
 			$result = $this->pub->inbox($this->post);
