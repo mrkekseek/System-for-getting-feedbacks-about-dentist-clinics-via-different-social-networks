@@ -1496,7 +1496,7 @@
 			{
 				if (empty($post['password']))
 				{
-					$this->errors[] = array("Empty password");
+					$this->errors[] = array("U heeft geen wachtwoord ingevuld");
 				}
 				else
 				{
@@ -1508,7 +1508,7 @@
 
 					if (empty($row))
 					{
-						$this->errors[] = array("Wrong password");
+						$this->errors[] = array("Uw wachtwoord is onjuist");
 					}
 					else
 					{
@@ -1523,7 +1523,7 @@
 		{
 			if (empty($post['email']))
 			{
-				$this->errors[] = array("Empty email");
+				$this->errors[] = array("U heeft geen e-mailadres ingevuld");
 			}
 			else
 			{
@@ -1552,12 +1552,12 @@
 					}
 					else
 					{
-						$this->errors[] = array("Database error");
+						$this->errors[] = array("Er is een verbindingsfout opgetreden");
 					}
 				}
 				else
 				{
-					$this->errors[] = array("Wrong email");
+					$this->errors[] = array("Dit e-mailadres is niet bij ons bekend");
 				}
 			}
 
@@ -1568,7 +1568,7 @@
 		{
 			if (empty($post['hash']))
 			{
-				$this->errors[] = array("Wrong URL");
+				$this->errors[] = array("De link voor het herstellen van uw wachtwoord is verlopen");
 			}
 			else
 			{
@@ -1586,12 +1586,12 @@
 					}
 					else
 					{
-						$this->errors[] = array("Database error");
+						$this->errors[] = array("Er is een verbindingsfout opgetreden");
 					}
 				}
 				else
 				{
-					$this->errors[] = array("Wrong URL");
+					$this->errors[] = array("De link voor het herstellen van uw wachtwoord is verlopen");
 				}
 			}
 
@@ -1621,7 +1621,7 @@
 				}
 				else
 				{
-					$this->errors[] = array("Database error");
+					$this->errors[] = array("Er is een verbindingsfout opgetreden");
 				}
 			}
 			else
@@ -1668,11 +1668,11 @@
 			{
 				if (empty($post['username']))
 				{
-					$this->errors[] = array("Empty username");
+					$this->errors[] = array("Geen bedrijfsnaam ingevuld");
 				}
 				elseif (empty($post['email']))
 				{
-					$this->errors[] = array("Empty email");
+					$this->errors[] = array("Geen e-mailadres ingevuld");
 				}
 				else
 				{
@@ -1681,7 +1681,7 @@
 					$this->db->limit(1);
 					if ($this->db->count_all_results("users"))
 					{
-						$this->errors[] = array("Email already use by another user");
+						$this->errors[] = array("Dit e-mailadres is al in gebruik");
 					}
 					else
 					{
