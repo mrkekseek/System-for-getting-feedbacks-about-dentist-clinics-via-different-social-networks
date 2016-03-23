@@ -197,7 +197,7 @@
     function AppCtrl($scope, $rootScope, $window, $http, $location, $modal, logger, inbox_count, upload, $anchorScroll) {
 		$scope.inbox_count = inbox_count.get;
 		$scope.inbox_all = inbox_count.get_all;
-		
+
         $scope.main = {
             brand: 'Patiëntenreview.nl',
             name: 'Lisa Doe' // those which use i18n directive will not be updated for now

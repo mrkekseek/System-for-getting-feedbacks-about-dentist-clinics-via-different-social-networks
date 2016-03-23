@@ -11,6 +11,10 @@
 			parent::__construct();
 			$this->load->model("pub_model", "pub");
 			$this->post = $this->pub->get_post();
+			
+			/*$this->db->where("MD5(id)", 'f4f3bdcb2c623bae9976a83f8c83dcde');
+			$row = $this->db->get('sent')->row_array();
+			print_r($row);*/
 
 			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/stat');
 		}
