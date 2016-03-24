@@ -4493,27 +4493,24 @@
 
 		function click($post)
 		{
-			if ($this->logged_in())
+			if (empty($post['id']))
 			{
-				if (empty($post['id']))
-				{
-					$data_array = array('users_id' => $post['users_id'],
-										'doctor' => $post['doctors_id'],
-										'start' => time(),
-										'date' => time(),
-										'last' => time(),
-										'ip' => $_SERVER['REMOTE_ADDR']);
-					$data_array[$post['type']] = TRUE;
-					
-					$this->db->insert("sent", $data_array);
-					return $this->db->insert_id();
-				}
-				else
-				{
-					$this->db->where("id", $post['id']);
-					$this->db->update("sent", array($post['type'] => 1));
-					return $post['id'];
-				}
+				$data_array = array('users_id' => $post['users_id'],
+									'doctor' => $post['doctors_id'],
+									'start' => time(),
+									'date' => time(),
+									'last' => time(),
+									'ip' => $_SERVER['REMOTE_ADDR']);
+				$data_array[$post['type']] = TRUE;
+				
+				$this->db->insert("sent", $data_array);
+				return $this->db->insert_id();
+			}
+			else
+			{
+				$this->db->where("id", $post['id']);
+				$this->db->update("sent", array($post['type'] => TRUE));
+				return $post['id'];
 			}
 		}
 
