@@ -2674,6 +2674,7 @@
 		$scope.i = {};
 		$scope.logo = '/application/views/images/logo_full.png';
 		$scope.color = '#0f75bc';
+		$scope.color_style = {};
 		$scope.onlines_keys = ['google', 'facebook', 'zorgkaart', 'independer'];
 		$scope.onlines = [];
 		$scope.onlines_col = 12;
@@ -2709,6 +2710,7 @@
 					{
 						$scope.logo = ($scope.i.user.logo ? $scope.i.user.logo : $scope.logo).replace('./', '/');
 						$scope.color = $scope.i.user.color ? $scope.i.user.color : $scope.color;
+						$scope.color_style = {"background-image": "linear-gradient(" + $scope.color + ", #F5F5F5)"};
 						
 						if ($scope.i.user.account_type == "1" || $scope.i.user.account == "2")
 						{
