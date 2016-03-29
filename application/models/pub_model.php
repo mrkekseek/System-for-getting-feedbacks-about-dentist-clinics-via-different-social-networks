@@ -3352,8 +3352,8 @@
 				$this->db->where("(`stars` IN (1, 2) OR `feedback` <> '')");
 				$this->db->where("reply", "");
 				$this->db->where("email <>", "");
-				$this->db->where("read", 0);
-				$this->db->update("sent", array('read' => TRUE));
+				$this->db->where("marked_as_read", 0);
+				$this->db->update("sent", array('marked_as_read' => TRUE));
 				
 			}
 		}
@@ -3395,7 +3395,7 @@
 									$this->db->where("(`stars` IN (1, 2) OR `feedback` <> '')");
 									$this->db->where("reply", "");
 									$this->db->where("email <>", "");
-									$this->db->where("read", 0);
+									$this->db->where("marked_as_read", 0);
 								}
 								else
 								{

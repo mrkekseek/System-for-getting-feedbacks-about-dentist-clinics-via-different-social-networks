@@ -158,7 +158,7 @@
 				{
 					for (var key in result)
 					{
-						if (result[key].read == "0" && result[key].reply == "" && result[key].email != "" && (result[key].feedback != "" || (result[key].stars > 0 && result[key].stars <= 2)))
+						if (result[key].marked_as_read == "0" && result[key].reply == "" && result[key].email != "" && (result[key].feedback != "" || (result[key].stars > 0 && result[key].stars <= 2)))
 						{
 							self.count++;
 						}
