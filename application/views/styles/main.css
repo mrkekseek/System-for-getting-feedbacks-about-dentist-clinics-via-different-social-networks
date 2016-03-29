@@ -2239,9 +2239,12 @@ span.pro {
 }
 
 .cards-box-content {
-	padding: 40px 50px 50px;
 	position: relative;
 	z-index: 0;
+}
+
+.cards-collapse-inner {
+	padding: 40px 50px 50px;
 }
 
 .cards-number {
@@ -2365,9 +2368,12 @@ span.pro {
 	opacity: 0;
 }
 
+.cards-box-content .doctors-box {
+	padding: 30px;
+}
+
 .cards-box-content .doctors-box h3.sub {
 	margin-bottom: 15px;
-    margin-top: 30px;
 }
 
 .doctors-list {
