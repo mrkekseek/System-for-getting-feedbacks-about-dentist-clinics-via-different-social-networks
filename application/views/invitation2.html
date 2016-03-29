@@ -27,7 +27,7 @@
 
 		<div class="invitation-box" ng-controller="InvitationCtrl" ng-class="{'shown': apps.ready}">
 			<div class="main-container rating-page-back">
-				<div class="rating-page-grad" style="background: linear-gradient({{color}}, whitesmoke);">
+				<div class="rating-page-grad" ng-style="color_style">
 				</div>
 				
 				<div class="top-box bg-white text-center">
@@ -58,24 +58,26 @@
 
 						<div class="cards-box-content">
 							<div class="cards-collapse" ng-class="{'closed': is_vote, 'opening': revote}">
-								<div class="cards-number" ng-if=" ! is_vote">
-									Stap 1
-								</div>
-								
-								<h2>Zou u onze praktijk aanbevelen bij familie of vrienden?</h2>
-								
-								<h3 class="sub">Gemeten op een schaal van 1 tot en met 5.</h3>
-								
-								<div class="stars-box" ng-init="stars_list = [1, 2, 3, 4, 5]">
-									<div class="stars-item" ng-repeat="(key, star) in stars_list" ng-click="click_star(star)" ng-class="{active: star <= vote}">
-										<i class="fa fa-star-o" style="color: {{color}};"></i>
-										<i class="fa fa-star" style="color: {{color}};"></i>
+								<div class="cards-collapse-inner">
+									<div class="cards-number" ng-if=" ! is_vote">
+										Stap 1
 									</div>
-								</div>
-								
-								<div class="stars-number-box clearfix">
-									<div class="stars-number-item" ng-repeat="(key, star) in stars_list">
-										<div class="stars-number">{{star}}</div>
+									
+									<h2>Zou u onze praktijk aanbevelen bij familie of vrienden?</h2>
+									
+									<h3 class="sub">Gemeten op een schaal van 1 tot en met 5.</h3>
+									
+									<div class="stars-box" ng-init="stars_list = [1, 2, 3, 4, 5]">
+										<div class="stars-item" ng-repeat="(key, star) in stars_list" ng-click="click_star(star)" ng-class="{active: star <= vote}">
+											<i class="fa fa-star-o" style="color: {{color}};"></i>
+											<i class="fa fa-star" style="color: {{color}};"></i>
+										</div>
+									</div>
+									
+									<div class="stars-number-box clearfix">
+										<div class="stars-number-item" ng-repeat="(key, star) in stars_list">
+											<div class="stars-number">{{star}}</div>
+										</div>
 									</div>
 								</div>
 							</div>

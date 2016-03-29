@@ -158,7 +158,7 @@
 				{
 					for (var key in result)
 					{
-						if (result[key].read == "0" && result[key].reply == "" && result[key].email != "" && (result[key].feedback != "" || (result[key].stars > 0 && result[key].stars <= 2)))
+						if (result[key].marked_as_read == "0" && result[key].reply == "" && result[key].email != "" && (result[key].feedback != "" || (result[key].stars > 0 && result[key].stars <= 2)))
 						{
 							self.count++;
 						}
@@ -2623,7 +2623,7 @@
 		$scope.today('activation');
 		
 		var date = new Date();
-		$scope.user['suspension'] = new Date(date.getTime() + 14 * 24 * 3600 * 1000);
+		$scope.user['suspension'] = new Date(date.getTime() + 30 * 24 * 3600 * 1000);
 		$scope.user['suspension_str'] = $scope.user['suspension'].getDate() + "-" + ($scope.user['suspension'].getMonth() + 1) + "-" + $scope.user['suspension'].getFullYear();
 
 		$scope.showWeeks = true;
@@ -2674,6 +2674,7 @@
 		$scope.i = {};
 		$scope.logo = '/application/views/images/logo_full.png';
 		$scope.color = '#0f75bc';
+		$scope.color_style = {};
 		$scope.onlines_keys = ['google', 'facebook', 'zorgkaart', 'independer'];
 		$scope.onlines = [];
 		$scope.onlines_col = 12;
@@ -2709,6 +2710,7 @@
 					{
 						$scope.logo = ($scope.i.user.logo ? $scope.i.user.logo : $scope.logo).replace('./', '/');
 						$scope.color = $scope.i.user.color ? $scope.i.user.color : $scope.color;
+						$scope.color_style = {"background-image": "linear-gradient(" + $scope.color + ", #F5F5F5)"};
 						
 						if ($scope.i.user.account_type == "1" || $scope.i.user.account == "2")
 						{
@@ -3369,11 +3371,8 @@
 							file.progress = 100;
 							$scope.status = 2;
 						}, 1100);
-						if ($scope.result.data && $scope.result.data.length)
-						{
-							$scope.result.data.sort(function(a, b) { return b.error - a.error});
-							$scope.print($scope.result);
-						}
+						
+						$scope.print($scope.result);
 					}
 				});
 			}, function (response)
@@ -3423,17 +3422,21 @@
 			$scope.keys = Object.keys($scope.headers);
 
 			$scope.send_emails = [];
-			for (var key in $scope.data)
+			if ($scope.data && $scope.data.length)
 			{
-				if ($scope.data[key].error < 1)
+				$scope.data.sort(function(a, b) { return b.error - a.error});
+				for (var key in $scope.data)
 				{
-					$scope.data[key].text = $scope.data[key].email;
-					$scope.send_emails.push($scope.data[key]);
+					if ($scope.data[key].error < 1)
+					{
+						$scope.data[key].text = $scope.data[key].email;
+						$scope.send_emails.push($scope.data[key]);
+					}
 				}
+				
+				$scope.pages = Math.ceil($scope.data.length / $scope.on_page);
+				$scope.change_page(1);
 			}
-			
-			$scope.pages = Math.ceil($scope.data.length / $scope.on_page);
-			$scope.change_page(1);
 		};
 		
 		$scope.page_data = [];
