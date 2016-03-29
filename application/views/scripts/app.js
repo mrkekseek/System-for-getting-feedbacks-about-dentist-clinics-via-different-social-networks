@@ -2623,7 +2623,7 @@
 		$scope.today('activation');
 		
 		var date = new Date();
-		$scope.user['suspension'] = new Date(date.getTime() + 14 * 24 * 3600 * 1000);
+		$scope.user['suspension'] = new Date(date.getTime() + 30 * 24 * 3600 * 1000);
 		$scope.user['suspension_str'] = $scope.user['suspension'].getDate() + "-" + ($scope.user['suspension'].getMonth() + 1) + "-" + $scope.user['suspension'].getFullYear();
 
 		$scope.showWeeks = true;

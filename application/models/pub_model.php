@@ -1338,7 +1338,7 @@
 												
 							if ($row['first_time'])
 							{
-								$data_array['trial_end'] = $now + 14 * 24 * 3600;
+								$data_array['trial_end'] = $now + 30 * 24 * 3600;
 							}
 
 							$this->db->where("id", $row['id']);
@@ -1612,7 +1612,7 @@
 									"google" => $post['google'],
 									"account" => 2,
 									"account_stop" => 0,
-									"trial_end" => time() + (14 * 24 * 3600));
+									"trial_end" => time() + (30 * 24 * 3600));
 
 				$this->db->where("id", $this->session->userdata("id"));
 				if ($this->db->update("users", $data_array))
@@ -1936,8 +1936,8 @@
 		function change_trial($post)
 		{
 			$this->db->where("id", $post['id']);
-			$this->db->update("users", array("trial_end" => time() + 14 * 24 * 3600));
-			$this->errors[] = array("Success" => "Proefperiode verlengd met 14 dagen");
+			$this->db->update("users", array("trial_end" => time() + 30 * 24 * 3600));
+			$this->errors[] = array("Success" => "Proefperiode verlengd met 30 dagen");
 		}
 		
 		function suspend_account()
@@ -2015,7 +2015,7 @@
 					$data_array['password'] = crypt($post['password'], substr(md5($post['password']), 0, 8));
 					$data_array['status'] = 1;
 					$data_array['signup'] = time();
-					$data_array['suspension'] = $data_array['activation'] + 14 * 24 * 3600;
+					$data_array['suspension'] = $data_array['activation'] + 30 * 24 * 3600;
 					$data_array['trial_end'] = $data_array['suspension'];
 					$data_array['account'] = 2;
 					unset($data_array['suspension_str']);
@@ -2070,7 +2070,7 @@
 					$data_array['status'] = 1;
 					$data_array['signup'] = time();
 					$data_array['activation'] = mktime(0, 0, 0, date('m'), date('j'), date('Y'));
-					$data_array['suspension'] = $data_array['activation'] + 14 * 24 * 3600;
+					$data_array['suspension'] = $data_array['activation'] + 30 * 24 * 3600;
 					$data_array['reminder_checked'] = TRUE;
 					$data_array['reminder_period'] = 0;
 					$data_array['reminder_time'] = 2703600;
@@ -4355,12 +4355,12 @@
 					}
 				}
 				
-				if ($row['signup'] >= $now - 14 * 24 * 3600)
+				if ($row['signup'] >= $now - 30 * 24 * 3600)
 				{
 					$stat['added14'][] = array("id" => $row['id'], "username" => $row['username'], "date" => date("d-m-Y", $row['signup']));
 				}
 				
-				if ($row['suspension'] > $now && $row['suspension'] <= $now + 14 * 24 * 3600)
+				if ($row['suspension'] > $now && $row['suspension'] <= $now + 30 * 24 * 3600)
 				{
 					$stat['expire14'][] = array("id" => $row['id'], "username" => $row['username'], "date" => date("d-m-Y", $row['suspension']));
 				}
