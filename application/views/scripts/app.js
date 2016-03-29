@@ -3369,11 +3369,8 @@
 							file.progress = 100;
 							$scope.status = 2;
 						}, 1100);
-						if ($scope.result.data && $scope.result.data.length)
-						{
-							$scope.result.data.sort(function(a, b) { return b.error - a.error});
-							$scope.print($scope.result);
-						}
+						
+						$scope.print($scope.result);
 					}
 				});
 			}, function (response)
@@ -3423,17 +3420,21 @@
 			$scope.keys = Object.keys($scope.headers);
 
 			$scope.send_emails = [];
-			for (var key in $scope.data)
+			if ($scope.data && $scope.data.length)
 			{
-				if ($scope.data[key].error < 1)
+				$scope.data.sort(function(a, b) { return b.error - a.error});
+				for (var key in $scope.data)
 				{
-					$scope.data[key].text = $scope.data[key].email;
-					$scope.send_emails.push($scope.data[key]);
+					if ($scope.data[key].error < 1)
+					{
+						$scope.data[key].text = $scope.data[key].email;
+						$scope.send_emails.push($scope.data[key]);
+					}
 				}
+				
+				$scope.pages = Math.ceil($scope.data.length / $scope.on_page);
+				$scope.change_page(1);
 			}
-			
-			$scope.pages = Math.ceil($scope.data.length / $scope.on_page);
-			$scope.change_page(1);
 		};
 		
 		$scope.page_data = [];
