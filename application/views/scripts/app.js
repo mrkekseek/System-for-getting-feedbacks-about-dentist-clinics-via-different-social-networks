@@ -3145,7 +3145,6 @@
 
 		$scope.more = function(id, is_feedback, email, $event)
 		{
-			console.log($event.target);
 			if ($event.target.tagName.toLowerCase() != "span" && $event.target.tagName.toLowerCase() != "input" && $event.target.className.toLowerCase() != "ui-checkbox")
 			{
 				if (email || is_feedback)

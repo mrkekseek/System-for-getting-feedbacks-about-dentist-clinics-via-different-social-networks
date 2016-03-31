@@ -269,7 +269,7 @@
 
 		function save_last()
 		{
-			if ($this->session->userdata("id"))
+			if ($this->session->userdata("id") && ! $this->session->userdata("admin_id"))
 			{
 				$this->db->where("id", $this->session->userdata("id"));
 				$this->db->update("users", array("last" => time()));
@@ -2376,7 +2376,7 @@
 										}
 									}
 									
-									if (empty($rows[$i][$cols[$tag]]) && in_array($tag, $tags_required))
+									if (empty($rows[$i][$cols[$tag]]) && (in_array($tag, $tags_required) || $tag == 'email'))
 									{
 										$line['error'] = 2;
 										$result['check'] = FALSE;
