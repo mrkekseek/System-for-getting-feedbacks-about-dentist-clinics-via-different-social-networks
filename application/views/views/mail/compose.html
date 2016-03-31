@@ -105,7 +105,7 @@
 							</thead>
 							
 							<tbody>
-								<tr ng-repeat="d in page_data" ng-show="d.error == 0 || (d.error > 0 && warnings)">
+								<tr ng-repeat="d in page_data">
 									<td>
 										<span class="btn btn-sm btn-success" ng-if="d.error == 0">In orde</span>
 										<span class="btn btn-sm btn-warning" ng-if="d.error == 1">Dubbel</span>

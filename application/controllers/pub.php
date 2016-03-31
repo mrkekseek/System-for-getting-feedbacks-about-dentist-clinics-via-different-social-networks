@@ -281,9 +281,9 @@
 			$result = array();
 			if ($this->pub->logged_in())
 			{
-				if ( ! empty($_FILES['file']['tmp_name']) && (strpos($_FILES['file']['name'], 'xls') !== FALSE))
+				if ( ! empty($_FILES['file']['tmp_name']) && (strpos(strtolower($_FILES['file']['name']), 'xls') !== FALSE || strpos(strtolower($_FILES['file']['name']), 'tab') !== FALSE))
 				{
-					$result = $this->pub->parse_xls($_FILES['file']['tmp_name'], TRUE);
+					$result = $this->pub->parse_xls($_FILES['file']['tmp_name'], TRUE, strtolower($_FILES['file']['name']));
 				}
 				else
 				{

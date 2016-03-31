@@ -2246,7 +2246,7 @@
 			}
 		}
 
-		function parse_xls($file, $first = FALSE)
+		function parse_xls($file, $first = FALSE, $name = FALSE)
 		{
 			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
 			{
@@ -2272,13 +2272,30 @@
 			$result = array('dont_use' => array(), 'file' => '', 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
 				
 			mt_srand();
-			$dest = $path.time().mt_rand(100, 999).".xls";
+			$ext = pathinfo($name, PATHINFO_EXTENSION);
+			$dest = $path.time().mt_rand(100, 999).".".$ext;
 			if (copy($file, $dest))
 			{
 				$result['file'] = $dest;
-				$this->load->library('excel');
-				$obj = $this->excel->load($dest);
-				$rows = $this->excel->rows($obj);
+				$rows = array();
+				if ($ext == 'tab')
+				{
+					$fp = fopen($dest, 'r');
+					while ( ! feof($fp))
+					{
+						$line = fgets($fp, 2048);
+						$data = str_getcsv($line, "\t");
+						$rows[] = $data;
+					}                              
+					fclose($fp);
+				}
+				else
+				{	
+					$this->load->library('excel');
+					$obj = $this->excel->load($dest);
+					$rows = $this->excel->rows($obj);
+				}
+				
 				if ( ! empty($rows))
 				{
 					$first = 0;
@@ -2318,82 +2335,86 @@
 					{
 						setLocale(LC_CTYPE, 'nl_NL.UTF-8');
 						$emails = array();
+						$init_count = count($rows[0]);
 						for ($i = $first, $count = count($rows); $i < $count; $i++)
 						{
-							$line = array('error' => 0);
-							
-							foreach ($tags as $tag)
+							if ($init_count == count($rows[$i]))
 							{
-								if (in_array($tag, array('birth', 'doctor')) && ! in_array($tag, $tags_required))
-								{
-									$result['dont_use'][$tag] = TRUE;
-								}
+								$line = array('error' => 0);
 								
-								if ($cols[$tag] !== FALSE)
+								foreach ($tags as $tag)
 								{
-									$line[$tag] = $rows[$i][$cols[$tag]];
-									if ($tag == 'email')
+									if (in_array($tag, array('birth', 'doctor')) && ! in_array($tag, $tags_required))
 									{
-										$email = strtolower($rows[$i][$cols[$tag]]);
-										if (filter_var($email, FILTER_VALIDATE_EMAIL))
+										$result['dont_use'][$tag] = TRUE;
+									}
+									
+									if ($cols[$tag] !== FALSE)
+									{
+										$line[$tag] = $rows[$i][$cols[$tag]];
+										if ($tag == 'email')
 										{
-											if (in_array($email, $emails) && $line['error'] < 2)
+											$email = strtolower($line[$tag]);
+											if (filter_var($email, FILTER_VALIDATE_EMAIL))
 											{
-												$line['error'] = 1;
-												$result['check'] = FALSE;
+												if (in_array($email, $emails) && $line['error'] < 2)
+												{
+													$line['error'] = 1;
+													$result['check'] = FALSE;
+												}
+												$emails[] = $email;
 											}
-											$emails[] = $email;
+											else
+											{
+												if ( ! empty($email))
+												{
+													$line[$tag] = '<b>!</b>';
+													$line['error'] = 2;
+													$result['check'] = FALSE;
+												}
+											}
 										}
-										else
+										
+										if ($tag == 'name' || $tag == 'sname')
 										{
-											if ( ! empty($email))
+											if ( ! empty($line[$tag]) && ! ctype_alpha(str_replace(array(' ', '.', '-'), '', $line[$tag])))
 											{
 												$line[$tag] = '<b>!</b>';
 												$line['error'] = 2;
 												$result['check'] = FALSE;
 											}
 										}
-									}
-									
-									if ($tag == 'name' || $tag == 'sname')
-									{
-										if ( ! empty($rows[$i][$cols[$tag]]) && ! ctype_alpha($rows[$i][$cols[$tag]]))
+										
+										if ($tag == 'birth' && ! empty($line[$tag]))
 										{
-											$line[$tag] = '<b>!</b>';
+											$temp = explode((strpos($line[$tag], '/') ? '/' : '-'), $line[$tag]);
+											if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
+											{
+												$line[$tag] = '<b>!</b>';
+												$line['error'] = 2;
+												$result['check'] = FALSE;
+											}
+										}
+										
+										if (empty($line[$tag]) && (in_array($tag, $tags_required) || $tag == 'email'))
+										{
 											$line['error'] = 2;
 											$result['check'] = FALSE;
 										}
 									}
-									
-									if ($tag == 'birth' && ! empty($rows[$i][$cols[$tag]]))
+									else
 									{
-										$temp = explode((strpos($rows[$i][$cols[$tag]], '/') ? '/' : '-'), $rows[$i][$cols[$tag]]);
-										if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
+										$line[$tag] = "";
+										if (in_array($tag, $tags_required))
 										{
-											$line[$tag] = '<b>!</b>';
 											$line['error'] = 2;
-											$result['check'] = FALSE;
 										}
-									}
-									
-									if (empty($rows[$i][$cols[$tag]]) && (in_array($tag, $tags_required) || $tag == 'email'))
-									{
-										$line['error'] = 2;
 										$result['check'] = FALSE;
-									}
+									}							
 								}
-								else
-								{
-									$line[$tag] = "";
-									if (in_array($tag, $tags_required))
-									{
-										$line['error'] = 2;
-									}
-									$result['check'] = FALSE;
-								}							
-							}
 
-							$result['data'][] = $line;
+								$result['data'][] = $line;
+							}
 						}
 					}
 				}

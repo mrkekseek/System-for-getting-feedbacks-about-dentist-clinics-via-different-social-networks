@@ -3403,6 +3403,7 @@
 		$scope.headers = {};
 		$scope.keys = [];
 		$scope.data = [];
+		$scope.all_data = [];
 		$scope.cols = [];
 		$scope.dont_use = [];
 		$scope.empty = false;
@@ -3412,7 +3413,7 @@
 			$scope.column = result.cols_check;
 			$scope.dont_use = result.dont_use;
 			$scope.headers = result.headers;
-			$scope.data = result.data;
+			$scope.all_data = result.data;
 			$scope.cols = result.cols;
 			$scope.empty = result.empty;
 			$scope.check = result.check;
@@ -3421,21 +3422,32 @@
 			$scope.keys = Object.keys($scope.headers);
 
 			$scope.send_emails = [];
-			if ($scope.data && $scope.data.length)
+			if ($scope.all_data && $scope.all_data.length)
 			{
-				$scope.data.sort(function(a, b) { return b.error - a.error});
-				for (var key in $scope.data)
+				$scope.reprint_rows();
+			}
+		};
+		
+		$scope.reprint_rows = function()
+		{
+			$scope.data = [];
+			$scope.all_data.sort(function(a, b) { return b.error - a.error});
+			for (var key in $scope.all_data)
+			{
+				if ($scope.all_data[key].error < 1)
 				{
-					if ($scope.data[key].error < 1)
-					{
-						$scope.data[key].text = $scope.data[key].email;
-						$scope.send_emails.push($scope.data[key]);
-					}
+					$scope.all_data[key].text = $scope.all_data[key].email;
+					$scope.send_emails.push($scope.all_data[key]);
 				}
 				
-				$scope.pages = Math.ceil($scope.data.length / $scope.on_page);
-				$scope.change_page(1);
+				if ($scope.warnings || ( ! $scope.warnings && $scope.all_data[key].error == 0))
+				{
+					$scope.data.push($scope.all_data[key]);
+				}
 			}
+			
+			$scope.pages = Math.ceil($scope.data.length / $scope.on_page);
+			$scope.change_page(1);
 		};
 		
 		$scope.page_data = [];
@@ -3530,6 +3542,8 @@
 		$scope.warnings = false;
 		$scope.show_warnings = function() {
 			$scope.warnings = ! $scope.warnings;
+			
+			$scope.reprint_rows();
 		};
 		
 		/*
