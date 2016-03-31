@@ -3528,6 +3528,11 @@
             });
 		};
 		
+		$scope.warnings = false;
+		$scope.show_warnings = function() {
+			$scope.warnings = ! $scope.warnings;
+		};
+		
 		/*
 		
 		$scope.tags = [];

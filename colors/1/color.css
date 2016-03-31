@@ -30,8 +30,15 @@ body .icon-dashboard.bg-warning {
 
 body .mail-categories .list-group .list-group-item.active > a,
 body .mail-categories .list-group .list-group-item > a:hover,
-a {
+body a {
 	color: #bc0f0f;
+}
+
+body a:hover,
+body a:focus,
+body a:active {
+	color: #bc0f0f;
+	text-decoration: underline;
 }
 
 body .btn-invoice-label.past {

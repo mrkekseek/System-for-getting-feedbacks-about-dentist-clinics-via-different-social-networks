@@ -80,7 +80,7 @@
 					</div>
 					
 					<div class="alert alert-warning" ng-if=" ! check">
-						<p>De onderdelen met waarschuwingen zullen worden overgeslagen.</p>
+						<p>Er zijn onderdelen met waarschuwingen gevonden. <a href="javascript:void(0);" ng-click="show_warnings()">{{ ! warnings ? 'Toon onderdelen' : 'Verberg onderdelen' }}</a></p>
 					</div>
 					
 					<div class="table-responsive">
@@ -105,7 +105,7 @@
 							</thead>
 							
 							<tbody>
-								<tr ng-repeat="d in page_data">
+								<tr ng-repeat="d in page_data" ng-show="d.error == 0 || (d.error > 0 && warnings)">
 									<td>
 										<span class="btn btn-sm btn-success" ng-if="d.error == 0">In orde</span>
 										<span class="btn btn-sm btn-warning" ng-if="d.error == 1">Dubbel</span>
