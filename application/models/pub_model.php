@@ -173,13 +173,13 @@
 			$time = mktime(date("H"), date("i"), 0, 2, 1, 1970);
 			$this->db->where("reminder_checked", TRUE);
 			$this->db->where("reminder_time >=", $time);
-			$this->db->where("reminder_time < ", $time + 30 * 60);
+			$this->db->where("reminder_time < ", $time + 10 * 60);
 			$this->db->where("reminder_last <>", date("j"));
 			$this->db->where("reminder_period", 1);
 			$this->db->or_where("reminder_period", 0);
 			$this->db->where("reminder_checked", TRUE);
 			$this->db->where("reminder_time >=", $time);
-			$this->db->where("reminder_time < ", $time + 30 * 60);
+			$this->db->where("reminder_time < ", $time + 10 * 60);
 			$this->db->where("reminder_last <>", date("j"));
 			$this->db->where("reminder_day", date("N"));
 			$result = $this->db->get("users")->result_array();
@@ -269,7 +269,7 @@
 
 		function save_last()
 		{
-			if ($this->session->userdata("id"))
+			if ($this->session->userdata("id") && ! $this->session->userdata("admin_id"))
 			{
 				$this->db->where("id", $this->session->userdata("id"));
 				$this->db->update("users", array("last" => time()));
@@ -2246,7 +2246,7 @@
 			}
 		}
 
-		function parse_xls($file, $first = FALSE)
+		function parse_xls($file, $first = FALSE, $name = FALSE)
 		{
 			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
 			{
@@ -2272,13 +2272,30 @@
 			$result = array('dont_use' => array(), 'file' => '', 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
 				
 			mt_srand();
-			$dest = $path.time().mt_rand(100, 999).".xls";
+			$ext = pathinfo($name, PATHINFO_EXTENSION);
+			$dest = $path.time().mt_rand(100, 999).".".$ext;
 			if (copy($file, $dest))
 			{
 				$result['file'] = $dest;
-				$this->load->library('excel');
-				$obj = $this->excel->load($dest);
-				$rows = $this->excel->rows($obj);
+				$rows = array();
+				if ($ext == 'tab')
+				{
+					$fp = fopen($dest, 'r');
+					while ( ! feof($fp))
+					{
+						$line = fgets($fp, 2048);
+						$data = str_getcsv($line, "\t");
+						$rows[] = $data;
+					}                              
+					fclose($fp);
+				}
+				else
+				{	
+					$this->load->library('excel');
+					$obj = $this->excel->load($dest);
+					$rows = $this->excel->rows($obj);
+				}
+				
 				if ( ! empty($rows))
 				{
 					$first = 0;
@@ -2311,58 +2328,93 @@
 						}
 						
 						$result['headers'][$tag] = $fields[$tag];
-						/*if ($col !== FALSE)
-						{
-							$result['cols'] = array_diff($result['cols'], array($rows[0][$col]));
-						}*/
 					}
 					$result['cols'] = array_values($result['cols']);
 					
 					if ( ! empty($cols))
 					{
+						setLocale(LC_CTYPE, 'nl_NL.UTF-8');
 						$emails = array();
+						$init_count = count($rows[0]);
 						for ($i = $first, $count = count($rows); $i < $count; $i++)
 						{
-							$line = array('error' => 0);
-							
-							foreach ($tags as $tag)
+							if ($init_count == count($rows[$i]))
 							{
-								if (in_array($tag, array('birth', 'doctor')) && ! in_array($tag, $tags_required))
-								{
-									$result['dont_use'][$tag] = TRUE;
-								}
+								$line = array('error' => 0);
 								
-								if ($cols[$tag] !== FALSE)
+								foreach ($tags as $tag)
 								{
-									$line[$tag] = $rows[$i][$cols[$tag]];
-									if ($tag == 'email')
+									if (in_array($tag, array('birth', 'doctor')) && ! in_array($tag, $tags_required))
 									{
-										$email = strtolower($rows[$i][$cols[$tag]]);
-										if (in_array($email, $emails) && $line['error'] < 2)
-										{
-											$line['error'] = 1;
-											$result['check'] = FALSE;
-										}
-										$emails[] = $email;
+										$result['dont_use'][$tag] = TRUE;
 									}
 									
-									if (empty($rows[$i][$cols[$tag]]) && in_array($tag, $tags_required))
+									if ($cols[$tag] !== FALSE)
 									{
-										$line['error'] = 2;
+										$line[$tag] = $rows[$i][$cols[$tag]];
+										if ($tag == 'email')
+										{
+											$email = strtolower($line[$tag]);
+											if (filter_var($email, FILTER_VALIDATE_EMAIL))
+											{
+												if (in_array($email, $emails) && $line['error'] < 2)
+												{
+													$line['error'] = 1;
+													$result['check'] = FALSE;
+												}
+												$emails[] = $email;
+											}
+											else
+											{
+												if ( ! empty($email))
+												{
+													$line[$tag] = '<b>!</b>';
+													$line['error'] = 2;
+													$result['check'] = FALSE;
+												}
+											}
+										}
+										
+										if ($tag == 'name' || $tag == 'sname')
+										{
+											if ( ! empty($line[$tag]) && ! ctype_alpha(str_replace(array(' ', '.', '-'), '', $line[$tag])))
+											{
+												$line[$tag] = '<b>!</b>';
+												$line['error'] = 2;
+												$result['check'] = FALSE;
+											}
+										}
+										
+										if ($tag == 'birth' && ! empty($line[$tag]))
+										{
+											$temp = explode((strpos($line[$tag], '/') ? '/' : '-'), $line[$tag]);
+											if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
+											{
+												$line[$tag] = '<b>!</b>';
+												$line['error'] = 2;
+												$result['check'] = FALSE;
+											}
+										}
+										
+										if (empty($line[$tag]) && (in_array($tag, $tags_required) || $tag == 'email'))
+										{
+											$line['error'] = 2;
+											$result['check'] = FALSE;
+										}
 									}
+									else
+									{
+										$line[$tag] = "";
+										if (in_array($tag, $tags_required))
+										{
+											$line['error'] = 2;
+										}
+										$result['check'] = FALSE;
+									}							
 								}
-								else
-								{
-									$line[$tag] = "";
-									if (in_array($tag, $tags_required))
-									{
-										$line['error'] = 2;
-									}
-									$result['check'] = FALSE;
-								}							
-							}
 
-							$result['data'][] = $line;
+								$result['data'][] = $line;
+							}
 						}
 					}
 				}
@@ -2500,97 +2552,100 @@
 				$error = TRUE;
 				foreach ($post['emails'] as $list)
 				{
-					if ($sent)
+					if ( ! empty($list['text']))
 					{
-						$users_id = $list['users_id'];
-						$this->db->where("id", $users_id);
-						$this->db->where("patients_reminder", TRUE);
-						$this->db->limit(1);
-						$row = $this->db->get("users")->row_array();
-
-						$email = strtolower($list['text']);
-						$this->db->where("email", $email);
-						if ( ! $this->db->count_all_results("unsubscribes"))
-						{							$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
-							$email_data['logo'] = ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png');
-							$email_data['username'] = $row['username'];
-							$email_data['id'] = md5($row['id']);
-							$email_data['color'] = empty($row['color']) ? "#0f75bc" : $row['color'];
-							$email_data['account_type'] = $row['account_type'];
-							$email_data['account'] = $row['account'];
-							$email_data['promo_checked'] = $row['promo_checked'];
-							$email_data['sent_id'] = $list['id'];
-							$email_data['reminder_date'] = $list['reminder_date'];
-							$email_data['stars_type'] = $row['stars_type'];
-							$email_data['stars_text'] = $row['stars_text'];
-							$email_data['texts'] = $this->get_emails_texts($row, $list);
-							
-							$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
-
-							$subject = (empty($subject) ? $email_data['texts']['subject'] : $subject);
-							if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], $row['email']))
-							{
-								$error = FALSE;
-								$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
-							}
-						}
-					}
-					else
-					{
-						$users_id = $this->session->userdata("id");
-						$this->db->where("id", $users_id);
-						$this->db->limit(1);
-						$row = $this->db->get("users")->row_array();
-
-						if ( ! empty($row))
+						if ($sent)
 						{
+							$users_id = $list['users_id'];
+							$this->db->where("id", $users_id);
+							$this->db->where("patients_reminder", TRUE);
+							$this->db->limit(1);
+							$row = $this->db->get("users")->row_array();
+
 							$email = strtolower($list['text']);
 							$this->db->where("email", $email);
 							if ( ! $this->db->count_all_results("unsubscribes"))
-							{	
-								$email_data = array('domain' => (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/',
-													'logo' => ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png'),
-													'username' => $row['username'],
-													'id' => md5($row['id']),
-													'color' => empty($row['color']) ? "#0f75bc" : $row['color'],
-													'account_type' => $row['account_type'],
-													'account' => $row['account']);
-													
-								if ( ! empty($list['doctor']))
+							{							$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+								$email_data['logo'] = ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png');
+								$email_data['username'] = $row['username'];
+								$email_data['id'] = md5($row['id']);
+								$email_data['color'] = empty($row['color']) ? "#0f75bc" : $row['color'];
+								$email_data['account_type'] = $row['account_type'];
+								$email_data['account'] = $row['account'];
+								$email_data['promo_checked'] = $row['promo_checked'];
+								$email_data['sent_id'] = $list['id'];
+								$email_data['reminder_date'] = $list['reminder_date'];
+								$email_data['stars_type'] = $row['stars_type'];
+								$email_data['stars_text'] = $row['stars_text'];
+								$email_data['texts'] = $this->get_emails_texts($row, $list);
+								
+								$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
+
+								$subject = (empty($subject) ? $email_data['texts']['subject'] : $subject);
+								if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], $row['email']))
 								{
-									$this->db->where("id", $list['doctor']);
-									$this->db->where("users_id", $this->session->userdata("id"));
-									if ( ! $this->db->count_all_results("doctors"))
-									{
-										$list['doctor'] = 0;
-									}
+									$error = FALSE;
+									$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
 								}
+							}
+						}
+						else
+						{
+							$users_id = $this->session->userdata("id");
+							$this->db->where("id", $users_id);
+							$this->db->limit(1);
+							$row = $this->db->get("users")->row_array();
 
-								$data_array = array("users_id" => $this->session->userdata("id"),
-													"title" => ! empty($list['title']) ? $list['title'] : "",
-													"name" => ! empty($list['name']) ? $list['name'] : "",
-													"sname" => ! empty($list['sname']) ? $list['sname'] : "",
-													"doctor" => ! empty($list['doctor']) ? $list['doctor'] : 0,
-													"birth" => ! empty($list['birth']) ? $list['birth'] : "",
-													"email" => strtolower($list['text']),
-													"date" => time(),
-													"status" => 1,
-													"stars" => 0,
-													"feedback" => "");
-								if ($this->db->insert("sent", $data_array))
-								{
-									$email_data['sent_id'] = $this->db->insert_id();
-									$email_data['promo_checked'] = $row['promo_checked'];
-									$email_data['stars_type'] = $row['stars_type'];
-									$email_data['stars_text'] = $row['stars_text'];
-									$email_data['texts'] = $this->get_emails_texts($row, $list);
-									
-									$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
-
-									if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], $row['email']))
+							if ( ! empty($row))
+							{
+								$email = strtolower($list['text']);
+								$this->db->where("email", $email);
+								if ( ! $this->db->count_all_results("unsubscribes"))
+								{	
+									$email_data = array('domain' => (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/',
+														'logo' => ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png'),
+														'username' => $row['username'],
+														'id' => md5($row['id']),
+														'color' => empty($row['color']) ? "#0f75bc" : $row['color'],
+														'account_type' => $row['account_type'],
+														'account' => $row['account']);
+														
+									if ( ! empty($list['doctor']))
 									{
-										$error = FALSE;
-										$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
+										$this->db->where("id", $list['doctor']);
+										$this->db->where("users_id", $this->session->userdata("id"));
+										if ( ! $this->db->count_all_results("doctors"))
+										{
+											$list['doctor'] = 0;
+										}
+									}
+
+									$data_array = array("users_id" => $this->session->userdata("id"),
+														"title" => ! empty($list['title']) ? $list['title'] : "",
+														"name" => ! empty($list['name']) ? $list['name'] : "",
+														"sname" => ! empty($list['sname']) ? $list['sname'] : "",
+														"doctor" => ! empty($list['doctor']) ? $list['doctor'] : 0,
+														"birth" => ! empty($list['birth']) ? $list['birth'] : "",
+														"email" => strtolower($list['text']),
+														"date" => time(),
+														"status" => 1,
+														"stars" => 0,
+														"feedback" => "");
+									if ($this->db->insert("sent", $data_array))
+									{
+										$email_data['sent_id'] = $this->db->insert_id();
+										$email_data['promo_checked'] = $row['promo_checked'];
+										$email_data['stars_type'] = $row['stars_type'];
+										$email_data['stars_text'] = $row['stars_text'];
+										$email_data['texts'] = $this->get_emails_texts($row, $list);
+										
+										$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
+
+										if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], $row['email']))
+										{
+											$error = FALSE;
+											$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
+										}
 									}
 								}
 							}
