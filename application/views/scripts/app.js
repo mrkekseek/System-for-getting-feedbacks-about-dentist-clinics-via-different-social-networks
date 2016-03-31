@@ -6680,7 +6680,7 @@
 			console.log($scope.m.url);
 			if ($scope.system == "google")
 			{
-				if (($scope.m.url.indexOf("://places.google.com/") + 1) || ($scope.m.url.indexOf("://www.places.google.com/") + 1) || ($scope.m.url.indexOf("://plus.google.com/") + 1) || ($scope.m.url.indexOf("://www.plus.google.com/") + 1))
+				if (($scope.m.url.indexOf("://places.google.com/") + 1) || ($scope.m.url.indexOf("://www.places.google.com/") + 1) || ($scope.m.url.indexOf("://plus.google.com/") + 1) || ($scope.m.url.indexOf("://www.plus.google.com/") + 1) || ($scope.m.url.indexOf("://google") + 1) || ($scope.m.url.indexOf("://www.google") + 1) || ($scope.m.url.indexOf("://plus.google") + 1) || ($scope.m.url.indexOf("://www.plus.google") + 1))
 				{
 					$scope.valid = "valid";
 				}
