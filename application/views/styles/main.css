@@ -2781,6 +2781,12 @@ body .btn-primary.compose-prev:disabled {
 	text-transform: none;
 }
 
+.compose-steps-item td > b {
+	color: #E33935;
+	display: block;
+	text-align: center;
+}
+
 @media (max-width: 768px) {
 	.drag-area {
 		padding: 30px 10px;

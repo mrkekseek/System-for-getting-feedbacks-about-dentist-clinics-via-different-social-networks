@@ -2311,15 +2311,12 @@
 						}
 						
 						$result['headers'][$tag] = $fields[$tag];
-						/*if ($col !== FALSE)
-						{
-							$result['cols'] = array_diff($result['cols'], array($rows[0][$col]));
-						}*/
 					}
 					$result['cols'] = array_values($result['cols']);
 					
 					if ( ! empty($cols))
 					{
+						setLocale(LC_CTYPE, 'nl_NL.UTF-8');
 						$emails = array();
 						for ($i = $first, $count = count($rows); $i < $count; $i++)
 						{
@@ -2338,12 +2335,39 @@
 									if ($tag == 'email')
 									{
 										$email = strtolower($rows[$i][$cols[$tag]]);
-										if (in_array($email, $emails) && $line['error'] < 2)
+										if (filter_var($email, FILTER_VALIDATE_EMAIL))
 										{
-											$line['error'] = 1;
-											$result['check'] = FALSE;
+											if (in_array($email, $emails) && $line['error'] < 2)
+											{
+												$line['error'] = 1;
+												$result['check'] = FALSE;
+											}
+											$emails[] = $email;
 										}
-										$emails[] = $email;
+										else
+										{
+											$line[$tag] = '<b>!</b>';
+											$line['error'] = 2;
+										}
+									}
+									
+									if ($tag == 'name' || $tag == 'sname')
+									{
+										if ( ! ctype_alpha($rows[$i][$cols[$tag]]))
+										{
+											$line[$tag] = '<b>!</b>';
+											$line['error'] = 2;
+										}
+									}
+									
+									if ($tag == 'birth')
+									{
+										$temp = explode((strpos($rows[$i][$cols[$tag]], '/') ? '/' : '-'), $rows[$i][$cols[$tag]]);
+										if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
+										{
+											$line[$tag] = '<b>!</b>';
+											$line['error'] = 2;
+										}
 									}
 									
 									if (empty($rows[$i][$cols[$tag]]) && in_array($tag, $tags_required))
