@@ -2346,33 +2346,40 @@
 										}
 										else
 										{
-											$line[$tag] = '<b>!</b>';
-											$line['error'] = 2;
+											if ( ! empty($email))
+											{
+												$line[$tag] = '<b>!</b>';
+												$line['error'] = 2;
+												$result['check'] = FALSE;
+											}
 										}
 									}
 									
 									if ($tag == 'name' || $tag == 'sname')
 									{
-										if ( ! ctype_alpha($rows[$i][$cols[$tag]]))
+										if ( ! empty($rows[$i][$cols[$tag]]) && ! ctype_alpha($rows[$i][$cols[$tag]]))
 										{
 											$line[$tag] = '<b>!</b>';
 											$line['error'] = 2;
+											$result['check'] = FALSE;
 										}
 									}
 									
-									if ($tag == 'birth')
+									if ($tag == 'birth' && ! empty($rows[$i][$cols[$tag]]))
 									{
 										$temp = explode((strpos($rows[$i][$cols[$tag]], '/') ? '/' : '-'), $rows[$i][$cols[$tag]]);
 										if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
 										{
 											$line[$tag] = '<b>!</b>';
 											$line['error'] = 2;
+											$result['check'] = FALSE;
 										}
 									}
 									
 									if (empty($rows[$i][$cols[$tag]]) && in_array($tag, $tags_required))
 									{
 										$line['error'] = 2;
+										$result['check'] = FALSE;
 									}
 								}
 								else
@@ -2524,97 +2531,100 @@
 				$error = TRUE;
 				foreach ($post['emails'] as $list)
 				{
-					if ($sent)
+					if ( ! empty($list['text']))
 					{
-						$users_id = $list['users_id'];
-						$this->db->where("id", $users_id);
-						$this->db->where("patients_reminder", TRUE);
-						$this->db->limit(1);
-						$row = $this->db->get("users")->row_array();
-
-						$email = strtolower($list['text']);
-						$this->db->where("email", $email);
-						if ( ! $this->db->count_all_results("unsubscribes"))
-						{							$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
-							$email_data['logo'] = ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png');
-							$email_data['username'] = $row['username'];
-							$email_data['id'] = md5($row['id']);
-							$email_data['color'] = empty($row['color']) ? "#0f75bc" : $row['color'];
-							$email_data['account_type'] = $row['account_type'];
-							$email_data['account'] = $row['account'];
-							$email_data['promo_checked'] = $row['promo_checked'];
-							$email_data['sent_id'] = $list['id'];
-							$email_data['reminder_date'] = $list['reminder_date'];
-							$email_data['stars_type'] = $row['stars_type'];
-							$email_data['stars_text'] = $row['stars_text'];
-							$email_data['texts'] = $this->get_emails_texts($row, $list);
-							
-							$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
-
-							$subject = (empty($subject) ? $email_data['texts']['subject'] : $subject);
-							if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], $row['email']))
-							{
-								$error = FALSE;
-								$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
-							}
-						}
-					}
-					else
-					{
-						$users_id = $this->session->userdata("id");
-						$this->db->where("id", $users_id);
-						$this->db->limit(1);
-						$row = $this->db->get("users")->row_array();
-
-						if ( ! empty($row))
+						if ($sent)
 						{
+							$users_id = $list['users_id'];
+							$this->db->where("id", $users_id);
+							$this->db->where("patients_reminder", TRUE);
+							$this->db->limit(1);
+							$row = $this->db->get("users")->row_array();
+
 							$email = strtolower($list['text']);
 							$this->db->where("email", $email);
 							if ( ! $this->db->count_all_results("unsubscribes"))
-							{	
-								$email_data = array('domain' => (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/',
-													'logo' => ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png'),
-													'username' => $row['username'],
-													'id' => md5($row['id']),
-													'color' => empty($row['color']) ? "#0f75bc" : $row['color'],
-													'account_type' => $row['account_type'],
-													'account' => $row['account']);
-													
-								if ( ! empty($list['doctor']))
+							{							$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+								$email_data['logo'] = ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png');
+								$email_data['username'] = $row['username'];
+								$email_data['id'] = md5($row['id']);
+								$email_data['color'] = empty($row['color']) ? "#0f75bc" : $row['color'];
+								$email_data['account_type'] = $row['account_type'];
+								$email_data['account'] = $row['account'];
+								$email_data['promo_checked'] = $row['promo_checked'];
+								$email_data['sent_id'] = $list['id'];
+								$email_data['reminder_date'] = $list['reminder_date'];
+								$email_data['stars_type'] = $row['stars_type'];
+								$email_data['stars_text'] = $row['stars_text'];
+								$email_data['texts'] = $this->get_emails_texts($row, $list);
+								
+								$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
+
+								$subject = (empty($subject) ? $email_data['texts']['subject'] : $subject);
+								if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], $row['email']))
 								{
-									$this->db->where("id", $list['doctor']);
-									$this->db->where("users_id", $this->session->userdata("id"));
-									if ( ! $this->db->count_all_results("doctors"))
-									{
-										$list['doctor'] = 0;
-									}
+									$error = FALSE;
+									$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
 								}
+							}
+						}
+						else
+						{
+							$users_id = $this->session->userdata("id");
+							$this->db->where("id", $users_id);
+							$this->db->limit(1);
+							$row = $this->db->get("users")->row_array();
 
-								$data_array = array("users_id" => $this->session->userdata("id"),
-													"title" => ! empty($list['title']) ? $list['title'] : "",
-													"name" => ! empty($list['name']) ? $list['name'] : "",
-													"sname" => ! empty($list['sname']) ? $list['sname'] : "",
-													"doctor" => ! empty($list['doctor']) ? $list['doctor'] : 0,
-													"birth" => ! empty($list['birth']) ? $list['birth'] : "",
-													"email" => strtolower($list['text']),
-													"date" => time(),
-													"status" => 1,
-													"stars" => 0,
-													"feedback" => "");
-								if ($this->db->insert("sent", $data_array))
-								{
-									$email_data['sent_id'] = $this->db->insert_id();
-									$email_data['promo_checked'] = $row['promo_checked'];
-									$email_data['stars_type'] = $row['stars_type'];
-									$email_data['stars_text'] = $row['stars_text'];
-									$email_data['texts'] = $this->get_emails_texts($row, $list);
-									
-									$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
-
-									if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], $row['email']))
+							if ( ! empty($row))
+							{
+								$email = strtolower($list['text']);
+								$this->db->where("email", $email);
+								if ( ! $this->db->count_all_results("unsubscribes"))
+								{	
+									$email_data = array('domain' => (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/',
+														'logo' => ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png'),
+														'username' => $row['username'],
+														'id' => md5($row['id']),
+														'color' => empty($row['color']) ? "#0f75bc" : $row['color'],
+														'account_type' => $row['account_type'],
+														'account' => $row['account']);
+														
+									if ( ! empty($list['doctor']))
 									{
-										$error = FALSE;
-										$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
+										$this->db->where("id", $list['doctor']);
+										$this->db->where("users_id", $this->session->userdata("id"));
+										if ( ! $this->db->count_all_results("doctors"))
+										{
+											$list['doctor'] = 0;
+										}
+									}
+
+									$data_array = array("users_id" => $this->session->userdata("id"),
+														"title" => ! empty($list['title']) ? $list['title'] : "",
+														"name" => ! empty($list['name']) ? $list['name'] : "",
+														"sname" => ! empty($list['sname']) ? $list['sname'] : "",
+														"doctor" => ! empty($list['doctor']) ? $list['doctor'] : 0,
+														"birth" => ! empty($list['birth']) ? $list['birth'] : "",
+														"email" => strtolower($list['text']),
+														"date" => time(),
+														"status" => 1,
+														"stars" => 0,
+														"feedback" => "");
+									if ($this->db->insert("sent", $data_array))
+									{
+										$email_data['sent_id'] = $this->db->insert_id();
+										$email_data['promo_checked'] = $row['promo_checked'];
+										$email_data['stars_type'] = $row['stars_type'];
+										$email_data['stars_text'] = $row['stars_text'];
+										$email_data['texts'] = $this->get_emails_texts($row, $list);
+										
+										$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
+
+										if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], $row['email']))
+										{
+											$error = FALSE;
+											$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
+										}
 									}
 								}
 							}
