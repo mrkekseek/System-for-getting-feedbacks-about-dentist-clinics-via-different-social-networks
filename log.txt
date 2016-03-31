@@ -1,267 +1,463 @@
-The following SMTP error was encountered: 0 <br />Unable to send data: AUTH LOGIN<br />Failed to send AUTH LOGIN command. Error: <br />Unable to send data: MAIL FROM:<info@patientenreview.nl><br /><pre>from: </pre>The following SMTP error was encountered: <br />Unable to send data: RCPT TO:<admin@patientenreview.nl><br /><pre>to: </pre>The following SMTP error was encountered: <br />Unable to send data: DATA<br /><pre>data: </pre>The following SMTP error was encountered: <br />Unable to send data: User-Agent: CodeIgniter
-Date: Sat, 19 Mar 2016 12:26:57 +0100
-From: =?utf-8?Q?Pati=c3=abntenreview?= <info@patientenreview.nl>
+The following SMTP error was encountered: 0 <br />Unable to send data: AUTH LOGIN<br />Failed to send AUTH LOGIN command. Error: <br />Unable to send data: MAIL FROM:<info@patientenreview.nl><br /><pre>from: </pre>The following SMTP error was encountered: <br />Unable to send data: RCPT TO:<hallo@cloudrocket.co><br /><pre>to: </pre>The following SMTP error was encountered: <br />Unable to send data: DATA<br /><pre>data: </pre>The following SMTP error was encountered: <br />Unable to send data: User-Agent: CodeIgniter
+Date: Tue, 29 Mar 2016 19:20:19 +0200
+From: "testpraktijk hallo" <info@patientenreview.nl>
 Return-Path: <info@patientenreview.nl>
-To: admin@patientenreview.nl
-Reply-To: =?utf-8?Q?"Pati=c3=abntenreview"?= <info@patientenreview.nl>
-Subject: =?utf-8?Q?Uw_wachtwoord_herstellen?=
+To: hallo@cloudrocket.co
+Reply-To: =?utf-8?Q?"testpraktijk_hallo"?= <nick@cloudrocket.co>
+Subject: =?utf-8?Q?Hoe_was_uw_behandeling_bij_testpraktijk_hallo=3f?=
 X-Sender: info@patientenreview.nl
 X-Mailer: CodeIgniter
 X-Priority: 3 (Normal)
-Message-ID: <56ed3781c2ee1@patientenreview.nl>
+Message-ID: <56fab95399d9f@patientenreview.nl>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; boundary="B_ALT_56ed3781c2f3f"
+Content-Type: multipart/alternative; boundary="B_ALT_56fab95399e00"
 
 This is a multi-part message in MIME format.
 Your email application may not support this format.
 
---B_ALT_56ed3781c2f3f
+--B_ALT_56fab95399e00
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 
-Uw wachtwoord herstellen
+testpraktijk hallo
 
-Beste Beheerdersaccount,
+Hoe was uw behandeling?
 
-U ontvangt deze e-mail omdat u ons verzocht heeft om uw wachtwoord te
-herstellen. U kunt 
-direct een nieuw wachtwoord aanmaken met behulp van de volgende knop:
+Zou u testpraktijk hallo aanbevelen?
 
-Maak nieuw wachtwoord
+Geachte heer/mevrouw,U bent onlangs behandeld in onze praktijk. We sturen u
+deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw
+mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u
+bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw
+beoordeling te plaatsen op online kanalen.Op een schaal van 1 tot 5 sterren,
+hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of
+vrienden?
 
-Mocht u nog vragen hebben, dan kun u natuurlijk gewoon op dit mailtje
-reageren. Ook feedback is
-van harte welkom!
+Klik hier om te beoordelen
 
-Met vriendelijke groet,
+Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen.
+Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons
+team van feedback voorzien.Bedankt voor het delen van uw mening!Met
+vriendelijke groet,testpraktijk hallo
 
-Patiëntenreview
-www.patientenreview.nl
-info@patientenreview.nl
-Tel: 040 - 304 15 96
+U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het
+patiëntenbestand van testpraktijk hallo. Deze e-mail is een eenmalige
+uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend
+gebruikt voor het verzoek tot deelname aan dit
+patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar
+gemaakt.
 
-&copy; 2016 Patiëntenreview. Alle rechten voorbehouden.
+Ik wil geen e-mails meer van Patiëntenreview ontvangen.
+
+..inner:hover td.star > div {
+background-position: 0 100% !important;
+}
+
+..inner:hover td.star:hover + td.star > div,
+..inner:hover td.star:hover + td.star + td.star > div,
+..inner:hover td.star:hover + td.star + td.star + td.star > div,
+..inner:hover td.star:hover + td.star + td.star + td.star + td.star > div {
+background-position: 0 0 !important;
+}
+
+@media (max-width: 768px) {
+..inner td {
+font-size: 0;
+}
+
+..outer-box {
+padding: 10px !important;
+}
+}
 
 
---B_ALT_56ed3781c2f3f
+--B_ALT_56fab95399e00
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
 <!DOCTYPE html>
 <html>
 	<head>
+		<style>
+			.inner:hover td.star > div {
+				background-position: 0 100% !important;
+			}
+		=09
+			.inner:hover td.star:hover + td.star > div,
+			.inner:hover td.star:hover + td.star + td.star > div,
+			.inner:hover td.star:hover + td.star + td.star + td.star > div,
+			.inner:hover td.star:hover + td.star + td.star + td.star + td.star > div=
+ {
+				background-position: 0 0 !important;
+			}
+		=09
+			@media (max-width: 768px) {
+				.inner td {
+					font-size: 0;
+				}
+			=09
+				.outer-box {
+					padding: 10px !important;
+				}
+			}
+		</style>
 	</head>
 =09
 	<body style=3D"padding: 0; margin: 0;">
-		<div style=3D"margin: 0 auto; min-width: 400px; background: #EAEAEA;">
-			<div style=3D"padding: 15px 15px 0;">
-				<div style=3D"height: 30px; background: #fff; padding: 10px; box-shadow=
-: 0 1px 2px rgba(0, 0, 0, 0.15);">
-					<a href=3D"javascript:void(0);">
-						<img src=3D"http://pr.cloudrocket.co/application/views/images/logo_fu=
-ll.png" height=3D"30" alt=3D"" />
-					</a>
-				</div>
+		<div style=3D"margin: 0 auto; min-width: 320px; background: #EAEAEA;">
+			<div style=3D"height: 30px; background: #fff; padding: 10px; box-shadow:=
+ 0 1px 2px rgba(0, 0, 0, 0.15);">
+				<table cellpadding=3D"0" cellspacing=3D"0" width=3D"100%">
+										<tr>
+						<td style=3D"text-align: left; padding: 0; margin: 0; font-size: 0; l=
+ine-height: 0; vertical-align: top;">
+							<a href=3D"javascript:void(0);">
+								<img src=3D"http://pr.cloudrocket.co/application/views/images/logo_=
+full.png" height=3D"30" alt=3D"" />
+							</a>
+						</td>
+							<td style=3D"text-align: right; padding: 0; margin: 0; font-size: 0;=
+ line-height: 0;">
+								<p style=3D"color: #626262; margin: 0; font: 14px/30px arial, sans-=
+serif; text-align: right;">
+									testpraktijk hallo								</p>
+							</td>
+					</tr>
+									</table>
 			</div>
 		=09
-			<div style=3D"padding: 15px 15px 0;">
-				<div style=3D"background: #fff; border-radius: 10px 10px 0 0; border: s=
-olid #E3E3E3 1px;">
-					<p style=3D"margin: 0; font: bold 14px/40px arial, sans-serif; color: =
-#525354; padding: 0 10px; background: #F6F6F6; border-radius: 10px 10px 0 0=
+						<table cellpadding=3D"0" cellspacing=3D"0" width=3D"100%">
+				<tr>
+					<td style=3D"height: 150px; vertical-align: middle; text-align: center=
+; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('htt=
+p://pr.cloudrocket.co//application/views/images/email-back.png'); backgroun=
+d-repeat: no-repeat; background-position: center; background-color: #0f75bc=
+; background-size: cover;">
+						Hoe was uw behandeling?					</td>
+				</tr>
+			</table>
+					=09
+			<div style=3D"text-align: center;">
+				<div style=3D"background: #fff; max-width: 700px; display: inline-block=
 ;">
-						Uw wachtwoord herstellen
-					</p>
-				=09
-					<div style=3D"padding: 20px;">
-						<p class=3D"in-text"style=3D"margin: 0; font: 13px/1.3 arial, sans-se=
-rif; color: #525354; padding-bottom: 15px;">
-							Beste Beheerdersaccount,
-						</p>
+					<div class=3D"outer-box" style=3D"padding: 30px; text-align: left;">
+												<p style=3D"margin: 0 0 20px; font: 14px/1.3 arial, sans-serif;=
+ color: #525354; padding: 15px; background-color: #F3F3F3; border: solid #D=
+3D3D3 1px;">
+							Zou u testpraktijk hallo aanbevelen?						</p>
+											=09
+												<p style=3D"margin: 0; font: 14px/1.3 arial, sans-serif; color:=
+ #525354; padding-bottom: 15px;">
+							Geachte heer/mevrouw,<br /><br />U bent onlangs behandeld in onze pr=
+aktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling=
+ heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bov=
+endien kunt u bijdragen aan het bevorderen van transparantie in de gezondhe=
+idszorg door uw beoordeling te plaatsen op online kanalen.<br /><br />Op ee=
+n schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk=
+ zou aanbevelen bij familie of vrienden?						</p>
+											=09
+											=09
+												<div style=3D"width: 100%; text-align: center; padding: 20px 0;=
+">
+							<a href=3D"http://pr.cloudrocket.co/invitation/0b1eec33c726a60554bc7=
+8518d5f9b32c" style=3D"display: block; text-decoration: none; text-align: c=
+enter; border-radius: 2px; font: 14px/1.3 arial, sans-serif; padding: 15px =
+12px; background-color: #0f75bc; border-color: #0f75bc; color: #fff;">
+								Klik hier om te beoordelen							</a>
+						</div>
+											=09
+											=09
 					=09
-						<p style=3D"margin: 0; font: 13px/1.3 arial, sans-serif; color: #5253=
-54; padding-bottom: 15px;">
-							U ontvangt deze e-mail omdat u ons verzocht heeft om uw wachtwoord t=
-e herstellen. U kunt=20
-							direct een nieuw wachtwoord aanmaken met behulp van de volgende knop=
-:
-						</p>
-					=09
-						<p style=3D"margin: 0; font: 13px/1.3 arial, sans-serif; color: #5253=
-54; padding-bottom: 15px;">
-							<a href=3D"http://pr.cloudrocket.co/#/pages/new-password/13216452c6b=
-69dd1c2c98c1d3a3468a3/" style=3D"display: block; margin-top: 10px; width: 2=
-00px; text-decoration: none; text-align: center; border-radius: 2px; font-s=
-ize: 14px; line-height: 1.5; padding: 6px 12px; background-color: #0f75bc; =
-border-color: #0f75bc; color: #fff;" target=3D"_blank">Maak nieuw wachtwoor=
-d</a>
-						</p>
-					=09
-						<p style=3D"margin: 0; font: 13px/1.3 arial, sans-serif; color: #5253=
-54; padding-bottom: 15px;">
-							Mocht u nog vragen hebben, dan kun u natuurlijk gewoon op dit mailtj=
-e reageren. Ook feedback is
-							van harte welkom!
-						</p>
-					=09
-						<p style=3D"margin: 0; font: 13px/1.3 arial, sans-serif; color: #5253=
-54; padding-bottom: 15px;">
-							Met vriendelijke groet,
-						</p>
-					=09
-						<p style=3D"margin: 0; font: 13px/1.3 arial, sans-serif; color: #5253=
-54; padding-bottom: 15px;">
-							Patiëntenreview<br />
-							<a href=3D"http://www.patientenreview.nl/" target=3D"_blank">www.pat=
-ientenreview.nl</a><br />
-							<a href=3D"mailto:info@patientenreview.nl">info@patientenreview.nl</=
-a><br />
-							Tel: 040 - 304 15 96
-						</p>
-					</div>
+												<p class=3D"in-text"style=3D"margin: 0; font: 14px/1.3 arial, s=
+ans-serif; color: #525354; padding-bottom: 15px;">
+							Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanb=
+evelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen o=
+f ons team van feedback voorzien.<br /><br />Bedankt voor het delen van uw =
+mening!<br /><br />Met vriendelijke groet,<br /><br />testpraktijk hallo			=
+			</p>
+											</div>
 				</div>
 			=09
-				<p style=3D"margin: 0; padding: 15px 0 10px; font: 11px/1.3 arial, sans=
--serif; color: #525354; text-align: center;">
-					&copy; 2016 Patiëntenreview. Alle rechten voorbehouden.
+				<div style=3D"clear: both;">
+				</div>
+		=09
+								<p style=3D"text-align: left; max-width: 700px; margin: 0 auto; pad=
+ding: 15px 10px 10px; font: 12px/1.3 arial, sans-serif; color: #999; displa=
+y: inline-block;">
+					U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in =
+het patiëntenbestand van testpraktijk hallo. Deze e-mail is een eenmalige =
+uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend geb=
+ruikt voor het verzoek tot deelname aan dit patiënttevredenheidsonderzoek =
+en wordt op geen enkele manier openbaar gemaakt.				</p>
+							=09
+							=09
+							=09
+				<p style=3D"max-width: 700px; margin: 0 auto; text-align: center; paddi=
+ng: 15px 0; font: 12px/1.5 arial, sans-serif; color: #aaa;">
+					<a href=3D"http://pr.cloudrocket.co/unsubscribe/b1eec33c726a60554bc785=
+18d5f9b32c/">
+						Ik wil geen e-mails meer van Patiëntenreview ontvangen.
+					</a>
 				</p>
 			</div>
 		</div>
+
+		<style>
+			.inner:hover td.star > div {
+				background-position: 0 100% !important;
+			}
+		=09
+			.inner:hover td.star:hover + td.star > div,
+			.inner:hover td.star:hover + td.star + td.star > div,
+			.inner:hover td.star:hover + td.star + td.star + td.star > div,
+			.inner:hover td.star:hover + td.star + td.star + td.star + td.star > div=
+ {
+				background-position: 0 0 !important;
+			}
+		=09
+			@media (max-width: 768px) {
+				.inner td {
+					font-size: 0;
+				}
+			=09
+				.outer-box {
+					padding: 10px !important;
+				}
+			}
+		</style>
 	</body>
 </html>
 
---B_ALT_56ed3781c2f3f--<br />Unable to send data: .<br /><br />The following SMTP error was encountered: <br />Unable to send email using PHP SMTP.  Your server might not be configured to send mail using this method.<br /><pre>User-Agent: CodeIgniter
-Date: Sat, 19 Mar 2016 12:26:57 +0100
-From: =?utf-8?Q?Pati=c3=abntenreview?= &lt;info@patientenreview.nl&gt;
+--B_ALT_56fab95399e00--<br />Unable to send data: .<br /><br />The following SMTP error was encountered: <br />Unable to send email using PHP SMTP.  Your server might not be configured to send mail using this method.<br /><pre>User-Agent: CodeIgniter
+Date: Tue, 29 Mar 2016 19:20:19 +0200
+From: &quot;testpraktijk hallo&quot; &lt;info@patientenreview.nl&gt;
 Return-Path: &lt;info@patientenreview.nl&gt;
-To: admin@patientenreview.nl
-Reply-To: =?utf-8?Q?&quot;Pati=c3=abntenreview&quot;?= &lt;info@patientenreview.nl&gt;
-Subject: =?utf-8?Q?Uw_wachtwoord_herstellen?=
+To: hallo@cloudrocket.co
+Reply-To: =?utf-8?Q?&quot;testpraktijk_hallo&quot;?= &lt;nick@cloudrocket.co&gt;
+Subject: =?utf-8?Q?Hoe_was_uw_behandeling_bij_testpraktijk_hallo=3f?=
 X-Sender: info@patientenreview.nl
 X-Mailer: CodeIgniter
 X-Priority: 3 (Normal)
-Message-ID: &lt;56ed3781c2ee1@patientenreview.nl&gt;
+Message-ID: &lt;56fab95399d9f@patientenreview.nl&gt;
 Mime-Version: 1.0
 
 
-Content-Type: multipart/alternative; boundary=&quot;B_ALT_56ed3781c2f3f&quot;
+Content-Type: multipart/alternative; boundary=&quot;B_ALT_56fab95399e00&quot;
 
 This is a multi-part message in MIME format.
 Your email application may not support this format.
 
---B_ALT_56ed3781c2f3f
+--B_ALT_56fab95399e00
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 
-Uw wachtwoord herstellen
+testpraktijk hallo
 
-Beste Beheerdersaccount,
+Hoe was uw behandeling?
 
-U ontvangt deze e-mail omdat u ons verzocht heeft om uw wachtwoord te
-herstellen. U kunt 
-direct een nieuw wachtwoord aanmaken met behulp van de volgende knop:
+Zou u testpraktijk hallo aanbevelen?
 
-Maak nieuw wachtwoord
+Geachte heer/mevrouw,U bent onlangs behandeld in onze praktijk. We sturen u
+deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw
+mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u
+bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw
+beoordeling te plaatsen op online kanalen.Op een schaal van 1 tot 5 sterren,
+hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of
+vrienden?
 
-Mocht u nog vragen hebben, dan kun u natuurlijk gewoon op dit mailtje
-reageren. Ook feedback is
-van harte welkom!
+Klik hier om te beoordelen
 
-Met vriendelijke groet,
+Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen.
+Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons
+team van feedback voorzien.Bedankt voor het delen van uw mening!Met
+vriendelijke groet,testpraktijk hallo
 
-Patiëntenreview
-www.patientenreview.nl
-info@patientenreview.nl
-Tel: 040 - 304 15 96
+U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het
+patiëntenbestand van testpraktijk hallo. Deze e-mail is een eenmalige
+uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend
+gebruikt voor het verzoek tot deelname aan dit
+patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar
+gemaakt.
 
-&amp;copy; 2016 Patiëntenreview. Alle rechten voorbehouden.
+Ik wil geen e-mails meer van Patiëntenreview ontvangen.
+
+.inner:hover td.star &gt; div {
+background-position: 0 100% !important;
+}
+
+.inner:hover td.star:hover + td.star &gt; div,
+.inner:hover td.star:hover + td.star + td.star &gt; div,
+.inner:hover td.star:hover + td.star + td.star + td.star &gt; div,
+.inner:hover td.star:hover + td.star + td.star + td.star + td.star &gt; div {
+background-position: 0 0 !important;
+}
+
+@media (max-width: 768px) {
+.inner td {
+font-size: 0;
+}
+
+.outer-box {
+padding: 10px !important;
+}
+}
 
 
---B_ALT_56ed3781c2f3f
+--B_ALT_56fab95399e00
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 	&lt;head&gt;
+		&lt;style&gt;
+			.inner:hover td.star &gt; div {
+				background-position: 0 100% !important;
+			}
+		=09
+			.inner:hover td.star:hover + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star + td.star + td.star &gt; div=
+ {
+				background-position: 0 0 !important;
+			}
+		=09
+			@media (max-width: 768px) {
+				.inner td {
+					font-size: 0;
+				}
+			=09
+				.outer-box {
+					padding: 10px !important;
+				}
+			}
+		&lt;/style&gt;
 	&lt;/head&gt;
 =09
 	&lt;body style=3D&quot;padding: 0; margin: 0;&quot;&gt;
-		&lt;div style=3D&quot;margin: 0 auto; min-width: 400px; background: #EAEAEA;&quot;&gt;
-			&lt;div style=3D&quot;padding: 15px 15px 0;&quot;&gt;
-				&lt;div style=3D&quot;height: 30px; background: #fff; padding: 10px; box-shadow=
-: 0 1px 2px rgba(0, 0, 0, 0.15);&quot;&gt;
-					&lt;a href=3D&quot;javascript:void(0);&quot;&gt;
-						&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/logo_fu=
-ll.png&quot; height=3D&quot;30&quot; alt=3D&quot;&quot; /&gt;
-					&lt;/a&gt;
-				&lt;/div&gt;
+		&lt;div style=3D&quot;margin: 0 auto; min-width: 320px; background: #EAEAEA;&quot;&gt;
+			&lt;div style=3D&quot;height: 30px; background: #fff; padding: 10px; box-shadow:=
+ 0 1px 2px rgba(0, 0, 0, 0.15);&quot;&gt;
+				&lt;table cellpadding=3D&quot;0&quot; cellspacing=3D&quot;0&quot; width=3D&quot;100%&quot;&gt;
+										&lt;tr&gt;
+						&lt;td style=3D&quot;text-align: left; padding: 0; margin: 0; font-size: 0; l=
+ine-height: 0; vertical-align: top;&quot;&gt;
+							&lt;a href=3D&quot;javascript:void(0);&quot;&gt;
+								&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/logo_=
+full.png&quot; height=3D&quot;30&quot; alt=3D&quot;&quot; /&gt;
+							&lt;/a&gt;
+						&lt;/td&gt;
+							&lt;td style=3D&quot;text-align: right; padding: 0; margin: 0; font-size: 0;=
+ line-height: 0;&quot;&gt;
+								&lt;p style=3D&quot;color: #626262; margin: 0; font: 14px/30px arial, sans-=
+serif; text-align: right;&quot;&gt;
+									testpraktijk hallo								&lt;/p&gt;
+							&lt;/td&gt;
+					&lt;/tr&gt;
+									&lt;/table&gt;
 			&lt;/div&gt;
 		=09
-			&lt;div style=3D&quot;padding: 15px 15px 0;&quot;&gt;
-				&lt;div style=3D&quot;background: #fff; border-radius: 10px 10px 0 0; border: s=
-olid #E3E3E3 1px;&quot;&gt;
-					&lt;p style=3D&quot;margin: 0; font: bold 14px/40px arial, sans-serif; color: =
-#525354; padding: 0 10px; background: #F6F6F6; border-radius: 10px 10px 0 0=
+						&lt;table cellpadding=3D&quot;0&quot; cellspacing=3D&quot;0&quot; width=3D&quot;100%&quot;&gt;
+				&lt;tr&gt;
+					&lt;td style=3D&quot;height: 150px; vertical-align: middle; text-align: center=
+; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('htt=
+p://pr.cloudrocket.co//application/views/images/email-back.png'); backgroun=
+d-repeat: no-repeat; background-position: center; background-color: #0f75bc=
+; background-size: cover;&quot;&gt;
+						Hoe was uw behandeling?					&lt;/td&gt;
+				&lt;/tr&gt;
+			&lt;/table&gt;
+					=09
+			&lt;div style=3D&quot;text-align: center;&quot;&gt;
+				&lt;div style=3D&quot;background: #fff; max-width: 700px; display: inline-block=
 ;&quot;&gt;
-						Uw wachtwoord herstellen
-					&lt;/p&gt;
-				=09
-					&lt;div style=3D&quot;padding: 20px;&quot;&gt;
-						&lt;p class=3D&quot;in-text&quot;style=3D&quot;margin: 0; font: 13px/1.3 arial, sans-se=
-rif; color: #525354; padding-bottom: 15px;&quot;&gt;
-							Beste Beheerdersaccount,
-						&lt;/p&gt;
+					&lt;div class=3D&quot;outer-box&quot; style=3D&quot;padding: 30px; text-align: left;&quot;&gt;
+												&lt;p style=3D&quot;margin: 0 0 20px; font: 14px/1.3 arial, sans-serif;=
+ color: #525354; padding: 15px; background-color: #F3F3F3; border: solid #D=
+3D3D3 1px;&quot;&gt;
+							Zou u testpraktijk hallo aanbevelen?						&lt;/p&gt;
+											=09
+												&lt;p style=3D&quot;margin: 0; font: 14px/1.3 arial, sans-serif; color:=
+ #525354; padding-bottom: 15px;&quot;&gt;
+							Geachte heer/mevrouw,&lt;br /&gt;&lt;br /&gt;U bent onlangs behandeld in onze pr=
+aktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling=
+ heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bov=
+endien kunt u bijdragen aan het bevorderen van transparantie in de gezondhe=
+idszorg door uw beoordeling te plaatsen op online kanalen.&lt;br /&gt;&lt;br /&gt;Op ee=
+n schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk=
+ zou aanbevelen bij familie of vrienden?						&lt;/p&gt;
+											=09
+											=09
+												&lt;div style=3D&quot;width: 100%; text-align: center; padding: 20px 0;=
+&quot;&gt;
+							&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/0b1eec33c726a60554bc7=
+8518d5f9b32c&quot; style=3D&quot;display: block; text-decoration: none; text-align: c=
+enter; border-radius: 2px; font: 14px/1.3 arial, sans-serif; padding: 15px =
+12px; background-color: #0f75bc; border-color: #0f75bc; color: #fff;&quot;&gt;
+								Klik hier om te beoordelen							&lt;/a&gt;
+						&lt;/div&gt;
+											=09
+											=09
 					=09
-						&lt;p style=3D&quot;margin: 0; font: 13px/1.3 arial, sans-serif; color: #5253=
-54; padding-bottom: 15px;&quot;&gt;
-							U ontvangt deze e-mail omdat u ons verzocht heeft om uw wachtwoord t=
-e herstellen. U kunt=20
-							direct een nieuw wachtwoord aanmaken met behulp van de volgende knop=
-:
-						&lt;/p&gt;
-					=09
-						&lt;p style=3D&quot;margin: 0; font: 13px/1.3 arial, sans-serif; color: #5253=
-54; padding-bottom: 15px;&quot;&gt;
-							&lt;a href=3D&quot;http://pr.cloudrocket.co/#/pages/new-password/13216452c6b=
-69dd1c2c98c1d3a3468a3/&quot; style=3D&quot;display: block; margin-top: 10px; width: 2=
-00px; text-decoration: none; text-align: center; border-radius: 2px; font-s=
-ize: 14px; line-height: 1.5; padding: 6px 12px; background-color: #0f75bc; =
-border-color: #0f75bc; color: #fff;&quot; target=3D&quot;_blank&quot;&gt;Maak nieuw wachtwoor=
-d&lt;/a&gt;
-						&lt;/p&gt;
-					=09
-						&lt;p style=3D&quot;margin: 0; font: 13px/1.3 arial, sans-serif; color: #5253=
-54; padding-bottom: 15px;&quot;&gt;
-							Mocht u nog vragen hebben, dan kun u natuurlijk gewoon op dit mailtj=
-e reageren. Ook feedback is
-							van harte welkom!
-						&lt;/p&gt;
-					=09
-						&lt;p style=3D&quot;margin: 0; font: 13px/1.3 arial, sans-serif; color: #5253=
-54; padding-bottom: 15px;&quot;&gt;
-							Met vriendelijke groet,
-						&lt;/p&gt;
-					=09
-						&lt;p style=3D&quot;margin: 0; font: 13px/1.3 arial, sans-serif; color: #5253=
-54; padding-bottom: 15px;&quot;&gt;
-							Patiëntenreview&lt;br /&gt;
-							&lt;a href=3D&quot;http://www.patientenreview.nl/&quot; target=3D&quot;_blank&quot;&gt;www.pat=
-ientenreview.nl&lt;/a&gt;&lt;br /&gt;
-							&lt;a href=3D&quot;mailto:info@patientenreview.nl&quot;&gt;info@patientenreview.nl&lt;/=
-a&gt;&lt;br /&gt;
-							Tel: 040 - 304 15 96
-						&lt;/p&gt;
-					&lt;/div&gt;
+												&lt;p class=3D&quot;in-text&quot;style=3D&quot;margin: 0; font: 14px/1.3 arial, s=
+ans-serif; color: #525354; padding-bottom: 15px;&quot;&gt;
+							Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanb=
+evelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen o=
+f ons team van feedback voorzien.&lt;br /&gt;&lt;br /&gt;Bedankt voor het delen van uw =
+mening!&lt;br /&gt;&lt;br /&gt;Met vriendelijke groet,&lt;br /&gt;&lt;br /&gt;testpraktijk hallo			=
+			&lt;/p&gt;
+											&lt;/div&gt;
 				&lt;/div&gt;
 			=09
-				&lt;p style=3D&quot;margin: 0; padding: 15px 0 10px; font: 11px/1.3 arial, sans=
--serif; color: #525354; text-align: center;&quot;&gt;
-					&amp;copy; 2016 Patiëntenreview. Alle rechten voorbehouden.
+				&lt;div style=3D&quot;clear: both;&quot;&gt;
+				&lt;/div&gt;
+		=09
+								&lt;p style=3D&quot;text-align: left; max-width: 700px; margin: 0 auto; pad=
+ding: 15px 10px 10px; font: 12px/1.3 arial, sans-serif; color: #999; displa=
+y: inline-block;&quot;&gt;
+					U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in =
+het patiëntenbestand van testpraktijk hallo. Deze e-mail is een eenmalige =
+uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend geb=
+ruikt voor het verzoek tot deelname aan dit patiënttevredenheidsonderzoek =
+en wordt op geen enkele manier openbaar gemaakt.				&lt;/p&gt;
+							=09
+							=09
+							=09
+				&lt;p style=3D&quot;max-width: 700px; margin: 0 auto; text-align: center; paddi=
+ng: 15px 0; font: 12px/1.5 arial, sans-serif; color: #aaa;&quot;&gt;
+					&lt;a href=3D&quot;http://pr.cloudrocket.co/unsubscribe/b1eec33c726a60554bc785=
+18d5f9b32c/&quot;&gt;
+						Ik wil geen e-mails meer van Patiëntenreview ontvangen.
+					&lt;/a&gt;
 				&lt;/p&gt;
 			&lt;/div&gt;
 		&lt;/div&gt;
+
+		&lt;style&gt;
+			.inner:hover td.star &gt; div {
+				background-position: 0 100% !important;
+			}
+		=09
+			.inner:hover td.star:hover + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star + td.star &gt; div,
+			.inner:hover td.star:hover + td.star + td.star + td.star + td.star &gt; div=
+ {
+				background-position: 0 0 !important;
+			}
+		=09
+			@media (max-width: 768px) {
+				.inner td {
+					font-size: 0;
+				}
+			=09
+				.outer-box {
+					padding: 10px !important;
+				}
+			}
+		&lt;/style&gt;
 	&lt;/body&gt;
 &lt;/html&gt;
 
---B_ALT_56ed3781c2f3f--</pre>
+--B_ALT_56fab95399e00--</pre>

@@ -3036,7 +3036,7 @@
 			if ( ! empty($result))
 			{
 				$config = array();
-				/*$config['protocol'] = 'smtp';
+				$config['protocol'] = 'smtp';
 				$config['smtp_user'] = 'hallo@cloudrocket.co';
 				$config['smtp_pass'] = 'mango1906';
 				$config['smtp_host'] = 'mail.cloudrocket.co';
@@ -3044,18 +3044,18 @@
 				$config['charset'] = 'utf-8';
 				$config['mailtype'] = 'html';
 				$config['newline'] = "\r\n";
-				$config['crlf'] = "\r\n";*/
+				$config['crlf'] = "\r\n";
 				
-				$config['protocol'] = 'smtp';
-				$config['smtp_user'] = 'postmaster@mg.patientenreview.nl';
-				$config['smtp_pass'] = '4add968a0a17e23db8752874334c9ae2';
-				$config['smtp_host'] = 'ssl://smtp.mailgun.org';
-				$config['smtp_port'] = '465';
-				$config['smtp_timeout'] = '4';
-				$config['charset'] = 'utf-8';
-				$config['mailtype'] = 'html';
-				$config['newline'] = "\r\n";
-				$config['crlf'] = "\n";
+				// $config['protocol'] = 'smtp';
+				// $config['smtp_user'] = 'postmaster@mg.patientenreview.nl';
+				// $config['smtp_pass'] = '4add968a0a17e23db8752874334c9ae2';
+				// $config['smtp_host'] = 'ssl://smtp.mailgun.org';
+				// $config['smtp_port'] = '465';
+				// $config['smtp_timeout'] = '4';
+				// $config['charset'] = 'utf-8';
+				// $config['mailtype'] = 'html';
+				// $config['newline'] = "\r\n";
+				// $config['crlf'] = "\n";
 
 				$this->load->library('email', $config);
 
