@@ -173,13 +173,13 @@
 			$time = mktime(date("H"), date("i"), 0, 2, 1, 1970);
 			$this->db->where("reminder_checked", TRUE);
 			$this->db->where("reminder_time >=", $time);
-			$this->db->where("reminder_time < ", $time + 30 * 60);
+			$this->db->where("reminder_time < ", $time + 10 * 60);
 			$this->db->where("reminder_last <>", date("j"));
 			$this->db->where("reminder_period", 1);
 			$this->db->or_where("reminder_period", 0);
 			$this->db->where("reminder_checked", TRUE);
 			$this->db->where("reminder_time >=", $time);
-			$this->db->where("reminder_time < ", $time + 30 * 60);
+			$this->db->where("reminder_time < ", $time + 10 * 60);
 			$this->db->where("reminder_last <>", date("j"));
 			$this->db->where("reminder_day", date("N"));
 			$result = $this->db->get("users")->result_array();
