@@ -296,7 +296,7 @@
 		function save_field()
 		{
 			$this->pub->save_field($this->post);
-			$result = $this->pub->parse_xls($this->post['file']);
+			$result = $this->pub->parse_xls($this->post['file'], FALSE, $this->post['file']);
 			$this->response($result);
 		}
 		

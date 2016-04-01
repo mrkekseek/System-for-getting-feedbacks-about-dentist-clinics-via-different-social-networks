@@ -2270,7 +2270,7 @@
 			$users_fields = $this->get_users_fields();
 			$cols = array();
 			$result = array('dont_use' => array(), 'file' => '', 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
-				
+
 			mt_srand();
 			$ext = pathinfo($name, PATHINFO_EXTENSION);
 			$dest = $path.time().mt_rand(100, 999).".".$ext;
@@ -2283,7 +2283,7 @@
 					$fp = fopen($dest, 'r');
 					while ( ! feof($fp))
 					{
-						$line = fgets($fp, 2048);
+						$line = fgets($fp);
 						$data = str_getcsv($line, "\t");
 						$rows[] = $data;
 					}                              
@@ -2366,12 +2366,9 @@
 											}
 											else
 											{
-												if ( ! empty($email))
-												{
-													$line[$tag] = '<b>!</b>';
-													$line['error'] = 2;
-													$result['check'] = FALSE;
-												}
+												$line[$tag] = '<b>!</b>';
+												$line['error'] = 2;
+												$result['check'] = FALSE;
 											}
 										}
 										
