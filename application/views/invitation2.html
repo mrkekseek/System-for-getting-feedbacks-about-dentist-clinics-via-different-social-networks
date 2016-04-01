@@ -35,7 +35,7 @@
 				</div>
 
 				<div class="cards-container">
-					<div class="cards-box promo-box" ng-if="short && ! limit && ! errors && i.user.promo_checked">
+					<div class="cards-box promo-box" ng-show="short && ! limit && ! errors && i.user.promo_checked">
 						<div class="cards-box-content">
 							<div class="cards-number">
 								PROMOTIECAMPAGNE
@@ -47,7 +47,7 @@
 						</div>
 					</div>
 							
-					<div class="cards-box" ng-if=" ! limit && ! errors">
+					<div class="cards-box" ng-show=" ! limit && ! errors">
 						<div class="cards-box-top" ng-if="is_vote" ng-class="{'negative-rating': vote <= 2, 'positive-rating': vote > 2}" ng-click="change_revote( ! revote)">
 							<span class="cards-top-text" ng-if="vote <= 2">Nee, ik zou {{i.user.username}} niet aanbevelen.</span>
 							<span class="cards-top-text" ng-if="vote > 2">Ja, ik zou {{i.user.username}} aanbevelen.</span>
@@ -92,7 +92,7 @@
 						</div>
 					</div>
 					
-					<div class="row rating-row" ng-if=" ! limit && ! errors">
+					<div class="row rating-row" ng-show=" ! limit && ! errors">
 						<div class="col-xs-12" ng-class="{'col-md-6 pull-right': vote <= 2 && vote > 0}">
 							<div class="cards-box" ng-if="onlines_col > 0"  ng-class="{active: vote > 0}">
 								<div class="cards-box-content">
@@ -127,7 +127,7 @@
 							</div>
 						</div>
 					
-						<div class="col-xs-12" ng-if="vote <= 2" ng-class="{'col-md-6': vote <= 2 && vote > 0}">
+						<div class="col-xs-12" ng-show="vote <= 2" ng-class="{'col-md-6': vote <= 2 && vote > 0}">
 							<div class="cards-box no-bottom-marging" ng-if="onlines_col > 0"  ng-class="{active: vote > 0}">
 								<div class="cards-box-content">
 									<div class="cards-number" ng-if="vote == 0 || vote > 2">
@@ -184,7 +184,7 @@
 						</div>
 					</div>
 					
-					<div class="cards-box thanks" ng-if=" ! limit && ! errors" ng-class="{'shown': feedback_sent}">
+					<div class="cards-box thanks" ng-show=" ! limit && ! errors" ng-class="{'shown': feedback_sent}">
 						<div class="cards-box-content">
 							<div class="cards-number">
 								Klaar
@@ -199,7 +199,7 @@
 						</div>
 					</div>
 					
-					<div class="cards-box" ng-if="limit && ! errors">
+					<div class="cards-box" ng-show="limit && ! errors">
 						<div class="cards-box-content">
 							<div class="cards-number">
 								Klaar!
@@ -213,7 +213,7 @@
 						</div>
 					</div>
 					
-					<div class="cards-box" ng-if="errors && ! limit">
+					<div class="cards-box" ng-show="errors && ! limit">
 						<div class="cards-box-content">
 							<div class="cards-number red">
 								HET SPIJT ONS...
