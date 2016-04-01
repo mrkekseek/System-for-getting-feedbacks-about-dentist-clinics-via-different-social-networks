@@ -2366,12 +2366,9 @@
 											}
 											else
 											{
-												if ( ! empty($email))
-												{
-													$line[$tag] = '<b>!</b>';
-													$line['error'] = 2;
-													$result['check'] = FALSE;
-												}
+												$line[$tag] = '<b>!</b>';
+												$line['error'] = 2;
+												$result['check'] = FALSE;
 											}
 										}
 										
