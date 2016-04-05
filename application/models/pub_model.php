@@ -2171,7 +2171,7 @@
 					$data_array['account'] = 2;
 					unset($data_array['suspension_str']);
 
-					$post['end_date'] = date("d-m-Y", $data_array['suspension']);
+					$post['end_date'] = date("d-m-Y", ! empty($data_array['trial_end']) ? $data_array['trial_end'] : $data_array['suspension']);
 
 					if ($this->db->insert("users", $data_array))
 					{
@@ -2231,7 +2231,7 @@
 					$send['username'] = $post['UserCompanyName'];
 					$send['email'] = $post['UserEmailadress'];
 					$send['password'] = $post['UserPassword'];
-					$send['end_date'] = date("d-m-Y", $data_array['suspension']);
+					$send['end_date'] = date("d-m-Y", ! empty($data_array['trial_end']) ? $data_array['trial_end'] : $data_array['suspension']);
 
 					if ($this->db->insert("users", $data_array))
 					{
