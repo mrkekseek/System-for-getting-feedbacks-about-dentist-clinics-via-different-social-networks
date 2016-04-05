@@ -277,7 +277,7 @@
             $http.post("/pub/logout").success(function(data, status, headers, config) {
 				if (logger.check(data))
 				{
-					$window.location.href = "/";
+					$window.location.reload(true);
 				}
 			});
         };
