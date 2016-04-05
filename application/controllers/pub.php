@@ -194,6 +194,11 @@
 				$result['emails'] = $this->pub->user_emails();
 				$result['widget'] = $this->pub->user_widget();
 			}
+			
+			if ($param == "doctors")
+			{
+				$result['doctors'] = count($this->pub->get_doctors($this->session->userdata("id")));
+			}
 			$this->response($result);
 		}
 		
@@ -236,6 +241,13 @@
 		function change_times()
 		{
 			$result = $this->pub->change_times($this->post);
+			$result = $this->pub->get_users();
+			$this->response($result);
+		}
+		
+		function change_user()
+		{
+			$result = $this->pub->change_user($this->post['user']);
 			$result = $this->pub->get_users();
 			$this->response($result);
 		}
@@ -296,6 +308,20 @@
 		function save_field()
 		{
 			$this->pub->save_field($this->post);
+			$result = $this->pub->parse_xls($this->post['file'], FALSE, $this->post['file']);
+			$this->response($result);
+		}
+		
+		function save_doctors_ids()
+		{
+			$this->pub->save_doctors_ids($this->post['ids']);
+			$result = $this->pub->parse_xls($this->post['file'], FALSE, $this->post['file']);
+			$this->response($result);
+		}
+		
+		function save_locations_ids()
+		{
+			$this->pub->save_locations_ids($this->post['ids']);
 			$result = $this->pub->parse_xls($this->post['file'], FALSE, $this->post['file']);
 			$this->response($result);
 		}
@@ -573,6 +599,31 @@
 		function activate_account()
 		{
 			$result = $this->pub->activate_account($this->post);
+			$this->response($result);
+		}
+		
+		function get_locations()
+		{
+			$result = $this->pub->get_locations();
+			$this->response($result);
+		}
+		
+		function save_location()
+		{
+			$result = $this->pub->save_location($this->post);
+			$this->response($result);
+		}
+		
+		function get_location()
+		{
+			$result = $this->pub->location_info($this->post['id']);
+			$this->response($result);
+		}
+		
+		function remove_location()
+		{
+			$this->pub->remove_location($this->post['id']);
+			$result = $this->pub->get_locations();
 			$this->response($result);
 		}
 		

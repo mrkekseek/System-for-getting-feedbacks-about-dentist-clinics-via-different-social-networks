@@ -33,12 +33,66 @@
 			<a href="#/pages/doctors_add" class="btn btn-primary">Voeg zorgverlener toe...</a>
 		</div>
 	</section>
+	
+	<section class="panel panel-default" ng-if="user.use_locations">
+        <div class="panel-heading"><strong><i class="fa fa-hospital-o"></i> Locaties</strong></div>
+		<div class="panel-body">
+			U kunt beoordelingen verzamelen voor individuele zorgverleners door ze toe te voegen aan uw abonnement. Uw patiënten kunnen vervolgens aangeven bij welke zorgverlener ze zijn behandeld. Om dit te automatiseren kunt u in het Excel-bestand per patiënt het zorgverlenernummer aangeven.
+		</div>
+        <div class="panel-body">
+			<div class="table-responsive">
+				<table class="table" ng-if="doctors.length > 0">
+					<thead>
+						<tr>
+							<th>Locatienummer</th>
+							<th>Adres</th>
+							<th>Postcode</th>
+							<th>Stad</th>
+							<th>Instellingen</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="l in locations">
+							<td>{{l.id}}</td>
+							<td>{{l.address}}</td>
+							<td>{{l.postcode}}</td>
+							<td>{{l.city}}</td>
+							<td><a href="#/pages/locations_add/{{l.id}}"><i class="glyphicon glyphicon-cog"></i></a></td>
+							<td><a href="javascript:void(0);" class="btn btn-sm btn-primary" ng-click="remove_location(l.id)">Verwijder dit profiel</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<a href="#/pages/locations_add" class="btn btn-primary">Voeg locatie toe...</a>
+		</div>
+	</section>
 </div>
 
 <script type="text/ng-template" id="removeDoctor.html">
 	<div class="modal-header">
 		<h3>
 			Zorgverlener verwijderen
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			Het verwijderen van dit zorgprofiel zorgt ervoor dat alle ontvangen beoordelingen en andere
+			gegevens gerelateerd aan dit profiel definitief zullen worden verwijderd. Deze actie kan niet
+			ongedaan worden gemaakt.
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+		<button class="btn btn-primary" ng-click="remove()">Verwijder</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="removeLocation.html">
+	<div class="modal-header">
+		<h3>
+			Locatie verwijderen
 		</h3>
 	</div>
 	<div class="modal-body">
