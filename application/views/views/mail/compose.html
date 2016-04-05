@@ -184,4 +184,199 @@
 			<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
 		</div>
 	</script>
+	
+	<script type="text/ng-template" id="define_doctors.html">
+		<div class="modal-outer" ng-show=" ! add_doctor_var">
+			<div class="modal-header">
+				<h3>
+					Koppel zorgverleners
+				</h3>
+			</div>
+			<div class="modal-body">
+				<p>
+					In het door u geüploade patiëntenbestand zijn zorgverleners aangetroffen die nog niet in uw abonnement voorkomen. Koppel hieronder uw zorgverleners of voeg een nieuwe zorgverlener toe.
+				</p>
+				
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th>Zorgverleners geüpload bestand</th>
+							<th>Zorgverleners in abonnement</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="u in unknown">
+							<td class="vertical-middle">{{u}}</td>
+							<td>
+								<select ng-model="selected[u]" class="form-control" ng-options="(d.title + ' ' + d.firstname + ' ' + d.lastname) for d in doctors track by d.id">
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<button type="button" class="btn btn-primary" ng-click="add()">Voeg zorgverlener toe...</button>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="save()">Bewaar</button>
+				<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+			</div>
+		</div>
+		
+		<div class="modal-outer" ng-show="add_doctor_var">
+			<div class="modal-header">
+				<h3>
+					Voeg nieuwe zorgverlener toe
+				</h3>
+			</div>
+			<div class="modal-body">
+				<div class="callout callout-info"  ng-if="user.account_type == 0 || (user.account_type == 1 && user.doctors > 3)">
+					<p>
+						Met het toevoegen van een zorgverlener zal &euro;60,00 per jaar in rekening gebracht worden.
+					</p>
+				</div>
+				
+				<form class="form-horizontal" role="form" name="form">
+					<div class="form-group">
+						<label class="col-md-4">Aanhef</label>
+						<div class="col-md-8">
+							<select class="form-control" name="title" ng-model="doctor.title" required="required">
+								<option value="heer">heer</option>
+								<option value="mevrouw">mevrouw</option>
+								<option value="Dr.">Dr.</option>
+								<option value="Drs.">Drs.</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="divider divider-dashed divider-lg pull-in"></div>
+					
+					<div class="form-group">
+						<label class="col-md-4">Voornaam</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="firstname" ng-model="doctor.firstname" value="" required="required" />
+						</div>
+					</div>
+					
+					<div class="divider divider-dashed divider-lg pull-in"></div>
+					
+					<div class="form-group">
+						<label class="col-md-4">Achternaam</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="lastname" ng-model="doctor.lastname" value="" required="required" />
+						</div>
+					</div>
+					
+					<div class="divider divider-dashed divider-lg pull-in"></div>
+					
+					<div class="form-group">
+						<label class="col-md-4">Waarde in Excel-bestand</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="name" ng-model="doctor.name" value="" required="required" />
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="add_doctor()">Voeg toe</button>
+				<button class="btn btn-default" ng-click="cancel_doctor()">Annuleer</button>
+			</div>
+		</div>
+	</script>
+	
+	<script type="text/ng-template" id="define_locations.html">
+		<div class="modal-outer" ng-show=" ! add_location_var">
+			<div class="modal-header">
+				<h3>
+					Koppel locaties
+				</h3>
+			</div>
+			<div class="modal-body">
+				<p>
+					In het door u geüploade patiëntenbestand zijn locaties aangetroffen die nog niet in uw abonnement voorkomen. Koppel hieronder uw locaties of voeg een nieuwe locatie toe.
+				</p>
+				
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th>Locaties geüpload bestand</th>
+							<th>Locaties in abonnement</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="u in unknown">
+							<td class="vertical-middle">{{u}}</td>
+							<td>
+								<select ng-model="selected[u]" class="form-control" ng-options="(l.postcode + ' ' + l.city + ' ' + l.address) for l in locations track by l.id">
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<button type="button" class="btn btn-primary" ng-click="add()">Voeg locatie toe...</button>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="save()">Bewaar</button>
+				<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+			</div>
+		</div>
+		
+		<div class="modal-outer" ng-show="add_location_var">
+			<div class="modal-header">
+				<h3>
+					Voeg nieuwe locatie toe
+				</h3>
+			</div>
+			<div class="modal-body">
+				<!--div class="callout callout-info"  ng-if="user.account_type == 0 || (user.account_type == 1 && user.doctors > 3)">
+					<p>
+						Met het toevoegen van een zorgverlener zal &euro;60,00 per jaar in rekening gebracht worden.
+					</p>
+				</div-->
+				
+				<form class="form-horizontal" role="form" name="form">
+					<div class="form-group">
+						<label class="col-md-4">Adres</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="address" ng-model="location.address" value="" required="required" />
+						</div>
+					</div>
+					
+					<div class="divider divider-dashed divider-lg pull-in"></div>
+					
+					<div class="form-group">
+						<label class="col-md-4">Postcode</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="postcode" ng-model="location.postcode" value="" required="required" />
+						</div>
+					</div>
+					
+					<div class="divider divider-dashed divider-lg pull-in"></div>
+					
+					<div class="form-group">
+						<label class="col-md-4">Stad</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="city" ng-model="location.city" value="" required="required" />
+						</div>
+					</div>
+					
+					<div class="divider divider-dashed divider-lg pull-in"></div>
+					
+					<div class="form-group">
+						<label class="col-md-4">Waarde in Excel-bestand</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="name" ng-model="location.name" value="" required="required" />
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="add_location()">Voeg toe</button>
+				<button class="btn btn-default" ng-click="cancel_location()">Annuleer</button>
+			</div>
+		</div>
+	</script>
 </div>

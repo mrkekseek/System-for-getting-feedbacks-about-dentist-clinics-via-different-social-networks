@@ -2787,6 +2787,10 @@ body .btn-primary.compose-prev:disabled {
 	text-align: center;
 }
 
+.table > tbody > tr > td.vertical-middle {
+	vertical-align: middle;
+}
+
 @media (max-width: 768px) {
 	.drag-area {
 		padding: 30px 10px;

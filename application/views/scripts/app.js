@@ -57,7 +57,7 @@
                 'dashboard', 'invitation/:hash?',
                 'charts/charts',
                 'pages/404', 'pages/500', 'pages/forgot-password', 'pages/new-password/:hash', 'pages/lock-screen', 'pages/signin', 'pages/signup',
-				'pages/profile', 'pages/subscription', 'pages/doctors', 'pages/doctors_add', 'pages/doctors_edit/:id', 'pages/online', 'pages/activate/:id', 'pages/invoice/:id', 
+				'pages/profile', 'pages/subscription', 'pages/advanced', 'pages/doctors_add', 'pages/doctors_edit/:id', 'pages/locations_add', 'pages/locations_add/:id', 'pages/online', 'pages/activate/:id', 'pages/invoice/:id', 
                 'mail/compose', 'mail/inbox', 'mail/single/:id', 'mail/reply/:id',
 				'manage/add', 'manage/view', 'charts/acharts', 'charts/stat'
             ];
@@ -73,9 +73,11 @@
 					  'pages/signin': 'Aanmelden',
 					  'pages/profile': 'Algemeen',
 					  'pages/subscription': 'Abonnement',
-					  'pages/doctors': 'Zorgverleners',
+					  'pages/advanced': 'Geavanceerd',
 					  'pages/doctors_add': 'Voeg zorgverlener toe',
 					  'pages/doctors_edit/:id': 'Instellingen',
+					  'pages/locations_add': 'Voeg locatie toe',
+					  'pages/locations_add/:id': 'Instellingen',
 					  'pages/online': 'Online profielen',
 					  'pages/activate/:id': 'Abonnement Activeren',
 					  'pages/invoice/:id': 'Abonnement Activeren',
@@ -2207,10 +2209,11 @@
 
     function DoctorsCtrl($scope, $rootScope, $window, $http, $location, $modal, logger) {
 		$scope.doctor = {};
+		$scope.location = {};
 		$scope.redirect_url = "";
 		$scope.zorgkaart = "none";
 		
-		if ($location.path() == "/pages/doctors")
+		if ($location.path() == "/pages/advanced")
 		{
 			$scope.doctors = [];
 			$http.get("/pub/get_doctors/").success(function(data, status, headers, config) {
@@ -2238,6 +2241,38 @@
 				modalInstance.result.then((function(remove) {
 					$http.post("/pub/remove_doctor/", {id: id}).success(function(data, status, headers, config) {
 						$scope.doctors = logger.check(data);
+					});
+				}), function() {
+					console.log("Modal dismissed at: " + new Date());
+				});
+			};
+			
+			$scope.locations = [];
+			$http.get("/pub/get_locations/").success(function(data, status, headers, config) {
+				var result;
+				if (result = logger.check(data))
+				{
+					for (var key in result)
+					{
+						$scope.locations.push(result[key]);
+					}
+				}
+			});
+			
+			$scope.remove_location = function(id) {
+				var modalInstance;
+				modalInstance = $modal.open({
+					templateUrl: "removeLocation.html",
+					controller: 'ModalInstanceRemoveLocationCtrl',
+					resolve: {
+						items: function() {
+							return [id];
+						}
+					}
+				});
+				modalInstance.result.then((function(remove) {
+					$http.post("/pub/remove_location/", {id: id}).success(function(data, status, headers, config) {
+						$scope.locations = logger.check(data);
 					});
 				}), function() {
 					console.log("Modal dismissed at: " + new Date());
@@ -2328,7 +2363,7 @@
 		if ($location.path().indexOf("/pages/doctors_edit") + 1)
 		{
 			var id = $location.path().split("/").pop();
-			$scope.redirect_url = "pages/doctors";
+			$scope.redirect_url = "pages/advanced";
 			$http.post("/pub/get_doctor/", {id: id}).success(function(data, status, headers, config) {
 				var result = {};
 				if (result = logger.check(data))
@@ -2338,6 +2373,27 @@
 						$scope.doctor[key] = result[key];
 					}
 					$scope.doctor.short = $scope.doctor.short == '' ? ($scope.doctor.firstname + '-' + $scope.doctor.lastname).replace(/ /ig, '-').toLowerCase() : $scope.doctor.short;
+				}
+			});
+		}
+		
+		if ($location.path() == "/pages/locations_add")
+		{
+			$scope.redirect_url = "pages/advanced";
+		}
+		
+		if ($location.path().indexOf("/pages/locations_add/") + 1)
+		{
+			var id = $location.path().split("/").pop();
+			$scope.redirect_url = "pages/advanced";
+			$http.post("/pub/get_location/", {id: id}).success(function(data, status, headers, config) {
+				var result = {};
+				if (result = logger.check(data))
+				{
+					for (var key in result)
+					{
+						$scope.location[key] = result[key];
+					}
 				}
 			});
 		}
@@ -2386,6 +2442,16 @@
 			}
 		};
 		
+		$scope.save_location = function()
+		{
+			$http.post("/pub/save_location/", $scope.location).success(function(data, status, headers, config) {
+				if (logger.check(data))
+				{
+					$location.url($scope.redirect_url);
+				}
+			});
+		};
+		
 		$scope.short_class = "none";
 		$scope.validate_url = function() {
 			$scope.short_class = "none";
@@ -2421,7 +2487,7 @@
 			init();
 		});
 
-		$scope.open_modal = function(id, activation, suspension, type, stop, user) {
+		/*$scope.open_modal = function(id, activation, suspension, type, stop, user) {
             var modalInstance;
             modalInstance = $modal.open({
                 templateUrl: "changeType.html",
@@ -2446,6 +2512,67 @@
 									suspension: suspension};
 
 					$http.post("/pub/change_times/", post_mas).success(function(data, status, headers, config) {
+						$scope.users = logger.check(data);
+						$scope.order('-date');
+					});
+				}
+				else
+				{
+					if (times.users)
+					{
+						$scope.users = times.users;
+						$scope.order('-date');
+						$scope.order('date');
+					}
+					else
+					{
+						for (var key in $scope.users)
+						{
+							if ($scope.users[key].id == times[0])
+							{
+								$scope.users[key].admin_stop = times[1];
+							}
+						}
+						
+						$http.post("/pub/remove_user/", {id: times[0], action: times[1]}).success(function(data, status, headers, config) {
+							$scope.users = logger.check(data);
+							$scope.order('-id');
+							$scope.order('id');
+						});
+					}
+				}
+            }), function() {
+                console.log("Modal dismissed at: " + new Date());
+            });
+        };*/
+		
+		$scope.open_modal = function(user) {
+            var modalInstance;
+            modalInstance = $modal.open({
+                templateUrl: "change_account.html",
+                controller: 'ModalInstanceChangeAccountCtrl',
+				size: 'lg',
+                resolve: {
+                    items: function() {
+						return user;
+					}
+                }
+            });
+            modalInstance.result.then((function(times) {
+				if (times.user)
+				{
+					var user = times.user;
+					
+					var date = new Date(user.activation);
+					user.activation = date.getTime() / 1000;
+
+					var date = new Date(user.suspension);
+					user.suspension = date.getTime() / 1000;
+					
+					var date = new Date(user.trial_end);
+					user.trial_end = date.getTime() / 1000;
+
+					$http.post("/pub/change_user/", {user: user}).success(function(data, status, headers, config) {
 						$scope.users = logger.check(data);
 						$scope.order('-date');
 					});
@@ -3322,10 +3449,12 @@
 		
 		$scope.compose_next = function() {
 			$scope.step++;
+			$scope.define_doctors();
 		};
 		
 		$scope.compose_prev = function() {
 			$scope.step--;
+			$scope.define_doctors();
 		};
 		
 		$scope.too_long = function() {
@@ -3428,8 +3557,14 @@
 			}
 		};
 		
+		$scope.doctors = [];
+		$scope.unknown_doctors = [];
+		$scope.locations = [];
+		$scope.unknown_locations = [];
 		$scope.reprint_rows = function()
 		{
+			$scope.unknown_doctors = [];
+			$scope.unknown_locations = [];
 			$scope.data = [];
 			$scope.all_data.sort(function(a, b) { return b.error - a.error});
 			for (var key in $scope.all_data)
@@ -3440,6 +3575,16 @@
 					$scope.send_emails.push($scope.all_data[key]);
 				}
 				
+				if ($scope.all_data[key].doctor != '' && $scope.all_data[key].doctor_id == 0)
+				{
+					$scope.unknown_doctors.push($scope.all_data[key].doctor);
+				}
+				
+				if ($scope.all_data[key].location != '' && $scope.all_data[key].location_id == 0)
+				{
+					$scope.unknown_locations.push($scope.all_data[key].location);
+				}
+				
 				if ($scope.warnings || ( ! $scope.warnings && $scope.all_data[key].error == 0))
 				{
 					$scope.data.push($scope.all_data[key]);
@@ -3448,6 +3593,83 @@
 			
 			$scope.pages = Math.ceil($scope.data.length / $scope.on_page);
 			$scope.change_page(1);
+			
+			$scope.define_doctors();
+		};
+		
+		$scope.define_doctors = function()
+		{
+			if ($scope.step == 1)
+			{
+				if ($scope.unknown_doctors.length)
+				{
+					$http.post("/pub/get_doctors/", {}).success(function(data, status, headers, config) {
+						$scope.doctors = logger.check(data);
+						
+						var modalInstance;
+						modalInstance = $modal.open({
+							templateUrl: 'define_doctors.html',
+							controller: 'ModalDefineDoctorsCtrl',
+							resolve: {
+								items: function() {
+									return [$scope.doctors, $scope.unknown_doctors];
+								}
+							}
+						});
+
+						modalInstance.result.then((function(ids) {
+							$http.post("/pub/save_doctors_ids/", {ids: ids, file: $scope.file}).success(function(data, status, headers, config) {
+								$scope.result = logger.check(data);
+								if ($scope.result.data && $scope.result.data.length)
+								{
+									$scope.result.data.sort(function(a, b) { return b.error - a.error});
+									$scope.print($scope.result);
+								}
+							});
+						}), function() {
+							console.log("Modal dismissed at: " + new Date());
+						});
+					});
+				}
+				else
+				{
+					$scope.define_locations();
+				}
+			}
+		};
+		
+		$scope.define_locations = function()
+		{
+			if ($scope.unknown_locations.length)
+			{
+				$http.post("/pub/get_locations/", {}).success(function(data, status, headers, config) {
+					$scope.locations = logger.check(data);
+					
+					var modalInstance;
+					modalInstance = $modal.open({
+						templateUrl: 'define_locations.html',
+						controller: 'ModalDefineLocationsCtrl',
+						resolve: {
+							items: function() {
+								return [$scope.locations, $scope.unknown_locations];
+							}
+						}
+					});
+
+					modalInstance.result.then((function(ids) {
+						$http.post("/pub/save_locations_ids/", {ids: ids, file: $scope.file}).success(function(data, status, headers, config) {
+							$scope.result = logger.check(data);
+							if ($scope.result.data && $scope.result.data.length)
+							{
+								$scope.result.data.sort(function(a, b) { return b.error - a.error});
+								$scope.print($scope.result);
+							}
+						});
+					}), function() {
+						console.log("Modal dismissed at: " + new Date());
+					});
+				});
+			}
 		};
 		
 		$scope.page_data = [];
@@ -3545,198 +3767,6 @@
 			
 			$scope.reprint_rows();
 		};
-		
-		/*
-		
-		$scope.tags = [];
-		$scope.uploading = false;
-
-		$scope.setUploading = function()
-		{
-			$scope.uploading = true;
-		};
-
-		$scope.onGlobalSuccess = function(response)
-		{
-			$scope.uploading = false;
-			var data = response.data;
-			if (data.errors)
-			{
-				var errors = [];
-				for (var key in data.errors)
-				{
-					for (var type in data.errors[key])
-					{
-						if (type == "modal")
-						{
-							$scope.modal_open(data.errors[key][type]);
-						}
-						else
-						{
-							errors.push({type: (type == 0 ? "danger" : type), msg: data.errors[key][type]});
-						}
-					}
-				}
-				$scope.alerts = errors;
-			}
-
-			var emails = [];
-			var unique_emails = [];
-			for (var key in $scope.tags)
-			{
-				emails.push($scope.tags[key]);
-				unique_emails.push($scope.tags[key].text.toLowerCase());
-			}
-
-			for (var key in data.result)
-			{
-				var check = true;
-				for (var k in unique_emails)
-				{
-					if (unique_emails[k] == data.result[key].email.toLowerCase())
-					{
-						check = false;
-					}
-				}
-
-				if (check)
-				{
-					emails.push({text: data.result[key].email, today: data.result[key].today, name: data.result[key].name, sname: data.result[key].sname, doctor: data.result[key].doctor, birth: data.result[key].birth, title: data.result[key].title});
-					unique_emails.push(data.result[key].email.toLowerCase());
-				}
-			}
-
-			$scope.tags = emails;
-		};
-
-		$scope.send = function()
-		{
-			var emails = [];
-			for (var key in $scope.tags)
-			{
-				emails.push($scope.tags[key]);
-			}
-
-			if (emails.length > 0)
-			{
-				$scope.loader = true;
-				$http.post("/pub/send/", {emails: emails}).success(function(data, status, headers, config) {
-					$scope.loader = false;
-					var result = logger.check(data);
-					$scope.clear();
-					if (result.first)
-					{
-						$window.location.href = "/send_new";
-					}
-					else
-					{
-						$location.url("/mail/inbox");
-					}
-				});
-			}
-			else
-			{
-				logger.check({errors: [['U heeft geen e-mailadres ingevuld.']]});
-			}
-		};
-
-		$scope.clear = function()
-		{
-			$scope.tags = [];
-			document.getElementsByClassName("btn-upload")[0].getElementsByTagName("input")[0].value = "";
-		};
-
-		$scope.modal_open = function(script)
-		{
-			var modalInstance;
-			modalInstance = $modal.open({
-				templateUrl: script,
-				controller: 'ModalInstanceCtrl',
-				resolve: {
-					items: function() {
-						return ["Behoud alle e-mailadressen", "Laat e-mailadressen weg"];
-					}
-				}
-			});
-
-			modalInstance.result.then((function(selectedItem) {
-                if (selectedItem == "Laat e-mailadressen weg")
-				{
-					var emails = [];
-					for (var key in $scope.tags)
-					{
-						if ( ! $scope.tags[key].today)
-						{
-							emails.push($scope.tags[key]);
-						}
-					}
-					$scope.tags = emails;
-				}
-            }), function() {
-                console.log("Modal dismissed at: " + new Date());
-            });
-		};
-		
-		$scope.emails = {};
-		$scope.last_date = "";
-		$scope.check_login_times = function(stars) {
-			$http.get("/pub/check_login_times/").success(function(data, status, headers, config) {
-				$scope.result = logger.check(data);
-				if ($scope.result.email)
-				{
-					$scope.emails = $scope.result.emails;
-					if ( ! $scope.user.intro)
-					{
-						$scope.open_modal($scope.result.email);
-					}
-				}
-				
-				$scope.last_date = $scope.result.date;
-			});
-		};
-
-		$scope.check_login_times();
-		
-		$scope.open_modal = function(email) {
-			var existing_tags = {};
-			var tags = {title: '[AANHEF PATIËNT]',
-						name: '[VOORNAAM PATIËNT]',
-						sname: '[ACHTERNAAM PATIËNT]',
-						doctors_title: '[AANHEF ZORGVERLENER]',
-						doctors_name: '[VOORNAAM ZORGVERLENER]',
-						doctors_sname: '[ACHTERNAAM ZORGVERLENER]'};
-
-			var fields = ['subject', 'header', 'gray', 'text1', 'promo', 'text2', 'footer'];
-			for (var i in fields)
-			{
-				for (var key in tags)
-				{
-					if ($scope.emails[fields[i]].indexOf(tags[key]) + 1)
-					{
-						existing_tags[key] = true;
-					}
-				}
-			}
-			
-			var modalInstance;
-			modalInstance = $modal.open({
-				templateUrl: "example.html",
-				controller: 'ModalInstanceTestEmailCtrl',
-				resolve: {
-					items: function() {
-						return existing_tags;
-					}
-				}
-			});
-			
-			modalInstance.result.then((function(items) {
-				$http.post("/pub/send_test_email/", {emails: $scope.emails, values: items, user: $scope.user}).success(function(data, status, headers, config) {
-					logger.check(data);
-				});
-			}), function() {
-				console.log("Modal dismissed at: " + new Date());
-			});
-        };*/
     }
 })();
 ;
@@ -6243,6 +6273,7 @@
         .controller('ModalDemoCtrl', ['$scope', '$modal', '$log', ModalDemoCtrl])
         .controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'items', ModalInstanceCtrl])
 		.controller('ModalInstanceUsersCtrl', ['$scope', '$modalInstance', '$modal', '$http', 'logger', 'items', ModalInstanceUsersCtrl])
+		.controller('ModalInstanceChangeAccountCtrl', ['$scope', '$modalInstance', '$modal', '$http', 'logger', 'items', ModalInstanceChangeAccountCtrl])
 		.controller('ModalInstanceDeleteUsersCtrl', ['$scope', '$modalInstance', 'items', ModalInstanceDeleteUsersCtrl])
 		.controller('ModalInstanceFeedbackCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceFeedbackCtrl])
 		.controller('ModalInstanceSuspendedCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceSuspendedCtrl])
@@ -6255,6 +6286,7 @@
 		.controller('ModalInstanceConfirmSuspendionCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceConfirmSuspendionCtrl])
 		.controller('ModalInstanceSuspendAccountCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceSuspendAccountCtrl])
 		.controller('ModalInstanceRemoveDoctorCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceRemoveDoctorCtrl])
+		.controller('ModalInstanceRemoveLocationCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceRemoveLocationCtrl])
 		.controller('ModalInstanceSuspendPopupCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceSuspendPopupCtrl])
 		.controller('ModalInstanceTestEmailCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceTestEmailCtrl])
 		.controller('ModalInstanceStarsEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceStarsEditCtrl])
@@ -6266,6 +6298,8 @@
 		.controller('ModalUnsubscribeCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUnsubscribeCtrl])
 		.controller('ModalUndoCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUndoCtrl])
 		.controller('ModalInstanceHelpCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceHelpCtrl])
+		.controller('ModalDefineDoctorsCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalDefineDoctorsCtrl])
+		.controller('ModalDefineLocationsCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalDefineLocationsCtrl])
         .controller('PaginationDemoCtrl', ['$scope', PaginationDemoCtrl])
         .controller('TabsDemoCtrl', ['$scope', TabsDemoCtrl])
         .controller('TreeDemoCtrl', ['$scope', TreeDemoCtrl])
@@ -6464,6 +6498,106 @@
 
         $scope.ok = function() {
             $modalInstance.close([$scope.id, $scope.activation, $scope.suspension]);
+        };
+
+		$scope.remove = function() {
+            $modalInstance.close([$scope.id, 1]);
+        };
+		
+		$scope.activate = function() {
+            $modalInstance.close([$scope.id, 0]);
+        };
+
+		$scope.reprint_users = function(users) {
+            $modalInstance.close({users: users});
+        };
+
+        $scope.cancel = function() {
+            $modalInstance.dismiss("cancel");
+        };
+
+		$scope.today = function(type) {
+			return $scope[type] = new Date();
+		};
+
+		$scope.showWeeks = true;
+		$scope.clear = function(type) {
+			$scope[type] = null;
+		};
+
+		$scope.disabled = function(date, mode) {
+			mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+		};
+
+		$scope.open_date = function($event, type) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope['opened_' + type] = true;
+		};
+
+		$scope.dateOptions = {
+			'year-format': "'yy'",
+			'starting-day': 1
+		};
+
+		$scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'shortDate'];
+		$scope.format = $scope.formats[0];
+
+		$scope.delete_modal = function(id) {
+            var modalInstance2;
+            modalInstance2 = $modal.open({
+                templateUrl: "delete.html",
+                controller: 'ModalInstanceDeleteUsersCtrl',
+                resolve: {
+                    items: function() {
+						return [id];
+					}
+                }
+            });
+            modalInstance2.result.then((function(id) {
+				$http.post("/pub/del_user/", {id: id[0]}).success(function(data, status, headers, config) {
+					var users = logger.check(data);
+					$scope.reprint_users(users);
+				});
+            }), function() {
+                console.log("Modal dismissed at: " + new Date());
+            });
+        };
+		
+		$scope.change_trial = function() {
+			$http.post("/pub/change_trial/", {id: $scope.id}).success(function(data, status, headers, config) {
+				logger.check(data);
+			});
+		};
+    };
+	
+	function ModalInstanceChangeAccountCtrl($scope, $modalInstance, $modal, $http, logger, items) {
+		$scope.user = items;
+		$scope.user.fake_type = $scope.user.organization == '1' ? '2' : $scope.user.account_type;
+ 		
+		$scope.id = $scope.user.id;
+		$scope.type = $scope.user.account;
+		$scope.stop = $scope.user.admin_stop;
+
+		var date = new Date($scope.user.activation * 1000);
+		$scope.date = {};
+		$scope.date.activation = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+		$scope.date.suspension = $scope.user.suspension * 1000;
+		$scope.date.trial_end = $scope.user.trial_end * 1000;
+		
+		$scope.fake_type_change = function() {
+			$scope.user.organization = ($scope.user.fake_type == '2' ? '1' : '0');
+			$scope.user.account_type = ($scope.user.fake_type == '2' ? '1' : $scope.user.fake_type);
+		};
+		
+		$scope.organization_change = function() {
+			$scope.user.fake_type = ($scope.user.organization == '1' ? '2' : $scope.user.account_type);
+		};
+
+        $scope.ok = function() {
+			$scope.user.suspension = $scope.date.suspension;
+			$scope.user.trial_end = $scope.date.trial_end;
+            $modalInstance.close({user: $scope.user});
         };
 
 		$scope.remove = function() {
@@ -6889,6 +7023,16 @@
 		};
     };
 	
+	function ModalInstanceRemoveLocationCtrl($scope, $modalInstance, $http, $location, logger, items) {
+		$scope.cancel = function() {
+			$modalInstance.dismiss("cancel");
+        };
+		
+		$scope.remove = function() {
+			$modalInstance.close("remove");
+		};
+    };
+	
 	function ModalInstanceSuspendPopupCtrl($scope, $modalInstance, $http, $location, logger, items) {
 		$scope.ok = function() {
 			$modalInstance.dismiss("cancel");
@@ -7277,6 +7421,172 @@
 		$scope.confirm = function() {
             $modalInstance.close("confirm");
         };
+    };
+	
+	function ModalDefineDoctorsCtrl($scope, $modalInstance, $http, logger, items) {
+		$scope.doctors = items[0];
+		$scope.unknown = items[1];
+		$scope.add_doctor_var = false;
+		$scope.doctor = {};
+		
+		$scope.selected = {};
+		for (var k in $scope.unknown)
+		{
+			$scope.selected[$scope.unknown[k]] = '';
+		}
+		
+		$scope.user = {};
+		$http.post("/pub/user/", {}).success(function(data, status, headers, config) {
+			$scope.user = logger.check(data);
+		});
+
+		$scope.cancel = function() {
+            $modalInstance.dismiss("cancel");
+        };
+		
+		$scope.save = function() {
+            $modalInstance.close($scope.selected);
+        };
+		
+		$scope.add = function() {
+			$scope.add_doctor_var = true;
+        };
+		
+		$scope.cancel_doctor = function() {
+			$scope.add_doctor_var = false;
+		};
+		
+		$scope.add_doctor = function() {
+			var error = 1;
+			if ( ! $scope.doctor.title)
+			{
+				logger.logError("Vergeet niet de Aanhef in te vullen!");
+				error = 0;
+			}
+			
+			if ( ! $scope.doctor.firstname)
+			{
+				logger.logError("Vergeet niet de Voornaam in te vullen!");
+				error = 0;
+			}
+			
+			if ( ! $scope.doctor.lastname)
+			{
+				logger.logError("Vergeet niet de Achternaam in te vullen!");
+				error = 0;
+			}
+			
+			if ( ! $scope.doctor.name)
+			{
+				logger.logError("Vergeet niet de Waarde in Excel-bestand in te vullen!");
+				error = 0;
+			}
+			
+			if (error)
+			{
+				$scope.id = 0;
+				$http.post("/pub/save_doctor/", $scope.doctor).success(function(data, status, headers, config) {
+					if ($scope.id = logger.check(data))
+					{
+						$http.post("/pub/get_doctors/", {}).success(function(data, status, headers, config) {
+							$scope.doctors = logger.check(data);
+							for (var k in $scope.doctors)
+							{
+								if ($scope.doctors[k].id == $scope.id)
+								{
+									$scope.selected[$scope.doctor.name] = $scope.doctors[k];
+								}
+							}
+							$scope.add_doctor_var = false;
+						});
+					}
+				});
+			}
+		};
+		
+    };
+	
+	function ModalDefineLocationsCtrl($scope, $modalInstance, $http, logger, items) {
+		$scope.locations = items[0];
+		$scope.unknown = items[1];
+		$scope.add_location_var = false;
+		$scope.location = {};
+		
+		$scope.selected = {};
+		for (var k in $scope.unknown)
+		{
+			$scope.selected[$scope.unknown[k]] = '';
+		}
+		
+		$scope.user = {};
+		$http.post("/pub/user/", {}).success(function(data, status, headers, config) {
+			$scope.user = logger.check(data);
+		});
+
+		$scope.cancel = function() {
+            $modalInstance.dismiss("cancel");
+        };
+		
+		$scope.save = function() {
+            $modalInstance.close($scope.selected);
+        };
+		
+		$scope.add = function() {
+			$scope.add_location_var = true;
+        };
+
+		$scope.cancel_location = function() {
+			$scope.add_location_var = false;
+		};
+		
+		$scope.add_location = function() {
+			var error = 1;
+			if ( ! $scope.location.address)
+			{
+				logger.logError("Vergeet niet de Adres in te vullen!");
+				error = 0;
+			}
+			
+			if ( ! $scope.location.postcode)
+			{
+				logger.logError("Vergeet niet de Postcode in te vullen!");
+				error = 0;
+			}
+			
+			if ( ! $scope.location.city)
+			{
+				logger.logError("Vergeet niet de Stad in te vullen!");
+				error = 0;
+			}
+			
+			if ( ! $scope.location.name)
+			{
+				logger.logError("Vergeet niet de Waarde in Excel-bestand in te vullen!");
+				error = 0;
+			}
+			
+			if (error)
+			{
+				$scope.id = 0;
+				$http.post("/pub/save_location/", $scope.location).success(function(data, status, headers, config) {
+					if ($scope.id = logger.check(data))
+					{
+						$http.post("/pub/get_locations/", {}).success(function(data, status, headers, config) {
+							$scope.locations = logger.check(data);
+							for (var k in $scope.locations)
+							{
+								if ($scope.locations[k].id == $scope.id)
+								{
+									$scope.selected[$scope.location.name] = $scope.locations[k];
+								}
+							}
+							$scope.add_location_var = false;
+						});
+					}
+				});
+			}
+		};
+		
     };
 
     function PaginationDemoCtrl($scope) {

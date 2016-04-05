@@ -9,6 +9,7 @@
 		var $base_amount = 275;
 		var $pro_amount = 450;
 		var $doctor_amount = 60;
+		var $free_doctors_number = 3;
 		var $period = 365;
 		var $tags = array('subject' => '[ONDERWERP VAN E-MAIL]',
 						  'title' => '[AANHEF PATIËNT]',
@@ -288,23 +289,26 @@
 			$result = $this->db->get("users")->result_array();
 			foreach ($result as $row)
 			{
-				if ($today == $row['suspension'])
+				if ( ! empty($row['organization']))
 				{
-					$end[] = $row['id'];
-					$users_ids[] = $row['id'];
-				}
-				
-				if (($row['suspension'] - $today) % $this->period == 0)
-				{
-					$this->db->where("users_id", $row['id']);
-					$this->db->where("date >", $today - $this->period);
-					if ( ! $this->db->count_all_results("invoices"))
+					if ($today == $row['suspension'])
 					{
+						$end[] = $row['id'];
 						$users_ids[] = $row['id'];
 					}
+					
+					if (($row['suspension'] - $today) % $this->period == 0)
+					{
+						$this->db->where("users_id", $row['id']);
+						$this->db->where("date >", $today - $this->period);
+						if ( ! $this->db->count_all_results("invoices"))
+						{
+							$users_ids[] = $row['id'];
+						}
+					}
+					
+					$users[$row['id']] = $row;
 				}
-				
-				$users[$row['id']] = $row;
 			}
 			
 			$users_ids = array_unique($users_ids);
@@ -503,6 +507,19 @@
 			}
 
 			return $result;
+		}
+		
+		function get_locations()
+		{
+			$this->db->where("users_id", $this->session->userdata("id"));
+			return $this->db->get("locations")->result_array();
+		}
+		
+		function location_info($id)
+		{
+			$this->db->where("id", $id);
+			$this->db->limit(1);
+			return $this->db->get("locations")->row_array();
 		}
 		
 		function get_doctors_amount($users_id)
@@ -729,6 +746,57 @@
 			return FALSE;
 		}
 		
+		function save_location($post)
+		{
+			if ($this->logged_in())
+			{
+				$data_array = array("users_id" => $this->session->userdata("id"),
+									"address" => $post['address'],
+									"postcode" => $post['postcode'],
+									"city" => $post['city']);
+
+				$locations_id = 0;
+				if ( ! empty($post['id']))
+				{
+					$this->errors[] = array("Success" => "Wijzigingen bewaard.");
+					$this->db->where("id", $post['id']);
+					$this->db->update("locations", $data_array);
+					
+					$locations_id = $post['id'];
+				}
+				else
+				{
+					$this->errors[] = array("Success" => "Wijzigingen bewaard.");
+					$data_array['date'] = time();
+					$this->db->insert("locations", $data_array);
+					
+					$locations_id = $this->db->insert_id();
+				}
+				
+				return $locations_id;
+			}
+			
+			return FALSE;
+		}
+		
+		function remove_location($id)
+		{
+			if ($this->logged_in())
+			{
+				$this->db->where("id", $id);
+				$this->db->where("users_id", $this->session->userdata("id"));
+				if ($this->db->delete("locations"))
+				{
+					$this->db->where("locations_id", $id);
+					$this->db->delete("locations_ids");
+					
+					return TRUE;
+				}
+			}
+			
+			return FALSE;
+		}
+		
 		function get_amount()
 		{
 			$result = array();
@@ -765,7 +833,7 @@
 			{
 				$this->db->where("users_id", $id);
 				$this->db->where("free", 1);
-				if ($this->db->count_all_results("doctors") < 3)
+				if ($this->db->count_all_results("doctors") < $this->free_doctors_number)
 				{
 					$price = 0;
 				}
@@ -797,7 +865,7 @@
 					{
 						$this->db->where("users_id", $row['id']);
 						$this->db->where("free", 1);
-						if ($this->db->count_all_results("doctors") < 3)
+						if ($this->db->count_all_results("doctors") < $this->free_doctors_number)
 						{
 							$free = 1;
 						}
@@ -845,7 +913,7 @@
 										"firstname" => $post['firstname'],
 										"lastname" => $post['lastname'],
 										"title" => $post['title'],
-										"zorgkaart" => strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer',
+										"zorgkaart" => ! empty($post['zorgkaart']) ? strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer' : '',
 										"short" => ! empty($post['short']) ? $post['short'] : "",
 										"short_checked" => ! empty($post['short_checked']) ? $post['short_checked'] : 0);
 
@@ -887,10 +955,13 @@
 							$this->db->insert("doctors_pay", $data_array);
 						}
 						
-						$this->doctors_invoice($doctors_id, $amount);
+						if (empty($row['organization']))
+						{
+							$this->doctors_invoice($doctors_id, $amount);
+						}
 					}
 					
-					return TRUE;
+					return $doctors_id;
 				}
 				else
 				{
@@ -1028,6 +1099,9 @@
 				if ($this->db->delete("doctors"))
 				{
 					$this->db->where("doctors_id", $id);
+					$this->db->delete("doctors_ids");
+					
+					$this->db->where("doctors_id", $id);
 					$this->db->delete("doctors_pay");
 					
 					$this->db->where("doctors_id", $id);
@@ -1105,6 +1179,10 @@
 			
 			$this->db->where("users_id", $id);
 			$row['login_count'] = $this->db->count_all_results("sessions");
+			
+			$row['account_amount'] = $row['account_amount'] != '0.00' ? $row['account_amount'] : ($row['account_type'] == 0 ? $this->base_amount : $this->pro_amount);
+			$row['doctors_amount'] = $row['doctors_amount'] != '0.00' ? $row['doctors_amount'] : $this->doctor_amount;
+			$row['doctors_number'] = ! empty($row['doctors_number']) ? $row['doctors_number'] : $this->free_doctors_number;
 			
 			return $row;
 		}
@@ -1226,8 +1304,59 @@
 				$result[$key]['last_str'] = ! empty($row['last']) ? date("d-m-Y", $row['last']) : "Nog niet ingelogd";
 				$result[$key]['activation_str'] = ! empty($row['activation']) ? date("d-m-Y", $row['activation']) : "";
 				$result[$key]['suspension_str'] = ! empty($row['suspension']) ? date("d-m-Y", $row['suspension']) : "";
+				
+				$result[$key]['account_amount'] = $result[$key]['account_amount'] != '0.00' ? $result[$key]['account_amount'] : ($result[$key]['account_type'] == 0 ? $this->base_amount : $this->pro_amount);
+				$result[$key]['doctors_amount'] = $result[$key]['doctors_amount'] != '0.00' ? $result[$key]['doctors_amount'] : $this->doctor_amount;
+				$result[$key]['doctors_number'] = ! empty($result[$key]['doctors_number']) ? $result[$key]['doctors_number'] : $this->free_doctors_number;
+				
+				$info = $this->user_stat($row['id']);
+				$result[$key]['last_login'] = $info['last_login'];
+				$result[$key]['login_number'] = $info['login_number'];
+				$result[$key]['sent_number'] = $info['sent_number'];
+				$result[$key]['batche_number'] = $info['batche_number'];
 			}
 			return $result;
+		}
+		
+		function user_stat($users_id)
+		{
+			if (empty($this->sessions))
+			{
+				$this->sessions = array();
+				$result = $this->db->get("sessions")->result_array();
+				foreach ($result as $row)
+				{
+					$this->sessions[$row['users_id']][] = $row['users_login'];
+				}
+			}
+			
+			if (empty($this->sents))
+			{
+				$this->sents = array();
+				$this->db->where('status <>', 3);
+				$result = $this->db->get("sent")->result_array();
+				foreach ($result as $row)
+				{
+					$this->sents[$row['users_id']][] = $row;
+				}
+			}
+			
+			$items = array('last_login' => '----',
+						   'login_number' => 0,
+						   'sent_number' => 0,
+						   'batche_number' => 0);
+			if ( ! empty($this->sessions[$users_id]))
+			{
+				$items['last_login'] = date('d-m-Y', max($this->sessions[$users_id]));
+				$items['login_number'] = count($this->sessions[$users_id]);
+			}
+			
+			if ( ! empty($this->sents[$users_id]))
+			{
+				$items['sent_number'] = count($this->sents[$users_id]);
+			}
+			
+			return $items;
 		}
 
 		function check_login_times()
@@ -1896,6 +2025,28 @@
 				$this->errors[] = array("Database error");
 			}
 		}
+		
+		function change_user($user)
+		{
+			$data_array = array('account_type' => $user['account_type'],
+								'organization' => $user['organization'],
+								'suspension' => $user['suspension'],
+								'trial_end' => $user['trial_end'],
+								'account_amount' => $user['account_amount'],
+								'doctors_amount' => $user['doctors_amount'],
+								'doctors_number' => $user['doctors_number']);
+								
+			$this->db->where("id", $user['id']);
+			if ($this->db->update("users", $data_array))
+			{
+				$this->errors[] = array("Success" => "Abonnement gewijzigd.");
+				return TRUE;
+			}
+			else
+			{
+				$this->errors[] = array("Database error");
+			}
+		}
 
 		function remove_user($post)
 		{
@@ -2268,6 +2419,15 @@
 							'birth' => 'Geboortedatum',
 							'doctor' => 'Zorgverlenernummer');
 			$users_fields = $this->get_users_fields();
+			
+			$this->db->where("id", $this->session->userdata('id'));
+			$this->db->where("use_locations", TRUE);
+			if ($this->db->count_all_results('users'))
+			{
+				$tags[] = 'location';
+				$fields['location'] = 'Locatie';
+			}
+			
 			$cols = array();
 			$result = array('dont_use' => array(), 'file' => '', 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
 
@@ -2305,7 +2465,7 @@
 						$col = FALSE;
 						foreach ($rows[0] as $key => $row)
 						{
-							if (( ! empty($users_fields[$tag]) && strtolower($row) == $users_fields[$tag]) || (strtolower($row) == strtolower($fields[$tag])))
+							if (( ! empty($users_fields[$tag]) && strtolower(trim($row)) == $users_fields[$tag]) || (strtolower(trim($row)) == strtolower($fields[$tag])))
 							{
 								$col = $key;
 							}
@@ -2352,6 +2512,16 @@
 									if ($cols[$tag] !== FALSE)
 									{
 										$line[$tag] = $rows[$i][$cols[$tag]];
+										if ($tag == 'doctor')
+										{
+											$line['doctor_id'] = $this->get_doctors_id(strtolower($line[$tag]));
+										}
+										
+										if ($tag == 'location')
+										{
+											$line['location_id'] = $this->get_locations_id(strtolower($line[$tag]));
+										}
+										
 										if ($tag == 'email')
 										{
 											$email = strtolower($line[$tag]);
@@ -2422,6 +2592,62 @@
 			}
 
 			return $result;
+		}
+		
+		function get_doctors_id($name)
+		{
+			$this->db->where('users_id', $this->session->userdata("id"));
+			$this->db->where('doctors_name', $name);
+			$this->db->limit(1);
+			$row = $this->db->get('doctors_ids')->row_array();
+			if ( ! empty($row))
+			{
+				return $row['doctors_id'];
+			}
+			
+			return 0;
+		}
+
+		function save_doctors_ids($ids)
+		{
+			foreach ($ids as $name => $doc)
+			{
+				if ( ! empty($doc))
+				{
+					$data_array = array('users_id' => $this->session->userdata('id'),
+										'doctors_id' => $doc['id'],
+										'doctors_name' => strtolower($name));
+					$this->db->insert('doctors_ids', $data_array);
+				}
+			}
+		}
+		
+		function get_locations_id($name)
+		{
+			$this->db->where('users_id', $this->session->userdata("id"));
+			$this->db->where('locations_name', $name);
+			$this->db->limit(1);
+			$row = $this->db->get('locations_ids')->row_array();
+			if ( ! empty($row))
+			{
+				return $row['locations_id'];
+			}
+			
+			return 0;
+		}
+		
+		function save_locations_ids($ids)
+		{
+			foreach ($ids as $name => $location)
+			{
+				if ( ! empty($location))
+				{
+					$data_array = array('users_id' => $this->session->userdata('id'),
+										'locations_id' => $location['id'],
+										'locations_name' => strtolower($name));
+					$this->db->insert('locations_ids', $data_array);
+				}
+			}
 		}
 		
 		function save_field($post)
@@ -2607,21 +2833,13 @@
 														'account_type' => $row['account_type'],
 														'account' => $row['account']);
 														
-									if ( ! empty($list['doctor']))
-									{
-										$this->db->where("id", $list['doctor']);
-										$this->db->where("users_id", $this->session->userdata("id"));
-										if ( ! $this->db->count_all_results("doctors"))
-										{
-											$list['doctor'] = 0;
-										}
-									}
-
 									$data_array = array("users_id" => $this->session->userdata("id"),
 														"title" => ! empty($list['title']) ? $list['title'] : "",
 														"name" => ! empty($list['name']) ? $list['name'] : "",
 														"sname" => ! empty($list['sname']) ? $list['sname'] : "",
-														"doctor" => ! empty($list['doctor']) ? $list['doctor'] : 0,
+														"doctor" => ! empty($list['doctor_id']) ? $list['doctor_id'] : 0,
+														"location" => ! empty($list['location_id']) ? $list['location_id'] : 0,
+														"treatment" => ! empty($list['treatment']) ? $list['treatment'] : "",
 														"birth" => ! empty($list['birth']) ? $list['birth'] : "",
 														"email" => strtolower($list['text']),
 														"date" => time(),

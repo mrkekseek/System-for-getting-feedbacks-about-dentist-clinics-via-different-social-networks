@@ -109,9 +109,9 @@
 						<td>{{user.id}}</td>
 						<td>{{user.username}}</td>
 						<td>
-							<a ng-if="user.admin_stop == '1'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Geblokkeerd</a>
-							<a ng-if="user.admin_stop == '0' && (user.account == '1' || user.account == '2') && user.type != '2'" href="javascript:void(0);" class="label label-success" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Actief</a>
-							<a ng-if="user.admin_stop == '0' && user.type == '2'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user.id, user.activation, user.suspension, user.account, user.admin_stop, user)">Gestopt</a>
+							<a ng-if="user.admin_stop == '1'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user)">Geblokkeerd</a>
+							<a ng-if="user.admin_stop == '0' && (user.account == '1' || user.account == '2') && user.type != '2'" href="javascript:void(0);" class="label label-success" ng-click="open_modal(user)">Actief</a>
+							<a ng-if="user.admin_stop == '0' && user.type == '2'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user)">Gestopt</a>
 						</td>
 						<td>{{user.email}}</td>
 						<td>{{user.signup_str}}</td>
@@ -119,8 +119,9 @@
 						<td>{{user.suspension_str}}</td>
 						<td>
 							<span ng-if="user.account == '2'">Proefperiode</span>
-							<span ng-if="user.account != '2' && user.account_type == '0'">Basis</span>
-							<span ng-if="user.account != '2' && user.account_type == '1'">Pro</span>
+							<span ng-if="user.account != '2' && user.account_type == '0' && user.organization != '1'">Basis</span>
+							<span ng-if="user.account != '2' && user.account_type == '1' && user.organization != '1'">Pro</span>
+							<span ng-if="user.account != '2' && user.account_type == '1' && user.organization == '1'">Organisaties</span>
 						</td>
 						<td><a class="label label-primary" ng-click="login_as_user(user.id)">Log In</a></td>
 					</tr>
@@ -156,46 +157,128 @@
 	</section>
 </div>
 
-<script type="text/ng-template" id="changeType.html">
+<script type="text/ng-template" id="change_account.html">
 	<div class="modal-header">
-		<h3>Wijzig abonnement</h3>
+		<h3>Wijzig account</h3>
 	</div>
 	<div class="modal-body">
-		<p>
-			Laatste login: {{user.last_str}}
-		</p>
-		<div class="row">
-            <div class="col-sm-6 col-xs-12">
-				<label>Startdatum abonnement</label>
-				<div class="input-group ui-datepicker">
-					<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="activation" is-open="opened_activation" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-					<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'activation')"><i class="ti-calendar"></i></a>
-				</div>
-			</div>
-			
-			<div class="col-sm-6">
-				<label>Einddatum abonnement</label>
-				<div class="input-group ui-datepicker">
-					<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="suspension" is-open="opened_suspension" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-					<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'suspension')"><i class="ti-calendar"></i></a>
-				</div>
-				<div class="help-block">
-					Deze gebruiker zal om verlenging gevraagd worden op: {{suspension_str}}
-				</div>
-			</div>
-			
-			<div class="col-sm-6 col-xs-12">
-				<label>&nbsp;</label><br />
-				<a href="javascript:void(0);" class="btn btn-primary" ng-if="type == 2" ng-click="change_trial()">Verleng proefperiode</a>
-			</div>
-		</div>
+		<tabset justified="true" class="ui-tab">
+			<tab heading="Abonnement">
+				<form class="form-horizontal" role="form" name="form">
+					<div class="form-group">
+						<label class="col-md-4">Geforceerd</label>
+						<div class="col-md-8">
+							<select class="form-control" ng-model="user.fake_type" ng-change="fake_type_change()">
+								<option value="0">Patiëntenreview Basis</option>
+								<option value="1">Patiëntenreview Pro</option>
+								<option value="2">Patiëntenreview voor Organisaties</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="divider divider-dashed divider-lg pull-in"></div>
+					
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Startdatum betaaltermijn</th>
+								<th>Einddatum betaaltermijn</th>
+								<th>Einddatum proefabonnement</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							<tr>
+								<td>{{activation}}</td>
+								<td>
+									<div class="input-group ui-datepicker">
+										<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="date.suspension" is-open="$parent.opened_suspension" min="minDate" max="'2017-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+										<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'suspension')"><i class="ti-calendar"></i></a>
+									</div>
+								</td>
+								<td>
+									<div class="input-group ui-datepicker">
+										<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="date.trial_end" is-open="$parent.opened_trial_end" min="minDate" max="'2017-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+										<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'trial_end')"><i class="ti-calendar"></i></a>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<button class="btn btn-danger" ng-click="delete_modal(id)">Verwijder account</button>
+					<button class="btn btn-danger" ng-click="remove()" ng-if="stop == 0">Beëindig direct</button>
+				</form>
+			</tab>
+			<tab heading="Facturering">
+				<form class="form-horizontal" role="form" name="form">
+					<div class="form-group">
+						<label class="col-md-4">&nbsp;</label>
+						<div class="col-md-8">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" ng-model="user.organization" ng-checked="user.organization == '1'" ng-change="organization_change()" />
+									Dit account wordt handmatig gefactureerd
+								</label>
+							</div>
+						</div>
+					</div>
+					
+					<div class="divider divider-dashed divider-lg pull-in"></div>
+					
+					<div class="form-group">
+						<label class="col-md-4">Account amount, &euro;</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="amount" ng-model="user.account_amount" required="required" />
+						</div>
+					</div>
+					
+					<div class="divider divider-dashed divider-lg pull-in"></div>
+					
+					<div class="form-group">
+						<label class="col-md-4">Amount for each doctor, &euro;</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="amount" ng-model="user.doctors_amount" required="required" />
+						</div>
+					</div>
+					
+					<div class="divider divider-dashed divider-lg pull-in"></div>
+					
+					<div class="form-group">
+						<label class="col-md-4">Number for each doctor</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="number" ng-model="user.doctors_number" required="required" />
+						</div>
+					</div>
+				</form>
+			</tab>
+			<tab heading="Gebruiksgegevens">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Laatst ingelogd</th>
+							<th>Aantal ingelogde sessies</th>
+							<th>Aantal uitnodigingen verstuurd</th>
+							<th>Aantal batches</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr>
+							<td>{{user.last_login}}</td>
+							<td>{{user.login_number}}</td>
+							<td>{{user.sent_number}}</td>
+							<td>{{user.batche_number}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</tab>
+		</tabset>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="ok()">OK</button>
-		<button class="btn btn-danger" ng-click="remove()" ng-if="stop == 0">Beëindig direct</button>
+		<button class="btn btn-primary" ng-click="ok()">Bewaar</button>
 		<button class="btn btn-success" ng-click="activate()" ng-if="stop == 1">Activeer</button>
-		<button class="btn btn-danger" ng-click="delete_modal(id)">Verwijder</button>
-		<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-default" ng-click="cancel()">Sluit</button>
 	</div>
 </script>
 
