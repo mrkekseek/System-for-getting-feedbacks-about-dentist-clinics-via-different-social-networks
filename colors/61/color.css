@@ -30,8 +30,15 @@ body .icon-dashboard.bg-warning {
 
 body .mail-categories .list-group .list-group-item.active > a,
 body .mail-categories .list-group .list-group-item > a:hover,
-a {
+body a {
 	color: #f57b25;
+}
+
+body a:hover,
+body a:focus,
+body a:active {
+	color: #f57b25;
+	text-decoration: underline;
 }
 
 body .btn-invoice-label.past {
@@ -47,16 +54,31 @@ body .ui-radio input[type="radio"]:checked + span:after {
 	background-color: #f57b25 !important;
 }
 
-body .ui-radio input[type="radio"]:checked + span:before {
+body .ui-radio input[type="radio"]:checked + span:before,
+body .pagination > .active > a,
+body .pagination > .active > a:focus,
+body .pagination > .active > a:hover,
+body .pagination > .active > span,
+body .pagination > .active > span:focus,
+body .pagination > .active > span:hover,
+body .ui-checkbox input[type="checkbox"]:checked + span::before,
+body .ui-checkbox input[type="checkbox"] + span:hover::before {
 	border-color: #f57b25 !important;
 }
 
 body .emails-edit:hover,
-body .widget-edit:hover {
+body .widget-edit:hover,
+body .ui-checkbox input[type="checkbox"]:checked + span::after {
 	background-color: #f57b25 !important;
 }
 
-body .badge-primary {
+body .badge-primary,
+body .pagination > .active > a,
+body .pagination > .active > a:focus,
+body .pagination > .active > a:hover,
+body .pagination > .active > span,
+body .pagination > .active > span:focus,
+body .pagination > .active > span:hover {
 	background-color: #f57b25 !important;
 }
 
