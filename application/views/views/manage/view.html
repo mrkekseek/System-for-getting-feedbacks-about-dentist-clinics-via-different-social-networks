@@ -229,7 +229,7 @@
 					<div class="form-group">
 						<label class="col-md-4">Account amount, &euro;</label>
 						<div class="col-md-8">
-							<input type="text" class="form-control" name="amount" ng-model="user.account_amount" required="required" />
+							<input type="text" class="form-control" name="amount" ng-model="user.account_amount" ng-disabled="user.organization == '1'" required="required" />
 						</div>
 					</div>
 					
@@ -238,7 +238,7 @@
 					<div class="form-group">
 						<label class="col-md-4">Amount for each doctor, &euro;</label>
 						<div class="col-md-8">
-							<input type="text" class="form-control" name="amount" ng-model="user.doctors_amount" required="required" />
+							<input type="text" class="form-control" name="amount" ng-model="user.doctors_amount" ng-disabled="user.organization == '1'" required="required" />
 						</div>
 					</div>
 					
@@ -247,7 +247,7 @@
 					<div class="form-group">
 						<label class="col-md-4">Number for each doctor</label>
 						<div class="col-md-8">
-							<input type="text" class="form-control" name="number" ng-model="user.doctors_number" required="required" />
+							<input type="text" class="form-control" name="number" ng-model="user.doctors_number" ng-disabled="user.organization == '1'" required="required" />
 						</div>
 					</div>
 				</form>
