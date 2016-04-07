@@ -2475,6 +2475,9 @@
 			{
 				$tags[] = 'location';
 				$fields['location'] = 'Locatie';
+				
+				$tags[] = 'treatment';
+				$fields['treatment'] = 'Behandeling';
 			}
 			
 			$cols = array();
