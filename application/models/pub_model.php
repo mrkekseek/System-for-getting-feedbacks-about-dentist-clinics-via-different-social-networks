@@ -3736,6 +3736,24 @@
 							$doctors[$row['id']] = $row;
 						}
 					}
+					
+					$locations = array();
+					$locations_ids = array();
+					foreach ($result as $row)
+					{
+						$locations_ids[] = $row['location'];
+					}
+					$locations_ids = array_diff(array_unique($locations_ids), array('0'));
+					
+					if ( ! empty($locations_ids))
+					{
+						$this->db->where_in("id", $locations_ids);
+						$locs = $this->db->get("locations")->result_array();
+						foreach ($locs as $row)
+						{
+							$locations[$row['id']] = $row;
+						}
+					}
 
 					foreach ($result as $row)
 					{
@@ -3745,7 +3763,12 @@
 						$row['doctor_name'] = "";
 						if ( ! empty($doctors[$row['doctor']]))
 						{
-							$row['doctor_name'] = $doctors[$row['doctor']]['firstname'].' '.$doctors[$row['doctor']]['lastname'];
+							$row['doctor_name'] = $doctors[$row['doctor']]['title'].' '.$doctors[$row['doctor']]['firstname'].' '.$doctors[$row['doctor']]['lastname'];
+						}
+						$row['location_name'] = "";
+						if ( ! empty($locations[$row['location']]))
+						{
+							$row['location_name'] = $locations[$row['location']]['title'];
 						}
 						$items[] = $row;
 					}
