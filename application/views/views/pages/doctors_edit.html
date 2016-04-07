@@ -36,6 +36,15 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
+                    <label class="col-md-4">Waarde in Excel-bestand</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="name" ng-model="doctor.name" value="" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
                     <label class="col-md-4">Zorgkaart</label>
                     <div class="col-md-8">
                         <input type="text" class="form-control" ng-class="zorgkaart" name="zorgkaart" ng-model="doctor.zorgkaart" ng-change="check_link()" value="" />
@@ -65,7 +74,7 @@
                 <div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="text-right">
-					<a href="#/pages/doctors" class="btn btn-default">Annuleer</a>
+					<a href="#/pages/advanced" class="btn btn-default">Annuleer</a>
 					&nbsp;
 					<a href="javascript:void(0);" class="btn btn-primary" ng-click="save_doctor()">Bewaar</a>
 				</div>

@@ -34,7 +34,7 @@
 		</div>
 	</section>
 	
-	<section class="panel panel-default" ng-if="user.use_locations">
+	<section class="panel panel-default" ng-if="user.organization">
         <div class="panel-heading"><strong><i class="fa fa-hospital-o"></i> Locaties</strong></div>
 		<div class="panel-body">
 			U kunt beoordelingen verzamelen voor individuele zorgverleners door ze toe te voegen aan uw abonnement. Uw patiënten kunnen vervolgens aangeven bij welke zorgverlener ze zijn behandeld. Om dit te automatiseren kunt u in het Excel-bestand per patiënt het zorgverlenernummer aangeven.
@@ -45,6 +45,7 @@
 					<thead>
 						<tr>
 							<th>Locatienummer</th>
+							<th>Locatie</th>
 							<th>Adres</th>
 							<th>Postcode</th>
 							<th>Stad</th>
@@ -55,6 +56,7 @@
 					<tbody>
 						<tr ng-repeat="l in locations">
 							<td>{{l.id}}</td>
+							<td>{{l.title}}</td>
 							<td>{{l.address}}</td>
 							<td>{{l.postcode}}</td>
 							<td>{{l.city}}</td>

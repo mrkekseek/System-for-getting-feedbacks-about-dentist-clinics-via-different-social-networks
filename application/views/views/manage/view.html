@@ -100,6 +100,7 @@
 								  data-ng-click=" order('-suspension') "
 								  data-ng-class="{active: row == '-suspension'}"></span>
 						</div></th>
+						<th><div class="th">&nbsp;</div></th>
 						<th><div class="th">Account</div></th>
 					</tr>
 				</thead>
@@ -109,9 +110,9 @@
 						<td>{{user.id}}</td>
 						<td>{{user.username}}</td>
 						<td>
-							<a ng-if="user.admin_stop == '1'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user)">Geblokkeerd</a>
-							<a ng-if="user.admin_stop == '0' && (user.account == '1' || user.account == '2') && user.type != '2'" href="javascript:void(0);" class="label label-success" ng-click="open_modal(user)">Actief</a>
-							<a ng-if="user.admin_stop == '0' && user.type == '2'" href="javascript:void(0);" class="label label-danger" ng-click="open_modal(user)">Gestopt</a>
+							<a ng-if="user.admin_stop == '1'" href="javascript:void(0);" class="label label-danger">Geblokkeerd</a>
+							<a ng-if="user.admin_stop == '0' && (user.account == '1' || user.account == '2') && user.type != '2'" href="javascript:void(0);" class="label label-success">Actief</a>
+							<a ng-if="user.admin_stop == '0' && user.type == '2'" href="javascript:void(0);" class="label label-danger">Gestopt</a>
 						</td>
 						<td>{{user.email}}</td>
 						<td>{{user.signup_str}}</td>
@@ -123,6 +124,7 @@
 							<span ng-if="user.account != '2' && user.account_type == '1' && user.organization != '1'">Pro</span>
 							<span ng-if="user.account != '2' && user.account_type == '1' && user.organization == '1'">Organisaties</span>
 						</td>
+						<td class="text-center"><a href="javascript:void(0);" ng-click="open_modal(user)"><i class="glyphicon glyphicon-cog"></i></a></td>
 						<td><a class="label label-primary" ng-click="login_as_user(user.id)">Log In</a></td>
 					</tr>
 				</tbody>
@@ -229,7 +231,7 @@
 					<div class="form-group">
 						<label class="col-md-4">Prijs voor abonnement</label>
 						<div class="col-md-8">
-							<input type="text" class="form-control" name="amount" ng-model="user.account_amount" required="required" />
+							<input type="text" class="form-control" name="amount" ng-model="user.account_amount" ng-disabled="user.organization == '1'" required="required" />
 						</div>
 					</div>
 					
@@ -238,7 +240,7 @@
 					<div class="form-group">
 						<label class="col-md-4">Prijs per zorgverlener</label>
 						<div class="col-md-8">
-							<input type="text" class="form-control" name="amount" ng-model="user.doctors_amount" required="required" />
+							<input type="text" class="form-control" name="amount" ng-model="user.doctors_amount" ng-disabled="user.organization == '1'" required="required" />
 						</div>
 					</div>
 					
@@ -247,7 +249,7 @@
 					<div class="form-group">
 						<label class="col-md-4">Aantal gratis zorgverleners</label>
 						<div class="col-md-8">
-							<input type="text" class="form-control" name="number" ng-model="user.doctors_number" required="required" />
+							<input type="text" class="form-control" name="number" ng-model="user.doctors_number" ng-disabled="user.organization == '1'" required="required" />
 						</div>
 					</div>
 				</form>

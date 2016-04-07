@@ -2487,65 +2487,6 @@
 			init();
 		});
 
-		/*$scope.open_modal = function(id, activation, suspension, type, stop, user) {
-            var modalInstance;
-            modalInstance = $modal.open({
-                templateUrl: "changeType.html",
-                controller: 'ModalInstanceUsersCtrl',
-                resolve: {
-                    items: function() {
-						return [id, activation, suspension, type, stop, user];
-					}
-                }
-            });
-            modalInstance.result.then((function(times) {
-				if (times.length == 3)
-				{
-					var date = new Date(times[1]);
-					var activation = date.getTime() / 1000;
-
-					var date = new Date(times[2]);
-					var suspension = date.getTime() / 1000;
-
-					var post_mas = {id: times[0],
-									activation: activation,
-									suspension: suspension};
-
-					$http.post("/pub/change_times/", post_mas).success(function(data, status, headers, config) {
-						$scope.users = logger.check(data);
-						$scope.order('-date');
-					});
-				}
-				else
-				{
-					if (times.users)
-					{
-						$scope.users = times.users;
-						$scope.order('-date');
-						$scope.order('date');
-					}
-					else
-					{
-						for (var key in $scope.users)
-						{
-							if ($scope.users[key].id == times[0])
-							{
-								$scope.users[key].admin_stop = times[1];
-							}
-						}
-						
-						$http.post("/pub/remove_user/", {id: times[0], action: times[1]}).success(function(data, status, headers, config) {
-							$scope.users = logger.check(data);
-							$scope.order('-id');
-							$scope.order('id');
-						});
-					}
-				}
-            }), function() {
-                console.log("Modal dismissed at: " + new Date());
-            });
-        };*/
-		
 		$scope.open_modal = function(user) {
             var modalInstance;
             modalInstance = $modal.open({
@@ -3444,6 +3385,7 @@
     function ComposeCtrl($scope, $rootScope, $window, $http, $location, $modal, logger, Upload, $timeout) {
 		$scope.step = 0;
 		$scope.status = 0;
+		$scope.all_finished = false;
 		$scope.too_long_time = false;
 		$scope.too_long_text = 'Uw patiëntenbestand wordt verwerkt.';
 		
@@ -3730,7 +3672,8 @@
 			{
 				$http.post("/pub/send/", {emails: $scope.send_emails, file: $scope.file}).success(function(data, status, headers, config) {
 					logger.check(data);
-					$location.url("/mail/inbox");
+					//$location.url("/mail/inbox");
+					$scope.all_finished = true;
 				});
 			}
 			else
@@ -7541,6 +7484,12 @@
 		
 		$scope.add_location = function() {
 			var error = 1;
+			if ( ! $scope.location.title)
+			{
+				logger.logError("Vergeet niet de Locatie in te vullen!");
+				error = 0;
+			}
+			
 			if ( ! $scope.location.address)
 			{
 				logger.logError("Vergeet niet de Adres in te vullen!");

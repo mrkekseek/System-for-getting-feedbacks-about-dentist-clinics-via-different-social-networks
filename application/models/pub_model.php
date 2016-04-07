@@ -519,7 +519,22 @@
 		{
 			$this->db->where("id", $id);
 			$this->db->limit(1);
-			return $this->db->get("locations")->row_array();
+			$row = $this->db->get("locations")->row_array();
+			
+			$row['name'] = '';
+			if ( ! empty($row['id']))
+			{
+				$this->db->where('users_id', $this->session->userdata("id"));
+				$this->db->where('locations_id', $id);
+				$this->db->limit(1);
+				$result = $this->db->get("locations_ids")->row_array();
+				if ( ! empty($result))
+				{
+					$row['name'] = $result['locations_name'];
+				}
+			}
+			
+			return $row;
 		}
 		
 		function get_doctors_amount($users_id)
@@ -546,7 +561,22 @@
 		{
 			$this->db->where("id", $id);
 			$this->db->limit(1);
-			return $this->db->get("doctors")->row_array();
+			$row = $this->db->get("doctors")->row_array();
+			
+			$row['name'] = '';
+			if ( ! empty($row['id']))
+			{
+				$this->db->where('users_id', $this->session->userdata("id"));
+				$this->db->where('doctors_id', $id);
+				$this->db->limit(1);
+				$result = $this->db->get("doctors_ids")->row_array();
+				if ( ! empty($result))
+				{
+					$row['name'] = $result['doctors_name'];
+				}
+			}
+			
+			return $row;
 		}
 		
 		function account_save($post)
@@ -751,6 +781,7 @@
 			if ($this->logged_in())
 			{
 				$data_array = array("users_id" => $this->session->userdata("id"),
+									"title" => $post['title'],
 									"address" => $post['address'],
 									"postcode" => $post['postcode'],
 									"city" => $post['city']);
@@ -772,6 +803,15 @@
 					
 					$locations_id = $this->db->insert_id();
 				}
+				
+				$this->db->where('users_id', $this->session->userdata("id"));
+				$this->db->where('locations_id', $locations_id);
+				$this->db->delete('locations_ids');
+				
+				$data_array = array('users_id' => $this->session->userdata("id"),
+									'locations_id' => $locations_id,
+									'locations_name' => strtolower( ! empty($post['name']) ? $post['name'] : ''));
+				$this->db->insert('locations_ids', $data_array);
 				
 				return $locations_id;
 			}
@@ -944,6 +984,15 @@
 					
 					if ( ! empty($doctors_id))
 					{
+						$this->db->where('users_id', $this->session->userdata("id"));
+						$this->db->where('doctors_id', $doctors_id);
+						$this->db->delete('doctors_ids');
+						
+						$data_array = array('users_id' => $this->session->userdata("id"),
+											'doctors_id' => $doctors_id,
+											'doctors_name' => strtolower( ! empty($post['name']) ? $post['name'] : ''));
+						$this->db->insert('doctors_ids', $data_array);
+						
 						if ( ! empty($amount))
 						{
 							$data_array = array("doctors_id" => $doctors_id,
@@ -2421,11 +2470,14 @@
 			$users_fields = $this->get_users_fields();
 			
 			$this->db->where("id", $this->session->userdata('id'));
-			$this->db->where("use_locations", TRUE);
+			$this->db->where("organization", TRUE);
 			if ($this->db->count_all_results('users'))
 			{
 				$tags[] = 'location';
 				$fields['location'] = 'Locatie';
+				
+				$tags[] = 'treatment';
+				$fields['treatment'] = 'Behandeling';
 			}
 			
 			$cols = array();
@@ -2504,7 +2556,7 @@
 								
 								foreach ($tags as $tag)
 								{
-									if (in_array($tag, array('birth', 'doctor')) && ! in_array($tag, $tags_required))
+									if (in_array($tag, array('birth', 'doctor', 'location', 'treatment')) && ! in_array($tag, $tags_required))
 									{
 										$result['dont_use'][$tag] = TRUE;
 									}
@@ -3735,6 +3787,24 @@
 							$doctors[$row['id']] = $row;
 						}
 					}
+					
+					$locations = array();
+					$locations_ids = array();
+					foreach ($result as $row)
+					{
+						$locations_ids[] = $row['location'];
+					}
+					$locations_ids = array_diff(array_unique($locations_ids), array('0'));
+					
+					if ( ! empty($locations_ids))
+					{
+						$this->db->where_in("id", $locations_ids);
+						$locs = $this->db->get("locations")->result_array();
+						foreach ($locs as $row)
+						{
+							$locations[$row['id']] = $row;
+						}
+					}
 
 					foreach ($result as $row)
 					{
@@ -3744,7 +3814,12 @@
 						$row['doctor_name'] = "";
 						if ( ! empty($doctors[$row['doctor']]))
 						{
-							$row['doctor_name'] = $doctors[$row['doctor']]['firstname'].' '.$doctors[$row['doctor']]['lastname'];
+							$row['doctor_name'] = $doctors[$row['doctor']]['title'].' '.$doctors[$row['doctor']]['firstname'].' '.$doctors[$row['doctor']]['lastname'];
+						}
+						$row['location_name'] = "";
+						if ( ! empty($locations[$row['location']]))
+						{
+							$row['location_name'] = $locations[$row['location']]['title'];
 						}
 						$items[] = $row;
 					}
