@@ -139,12 +139,27 @@
 				</div>
 				
 				<div class="compose-steps-item" ng-show="step == 2">
-					<div class="compose-finish">
+					<div class="compose-finish" ng-show=" ! all_finished">
 						<img src="/application/views/images/compose.svg" alt="" class="compose-icon" />
 						U staat op het punt om {{send_emails.length}} patiënten een uitnodiging te sturen.
 						<div class="compose-buttons">
 							<button class="btn btn-danger" ng-click="send()" ng-disabled=" ! send_emails.length">Stuur uitnodigingen</button><br />
 							<button class="btn btn-sm btn-default" ng-click="compose_prev()">Annuleer</button>
+						</div>
+					</div>
+					
+					<div class="compose-all" ng-show="all_finished">
+						<div class="compose-all-icon">
+							<i class="fa fa-check-circle"></i>
+						</div>
+						
+						<div class="compose-all-text">
+							Het versturen van uw uitnodigingen is gelukt!
+							<span class="drag-span">U ontvangt in de regel binner 48 reacties van uw patiënten.</span>
+						</div>
+						
+						<div class="compose-all-button">
+							<a href="#/dashboard" class="btn btn-default">Terug naar dashboard</a>
 						</div>
 					</div>
 				</div>

@@ -3385,6 +3385,7 @@
     function ComposeCtrl($scope, $rootScope, $window, $http, $location, $modal, logger, Upload, $timeout) {
 		$scope.step = 0;
 		$scope.status = 0;
+		$scope.all_finished = false;
 		$scope.too_long_time = false;
 		$scope.too_long_text = 'Uw patiëntenbestand wordt verwerkt.';
 		
@@ -3671,7 +3672,8 @@
 			{
 				$http.post("/pub/send/", {emails: $scope.send_emails, file: $scope.file}).success(function(data, status, headers, config) {
 					logger.check(data);
-					$location.url("/mail/inbox");
+					//$location.url("/mail/inbox");
+					$scope.all_finished = true;
 				});
 			}
 			else
