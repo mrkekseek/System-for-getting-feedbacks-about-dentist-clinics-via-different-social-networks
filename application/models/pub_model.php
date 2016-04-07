@@ -2422,7 +2422,7 @@
 			$users_fields = $this->get_users_fields();
 			
 			$this->db->where("id", $this->session->userdata('id'));
-			$this->db->where("use_locations", TRUE);
+			$this->db->where("organization", TRUE);
 			if ($this->db->count_all_results('users'))
 			{
 				$tags[] = 'location';
@@ -2505,7 +2505,7 @@
 								
 								foreach ($tags as $tag)
 								{
-									if (in_array($tag, array('birth', 'doctor')) && ! in_array($tag, $tags_required))
+									if (in_array($tag, array('birth', 'doctor', 'location', 'treatment')) && ! in_array($tag, $tags_required))
 									{
 										$result['dont_use'][$tag] = TRUE;
 									}
