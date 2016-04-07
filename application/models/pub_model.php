@@ -519,7 +519,22 @@
 		{
 			$this->db->where("id", $id);
 			$this->db->limit(1);
-			return $this->db->get("locations")->row_array();
+			$row = $this->db->get("locations")->row_array();
+			
+			$row['name'] = '';
+			if ( ! empty($row['id']))
+			{
+				$this->db->where('users_id', $this->session->userdata("id"));
+				$this->db->where('locations_id', $id);
+				$this->db->limit(1);
+				$result = $this->db->get("locations_ids")->row_array();
+				if ( ! empty($result))
+				{
+					$row['name'] = $result['locations_name'];
+				}
+			}
+			
+			return $row;
 		}
 		
 		function get_doctors_amount($users_id)
@@ -546,7 +561,22 @@
 		{
 			$this->db->where("id", $id);
 			$this->db->limit(1);
-			return $this->db->get("doctors")->row_array();
+			$row = $this->db->get("doctors")->row_array();
+			
+			$row['name'] = '';
+			if ( ! empty($row['id']))
+			{
+				$this->db->where('users_id', $this->session->userdata("id"));
+				$this->db->where('doctors_id', $id);
+				$this->db->limit(1);
+				$result = $this->db->get("doctors_ids")->row_array();
+				if ( ! empty($result))
+				{
+					$row['name'] = $result['doctors_name'];
+				}
+			}
+			
+			return $row;
 		}
 		
 		function account_save($post)
@@ -774,6 +804,15 @@
 					$locations_id = $this->db->insert_id();
 				}
 				
+				$this->db->where('users_id', $this->session->userdata("id"));
+				$this->db->where('locations_id', $locations_id);
+				$this->db->delete('locations_ids');
+				
+				$data_array = array('users_id' => $this->session->userdata("id"),
+									'locations_id' => $locations_id,
+									'locations_name' => strtolower( ! empty($post['name']) ? $post['name'] : ''));
+				$this->db->insert('locations_ids', $data_array);
+				
 				return $locations_id;
 			}
 			
@@ -945,6 +984,15 @@
 					
 					if ( ! empty($doctors_id))
 					{
+						$this->db->where('users_id', $this->session->userdata("id"));
+						$this->db->where('doctors_id', $doctors_id);
+						$this->db->delete('doctors_ids');
+						
+						$data_array = array('users_id' => $this->session->userdata("id"),
+											'doctors_id' => $doctors_id,
+											'doctors_name' => strtolower( ! empty($post['name']) ? $post['name'] : ''));
+						$this->db->insert('doctors_ids', $data_array);
+						
 						if ( ! empty($amount))
 						{
 							$data_array = array("doctors_id" => $doctors_id,
