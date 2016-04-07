@@ -3385,9 +3385,15 @@
     function ComposeCtrl($scope, $rootScope, $window, $http, $location, $modal, logger, Upload, $timeout) {
 		$scope.step = 0;
 		$scope.status = 0;
+		$scope.first_upload = true;
+		console.log($scope.first_upload);
 		$scope.all_finished = false;
 		$scope.too_long_time = false;
 		$scope.too_long_text = 'Uw patiëntenbestand wordt verwerkt.';
+		
+		$timeout(function() {
+			$scope.first_upload = $scope.user.first_upload;
+		}, 500);
 		
 		$scope.compose_next = function() {
 			$scope.step++;
@@ -3443,6 +3449,10 @@
 						}, 1100);
 						
 						$scope.print($scope.result);
+						if ($scope.first_upload)
+						{
+							$scope.first_upload_modal();
+						}
 					}
 				});
 			}, function (response)
@@ -3537,6 +3547,29 @@
 			$scope.change_page(1);
 			
 			$scope.define_doctors();
+		};
+		
+		$scope.first_upload_modal = function()
+		{
+			var modalInstance;
+			modalInstance = $modal.open({
+				templateUrl: 'first_upload.html',
+				controller: 'ModalFirstUploadCtrl',
+				resolve: {
+					items: function() {
+						return [];
+					}
+				}
+			});
+
+			modalInstance.result.then((function(ids) {
+				$http.post("/pub/upload_help/", {file: $scope.file}).success(function(data, status, headers, config) {
+					logger.check(data);
+					$location.url("/dashboard");
+				});
+			}), function() {
+				console.log("Modal dismissed at: " + new Date());
+			});
 		};
 		
 		$scope.define_doctors = function()
@@ -6242,6 +6275,7 @@
 		.controller('ModalUndoCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUndoCtrl])
 		.controller('ModalInstanceHelpCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceHelpCtrl])
 		.controller('ModalDefineDoctorsCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalDefineDoctorsCtrl])
+		.controller('ModalFirstUploadCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalFirstUploadCtrl])
 		.controller('ModalDefineLocationsCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalDefineLocationsCtrl])
         .controller('PaginationDemoCtrl', ['$scope', PaginationDemoCtrl])
         .controller('TabsDemoCtrl', ['$scope', TabsDemoCtrl])
@@ -7357,6 +7391,16 @@
     };
 	
 	function ModalInstanceHelpCtrl($scope, $modalInstance, $http, logger, items) {
+		$scope.cancel = function() {
+            $modalInstance.dismiss("cancel");
+        };
+		
+		$scope.confirm = function() {
+            $modalInstance.close("confirm");
+        };
+    };
+	
+	function ModalFirstUploadCtrl($scope, $modalInstance, $http, logger, items) {
 		$scope.cancel = function() {
             $modalInstance.dismiss("cancel");
         };

@@ -165,7 +165,7 @@
 				</div>
 			</div>
 			
-			<div class="row" ng-id="step < 2">
+			<div class="row" ng-if="step < 2 && ! first_upload">
 				<div class="col-sm-5 col-xs-12">
 					<a href="javascript:void(0);" class="link-upload-help" ng-show="status > 1" ng-click="help()">Heeft u hulp nodig?</a><br /><br />
 				</div>
@@ -196,6 +196,23 @@
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-primary" ng-click="confirm()">Geef toestemming</button>
+			<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+		</div>
+	</script>
+	
+	<script type="text/ng-template" id="first_upload.html">
+		<div class="modal-header">
+			<h3>
+				Uw eerste upload
+			</h3>
+		</div>
+		<div class="modal-body">
+			<p>
+				Omdat dit uw eerste upload is, zal het geüploade bestand worden gecontroleerd door het Patiëntenreview Support Team. Op deze manier kunnen we uw Patiëntenreview account afstellen op de door u aangeleverde patiëntenbestanden.
+			</p>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" ng-click="confirm()">Stuur</button>
 			<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
 		</div>
 	</script>

@@ -1232,6 +1232,14 @@
 			$row['account_amount'] = $row['account_amount'] != '0.00' ? $row['account_amount'] : ($row['account_type'] == 0 ? $this->base_amount : $this->pro_amount);
 			$row['doctors_amount'] = $row['doctors_amount'] != '0.00' ? $row['doctors_amount'] : $this->doctor_amount;
 			$row['doctors_number'] = ! empty($row['doctors_number']) ? $row['doctors_number'] : $this->free_doctors_number;
+
+			$row['first_upload'] = FALSE;
+			if (empty($row['admin_id']))
+			{
+				$this->db->where('users_id', $row['id']);
+				$this->db->where('status <>', 3);
+				$row['first_upload'] = ! $this->db->count_all_results('sent');
+			}
 			
 			return $row;
 		}
@@ -2719,6 +2727,9 @@
 		
 		function upload_help($file)
 		{
+			$help_email = 'support@patientenreview.nl';
+			//$help_email = 'id@div-art.com';
+			
 			$this->db->where("id", $this->session->userdata("id"));
 			$this->db->limit(1);
 			$row = $this->db->get("users")->row_array();
@@ -2726,7 +2737,7 @@
 			$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 			$message = $this->load->view('views/mail/tpl_help.html', $post, TRUE);
 			$attach = $file."&&".(($row['account'] == 1 && $row['account_type'] == 0) ? './excel-basis-tpl.xls' : './excel-tpl.xls');
-			$this->send("help", 'support@patientenreview.nl', 'Hulpverzoek upload patiëntenbestand '.$row['username'], $message, 'Patiëntenreview', 'info@patientenreview.nl', $attach);
+			$this->send("help", $help_email, 'Hulpverzoek upload patiëntenbestand '.$row['username'], $message, 'Patiëntenreview', 'info@patientenreview.nl', $attach);
 			$this->errors[] = array("Success" => "Patiëntenbestand verstuurd");
 			return $this->real_send(array('help'), $this->db->insert_id());
 		}
