@@ -45,6 +45,7 @@
 					<thead>
 						<tr>
 							<th>Locatienummer</th>
+							<th>Locatie</th>
 							<th>Adres</th>
 							<th>Postcode</th>
 							<th>Stad</th>
@@ -55,6 +56,7 @@
 					<tbody>
 						<tr ng-repeat="l in locations">
 							<td>{{l.id}}</td>
+							<td>{{l.title}}</td>
 							<td>{{l.address}}</td>
 							<td>{{l.postcode}}</td>
 							<td>{{l.city}}</td>

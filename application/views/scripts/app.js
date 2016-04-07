@@ -7482,6 +7482,12 @@
 		
 		$scope.add_location = function() {
 			var error = 1;
+			if ( ! $scope.location.title)
+			{
+				logger.logError("Vergeet niet de Locatie in te vullen!");
+				error = 0;
+			}
+			
 			if ( ! $scope.location.address)
 			{
 				logger.logError("Vergeet niet de Adres in te vullen!");

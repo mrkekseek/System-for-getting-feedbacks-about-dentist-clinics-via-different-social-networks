@@ -751,6 +751,7 @@
 			if ($this->logged_in())
 			{
 				$data_array = array("users_id" => $this->session->userdata("id"),
+									"title" => $post['title'],
 									"address" => $post['address'],
 									"postcode" => $post['postcode'],
 									"city" => $post['city']);
