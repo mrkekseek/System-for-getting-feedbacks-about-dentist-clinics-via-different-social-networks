@@ -3501,8 +3501,6 @@
 			$scope.file = result.file;
 
 			$scope.keys = Object.keys($scope.headers);
-
-			$scope.send_emails = [];
 			if ($scope.all_data && $scope.all_data.length)
 			{
 				$scope.reprint_rows();
@@ -3518,6 +3516,7 @@
 			$scope.unknown_doctors = [];
 			$scope.unknown_locations = [];
 			$scope.data = [];
+			$scope.send_emails = [];
 			$scope.all_data.sort(function(a, b) { return b.error - a.error});
 			for (var key in $scope.all_data)
 			{
