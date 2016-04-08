@@ -3501,7 +3501,6 @@
 			$scope.file = result.file;
 
 			$scope.keys = Object.keys($scope.headers);
-			console.log($scope.column);
 
 			$scope.send_emails = [];
 			if ($scope.all_data && $scope.all_data.length)
@@ -3527,15 +3526,39 @@
 					$scope.all_data[key].text = $scope.all_data[key].email;
 					$scope.send_emails.push($scope.all_data[key]);
 				}
-				
+
 				if ($scope.all_data[key].doctor != '' && $scope.all_data[key].doctor_id == 0)
 				{
-					$scope.unknown_doctors.push($scope.all_data[key].doctor);
+					var check = true;
+					for (var i in $scope.unknown_doctors)
+					{
+						if ($scope.all_data[key].doctor == $scope.unknown_doctors[i])
+						{
+							check = false;
+						}
+					}
+					
+					if (check)
+					{
+						$scope.unknown_doctors.push($scope.all_data[key].doctor);
+					}
 				}
 				
 				if ($scope.all_data[key].location != '' && $scope.all_data[key].location_id == 0)
 				{
-					$scope.unknown_locations.push($scope.all_data[key].location);
+					var check = true;
+					for (var i in $scope.unknown_locations)
+					{
+						if ($scope.all_data[key].location == $scope.unknown_locations[i])
+						{
+							check = false;
+						}
+					}
+					
+					if (check)
+					{
+						$scope.unknown_locations.push($scope.all_data[key].location);
+					}
 				}
 				
 				if ($scope.warnings || ( ! $scope.warnings && $scope.all_data[key].error == 0))
