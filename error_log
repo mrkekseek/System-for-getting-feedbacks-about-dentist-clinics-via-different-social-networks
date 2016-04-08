@@ -262,3 +262,4 @@ error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify faile
 [18-Dec-2015 13:20:27 UTC] PHP Warning:  file_get_contents(https://www.zorgkaartnederland.nl/plastisch-chirurg): failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error
  in /home/cloudrocket/public_html/customer/patientenreview/notifier.php on line 55
 [18-Dec-2015 13:20:27 UTC] PHP Warning:  DOMDocument::loadHTML(): Empty string supplied as input in /home/cloudrocket/public_html/customer/patientenreview/notifier.php on line 55
+[07-Apr-2016 17:26:24 Europe/Amsterdam] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 2048 bytes) in /home/cloudrocket/public_html/pr/application/third_party/PHPExcel/Worksheet.php on line 2479

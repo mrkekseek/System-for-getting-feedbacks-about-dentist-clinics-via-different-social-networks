@@ -1,29 +1,29 @@
-<br /><pre>hello: </pre>The following SMTP error was encountered: <br />Unable to send data: AUTH LOGIN<br />Failed to send AUTH LOGIN command. Error: <br />Unable to send data: MAIL FROM:<info@patientenreview.nl><br /><pre>from: </pre>The following SMTP error was encountered: <br />Unable to send data: RCPT TO:<nickvandenberg31@me.com><br /><pre>to: </pre>The following SMTP error was encountered: <br />Unable to send data: DATA<br /><pre>data: </pre>The following SMTP error was encountered: <br />Unable to send data: User-Agent: CodeIgniter
-Date: Thu, 3 Mar 2016 14:59:20 +0100
-From: "Cloudrocket Test Practice" <info@patientenreview.nl>
+The following SMTP error was encountered: 0 <br />Unable to send data: AUTH LOGIN<br />Failed to send AUTH LOGIN command. Error: <br />Unable to send data: MAIL FROM:<info@patientenreview.nl><br /><pre>from: </pre>The following SMTP error was encountered: <br />Unable to send data: RCPT TO:<deejayy@yandex.ua><br /><pre>to: </pre>The following SMTP error was encountered: <br />Unable to send data: DATA<br /><pre>data: </pre>The following SMTP error was encountered: <br />Unable to send data: User-Agent: CodeIgniter
+Date: Thu, 7 Apr 2016 20:50:03 +0200
+From: "Fysiotherapeut Marendijk" <info@patientenreview.nl>
 Return-Path: <info@patientenreview.nl>
-To: nickvandenberg31@me.com
-Reply-To: =?utf-8?Q?"Cloudrocket_Test_Practice"?= <development@cloudrocket.co>
-Subject: =?utf-8?Q?Hoe_was_uw_behandeling_bij_Cloudrocket_Test_Practice=3f?=
+To: deejayy@yandex.ua
+Reply-To: =?utf-8?Q?"Fysiotherapeut_Marendijk"?= <info@div-art.com>
+Subject: =?utf-8?Q?wer_Hoe_was_uw_behandeling_bij_Tandheelkunde_Oss?=
 X-Sender: info@patientenreview.nl
 X-Mailer: CodeIgniter
 X-Priority: 3 (Normal)
-Message-ID: <56d843383f480@patientenreview.nl>
+Message-ID: <5706abdb4059a@patientenreview.nl>
 Mime-Version: 1.0
-Content-Type: multipart/alternative; boundary="B_ALT_56d843383f4d3"
+Content-Type: multipart/alternative; boundary="B_ALT_5706abdb40bfc"
 
 This is a multi-part message in MIME format.
 Your email application may not support this format.
 
---B_ALT_56d843383f4d3
+--B_ALT_5706abdb40bfc
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 
-Cloudrocket Test Practice
+Fysiotherapeut Marendijk
 
 Hoe was uw behandeling?
 
-Zou u Cloudrocket Test Practice aanbevelen?
+Zou u Fysiotherapeut Marendijk aanbevelen?
 
 Geachte heer/mevrouw,U bent onlangs behandeld in onze praktijk. We sturen u
 deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw
@@ -33,21 +33,35 @@ beoordeling te plaatsen op online kanalen.Op een schaal van 1 tot 5 sterren,
 hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of
 vrienden?
 
+Beoordeel ons en win een ... t.w.v. €..,..!12312313
+
+&nbsp;
+
+&nbsp;
+
 Onwaarschijnlijk
+
+1
+
+2
+
+3
+
+4
+
+5
 
 Waarschijnlijk
 
-Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen.
-Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons
-team van feedback voorzien.Bedankt voor het delen van uw mening!Met
-vriendelijke groet,Cloudrocket Test Practice
+Beweeg met uw muis over het aantal sterretjes hierboven en klik om aan te
+geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt
+u uw mening delen met anderen of ons team van feedback voorzien.Bedankt voor
+het delen van uw mening!Met vriendelijke groet,Fysiotherapeut Marendijk
 
-U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het
-patiëntenbestand van Cloudrocket Test Practice. Deze e-mail is een
-eenmalige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt
-uitsluitend gebruikt voor het verzoek tot deelname aan dit
-patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar
-gemaakt.
+U ontvangt deze e-mail omdat uw e-mailadres is opgenomen in het
+patiëntenbestand van Fysiotherapeut Marendijk. Het verzoek tot deelname aan
+dit is een eenmalige e-mail volgend op uw behandeling.Deze e-mailuitnodiging
+wordt verzorgd door Patiëntenreview.
 
 Ik wil geen e-mails meer van Patiëntenreview ontvangen.
 
@@ -73,7 +87,7 @@ padding: 10px !important;
 }
 
 
---B_ALT_56d843383f4d3
+--B_ALT_5706abdb40bfc
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
@@ -114,15 +128,15 @@ Content-Transfer-Encoding: quoted-printable
 						<td style=3D"text-align: left; padding: 0; margin: 0; font-size: 0; l=
 ine-height: 0; vertical-align: top;">
 							<a href=3D"javascript:void(0);">
-								<img src=3D"http://pr.cloudrocket.co/application/views/images/logo_=
-full.png" height=3D"30" alt=3D"" />
+								<img src=3D"http://pr.da/application/views/images/logo_full.png" he=
+ight=3D"30" alt=3D"" />
 							</a>
 						</td>
 							<td style=3D"text-align: right; padding: 0; margin: 0; font-size: 0;=
  line-height: 0;">
 								<p style=3D"color: #626262; margin: 0; font: 14px/30px arial, sans-=
 serif; text-align: right;">
-									Cloudrocket Test Practice								</p>
+									Fysiotherapeut Marendijk								</p>
 							</td>
 					</tr>
 									</table>
@@ -132,9 +146,9 @@ serif; text-align: right;">
 				<tr>
 					<td style=3D"height: 150px; vertical-align: middle; text-align: center=
 ; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('htt=
-p://pr.cloudrocket.co//application/views/images/email-back.png'); backgroun=
-d-repeat: no-repeat; background-position: center; background-color: #3281c9=
-; background-size: cover;">
+p://pr.da//application/views/images/email-back.png'); background-repeat: no=
+-repeat; background-position: center; background-color: #bc0f0f; background=
+-size: cover;">
 						Hoe was uw behandeling?					</td>
 				</tr>
 			</table>
@@ -146,7 +160,7 @@ d-repeat: no-repeat; background-position: center; background-color: #3281c9=
 												<p style=3D"margin: 0 0 20px; font: 14px/1.3 arial, sans-serif;=
  color: #525354; padding: 15px; background-color: #F3F3F3; border: solid #D=
 3D3D3 1px;">
-							Zou u Cloudrocket Test Practice aanbevelen?						</p>
+							Zou u Fysiotherapeut Marendijk aanbevelen?						</p>
 											=09
 												<p style=3D"margin: 0; font: 14px/1.3 arial, sans-serif; color:=
  #525354; padding-bottom: 15px;">
@@ -158,179 +172,224 @@ idszorg door uw beoordeling te plaatsen op online kanalen.<br /><br />Op ee=
 n schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk=
  zou aanbevelen bij familie of vrienden?						</p>
 											=09
+												<p style=3D"padding: 15px; background-color: #F0A400; font: bol=
+d 14px/1.3 arial, sans-serif; color: #fff; text-align: center; margin: 0;">
+							Beoordeel ons en win een ... t.w.v. €..,..!12312313						</p>
+											=09
 											=09
 											=09
 												<table class=3D"inner" cellpadding=3D"0" cellspacing=3D"0" styl=
-e=3D"width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+e=3D"width: 100%; border-collapse: collapse; margin: 20px 0;">
 							<tr>
 								<td style=3D"vertical-align: middle; font: 13px/1.3 arial, sans-ser=
 if; color: #6E6E6E; text-align: right; padding-right: 2%;">
-									Onwaarschijnlijk
+									&nbsp;
 								</td>
 								<td class=3D"star" style=3D"vertical-align: middle; width: 12%; tex=
 t-align: center;">
-									<div style=3D"background-image: url('http://pr.cloudrocket.co/appl=
-ication/views/images/star_gmail.png'); background-repeat: no-repeat; backgr=
-ound-position: center 0; background-size: 100% auto;">
-										<a href=3D"http://pr.cloudrocket.co/invitation/13416a75f4cea91095=
-07cacd8e2f2aefc" style=3D"text-decoration: none;">
-											<img src=3D"http://pr.cloudrocket.co/application/views/images/st=
-ar_default.png" alt=3D"" style=3D"width: 100%; vertical-align: middle;" />
-										</a>
-									</div>
+									<a href=3D"http://pr.da/invitation/1c8ed21db4f678f3b13b9d5ee164890=
+88" style=3D"text-decoration: none; opacity: 0.2;">
+										<img src=3D"http://pr.da/application/views/images/star_hover.png"=
+ alt=3D"" style=3D"width: 100%; vertical-align: middle;" />
+									</a>
 								</td>
 								<td class=3D"star" style=3D"vertical-align: middle; width: 12%; tex=
 t-align: center;">
-									<div style=3D"background-image: url('http://pr.cloudrocket.co/appl=
-ication/views/images/star_gmail.png'); background-repeat: no-repeat; backgr=
-ound-position: center 0; background-size: 100% auto;">
-										<a href=3D"http://pr.cloudrocket.co/invitation/23416a75f4cea91095=
-07cacd8e2f2aefc" style=3D"text-decoration: none;">
-											<img src=3D"http://pr.cloudrocket.co/application/views/images/st=
-ar_default.png" alt=3D"" style=3D"width: 100%; vertical-align: middle;" />
-										</a>
-									</div>
+									<a href=3D"http://pr.da/invitation/2c8ed21db4f678f3b13b9d5ee164890=
+88" style=3D"text-decoration: none; opacity: 0.4;">
+										<img src=3D"http://pr.da/application/views/images/star_hover.png"=
+ alt=3D"" style=3D"width: 100%; vertical-align: middle;" />
+									</a>
 								</td>
 								<td class=3D"star" style=3D"vertical-align: middle; width: 12%; tex=
 t-align: center;">
-									<div style=3D"background-image: url('http://pr.cloudrocket.co/appl=
-ication/views/images/star_gmail.png'); background-repeat: no-repeat; backgr=
-ound-position: center 0; background-size: 100% auto;">
-										<a href=3D"http://pr.cloudrocket.co/invitation/33416a75f4cea91095=
-07cacd8e2f2aefc" style=3D"text-decoration: none;">
-											<img src=3D"http://pr.cloudrocket.co/application/views/images/st=
-ar_default.png" alt=3D"" style=3D"width: 100%; vertical-align: middle;" />
-										</a>
-									</div>
+									<a href=3D"http://pr.da/invitation/3c8ed21db4f678f3b13b9d5ee164890=
+88" style=3D"text-decoration: none; opacity: 0.6;">
+										<img src=3D"http://pr.da/application/views/images/star_hover.png"=
+ alt=3D"" style=3D"width: 100%; vertical-align: middle;" />
+									</a>
 								</td>
 								<td class=3D"star" style=3D"vertical-align: middle; width: 12%; tex=
 t-align: center;">
-									<div style=3D"background-image: url('http://pr.cloudrocket.co/appl=
-ication/views/images/star_gmail.png'); background-repeat: no-repeat; backgr=
-ound-position: center 0; background-size: 100% auto;">
-										<a href=3D"http://pr.cloudrocket.co/invitation/43416a75f4cea91095=
-07cacd8e2f2aefc" style=3D"text-decoration: none;">
-											<img src=3D"http://pr.cloudrocket.co/application/views/images/st=
-ar_default.png" alt=3D"" style=3D"width: 100%; vertical-align: middle;" />
-										</a>
-									</div>
+									<a href=3D"http://pr.da/invitation/4c8ed21db4f678f3b13b9d5ee164890=
+88" style=3D"text-decoration: none; opacity: 0.8;">
+										<img src=3D"http://pr.da/application/views/images/star_hover.png"=
+ alt=3D"" style=3D"width: 100%; vertical-align: middle;" />
+									</a>
 								</td>
 								<td class=3D"star" style=3D"vertical-align: middle; width: 12%; tex=
 t-align: center;">
-									<div style=3D"background-image: url('http://pr.cloudrocket.co/appl=
-ication/views/images/star_gmail.png'); background-repeat: no-repeat; backgr=
-ound-position: center 0; background-size: 100% auto;">
-										<a href=3D"http://pr.cloudrocket.co/invitation/53416a75f4cea91095=
-07cacd8e2f2aefc" style=3D"text-decoration: none;">
-											<img src=3D"http://pr.cloudrocket.co/application/views/images/st=
-ar_default.png" alt=3D"" style=3D"width: 100%; vertical-align: middle;" />
-										</a>
-									</div>
+									<a href=3D"http://pr.da/invitation/5c8ed21db4f678f3b13b9d5ee164890=
+88" style=3D"text-decoration: none; opacity: 1.0;">
+										<img src=3D"http://pr.da/application/views/images/star_hover.png"=
+ alt=3D"" style=3D"width: 100%; vertical-align: middle;" />
+									</a>
 								</td>
 								<td style=3D"vertical-align: middle; font: 13px/1.3 arial, sans-ser=
 if; color: #6E6E6E; text-align: left; padding-left: 2%;">
+									&nbsp;
+								</td>
+							</tr>
+						=09
+							<tr>
+								<td style=3D"padding-top: 10px; font: 13px/1.3 arial, sans-serif; c=
+olor: #6E6E6E; text-align: right; padding-right: 2%;">
+									Onwaarschijnlijk
+								</td>
+								<td style=3D"width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;">
+									1
+								</td>
+								<td style=3D"width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;">
+									2
+								</td>
+								<td style=3D"width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;">
+									3
+								</td>
+								<td style=3D"width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;">
+									4
+								</td>
+								<td style=3D"width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;">
+									5
+								</td>
+								<td style=3D"padding-top: 10px; font: 13px/1.3 arial, sans-serif; c=
+olor: #6E6E6E; text-align: left; padding-left: 2%;">
 									Waarschijnlijk
 								</td>
 							</tr>
 						</table>
 						<!--div style=3D"width: 100%; margin: 0 auto; padding: 30px 0; font-s=
-ize: 0; white-space: nowrap;">
-							<span class=3D"stars-text" style=3D"display: inline-block; vertical-=
-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 a=
-rial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;">
-								Onwaarschijnlijk
-							</span>
-							<div class=3D"inner" style=3D"display: inline-block; width: 60%; ver=
-tical-align: middle;">
-								<div style=3D"display: inline-block; vertical-align: middle; width:=
- 20%; position: relative; z-index: 0;">
-									<a href=3D"http://pr.cloudrocket.co/invitation/13416a75f4cea910950=
-7cacd8e2f2aefc" style=3D"display: inline-block; text-decoration: none; back=
-ground-image: url('http://pr.cloudrocket.co/application/views/images/star_g=
-mail.png'); background-repeat: no-repeat; background-position: center 0; ba=
-ckground-size: 100% auto;">
-										<img src=3D"http://pr.cloudrocket.co/application/views/images/sta=
-r_default.png" alt=3D"" style=3D"width: 100%;" />
-									</a>
+ize: 0;">
+							<div class=3D"white-space: nowrap;">
+								<span class=3D"stars-text" style=3D"display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;">
+									&nbsp;
+								</span>
+								<div class=3D"inner" style=3D"display: inline-block; width: 60%; ve=
+rtical-align: middle;">
+									<div style=3D"display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;">
+										<a href=3D"http://pr.da/invitation/1c8ed21db4f678f3b13b9d5ee16489=
+088" style=3D"display: inline-block; text-decoration: none; opacity: 0.2;">
+											<img src=3D"http://pr.da/application/views/images/star_hover.png=
+" alt=3D"" style=3D"width: 100%;" />
+										</a>
+									</div>
+									<div style=3D"display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;">
+										<a href=3D"http://pr.da/invitation/2c8ed21db4f678f3b13b9d5ee16489=
+088" style=3D"display: inline-block; text-decoration: none; opacity: 0.4;">
+											<img src=3D"http://pr.da/application/views/images/star_hover.png=
+" alt=3D"" style=3D"width: 100%;" />
+										</a>
+									</div>
+									<div style=3D"display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;">
+										<a href=3D"http://pr.da/invitation/3c8ed21db4f678f3b13b9d5ee16489=
+088" style=3D"display: inline-block; text-decoration: none; opacity: 0.6;">
+											<img src=3D"http://pr.da/application/views/images/star_hover.png=
+" alt=3D"" style=3D"width: 100%;" />
+										</a>
+									</div>
+									<div style=3D"display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;">
+										<a href=3D"http://pr.da/invitation/4c8ed21db4f678f3b13b9d5ee16489=
+088" style=3D"display: inline-block; text-decoration: none; opacity: 0.8;">
+											<img src=3D"http://pr.da/application/views/images/star_hover.png=
+" alt=3D"" style=3D"width: 100%;" />
+										</a>
+									</div>
+									<div style=3D"display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;">
+										<a href=3D"http://pr.da/invitation/5c8ed21db4f678f3b13b9d5ee16489=
+088" style=3D"display: inline-block; text-decoration: none; opacity: 1.0;">
+											<img src=3D"http://pr.da/application/views/images/star_hover.png=
+" alt=3D"" style=3D"width: 100%;" />
+										</a>
+									</div>
 								</div>
-								<div style=3D"display: inline-block; vertical-align: middle; width:=
- 20%; position: relative; z-index: 0;">
-									<a href=3D"http://pr.cloudrocket.co/invitation/23416a75f4cea910950=
-7cacd8e2f2aefc" style=3D"display: inline-block; text-decoration: none; back=
-ground-image: url('http://pr.cloudrocket.co/application/views/images/star_g=
-mail.png'); background-repeat: no-repeat; background-position: center 0; ba=
-ckground-size: 100% auto;">
-										<img src=3D"http://pr.cloudrocket.co/application/views/images/sta=
-r_default.png" alt=3D"" style=3D"width: 100%;" />
-									</a>
-								</div>
-								<div style=3D"display: inline-block; vertical-align: middle; width:=
- 20%; position: relative; z-index: 0;">
-									<a href=3D"http://pr.cloudrocket.co/invitation/33416a75f4cea910950=
-7cacd8e2f2aefc" style=3D"display: inline-block; text-decoration: none; back=
-ground-image: url('http://pr.cloudrocket.co/application/views/images/star_g=
-mail.png'); background-repeat: no-repeat; background-position: center 0; ba=
-ckground-size: 100% auto;">
-										<img src=3D"http://pr.cloudrocket.co/application/views/images/sta=
-r_default.png" alt=3D"" style=3D"width: 100%;" />
-									</a>
-								</div>
-								<div style=3D"display: inline-block; vertical-align: middle; width:=
- 20%; position: relative; z-index: 0;">
-									<a href=3D"http://pr.cloudrocket.co/invitation/43416a75f4cea910950=
-7cacd8e2f2aefc" style=3D"display: inline-block; text-decoration: none; back=
-ground-image: url('http://pr.cloudrocket.co/application/views/images/star_g=
-mail.png'); background-repeat: no-repeat; background-position: center 0; ba=
-ckground-size: 100% auto;">
-										<img src=3D"http://pr.cloudrocket.co/application/views/images/sta=
-r_default.png" alt=3D"" style=3D"width: 100%;" />
-									</a>
-								</div>
-								<div style=3D"display: inline-block; vertical-align: middle; width:=
- 20%; position: relative; z-index: 0;">
-									<a href=3D"http://pr.cloudrocket.co/invitation/53416a75f4cea910950=
-7cacd8e2f2aefc" style=3D"display: inline-block; text-decoration: none; back=
-ground-image: url('http://pr.cloudrocket.co/application/views/images/star_g=
-mail.png'); background-repeat: no-repeat; background-position: center 0; ba=
-ckground-size: 100% auto;">
-										<img src=3D"http://pr.cloudrocket.co/application/views/images/sta=
-r_default.png" alt=3D"" style=3D"width: 100%;" />
-									</a>
-								</div>
+								<span class=3D"stars-text" style=3D"display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;">
+									&nbsp;
+								</span>
 							</div>
-							<span class=3D"stars-text" style=3D"display: inline-block; vertical-=
-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 a=
-rial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;">
-								Waarschijnlijk
-							</span>
+						=09
+							<div class=3D"white-space: nowrap; padding-top: 10px;">
+								<span class=3D"stars-text" style=3D"display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;">
+									Onwaarschijnlijk
+								</span>
+								<div class=3D"inner" style=3D"display: inline-block; width: 60%; ve=
+rtical-align: middle;">
+									<div style=3D"display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;">
+										1
+									</div>
+									<div style=3D"display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;">
+										2
+									</div>
+									<div style=3D"display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;">
+										3
+									</div>
+									<div style=3D"display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;">
+										4
+									</div>
+									<div style=3D"display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;">
+										5
+									</div>
+								</div>
+								<span class=3D"stars-text" style=3D"display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;">
+									Waarschijnlijk
+								</span>
+							</div>
 						</div-->
-											=09
 					=09
 												<p class=3D"in-text"style=3D"margin: 0; font: 14px/1.3 arial, s=
 ans-serif; color: #525354; padding-bottom: 15px;">
-							Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanb=
-evelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen o=
-f ons team van feedback voorzien.<br /><br />Bedankt voor het delen van uw =
-mening!<br /><br />Met vriendelijke groet,<br /><br />Cloudrocket Test Prac=
-tice						</p>
+							Beweeg met uw muis over het aantal sterretjes hierboven en klik om a=
+an te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopen=
+d kunt u uw mening delen met anderen of ons team van feedback voorzien.<br =
+/><br />Bedankt voor het delen van uw mening!<br /><br />Met vriendelijke g=
+roet,<br /><br />Fysiotherapeut Marendijk						</p>
 											</div>
+				</div>
+			=09
+				<div style=3D"clear: both;">
 				</div>
 		=09
 								<p style=3D"text-align: left; max-width: 700px; margin: 0 auto; pad=
 ding: 15px 10px 10px; font: 12px/1.3 arial, sans-serif; color: #999; displa=
 y: inline-block;">
-					U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in =
-het patiëntenbestand van Cloudrocket Test Practice. Deze e-mail is een een=
-malige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluit=
-end gebruikt voor het verzoek tot deelname aan dit patiënttevredenheidsond=
-erzoek en wordt op geen enkele manier openbaar gemaakt.				</p>
+					U ontvangt deze e-mail omdat uw e-mailadres is opgenomen in het patië=
+ntenbestand van Fysiotherapeut Marendijk. Het verzoek tot deelname aan dit =
+is een eenmalige e-mail volgend op uw behandeling.<br />Deze e-mailuitnodig=
+ing wordt verzorgd door <a href=3D'http://www.patientenreview.nl/'>Patiënt=
+enreview</a>.				</p>
 							=09
 							=09
 							=09
 				<p style=3D"max-width: 700px; margin: 0 auto; text-align: center; paddi=
 ng: 15px 0; font: 12px/1.5 arial, sans-serif; color: #aaa;">
-					<a href=3D"http://pr.cloudrocket.co/unsubscribe/3416a75f4cea9109507cac=
-d8e2f2aefc/">
+					<a href=3D"http://pr.da/unsubscribe/c8ed21db4f678f3b13b9d5ee16489088/"=
+>
 						Ik wil geen e-mails meer van Patiëntenreview ontvangen.
 					</a>
 				</p>
@@ -363,34 +422,34 @@ d8e2f2aefc/">
 	</body>
 </html>
 
---B_ALT_56d843383f4d3--<br />Unable to send data: .<br /><br />The following SMTP error was encountered: <br />Unable to send email using PHP SMTP.  Your server might not be configured to send mail using this method.<br /><pre>User-Agent: CodeIgniter
-Date: Thu, 3 Mar 2016 14:59:20 +0100
-From: &quot;Cloudrocket Test Practice&quot; &lt;info@patientenreview.nl&gt;
+--B_ALT_5706abdb40bfc--<br />Unable to send data: .<br /><br />The following SMTP error was encountered: <br />Unable to send email using PHP SMTP.  Your server might not be configured to send mail using this method.<br /><pre>User-Agent: CodeIgniter
+Date: Thu, 7 Apr 2016 20:50:03 +0200
+From: &quot;Fysiotherapeut Marendijk&quot; &lt;info@patientenreview.nl&gt;
 Return-Path: &lt;info@patientenreview.nl&gt;
-To: nickvandenberg31@me.com
-Reply-To: =?utf-8?Q?&quot;Cloudrocket_Test_Practice&quot;?= &lt;development@cloudrocket.co&gt;
-Subject: =?utf-8?Q?Hoe_was_uw_behandeling_bij_Cloudrocket_Test_Practice=3f?=
+To: deejayy@yandex.ua
+Reply-To: =?utf-8?Q?&quot;Fysiotherapeut_Marendijk&quot;?= &lt;info@div-art.com&gt;
+Subject: =?utf-8?Q?wer_Hoe_was_uw_behandeling_bij_Tandheelkunde_Oss?=
 X-Sender: info@patientenreview.nl
 X-Mailer: CodeIgniter
 X-Priority: 3 (Normal)
-Message-ID: &lt;56d843383f480@patientenreview.nl&gt;
+Message-ID: &lt;5706abdb4059a@patientenreview.nl&gt;
 Mime-Version: 1.0
 
 
-Content-Type: multipart/alternative; boundary=&quot;B_ALT_56d843383f4d3&quot;
+Content-Type: multipart/alternative; boundary=&quot;B_ALT_5706abdb40bfc&quot;
 
 This is a multi-part message in MIME format.
 Your email application may not support this format.
 
---B_ALT_56d843383f4d3
+--B_ALT_5706abdb40bfc
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 
-Cloudrocket Test Practice
+Fysiotherapeut Marendijk
 
 Hoe was uw behandeling?
 
-Zou u Cloudrocket Test Practice aanbevelen?
+Zou u Fysiotherapeut Marendijk aanbevelen?
 
 Geachte heer/mevrouw,U bent onlangs behandeld in onze praktijk. We sturen u
 deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw
@@ -400,21 +459,35 @@ beoordeling te plaatsen op online kanalen.Op een schaal van 1 tot 5 sterren,
 hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of
 vrienden?
 
+Beoordeel ons en win een ... t.w.v. €..,..!12312313
+
+&amp;nbsp;
+
+&amp;nbsp;
+
 Onwaarschijnlijk
+
+1
+
+2
+
+3
+
+4
+
+5
 
 Waarschijnlijk
 
-Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen.
-Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons
-team van feedback voorzien.Bedankt voor het delen van uw mening!Met
-vriendelijke groet,Cloudrocket Test Practice
+Beweeg met uw muis over het aantal sterretjes hierboven en klik om aan te
+geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt
+u uw mening delen met anderen of ons team van feedback voorzien.Bedankt voor
+het delen van uw mening!Met vriendelijke groet,Fysiotherapeut Marendijk
 
-U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het
-patiëntenbestand van Cloudrocket Test Practice. Deze e-mail is een
-eenmalige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt
-uitsluitend gebruikt voor het verzoek tot deelname aan dit
-patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar
-gemaakt.
+U ontvangt deze e-mail omdat uw e-mailadres is opgenomen in het
+patiëntenbestand van Fysiotherapeut Marendijk. Het verzoek tot deelname aan
+dit is een eenmalige e-mail volgend op uw behandeling.Deze e-mailuitnodiging
+wordt verzorgd door Patiëntenreview.
 
 Ik wil geen e-mails meer van Patiëntenreview ontvangen.
 
@@ -440,7 +513,7 @@ padding: 10px !important;
 }
 
 
---B_ALT_56d843383f4d3
+--B_ALT_5706abdb40bfc
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
@@ -481,15 +554,15 @@ Content-Transfer-Encoding: quoted-printable
 						&lt;td style=3D&quot;text-align: left; padding: 0; margin: 0; font-size: 0; l=
 ine-height: 0; vertical-align: top;&quot;&gt;
 							&lt;a href=3D&quot;javascript:void(0);&quot;&gt;
-								&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/logo_=
-full.png&quot; height=3D&quot;30&quot; alt=3D&quot;&quot; /&gt;
+								&lt;img src=3D&quot;http://pr.da/application/views/images/logo_full.png&quot; he=
+ight=3D&quot;30&quot; alt=3D&quot;&quot; /&gt;
 							&lt;/a&gt;
 						&lt;/td&gt;
 							&lt;td style=3D&quot;text-align: right; padding: 0; margin: 0; font-size: 0;=
  line-height: 0;&quot;&gt;
 								&lt;p style=3D&quot;color: #626262; margin: 0; font: 14px/30px arial, sans-=
 serif; text-align: right;&quot;&gt;
-									Cloudrocket Test Practice								&lt;/p&gt;
+									Fysiotherapeut Marendijk								&lt;/p&gt;
 							&lt;/td&gt;
 					&lt;/tr&gt;
 									&lt;/table&gt;
@@ -499,9 +572,9 @@ serif; text-align: right;&quot;&gt;
 				&lt;tr&gt;
 					&lt;td style=3D&quot;height: 150px; vertical-align: middle; text-align: center=
 ; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('htt=
-p://pr.cloudrocket.co//application/views/images/email-back.png'); backgroun=
-d-repeat: no-repeat; background-position: center; background-color: #3281c9=
-; background-size: cover;&quot;&gt;
+p://pr.da//application/views/images/email-back.png'); background-repeat: no=
+-repeat; background-position: center; background-color: #bc0f0f; background=
+-size: cover;&quot;&gt;
 						Hoe was uw behandeling?					&lt;/td&gt;
 				&lt;/tr&gt;
 			&lt;/table&gt;
@@ -513,7 +586,7 @@ d-repeat: no-repeat; background-position: center; background-color: #3281c9=
 												&lt;p style=3D&quot;margin: 0 0 20px; font: 14px/1.3 arial, sans-serif;=
  color: #525354; padding: 15px; background-color: #F3F3F3; border: solid #D=
 3D3D3 1px;&quot;&gt;
-							Zou u Cloudrocket Test Practice aanbevelen?						&lt;/p&gt;
+							Zou u Fysiotherapeut Marendijk aanbevelen?						&lt;/p&gt;
 											=09
 												&lt;p style=3D&quot;margin: 0; font: 14px/1.3 arial, sans-serif; color:=
  #525354; padding-bottom: 15px;&quot;&gt;
@@ -525,179 +598,224 @@ idszorg door uw beoordeling te plaatsen op online kanalen.&lt;br /&gt;&lt;br /&g
 n schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk=
  zou aanbevelen bij familie of vrienden?						&lt;/p&gt;
 											=09
+												&lt;p style=3D&quot;padding: 15px; background-color: #F0A400; font: bol=
+d 14px/1.3 arial, sans-serif; color: #fff; text-align: center; margin: 0;&quot;&gt;
+							Beoordeel ons en win een ... t.w.v. €..,..!12312313						&lt;/p&gt;
+											=09
 											=09
 											=09
 												&lt;table class=3D&quot;inner&quot; cellpadding=3D&quot;0&quot; cellspacing=3D&quot;0&quot; styl=
-e=3D&quot;width: 100%; border-collapse: collapse; margin-bottom: 20px;&quot;&gt;
+e=3D&quot;width: 100%; border-collapse: collapse; margin: 20px 0;&quot;&gt;
 							&lt;tr&gt;
 								&lt;td style=3D&quot;vertical-align: middle; font: 13px/1.3 arial, sans-ser=
 if; color: #6E6E6E; text-align: right; padding-right: 2%;&quot;&gt;
-									Onwaarschijnlijk
+									&amp;nbsp;
 								&lt;/td&gt;
 								&lt;td class=3D&quot;star&quot; style=3D&quot;vertical-align: middle; width: 12%; tex=
 t-align: center;&quot;&gt;
-									&lt;div style=3D&quot;background-image: url('http://pr.cloudrocket.co/appl=
-ication/views/images/star_gmail.png'); background-repeat: no-repeat; backgr=
-ound-position: center 0; background-size: 100% auto;&quot;&gt;
-										&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/13416a75f4cea91095=
-07cacd8e2f2aefc&quot; style=3D&quot;text-decoration: none;&quot;&gt;
-											&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/st=
-ar_default.png&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
-										&lt;/a&gt;
-									&lt;/div&gt;
+									&lt;a href=3D&quot;http://pr.da/invitation/1c8ed21db4f678f3b13b9d5ee164890=
+88&quot; style=3D&quot;text-decoration: none; opacity: 0.2;&quot;&gt;
+										&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png&quot;=
+ alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
+									&lt;/a&gt;
 								&lt;/td&gt;
 								&lt;td class=3D&quot;star&quot; style=3D&quot;vertical-align: middle; width: 12%; tex=
 t-align: center;&quot;&gt;
-									&lt;div style=3D&quot;background-image: url('http://pr.cloudrocket.co/appl=
-ication/views/images/star_gmail.png'); background-repeat: no-repeat; backgr=
-ound-position: center 0; background-size: 100% auto;&quot;&gt;
-										&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/23416a75f4cea91095=
-07cacd8e2f2aefc&quot; style=3D&quot;text-decoration: none;&quot;&gt;
-											&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/st=
-ar_default.png&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
-										&lt;/a&gt;
-									&lt;/div&gt;
+									&lt;a href=3D&quot;http://pr.da/invitation/2c8ed21db4f678f3b13b9d5ee164890=
+88&quot; style=3D&quot;text-decoration: none; opacity: 0.4;&quot;&gt;
+										&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png&quot;=
+ alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
+									&lt;/a&gt;
 								&lt;/td&gt;
 								&lt;td class=3D&quot;star&quot; style=3D&quot;vertical-align: middle; width: 12%; tex=
 t-align: center;&quot;&gt;
-									&lt;div style=3D&quot;background-image: url('http://pr.cloudrocket.co/appl=
-ication/views/images/star_gmail.png'); background-repeat: no-repeat; backgr=
-ound-position: center 0; background-size: 100% auto;&quot;&gt;
-										&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/33416a75f4cea91095=
-07cacd8e2f2aefc&quot; style=3D&quot;text-decoration: none;&quot;&gt;
-											&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/st=
-ar_default.png&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
-										&lt;/a&gt;
-									&lt;/div&gt;
+									&lt;a href=3D&quot;http://pr.da/invitation/3c8ed21db4f678f3b13b9d5ee164890=
+88&quot; style=3D&quot;text-decoration: none; opacity: 0.6;&quot;&gt;
+										&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png&quot;=
+ alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
+									&lt;/a&gt;
 								&lt;/td&gt;
 								&lt;td class=3D&quot;star&quot; style=3D&quot;vertical-align: middle; width: 12%; tex=
 t-align: center;&quot;&gt;
-									&lt;div style=3D&quot;background-image: url('http://pr.cloudrocket.co/appl=
-ication/views/images/star_gmail.png'); background-repeat: no-repeat; backgr=
-ound-position: center 0; background-size: 100% auto;&quot;&gt;
-										&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/43416a75f4cea91095=
-07cacd8e2f2aefc&quot; style=3D&quot;text-decoration: none;&quot;&gt;
-											&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/st=
-ar_default.png&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
-										&lt;/a&gt;
-									&lt;/div&gt;
+									&lt;a href=3D&quot;http://pr.da/invitation/4c8ed21db4f678f3b13b9d5ee164890=
+88&quot; style=3D&quot;text-decoration: none; opacity: 0.8;&quot;&gt;
+										&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png&quot;=
+ alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
+									&lt;/a&gt;
 								&lt;/td&gt;
 								&lt;td class=3D&quot;star&quot; style=3D&quot;vertical-align: middle; width: 12%; tex=
 t-align: center;&quot;&gt;
-									&lt;div style=3D&quot;background-image: url('http://pr.cloudrocket.co/appl=
-ication/views/images/star_gmail.png'); background-repeat: no-repeat; backgr=
-ound-position: center 0; background-size: 100% auto;&quot;&gt;
-										&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/53416a75f4cea91095=
-07cacd8e2f2aefc&quot; style=3D&quot;text-decoration: none;&quot;&gt;
-											&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/st=
-ar_default.png&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
-										&lt;/a&gt;
-									&lt;/div&gt;
+									&lt;a href=3D&quot;http://pr.da/invitation/5c8ed21db4f678f3b13b9d5ee164890=
+88&quot; style=3D&quot;text-decoration: none; opacity: 1.0;&quot;&gt;
+										&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png&quot;=
+ alt=3D&quot;&quot; style=3D&quot;width: 100%; vertical-align: middle;&quot; /&gt;
+									&lt;/a&gt;
 								&lt;/td&gt;
 								&lt;td style=3D&quot;vertical-align: middle; font: 13px/1.3 arial, sans-ser=
 if; color: #6E6E6E; text-align: left; padding-left: 2%;&quot;&gt;
+									&amp;nbsp;
+								&lt;/td&gt;
+							&lt;/tr&gt;
+						=09
+							&lt;tr&gt;
+								&lt;td style=3D&quot;padding-top: 10px; font: 13px/1.3 arial, sans-serif; c=
+olor: #6E6E6E; text-align: right; padding-right: 2%;&quot;&gt;
+									Onwaarschijnlijk
+								&lt;/td&gt;
+								&lt;td style=3D&quot;width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;&quot;&gt;
+									1
+								&lt;/td&gt;
+								&lt;td style=3D&quot;width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;&quot;&gt;
+									2
+								&lt;/td&gt;
+								&lt;td style=3D&quot;width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;&quot;&gt;
+									3
+								&lt;/td&gt;
+								&lt;td style=3D&quot;width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;&quot;&gt;
+									4
+								&lt;/td&gt;
+								&lt;td style=3D&quot;width: 12%; font: 13px/1.3 arial, sans-serif; color: #=
+6E6E6E; padding-top: 10px; text-align: center;&quot;&gt;
+									5
+								&lt;/td&gt;
+								&lt;td style=3D&quot;padding-top: 10px; font: 13px/1.3 arial, sans-serif; c=
+olor: #6E6E6E; text-align: left; padding-left: 2%;&quot;&gt;
 									Waarschijnlijk
 								&lt;/td&gt;
 							&lt;/tr&gt;
 						&lt;/table&gt;
 						&lt;!--div style=3D&quot;width: 100%; margin: 0 auto; padding: 30px 0; font-s=
-ize: 0; white-space: nowrap;&quot;&gt;
-							&lt;span class=3D&quot;stars-text&quot; style=3D&quot;display: inline-block; vertical-=
-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 a=
-rial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;&quot;&gt;
-								Onwaarschijnlijk
-							&lt;/span&gt;
-							&lt;div class=3D&quot;inner&quot; style=3D&quot;display: inline-block; width: 60%; ver=
-tical-align: middle;&quot;&gt;
-								&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width:=
- 20%; position: relative; z-index: 0;&quot;&gt;
-									&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/13416a75f4cea910950=
-7cacd8e2f2aefc&quot; style=3D&quot;display: inline-block; text-decoration: none; back=
-ground-image: url('http://pr.cloudrocket.co/application/views/images/star_g=
-mail.png'); background-repeat: no-repeat; background-position: center 0; ba=
-ckground-size: 100% auto;&quot;&gt;
-										&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/sta=
-r_default.png&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
-									&lt;/a&gt;
+ize: 0;&quot;&gt;
+							&lt;div class=3D&quot;white-space: nowrap;&quot;&gt;
+								&lt;span class=3D&quot;stars-text&quot; style=3D&quot;display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;&quot;&gt;
+									&amp;nbsp;
+								&lt;/span&gt;
+								&lt;div class=3D&quot;inner&quot; style=3D&quot;display: inline-block; width: 60%; ve=
+rtical-align: middle;&quot;&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;&quot;&gt;
+										&lt;a href=3D&quot;http://pr.da/invitation/1c8ed21db4f678f3b13b9d5ee16489=
+088&quot; style=3D&quot;display: inline-block; text-decoration: none; opacity: 0.2;&quot;&gt;
+											&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png=
+&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
+										&lt;/a&gt;
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;&quot;&gt;
+										&lt;a href=3D&quot;http://pr.da/invitation/2c8ed21db4f678f3b13b9d5ee16489=
+088&quot; style=3D&quot;display: inline-block; text-decoration: none; opacity: 0.4;&quot;&gt;
+											&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png=
+&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
+										&lt;/a&gt;
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;&quot;&gt;
+										&lt;a href=3D&quot;http://pr.da/invitation/3c8ed21db4f678f3b13b9d5ee16489=
+088&quot; style=3D&quot;display: inline-block; text-decoration: none; opacity: 0.6;&quot;&gt;
+											&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png=
+&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
+										&lt;/a&gt;
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;&quot;&gt;
+										&lt;a href=3D&quot;http://pr.da/invitation/4c8ed21db4f678f3b13b9d5ee16489=
+088&quot; style=3D&quot;display: inline-block; text-decoration: none; opacity: 0.8;&quot;&gt;
+											&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png=
+&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
+										&lt;/a&gt;
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0;&quot;&gt;
+										&lt;a href=3D&quot;http://pr.da/invitation/5c8ed21db4f678f3b13b9d5ee16489=
+088&quot; style=3D&quot;display: inline-block; text-decoration: none; opacity: 1.0;&quot;&gt;
+											&lt;img src=3D&quot;http://pr.da/application/views/images/star_hover.png=
+&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
+										&lt;/a&gt;
+									&lt;/div&gt;
 								&lt;/div&gt;
-								&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width:=
- 20%; position: relative; z-index: 0;&quot;&gt;
-									&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/23416a75f4cea910950=
-7cacd8e2f2aefc&quot; style=3D&quot;display: inline-block; text-decoration: none; back=
-ground-image: url('http://pr.cloudrocket.co/application/views/images/star_g=
-mail.png'); background-repeat: no-repeat; background-position: center 0; ba=
-ckground-size: 100% auto;&quot;&gt;
-										&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/sta=
-r_default.png&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
-									&lt;/a&gt;
-								&lt;/div&gt;
-								&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width:=
- 20%; position: relative; z-index: 0;&quot;&gt;
-									&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/33416a75f4cea910950=
-7cacd8e2f2aefc&quot; style=3D&quot;display: inline-block; text-decoration: none; back=
-ground-image: url('http://pr.cloudrocket.co/application/views/images/star_g=
-mail.png'); background-repeat: no-repeat; background-position: center 0; ba=
-ckground-size: 100% auto;&quot;&gt;
-										&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/sta=
-r_default.png&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
-									&lt;/a&gt;
-								&lt;/div&gt;
-								&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width:=
- 20%; position: relative; z-index: 0;&quot;&gt;
-									&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/43416a75f4cea910950=
-7cacd8e2f2aefc&quot; style=3D&quot;display: inline-block; text-decoration: none; back=
-ground-image: url('http://pr.cloudrocket.co/application/views/images/star_g=
-mail.png'); background-repeat: no-repeat; background-position: center 0; ba=
-ckground-size: 100% auto;&quot;&gt;
-										&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/sta=
-r_default.png&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
-									&lt;/a&gt;
-								&lt;/div&gt;
-								&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width:=
- 20%; position: relative; z-index: 0;&quot;&gt;
-									&lt;a href=3D&quot;http://pr.cloudrocket.co/invitation/53416a75f4cea910950=
-7cacd8e2f2aefc&quot; style=3D&quot;display: inline-block; text-decoration: none; back=
-ground-image: url('http://pr.cloudrocket.co/application/views/images/star_g=
-mail.png'); background-repeat: no-repeat; background-position: center 0; ba=
-ckground-size: 100% auto;&quot;&gt;
-										&lt;img src=3D&quot;http://pr.cloudrocket.co/application/views/images/sta=
-r_default.png&quot; alt=3D&quot;&quot; style=3D&quot;width: 100%;&quot; /&gt;
-									&lt;/a&gt;
-								&lt;/div&gt;
+								&lt;span class=3D&quot;stars-text&quot; style=3D&quot;display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;&quot;&gt;
+									&amp;nbsp;
+								&lt;/span&gt;
 							&lt;/div&gt;
-							&lt;span class=3D&quot;stars-text&quot; style=3D&quot;display: inline-block; vertical-=
-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 a=
-rial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;&quot;&gt;
-								Waarschijnlijk
-							&lt;/span&gt;
+						=09
+							&lt;div class=3D&quot;white-space: nowrap; padding-top: 10px;&quot;&gt;
+								&lt;span class=3D&quot;stars-text&quot; style=3D&quot;display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;&quot;&gt;
+									Onwaarschijnlijk
+								&lt;/span&gt;
+								&lt;div class=3D&quot;inner&quot; style=3D&quot;display: inline-block; width: 60%; ve=
+rtical-align: middle;&quot;&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;&quot;&gt;
+										1
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;&quot;&gt;
+										2
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;&quot;&gt;
+										3
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;&quot;&gt;
+										4
+									&lt;/div&gt;
+									&lt;div style=3D&quot;display: inline-block; vertical-align: middle; width=
+: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; co=
+lor: #ccc; text-align: center;&quot;&gt;
+										5
+									&lt;/div&gt;
+								&lt;/div&gt;
+								&lt;span class=3D&quot;stars-text&quot; style=3D&quot;display: inline-block; vertical=
+-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 =
+arial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;&quot;&gt;
+									Waarschijnlijk
+								&lt;/span&gt;
+							&lt;/div&gt;
 						&lt;/div--&gt;
-											=09
 					=09
 												&lt;p class=3D&quot;in-text&quot;style=3D&quot;margin: 0; font: 14px/1.3 arial, s=
 ans-serif; color: #525354; padding-bottom: 15px;&quot;&gt;
-							Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanb=
-evelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen o=
-f ons team van feedback voorzien.&lt;br /&gt;&lt;br /&gt;Bedankt voor het delen van uw =
-mening!&lt;br /&gt;&lt;br /&gt;Met vriendelijke groet,&lt;br /&gt;&lt;br /&gt;Cloudrocket Test Prac=
-tice						&lt;/p&gt;
+							Beweeg met uw muis over het aantal sterretjes hierboven en klik om a=
+an te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopen=
+d kunt u uw mening delen met anderen of ons team van feedback voorzien.&lt;br =
+/&gt;&lt;br /&gt;Bedankt voor het delen van uw mening!&lt;br /&gt;&lt;br /&gt;Met vriendelijke g=
+roet,&lt;br /&gt;&lt;br /&gt;Fysiotherapeut Marendijk						&lt;/p&gt;
 											&lt;/div&gt;
+				&lt;/div&gt;
+			=09
+				&lt;div style=3D&quot;clear: both;&quot;&gt;
 				&lt;/div&gt;
 		=09
 								&lt;p style=3D&quot;text-align: left; max-width: 700px; margin: 0 auto; pad=
 ding: 15px 10px 10px; font: 12px/1.3 arial, sans-serif; color: #999; displa=
 y: inline-block;&quot;&gt;
-					U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in =
-het patiëntenbestand van Cloudrocket Test Practice. Deze e-mail is een een=
-malige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluit=
-end gebruikt voor het verzoek tot deelname aan dit patiënttevredenheidsond=
-erzoek en wordt op geen enkele manier openbaar gemaakt.				&lt;/p&gt;
+					U ontvangt deze e-mail omdat uw e-mailadres is opgenomen in het patië=
+ntenbestand van Fysiotherapeut Marendijk. Het verzoek tot deelname aan dit =
+is een eenmalige e-mail volgend op uw behandeling.&lt;br /&gt;Deze e-mailuitnodig=
+ing wordt verzorgd door &lt;a href=3D'http://www.patientenreview.nl/'&gt;Patiënt=
+enreview&lt;/a&gt;.				&lt;/p&gt;
 							=09
 							=09
 							=09
 				&lt;p style=3D&quot;max-width: 700px; margin: 0 auto; text-align: center; paddi=
 ng: 15px 0; font: 12px/1.5 arial, sans-serif; color: #aaa;&quot;&gt;
-					&lt;a href=3D&quot;http://pr.cloudrocket.co/unsubscribe/3416a75f4cea9109507cac=
-d8e2f2aefc/&quot;&gt;
+					&lt;a href=3D&quot;http://pr.da/unsubscribe/c8ed21db4f678f3b13b9d5ee16489088/&quot;=
+&gt;
 						Ik wil geen e-mails meer van Patiëntenreview ontvangen.
 					&lt;/a&gt;
 				&lt;/p&gt;
@@ -730,4 +848,4 @@ d8e2f2aefc/&quot;&gt;
 	&lt;/body&gt;
 &lt;/html&gt;
 
---B_ALT_56d843383f4d3--</pre>
+--B_ALT_5706abdb40bfc--</pre>

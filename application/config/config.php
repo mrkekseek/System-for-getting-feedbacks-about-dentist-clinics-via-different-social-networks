@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://customer.cloudrocket.co/patientenreview/';
+$config['base_url']	= 'http://pr.cloudrocket.co/';
 
 /*
 |--------------------------------------------------------------------------
