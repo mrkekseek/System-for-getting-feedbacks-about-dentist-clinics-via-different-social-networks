@@ -2562,7 +2562,7 @@
 						$col = FALSE;
 						foreach ($rows[0] as $key => $row)
 						{
-							if (( ! empty($users_fields[$tag]) && strtolower(trim($row)) == $users_fields[$tag]) || (strtolower(trim($row)) == strtolower($fields[$tag])))
+							if ((isset($users_fields[$tag]) && strtolower(trim($row)) == $users_fields[$tag]) || (strtolower(trim($row)) == strtolower($fields[$tag]) && ! isset($users_fields[$tag])))
 							{
 								$col = $key;
 							}
@@ -2601,7 +2601,7 @@
 								
 								foreach ($tags as $tag)
 								{
-									if (in_array($tag, array('birth', 'doctor', 'location', 'treatment')) && ! in_array($tag, $tags_required))
+									if ($tag != 'email' && ! in_array($tag, $tags_required))
 									{
 										$result['dont_use'][$tag] = TRUE;
 									}
@@ -2934,13 +2934,13 @@
 														'account' => $row['account']);
 														
 									$data_array = array("users_id" => $this->session->userdata("id"),
-														"title" => ! empty($list['title']) ? $list['title'] : "",
-														"name" => ! empty($list['name']) ? $list['name'] : "",
-														"sname" => ! empty($list['sname']) ? $list['sname'] : "",
-														"doctor" => ! empty($list['doctor_id']) ? $list['doctor_id'] : 0,
-														"location" => ! empty($list['location_id']) ? $list['location_id'] : 0,
-														"treatment" => ! empty($list['treatment']) ? $list['treatment'] : "",
-														"birth" => ! empty($list['birth']) ? $list['birth'] : "",
+														"title" => ( ! empty($list['title']) && ! empty($post['column']['title'])) ? $list['title'] : "",
+														"name" => ( ! empty($list['name']) && ! empty($post['column']['name'])) ? $list['name'] : "",
+														"sname" => ( ! empty($list['sname']) && ! empty($post['column']['sname'])) ? $list['sname'] : "",
+														"doctor" => ( ! empty($list['doctor_id']) && ! empty($post['column']['doctor'])) ? $list['doctor_id'] : 0,
+														"location" => ( ! empty($list['location_id']) && ! empty($post['column']['location'])) ? $list['location_id'] : 0,
+														"treatment" => ( ! empty($list['treatment']) && ! empty($post['column']['treatment'])) ? $list['treatment'] : "",
+														"birth" => ( ! empty($list['birth']) && ! empty($post['column']['birth'])) ? $list['birth'] : "",
 														"email" => strtolower($list['text']),
 														"date" => time(),
 														"status" => 1,
