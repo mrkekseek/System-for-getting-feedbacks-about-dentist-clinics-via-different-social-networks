@@ -39,7 +39,7 @@
 							
 							<div class="col-sm-7 col-xs-12">
 								<div class="box-info av-online info-dashboard">
-									<div ng-if="show_average_online == '1'">
+									<div ng-show="show_average_online == '1'">
 										<p class="size-h2">{{stat.average_online}}</p>
 										<p class="text-muted" ng-if="type == 'all'"><span data-i18n="De gemiddelde waardering van uw praktijk op alle online kanalen."></span></p>
 										<p class="text-muted" ng-if="type == 'facebook'"><span data-i18n="De gemiddelde waardering van uw praktijk op Facebook."></span></p>
@@ -51,7 +51,7 @@
 										<a href="javascript:void(0);" class="btn btn-default zorgkaart" ng-click="print_online('zorgkaart')"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /> Zorgkaart</a-->
 									</div>
 									
-									<div ng-if="show_fb_login == '1'">
+									<div class="show_fb_login" ng-class="{'shown': show_fb_login == '1'}">
 										<p class="text-center">
 											Log in met het Facebook-account waarmee u de bedrijfspagina van uw praktijk beheert.<br /><br />
 											<a href="javascript:void(0);" class="btn btn-primary" ng-click="fb_login()"><i class="ti-facebook"></i> Log In</a>
