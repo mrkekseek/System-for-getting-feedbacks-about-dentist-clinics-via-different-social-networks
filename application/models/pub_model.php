@@ -2133,6 +2133,36 @@
 			$this->db->where("id", $user['id']);
 			if ($this->db->update("users", $data_array))
 			{
+				$now = time();
+				$data_array = array();
+				if ($now < $user['trial_end'])
+				{
+					$data_array = array("account" => 2,
+										"account_stop" => 0);
+				}
+				else
+				{
+					if ($now >= $user['suspension'])
+					{
+						$data_array = array("account" => 0,
+											"account_stop" => 1);
+					}
+					else
+					{
+						if ($now <= $user['suspension'])
+						{
+							$data_array = array("account" => 1,
+												"account_stop" => 0);
+						}
+					}
+				}
+				
+				if ( ! empty($data_array))
+				{
+					$this->db->where("id", $user['id']);
+					$this->db->update("users", $data_array);
+				}
+					
 				$this->errors[] = array("Success" => "Abonnement gewijzigd.");
 				return TRUE;
 			}
