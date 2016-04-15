@@ -2825,3 +2825,11 @@ body .btn-primary.compose-prev:disabled {
 		display: block;
 	}
 }
+
+.show_fb_login {
+	display: none;
+}
+
+.show_fb_login.shown {
+	display: block;
+}

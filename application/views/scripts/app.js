@@ -582,9 +582,9 @@
     'use strict';
 
     angular.module('app')
-        .controller('DashboardCtrl', [ '$scope', '$rootScope', '$window', '$location', '$http', 'logger', DashboardCtrl]); // overall control
+        .controller('DashboardCtrl', [ '$scope', '$rootScope', '$window', '$location', '$http', '$timeout', 'logger', DashboardCtrl]); // overall control
 
-    function DashboardCtrl($scope, $rootScope, $window, $location, $http, logger) {
+    function DashboardCtrl($scope, $rootScope, $window, $location, $http, $timeout, logger) {
 		$scope.first_time = true;
 		$scope.ready = false;
 		$scope.stat = {};
@@ -721,7 +721,9 @@
 					}
 					else
 					{
-						$scope.show_fb_login = '1';
+						$timeout(function() {
+							$scope.show_fb_login = '1';
+						});
 					}
 				 });
 			}
@@ -839,13 +841,13 @@
 				$scope.stat.average_online += $scope.stat.zorgkaart.rating * 1;
 				all_count++;
 			}
-			
+	
 			if ($scope.stat.independer && $scope.stat.independer && $scope.stat.independer.rating > 0)
 			{
 				$scope.stat.average_online += $scope.stat.independer.rating * 1;
 				all_count++;
 			}
-			
+
 			if ($scope.stat.telefoonboek && $scope.stat.telefoonboek && $scope.stat.telefoonboek.rating > 0)
 			{
 				$scope.stat.average_online += $scope.stat.telefoonboek.rating * 1;
@@ -854,7 +856,7 @@
 
 			if (all_count > 0)
 			{
-				$scope.stat.average_online = Math.round($scope.stat.average_online / all_count * 100) / 100;
+				$scope.stat.average_online = Math.round($scope.stat.average_online / all_count * 10) / 10;
 			}
 
 			switch ($scope.type)
@@ -868,7 +870,6 @@
 
 			if ($scope.first_time_init)
 			{
-				$scope.stat.average_online = Math.round($scope.stat.average_online * 1).toFixed(1);
 				$scope.first_time_init = false;
 
 				$http.post("/pub/last_dashboard/", {average: $scope.stat.average, average_online: $scope.stat.average_online}).success(function(data, status, headers, config) {
@@ -880,9 +881,11 @@
 			{
 				$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
 			}
-			
-			$scope.show_average_online = '1';
-			$scope.show_fb_login = false;
+
+			$timeout(function() {
+				$scope.show_average_online = '1';
+				$scope.show_fb_login = false;
+			});
 			
 			if ($scope.stat.reviews)
 			{
@@ -897,9 +900,9 @@
     'use strict';
 
     angular.module('app')
-        .controller('ChartsCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', 'logger', ChartsCtrl]); // overall control
+        .controller('ChartsCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', ChartsCtrl]); // overall control
 
-    function ChartsCtrl($scope, $rootScope, $window, $http, $location, logger) {
+    function ChartsCtrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
 		$scope.first_time = false;
 		$scope.ready = false;
 		$scope.show_difference = false;
@@ -1130,7 +1133,9 @@
 					}
 					else
 					{
-						$scope.show_fb_login = '1';
+						$timeout(function() {
+							$scope.show_fb_login = '1';
+						});
 					}
 				 });
 			}
@@ -1270,7 +1275,6 @@
 
 			if ($scope.first_time_init)
 			{
-				$scope.stat.average_online = $scope.stat.average_online;
 				$scope.first_time_init = false;
 
 				$http.post("/pub/last_dashboard/", {average: $scope.stat.average, average_online: $scope.stat.average_online}).success(function(data, status, headers, config) {
@@ -1280,11 +1284,13 @@
 
 			if ($scope.stat.average_online)
 			{
-				$scope.stat.average_online = Math.round($scope.stat.average_online * 1).toFixed(1);
+				$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
 			}
 			
-			$scope.show_average_online = '1';
-			$scope.show_fb_login = false;
+			$timeout(function() {
+				$scope.show_average_online = '1';
+				$scope.show_fb_login = false;
+			});
 		};
     }
 
@@ -1294,9 +1300,9 @@
     'use strict';
 
     angular.module('app')
-        .controller('AChartsCtrl', [ '$scope', '$rootScope', '$window', '$http', 'logger', AChartsCtrl]); // overall control
+        .controller('AChartsCtrl', [ '$scope', '$rootScope', '$window', '$http', '$timeout', 'logger', AChartsCtrl]); // overall control
 
-    function AChartsCtrl($scope, $rootScope, $window, $http, logger) {
+    function AChartsCtrl($scope, $rootScope, $window, $http, $timeout, logger) {
 		$scope.stat = {};
 		$scope.filter = {id: 0,
 						 average: 0,
@@ -1554,20 +1560,20 @@
 
 			if (all_count > 0)
 			{
-				$scope.stat.average_online = Math.floor(Math.round($scope.stat.average_online / all_count * 100) / 100 * 2) / 2
+				$scope.stat.average_online = Math.round($scope.stat.average_online / all_count * 10) / 10;
 			}
 
 			switch ($scope.type)
 			{
-				case "google": $scope.stat.average_online = Math.floor($scope.stat.google.rating * 2) / 2; break;
-				case "zorgkaart": $scope.stat.average_online = Math.floor($scope.stat.zorgkaart.rating * 2) / 2; break;
-				case "independer": $scope.stat.average_online = Math.floor($scope.stat.independer.rating * 2) / 2; break;
-				case "telefoonboek": $scope.stat.average_online = Math.floor($scope.stat.telefoonboek.rating * 2) / 2; break;
+				case "google": $scope.stat.average_online = $scope.stat.google.rating; break;
+				case "zorgkaart": $scope.stat.average_online = $scope.stat.zorgkaart.rating; break;
+				case "independer": $scope.stat.average_online = $scope.stat.independer.rating; break;
+				case "telefoonboek": $scope.stat.average_online = $scope.stat.telefoonboek.rating; break;
 			}
 
 			if ($scope.first_time_init)
 			{
-				$scope.stat.average_online = Math.round($scope.stat.average_online * 1).toFixed(1);
+				$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
 				$scope.first_time_init = false;
 
 				$http.post("/pub/last_dashboard/", {average: $scope.stat.average, average_online: $scope.stat.average_online}).success(function(data, status, headers, config) {
