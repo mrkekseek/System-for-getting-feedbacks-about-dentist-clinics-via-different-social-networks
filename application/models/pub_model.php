@@ -1435,6 +1435,16 @@
 				}
 			}
 			
+			if (empty($this->batches))
+			{
+				$this->batches = array();
+				$result = $this->db->get("sent_dates")->result_array();
+				foreach ($result as $row)
+				{
+					$this->batches[$row['users_id']][] = $row;
+				}
+			}
+			
 			$items = array('last_login' => '----',
 						   'login_number' => 0,
 						   'sent_number' => 0,
@@ -1448,6 +1458,11 @@
 			if ( ! empty($this->sents[$users_id]))
 			{
 				$items['sent_number'] = count($this->sents[$users_id]);
+			}
+			
+			if ( ! empty($this->batches[$users_id]))
+			{
+				$items['batche_number'] = count($this->batches[$users_id]);
 			}
 			
 			return $items;
