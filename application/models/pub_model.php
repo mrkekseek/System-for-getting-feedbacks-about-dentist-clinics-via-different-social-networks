@@ -2346,6 +2346,7 @@
 					$data_array['signup'] = time();
 					$data_array['activation'] = mktime(0, 0, 0, date('m'), date('j'), date('Y'));
 					$data_array['suspension'] = $data_array['activation'] + 30 * 24 * 3600;
+					$data_array['trial_end'] = $data_array['suspension'];
 					$data_array['reminder_checked'] = TRUE;
 					$data_array['reminder_period'] = 0;
 					$data_array['reminder_time'] = 2703600;
