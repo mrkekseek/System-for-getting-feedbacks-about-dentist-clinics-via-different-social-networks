@@ -3386,7 +3386,6 @@
 		$scope.step = 0;
 		$scope.status = 0;
 		$scope.first_upload = true;
-		console.log($scope.first_upload);
 		$scope.all_finished = false;
 		$scope.too_long_time = false;
 		$scope.too_long_text = 'Uw patiëntenbestand wordt verwerkt.';
@@ -3490,9 +3489,10 @@
 		$scope.empty = false;
 		$scope.check = true;
 		$scope.file = false;
+		$scope.checked_columns = {};
 		$scope.print = function(result) {
-			$scope.column = result.cols_check;
 			$scope.dont_use = result.dont_use;
+			$scope.column = result.cols_check;
 			$scope.headers = result.headers;
 			$scope.all_data = result.data;
 			$scope.cols = result.cols;
@@ -3501,8 +3501,6 @@
 			$scope.file = result.file;
 
 			$scope.keys = Object.keys($scope.headers);
-
-			$scope.send_emails = [];
 			if ($scope.all_data && $scope.all_data.length)
 			{
 				$scope.reprint_rows();
@@ -3518,6 +3516,7 @@
 			$scope.unknown_doctors = [];
 			$scope.unknown_locations = [];
 			$scope.data = [];
+			$scope.send_emails = [];
 			$scope.all_data.sort(function(a, b) { return b.error - a.error});
 			for (var key in $scope.all_data)
 			{
@@ -3526,15 +3525,39 @@
 					$scope.all_data[key].text = $scope.all_data[key].email;
 					$scope.send_emails.push($scope.all_data[key]);
 				}
-				
+
 				if ($scope.all_data[key].doctor != '' && $scope.all_data[key].doctor_id == 0)
 				{
-					$scope.unknown_doctors.push($scope.all_data[key].doctor);
+					var check = true;
+					for (var i in $scope.unknown_doctors)
+					{
+						if ($scope.all_data[key].doctor == $scope.unknown_doctors[i])
+						{
+							check = false;
+						}
+					}
+					
+					if (check)
+					{
+						$scope.unknown_doctors.push($scope.all_data[key].doctor);
+					}
 				}
 				
 				if ($scope.all_data[key].location != '' && $scope.all_data[key].location_id == 0)
 				{
-					$scope.unknown_locations.push($scope.all_data[key].location);
+					var check = true;
+					for (var i in $scope.unknown_locations)
+					{
+						if ($scope.all_data[key].location == $scope.unknown_locations[i])
+						{
+							check = false;
+						}
+					}
+					
+					if (check)
+					{
+						$scope.unknown_locations.push($scope.all_data[key].location);
+					}
 				}
 				
 				if ($scope.warnings || ( ! $scope.warnings && $scope.all_data[key].error == 0))
@@ -3685,17 +3708,14 @@
 		};
 
 		$scope.save_col = function(field) {
-			if ($scope.column[field] != '0')
-			{
-				$http.post("/pub/save_field/", {file: $scope.file, field: field, value: $scope.column[field]}).success(function(data, status, headers, config) {
-					$scope.result = logger.check(data);
-					if ($scope.result.data && $scope.result.data.length)
-					{
-						$scope.result.data.sort(function(a, b) { return b.error - a.error});
-						$scope.print($scope.result);
-					}
-				});
-			}
+			$http.post("/pub/save_field/", {file: $scope.file, field: field, value: $scope.column[field]}).success(function(data, status, headers, config) {
+				$scope.result = logger.check(data);
+				if ($scope.result.data && $scope.result.data.length)
+				{
+					$scope.result.data.sort(function(a, b) { return b.error - a.error});
+					$scope.print($scope.result);
+				}
+			});
 		};
 		
 		$scope.send_emails = [];
@@ -3703,7 +3723,7 @@
 		{
 			if ($scope.send_emails.length)
 			{
-				$http.post("/pub/send/", {emails: $scope.send_emails, file: $scope.file}).success(function(data, status, headers, config) {
+				$http.post("/pub/send/", {emails: $scope.send_emails, column: $scope.column, file: $scope.file}).success(function(data, status, headers, config) {
 					logger.check(data);
 					//$location.url("/mail/inbox");
 					$scope.all_finished = true;

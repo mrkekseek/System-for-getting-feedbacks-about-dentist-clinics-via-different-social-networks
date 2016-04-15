@@ -98,7 +98,7 @@
 									<td ng-repeat="key in keys">
 										<select class="form-control" ng-model="column[key]" ng-change="save_col(key)" ng-class="{'border-red': column[key] == 0 && ! dont_use[key]}">
 											<option value="0" ng-selected="column[key] == 0 || dont_use[key]">{{dont_use[key] ? 'Niet gebruiken' : 'Kies een kolom'}}</option>
-											<option value="{{c}}" ng-repeat="c in cols" ng-selected="column[key] == c && ! dont_use[key]">{{c}}</option>
+											<option value="{{c}}" ng-repeat="c in cols" ng-selected="column[key] == c">{{c}}</option>
 										</select>
 									</td>
 								</tr>

@@ -8,6 +8,7 @@
 		var $per_hour = 350;
 		var $base_amount = 275;
 		var $pro_amount = 450;
+		var $account_amount = 0;
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
 		var $period = 365;
@@ -37,7 +38,41 @@
 				$this->period = 366;
 			}
 			
+			$this->set_defaults();
+			
 			$this->renew_logout();
+		}
+		
+		function set_defaults()
+		{
+			if ($this->logged_in())
+			{
+				$this->db->where('id', $this->session->userdata('id'));
+				$this->db->limit(1);
+				$row = $this->db->get('users')->row_array();
+				
+				if ( ! empty($row))
+				{
+					if ( ! empty($row['account_amount']))
+					{
+						$this->account_amount = $row['account_amount'];
+					}
+					else
+					{
+						$this->account_amount = $row['account_type'] == '0' ? $this->base_amount : $this->pro_amount;
+					}
+					
+					if ( ! empty($row['doctors_amount']))
+					{
+						$this->doctor_amount = $row['doctors_amount'];
+					}
+					
+					if ( ! empty($row['doctors_number']))
+					{
+						$this->free_doctors_number = $row['doctors_number'];
+					}
+				}
+			}
 		}
 
 		function cron()
@@ -328,7 +363,7 @@
 					$need_invoice = FALSE;
 					if (in_array($users_id, $end))
 					{
-						$base_amount = $this->base_amount;
+						$base_amount = $this->account_amount;
 						$amount += $base_amount;
 					}
 					
@@ -478,7 +513,7 @@
 				$result['suspension'] = date("d-m-Y", empty($result['suspension']) ? ($result['trial_end'] + $this->period * 24 * 3600) : $result['suspension']);
 				$result['doctors'] = $this->get_doctors($this->session->userdata("id"));
 				$result['doctors_count'] = count($result['doctors']);
-				$result['amount'] = $result['account_type'] == 0 ? $this->base_amount : $this->pro_amount;
+				$result['amount'] = $this->account_amount;
 				foreach ($result['doctors'] as $doc)
 				{
 					if ( ! $doc['free'])
@@ -604,6 +639,7 @@
 			$result = array();
 			$result['base_amount'] = $this->base_amount;
 			$result['pro_amount'] = $this->pro_amount;
+			$result['account_amount'] = $this->account_amount;
 			$result['doctors'] = $this->get_doctors($id);
 			$result['doctors_amount'] = 0;
 			foreach ($result['doctors'] as $doc)
@@ -633,8 +669,8 @@
 				$result['suspension'] = date("d-m-Y", empty($row['suspension']) ? ($row['trial_end'] + $this->period * 24 * 3600) : $row['suspension']);
 				$end = $row['suspension'];
 				$result['days'] = (mktime(0, 0, 0, date("n", $end), date("j", $end), date("Y", $end)) - $time) / (24 * 3600);
-				$result['half_pro'] = round(($this->pro_amount / $this->period) * $result['days'], 2);
-				$result['half_basic'] = round(($this->base_amount / $this->period) * $result['days'], 2);
+				$result['half_pro'] = round(($this->account_amount / $this->period) * $result['days'], 2);
+				$result['half_basic'] = round(($this->account_amount / $this->period) * $result['days'], 2);
 				
 				$result['amount'] = 0;
 				if ($row['account'] == 1 && $row['account_type'] == 0)
@@ -842,6 +878,7 @@
 			$result = array();
 			$result['base_amount'] = $this->base_amount;
 			$result['pro_amount'] = $this->pro_amount;
+			$result['account_amount'] = $this->account_amount;
 			$result['doctor_amount'] = $this->doctor_amount;
 			$result['date'] = date("d-m-Y");
 			
@@ -2096,6 +2133,36 @@
 			$this->db->where("id", $user['id']);
 			if ($this->db->update("users", $data_array))
 			{
+				$now = time();
+				$data_array = array();
+				if ($now < $user['trial_end'])
+				{
+					$data_array = array("account" => 2,
+										"account_stop" => 0);
+				}
+				else
+				{
+					if ($now >= $user['suspension'])
+					{
+						$data_array = array("account" => 0,
+											"account_stop" => 1);
+					}
+					else
+					{
+						if ($now <= $user['suspension'])
+						{
+							$data_array = array("account" => 1,
+												"account_stop" => 0);
+						}
+					}
+				}
+				
+				if ( ! empty($data_array))
+				{
+					$this->db->where("id", $user['id']);
+					$this->db->update("users", $data_array);
+				}
+					
 				$this->errors[] = array("Success" => "Abonnement gewijzigd.");
 				return TRUE;
 			}
@@ -2525,7 +2592,7 @@
 						$col = FALSE;
 						foreach ($rows[0] as $key => $row)
 						{
-							if (( ! empty($users_fields[$tag]) && strtolower(trim($row)) == $users_fields[$tag]) || (strtolower(trim($row)) == strtolower($fields[$tag])))
+							if ((isset($users_fields[$tag]) && strtolower(trim($row)) == $users_fields[$tag]) || (strtolower(trim($row)) == strtolower($fields[$tag]) && ! isset($users_fields[$tag])))
 							{
 								$col = $key;
 							}
@@ -2564,7 +2631,7 @@
 								
 								foreach ($tags as $tag)
 								{
-									if (in_array($tag, array('birth', 'doctor', 'location', 'treatment')) && ! in_array($tag, $tags_required))
+									if ($tag != 'email' && ! in_array($tag, $tags_required))
 									{
 										$result['dont_use'][$tag] = TRUE;
 									}
@@ -2897,13 +2964,13 @@
 														'account' => $row['account']);
 														
 									$data_array = array("users_id" => $this->session->userdata("id"),
-														"title" => ! empty($list['title']) ? $list['title'] : "",
-														"name" => ! empty($list['name']) ? $list['name'] : "",
-														"sname" => ! empty($list['sname']) ? $list['sname'] : "",
-														"doctor" => ! empty($list['doctor_id']) ? $list['doctor_id'] : 0,
-														"location" => ! empty($list['location_id']) ? $list['location_id'] : 0,
-														"treatment" => ! empty($list['treatment']) ? $list['treatment'] : "",
-														"birth" => ! empty($list['birth']) ? $list['birth'] : "",
+														"title" => ( ! empty($list['title']) && ! empty($post['column']['title'])) ? $list['title'] : "",
+														"name" => ( ! empty($list['name']) && ! empty($post['column']['name'])) ? $list['name'] : "",
+														"sname" => ( ! empty($list['sname']) && ! empty($post['column']['sname'])) ? $list['sname'] : "",
+														"doctor" => ( ! empty($list['doctor_id']) && ! empty($post['column']['doctor'])) ? $list['doctor_id'] : 0,
+														"location" => ( ! empty($list['location_id']) && ! empty($post['column']['location'])) ? $list['location_id'] : 0,
+														"treatment" => ( ! empty($list['treatment']) && ! empty($post['column']['treatment'])) ? $list['treatment'] : "",
+														"birth" => ( ! empty($list['birth']) && ! empty($post['column']['birth'])) ? $list['birth'] : "",
 														"email" => strtolower($list['text']),
 														"date" => time(),
 														"status" => 1,
