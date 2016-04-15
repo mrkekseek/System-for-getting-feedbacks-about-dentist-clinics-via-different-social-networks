@@ -21,7 +21,6 @@
 								<div class="box-info info-dashboard">
 									<p class="size-h2">{{stat.average}}</p>
 									<p class="text-muted"><span data-i18n="De gemiddelde waardering van uw praktijk."></span></p>
-									<p class="text-small" ng-class="last.average > 0 ? 'color-success' : (last.average < 0 ? 'color-danger' : 'hide')"><span data-i18n="Gestegen sinds laatste keer: {{last.average}}%"></span></p>
 								</div>
 							</div>
 						</div>
@@ -45,7 +44,6 @@
 										<p class="text-muted" ng-if="type == 'facebook'"><span data-i18n="De gemiddelde waardering van uw praktijk op Facebook."></span></p>
 										<p class="text-muted" ng-if="type == 'google'"><span data-i18n="De gemiddelde waardering van uw praktijk op Google."></span></p>
 										<p class="text-muted" ng-if="type == 'zorgkaart'"><span data-i18n="De gemiddelde waardering van uw praktijk op Zorgkaart."></span></p>
-										<p class="text-small" ng-class="last.average_online > 0 ? 'color-success' : (last.average_online < 0 ? 'color-danger' : 'hide')"><span data-i18n="Gestegen sinds laatste keer: {{last.average_online}}%"></span></p>
 									</div>
 									
 									<div ng-if="show_fb_login == '1'">

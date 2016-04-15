@@ -21,7 +21,6 @@
 								<div class="box-info info-dashboard">
 									<p class="size-h2">{{stat.average}}</p>
 									<p class="text-muted"><span data-i18n="De gemiddelde waardering van uw praktijk gebaseerd op directe e-mailbeoordelingen."></span></p>
-									<p class="text-small" ng-class="(last.average > 0 && show_difference) ? 'color-success' : ((last.average < 0 && show_difference) ? 'color-danger' : 'hide')"><span data-i18n="Gestegen sinds laatste keer: {{last.average}}%"></span></p>
 								</div>
 							</div>
 						</div>
@@ -45,10 +44,6 @@
 										<p class="text-muted" ng-if="type == 'facebook'"><span data-i18n="De gemiddelde waardering van uw praktijk op Facebook."></span></p>
 										<p class="text-muted" ng-if="type == 'google'"><span data-i18n="De gemiddelde waardering van uw praktijk op Google."></span></p>
 										<p class="text-muted" ng-if="type == 'zorgkaart'"><span data-i18n="De gemiddelde waardering van uw praktijk op Zorgkaart."></span></p>
-										<p class="text-small" ng-class="(last.average_online > 0 && show_difference) ? 'color-success' : ((last.average_online < 0 && show_difference) ? 'color-danger' : 'hide')"><span data-i18n="Gestegen sinds laatste keer: {{last.average_online}}%"></span></p>
-										<!--a href="javascript:void(0);" class="btn btn-primary" ng-click="print_online('facebook')"><i class="ti-facebook"></i> Facebook</a>
-										<a href="javascript:void(0);" class="btn btn-danger" ng-click="print_online('google')"><i class="ti-google"></i> Google+</a>
-										<a href="javascript:void(0);" class="btn btn-default zorgkaart" ng-click="print_online('zorgkaart')"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /> Zorgkaart</a-->
 									</div>
 									
 									<div class="show_fb_login" ng-class="{'shown': show_fb_login == '1'}">
@@ -122,15 +117,12 @@
 						<div class="table-responsive" ng-if="letters.length">
 							<table class="table table-hover table-responsive" ng-init="words = {0: 'Geen reactie', 1: '1 ster', 2: '2 sterren', 3: '3 sterren', 4: '4 sterren', 5: '5 sterren'}">
 								<tr>
-									<!--th>Zorgverlener</th-->
 									<th>E-mail</th>
 									<th>Beoordeling</th>
-									<!--th>Doorgeklikt naar</th-->
 									<th>Datum</th>
 									<th></th>
 								</tr>
 								<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" ng-repeat="l in letters" ng-click="more(l.id, l.feedback != '', l.email)">
-									<!--td ng-class="{'color-danger bold': l.stars <= 2}">{{l.doctor_name}}</td-->
 									<td ng-class="{'color-danger bold': l.email != '' && l.stars <= 2, 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
 									<td>
 										<span ng-if="l.stars == 0">Geen reactie</span>
@@ -140,11 +132,6 @@
 										<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 3"></i>
 										<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 4"></i>
 									</td>
-									<!--td>
-										<span class='socials-inbox-icons' ng-if="l.google == 1"><i class="ti-google"></i></span>
-										<span class='socials-inbox-icons' ng-if="l.zorgkaart == 1"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /></span>
-										<span class='socials-inbox-icons' ng-if="l.facebook == 1"><i class="ti-facebook"></i></span>
-									</td-->
 									<td>{{l.date_time}}</td>
 									<td><i class="ti-marker-alt" ng-if="l.feedback != ''"></i></td>
 								</tr>
