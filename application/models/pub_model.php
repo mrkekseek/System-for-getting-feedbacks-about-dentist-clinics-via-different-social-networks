@@ -3914,6 +3914,8 @@
 			{
 				$row['date_time'] = date("d-m-y H:i", ($row['last'] > 0 ? $row['last'] : $row['date']));
 				$row['reply_time'] = $row['reply_time'] > 0 ? date("d-m-y H:i", $row['reply_time']) : "";
+				$row['feedback'] = str_replace("\n", '<br />', $row['feedback']);
+				$row['reply'] = str_replace("\n", '<br />', $row['reply']);
 			}
 			return $row;
 		}
