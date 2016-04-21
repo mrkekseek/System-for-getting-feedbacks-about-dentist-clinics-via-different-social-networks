@@ -119,8 +119,12 @@
 						</table>
 					</div>
 					
-					<nav class="uploads-nav" ng-if="pages > 1">
-						<ul class="pagination">
+					<nav class="uploads-nav">
+						<div class="pagination pull-right">
+							{{rows_shown}} van {{rows_all}} onderdelen getoond
+						</div>
+						
+						<ul class="pagination" ng-if="pages > 1">
 							<li ng-class="{'disabled': page == 1}">
 								<a href="javascript:void(0);" aria-label="Previous" ng-click="change_page(page - 1)">
 									<span aria-hidden="true">&laquo;</span>
