@@ -2756,6 +2756,12 @@ body .btn-primary.compose-prev:disabled {
 	margin-top: 15px;
 }
 
+.uploads-nav {
+	display: table;
+	width: 100%;
+}
+
+.uploads-nav .pagination,
 .uploads-nav .pagination > li > a,
 .uploads-nav .pagination > li > span {
 	margin: 0;

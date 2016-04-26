@@ -3513,6 +3513,8 @@
 			}
 		};
 		
+		$scope.rows_shown = 0;
+		$scope.rows_all = 0;
 		$scope.doctors = [];
 		$scope.unknown_doctors = [];
 		$scope.locations = [];
@@ -3523,6 +3525,7 @@
 			$scope.unknown_locations = [];
 			$scope.data = [];
 			$scope.send_emails = [];
+			$scope.rows_all = $scope.all_data.length;
 			$scope.all_data.sort(function(a, b) { return b.error - a.error});
 			for (var key in $scope.all_data)
 			{
@@ -3682,6 +3685,7 @@
 			var start = ($scope.page - 1) * $scope.on_page;
 			var end = start + $scope.on_page;
 			$scope.page_data = $scope.data.slice(start, end);
+			$scope.rows_shown = $scope.page_data.length;
 		};
 		
 		$scope.get_array = function(num) {
