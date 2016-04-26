@@ -3798,8 +3798,6 @@
 				if ($scope.result)
 				{
 					$scope.info = $scope.result;
-					$scope.info.feedback.replace(/\n/gi, "<br />");
-					$scope.info.reply.replace(/\n/gi, "<br />");
 				}
 			});
 		};
