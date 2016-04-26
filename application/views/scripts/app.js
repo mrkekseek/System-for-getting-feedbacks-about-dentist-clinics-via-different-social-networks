@@ -6582,11 +6582,10 @@
 		$scope.type = $scope.user.account;
 		$scope.stop = $scope.user.admin_stop;
 
-		var date = new Date($scope.user.activation * 1000);
 		$scope.date = {};
-		$scope.date.activation = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-		$scope.date.suspension = $scope.user.suspension * 1000;
-		$scope.date.trial_end = $scope.user.trial_end * 1000;
+		$scope.date.activation = new Date($scope.user.activation * 1000);
+		$scope.date.suspension = new Date($scope.user.suspension * 1000);
+		$scope.date.trial_end = new Date($scope.user.trial_end * 1000);
 		
 		$scope.fake_type_change = function() {
 			$scope.user.organization = ($scope.user.fake_type == '2' ? '1' : '0');
@@ -6598,6 +6597,7 @@
 		};
 
         $scope.ok = function() {
+			$scope.user.activation = $scope.date.activation;
 			$scope.user.suspension = $scope.date.suspension;
 			$scope.user.trial_end = $scope.date.trial_end;
             $modalInstance.close({user: $scope.user});

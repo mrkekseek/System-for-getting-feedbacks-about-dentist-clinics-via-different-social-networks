@@ -180,28 +180,29 @@
 					
 					<div class="divider divider-dashed divider-lg pull-in"></div>
 					
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Startdatum betaaltermijn</th>
-								<th>Einddatum betaaltermijn</th>
-								<th>Einddatum proefabonnement</th>
-							</tr>
-						</thead>
-						
+					<table class="table table-bordered">
 						<tbody>
 							<tr>
-								<td>{{activation}}</td>
+								<td>Registratiedatum</td>
+								<td>{{user.signup_str}}</td>
+							</tr>
+							
+							<tr>
+								<td>Startdatum huidige betaaltermijn</td>
+								<td>
+									<div class="input-group ui-datepicker">
+										<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="date.activation" is-open="$parent.opened_activation" min="minDate" max="'2017-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+										<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'activation')"><i class="ti-calendar"></i></a>
+									</div>
+								</td>
+							</tr>
+							
+							<tr>
+								<td>Einddatum huidige betaaltermijn</td>
 								<td>
 									<div class="input-group ui-datepicker">
 										<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="date.suspension" is-open="$parent.opened_suspension" min="minDate" max="'2017-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
 										<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'suspension')"><i class="ti-calendar"></i></a>
-									</div>
-								</td>
-								<td>
-									<div class="input-group ui-datepicker">
-										<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="date.trial_end" is-open="$parent.opened_trial_end" min="minDate" max="'2017-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-										<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'trial_end')"><i class="ti-calendar"></i></a>
 									</div>
 								</td>
 							</tr>

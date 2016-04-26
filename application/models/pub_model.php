@@ -2139,8 +2139,8 @@
 		{
 			$data_array = array('account_type' => $user['account_type'],
 								'organization' => $user['organization'],
+								'activation' => $user['activation'],
 								'suspension' => $user['suspension'],
-								'trial_end' => $user['trial_end'],
 								'account_amount' => $user['account_amount'],
 								'doctors_amount' => $user['doctors_amount'],
 								'doctors_number' => $user['doctors_number']);
