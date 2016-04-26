@@ -2839,3 +2839,29 @@ body .btn-primary.compose-prev:disabled {
 .show_fb_login.shown {
 	display: block;
 }
+
+@media (max-width: 768px) {
+	.page.page-mail > .row {
+		display: block;
+	}
+	
+	.hundret {
+		width: auto;
+		overflow: hidden;
+	}
+	
+	.page.page-mail .col-sm-3,
+	.page.page-mail .col-sm-9 {
+		display: block;
+		float: left;
+	}
+	
+	.page.page-mail .col-sm-3 {
+		padding-bottom: 0;
+	}
+	
+	.pagination > li > a,
+	.pagination > li > span {
+		margin-left: 5px;
+	}
+}
