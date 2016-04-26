@@ -1,6 +1,23 @@
 <div class="page page-mail" ng-controller="InboxCtrl">
     <div class="row hundret">
         <div class="col-sm-3 col-xs-12 mail-categories">
+			<div class="panel mail-container panel-default visible-xs">
+                <div class="panel-heading">
+					Ontvangen beoordelingen van uw praktijk
+					<button type="button" class="btn btn-primary" ng-show="count_letters()" ng-click="bulk_modal()">Stuur bedankje...</button>
+					<div class="dropdown pull-right" ng-if="filter == 'with_feedback'">
+						<button class="btn btn-primary dropdown-toggle" type="button" id="inbox_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Markeer als...
+							<span class="caret"></span>
+						</button>
+						
+						<ul class="dropdown-menu" aria-labelledby="inbox_actions">
+							<li><a href="javascript:void(0);" ng-click="read_letters()">Afgehandeld</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
             <div class="category-heading">
                 <a href="#/mail/compose" class="btn btn-block btn-lg btn-primary">Stuur nieuwe uitnodiging</a>
             </div>
@@ -76,7 +93,7 @@
         </div>
         <div class="col-sm-9 col-xs-12">
             <section class="panel panel-default mail-container table-dynamic">
-                <div class="panel-heading">
+                <div class="panel-heading hidden-xs">
 					Ontvangen beoordelingen van uw praktijk
 					<button type="button" class="btn btn-primary" ng-show="count_letters()" ng-click="bulk_modal()">Stuur bedankje...</button>
 					<div class="dropdown pull-right" ng-if="filter == 'with_feedback'">
@@ -90,124 +107,126 @@
 						</ul>
 					</div>
 				</div>
-                <table class="table table-hover table-responsive" ng-if="letters.length" ng-init="words = {0: 'Geen reactie', 1: '1 ster', 2: '2 sterren', 3: '3 sterren', 4: '4 sterren', 5: '5 sterren'}">
-					<thead>
-						<tr>
-							<th ng-show="filter == 'positive'"><div class="th">
-									<label class="ui-checkbox"><input type="checkbox" ng-model="check_all[0]" ng-change="check_all_letters()" /><span></span></label>
-								</div>
-							</th>
-							<th><div class="th">
-								Datum
-								<span class="fa fa-angle-up"
-									  data-ng-click=" order('date') "
-									  data-ng-class="{active: row == 'date'}"></span>
-								<span class="fa fa-angle-down"
-									  data-ng-click=" order('-date') "
-									  data-ng-class="{active: row == '-date'}"></span>
-							</div></th>
-							<th><div class="th">
-								Beoordeling
-								<span class="fa fa-angle-up"
-									  data-ng-click=" order('stars') "
-									  data-ng-class="{active: row == 'stars'}"></span>
-								<span class="fa fa-angle-down"
-									  data-ng-click=" order('-stars') "
-									  data-ng-class="{active: row == '-stars'}"></span>
-							</div></th>
-							<th></th>
-							<th><div class="th">
-								Voornaam
-								<span class="fa fa-angle-up"
-									  data-ng-click=" order('name') "
-									  data-ng-class="{active: row == 'name'}"></span>
-								<span class="fa fa-angle-down"
-									  data-ng-click=" order('-name') "
-									  data-ng-class="{active: row == '-name'}"></span>
-							</div></th>
-							<th><div class="th">
-								Achternaam
-								<span class="fa fa-angle-up"
-									  data-ng-click=" order('sname') "
-									  data-ng-class="{active: row == 'sname'}"></span>
-								<span class="fa fa-angle-down"
-									  data-ng-click=" order('-sname') "
-									  data-ng-class="{active: row == '-sname'}"></span>
-							</div></th>
-							<th><div class="th">
-								Geboortedatum
-								<span class="fa fa-angle-up"
-									  data-ng-click=" order('birth') "
-									  data-ng-class="{active: row == 'birth'}"></span>
-								<span class="fa fa-angle-down"
-									  data-ng-click=" order('-birth') "
-									  data-ng-class="{active: row == '-birth'}"></span>
-							</div></th>
-							<th><div class="th">
-								Zorgverlener
-								<span class="fa fa-angle-up"
-									  data-ng-click=" order('doctor_name') "
-									  data-ng-class="{active: row == 'doctor_name'}"></span>
-								<span class="fa fa-angle-down"
-									  data-ng-click=" order('-doctor_name') "
-									  data-ng-class="{active: row == '-doctor_name'}"></span>
-							</div></th>
-							<th ng-if="user.organization"><div class="th">
-								Locatie
-								<span class="fa fa-angle-up"
-									  data-ng-click=" order('location_name') "
-									  data-ng-class="{active: row == 'location_name'}"></span>
-								<span class="fa fa-angle-down"
-									  data-ng-click=" order('-location_name') "
-									  data-ng-class="{active: row == '-location_name'}"></span>
-							</div></th>
-							<th><div class="th">
-								E-mail
-								<span class="fa fa-angle-up"
-									  data-ng-click=" order('email') "
-									  data-ng-class="{active: row == 'email'}"></span>
-								<span class="fa fa-angle-down"
-									  data-ng-click=" order('-email') "
-									  data-ng-class="{active: row == '-email'}"></span>
-							</div></th>
-							
-							<th><div class="th">Doorgeklikt naar</div></th>
-							
-							
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" data-ng-repeat="l in currentPageStores" ng-click="more(l.id, l.feedback != '', l.email, $event)">
-							<td ng-show="filter == 'positive'">
-								<label class="ui-checkbox"><input type="checkbox" ng-model="check_letter[l.id]" ng-change="check_one_letter(l.id)"/><span></span></label>
-							</td>
-							<td>{{l.date_time}}</td>
-							<td>
-								<span ng-if="l.stars == 0">Niet beoordeeld</span>
-								<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 0"></i>
-								<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 1"></i>
-								<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 2"></i>
-								<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 3"></i>
-								<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 4"></i>
-							</td>
-							<td><i class="ti-comment" ng-if="(l.feedback != '' && l.reply == '') || (l.feedback == '' && l.reply != '')"></i><i class="ti-comments" ng-if="l.feedback != '' && l.reply != ''"></i></td>
-							<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.name}}</td>
-							<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.sname}}</td>
-							<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.birth}}</td>
-							<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.doctor_name}}</td>
-							<td ng-class="{'color-danger bold': l.stars <= 2}" ng-if="user.organization">{{l.location_name}}</td>
-							<td ng-class="{'color-danger bold': l.stars <= 2 && l.email != '', 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
-							<td>
-								<span class='socials-inbox-icons' ng-if="l.google == 1"><i class="ti-google"></i></span>
-								<span class='socials-inbox-icons' ng-if="l.zorgkaart == 1"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /></span>
-								<span class='socials-inbox-icons' ng-if="l.facebook == 1"><i class="ti-facebook"></i></span>
-								<span class='socials-inbox-icons' ng-if="l.independer == 1"><img src="/application/views/images/independer-icon.png" alt="" /></span>
-							</td>
-							
-							
-						</tr>
-					</tbody>
-                </table>
+				<div class="table-responsive">
+					<table class="table table-hover table-responsive" ng-if="letters.length" ng-init="words = {0: 'Geen reactie', 1: '1 ster', 2: '2 sterren', 3: '3 sterren', 4: '4 sterren', 5: '5 sterren'}">
+						<thead>
+							<tr>
+								<th ng-show="filter == 'positive'"><div class="th">
+										<label class="ui-checkbox"><input type="checkbox" ng-model="check_all[0]" ng-change="check_all_letters()" /><span></span></label>
+									</div>
+								</th>
+								<th><div class="th">
+									Datum
+									<span class="fa fa-angle-up"
+										  data-ng-click=" order('date') "
+										  data-ng-class="{active: row == 'date'}"></span>
+									<span class="fa fa-angle-down"
+										  data-ng-click=" order('-date') "
+										  data-ng-class="{active: row == '-date'}"></span>
+								</div></th>
+								<th><div class="th">
+									Beoordeling
+									<span class="fa fa-angle-up"
+										  data-ng-click=" order('stars') "
+										  data-ng-class="{active: row == 'stars'}"></span>
+									<span class="fa fa-angle-down"
+										  data-ng-click=" order('-stars') "
+										  data-ng-class="{active: row == '-stars'}"></span>
+								</div></th>
+								<th></th>
+								<th><div class="th">
+									Voornaam
+									<span class="fa fa-angle-up"
+										  data-ng-click=" order('name') "
+										  data-ng-class="{active: row == 'name'}"></span>
+									<span class="fa fa-angle-down"
+										  data-ng-click=" order('-name') "
+										  data-ng-class="{active: row == '-name'}"></span>
+								</div></th>
+								<th><div class="th">
+									Achternaam
+									<span class="fa fa-angle-up"
+										  data-ng-click=" order('sname') "
+										  data-ng-class="{active: row == 'sname'}"></span>
+									<span class="fa fa-angle-down"
+										  data-ng-click=" order('-sname') "
+										  data-ng-class="{active: row == '-sname'}"></span>
+								</div></th>
+								<th><div class="th">
+									Geboortedatum
+									<span class="fa fa-angle-up"
+										  data-ng-click=" order('birth') "
+										  data-ng-class="{active: row == 'birth'}"></span>
+									<span class="fa fa-angle-down"
+										  data-ng-click=" order('-birth') "
+										  data-ng-class="{active: row == '-birth'}"></span>
+								</div></th>
+								<th><div class="th">
+									Zorgverlener
+									<span class="fa fa-angle-up"
+										  data-ng-click=" order('doctor_name') "
+										  data-ng-class="{active: row == 'doctor_name'}"></span>
+									<span class="fa fa-angle-down"
+										  data-ng-click=" order('-doctor_name') "
+										  data-ng-class="{active: row == '-doctor_name'}"></span>
+								</div></th>
+								<th ng-if="user.organization"><div class="th">
+									Locatie
+									<span class="fa fa-angle-up"
+										  data-ng-click=" order('location_name') "
+										  data-ng-class="{active: row == 'location_name'}"></span>
+									<span class="fa fa-angle-down"
+										  data-ng-click=" order('-location_name') "
+										  data-ng-class="{active: row == '-location_name'}"></span>
+								</div></th>
+								<th><div class="th">
+									E-mail
+									<span class="fa fa-angle-up"
+										  data-ng-click=" order('email') "
+										  data-ng-class="{active: row == 'email'}"></span>
+									<span class="fa fa-angle-down"
+										  data-ng-click=" order('-email') "
+										  data-ng-class="{active: row == '-email'}"></span>
+								</div></th>
+								
+								<th><div class="th">Doorgeklikt naar</div></th>
+								
+								
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" data-ng-repeat="l in currentPageStores" ng-click="more(l.id, l.feedback != '', l.email, $event)">
+								<td ng-show="filter == 'positive'">
+									<label class="ui-checkbox"><input type="checkbox" ng-model="check_letter[l.id]" ng-change="check_one_letter(l.id)"/><span></span></label>
+								</td>
+								<td>{{l.date_time}}</td>
+								<td>
+									<span ng-if="l.stars == 0">Niet beoordeeld</span>
+									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 0"></i>
+									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 1"></i>
+									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 2"></i>
+									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 3"></i>
+									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 4"></i>
+								</td>
+								<td><i class="ti-comment" ng-if="(l.feedback != '' && l.reply == '') || (l.feedback == '' && l.reply != '')"></i><i class="ti-comments" ng-if="l.feedback != '' && l.reply != ''"></i></td>
+								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.name}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.sname}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.birth}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.doctor_name}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2}" ng-if="user.organization">{{l.location_name}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2 && l.email != '', 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
+								<td>
+									<span class='socials-inbox-icons' ng-if="l.google == 1"><i class="ti-google"></i></span>
+									<span class='socials-inbox-icons' ng-if="l.zorgkaart == 1"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /></span>
+									<span class='socials-inbox-icons' ng-if="l.facebook == 1"><i class="ti-facebook"></i></span>
+									<span class='socials-inbox-icons' ng-if="l.independer == 1"><img src="/application/views/images/independer-icon.png" alt="" /></span>
+								</td>
+								
+								
+							</tr>
+						</tbody>
+					</table>
+				</div>
 				
 				<footer class="table-footer" ng-if="letters.length">
 					<div class="row">
