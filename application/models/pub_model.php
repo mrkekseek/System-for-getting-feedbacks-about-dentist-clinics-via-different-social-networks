@@ -820,7 +820,8 @@
 									"title" => $post['title'],
 									"address" => $post['address'],
 									"postcode" => $post['postcode'],
-									"city" => $post['city']);
+									"city" => $post['city'],
+									"zorgkaart" => $post['zorgkaart']);
 
 				$locations_id = 0;
 				if ( ! empty($post['id']))
@@ -2462,6 +2463,7 @@
 						$post['last'] = $data_array['last'];
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+						$post['doctor'] = $this->doctor_info($post['doctors_id']);
 						return $post;
 					}
 				}
@@ -2473,6 +2475,7 @@
 						$post['last'] = time();
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+						$post['doctor'] = $this->doctor_info($post['doctors_id']);
 						return $post;
 					}
 				}
@@ -3551,6 +3554,11 @@
 					else
 					{
 						$return['doctors'] = $this->get_doctors($return['info']['users_id']);
+					}
+					
+					if ( ! empty($return['info']['location']))
+					{
+						$return['location'] = $this->location_info($return['info']['location']);
 					}
 				}
 			}
