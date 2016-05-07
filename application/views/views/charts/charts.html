@@ -161,6 +161,230 @@
 					</div>
 				</div>
 			</div>
+			
+			<div class="row charts2-row" ng-if="data.questions.length">
+				<div ng-repeat="q in data.questions" class="col-sm-{{12 / data.questions.length}} col-xs-12">
+					<div class="panel panel-default">
+						<div class="charts2-questions-icon">
+							<i class="{{q.stats_icon}}"></i>
+						</div>
+						
+						<div class="charts2-questions-info">
+							<div class="charts2-questions-average">
+								{{q.average}}
+							</div>
+							
+							<div class="charts2-questions-name">
+								{{q.question_name}}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="charts2-dashed">
+			</div>
+			
+			<div class="row charts2-row">
+				<div class="col-md-6 col-xs-12">
+					<div class="panel panel-default">
+						<div class="row">
+							<div class="col-sm-5 col-xs-12">
+								<div class="charts2-side-icons">
+									<div class="charts2-side-nps">
+										<i class="fa fa-male o3" ng-repeat="n in range(nps['12'])"></i><i class="fa fa-male o5" ng-repeat="n in range(nps['3'])"></i><i class="fa fa-male" ng-repeat="n in range(nps['45'])"></i>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-sm-7 col-xs-12">
+								<div class="charts2-side-value">
+									<div class="charts2-side-amount">
+										{{data.average_nps.delta > 0 ? '+' : ''}}{{data.average_nps.delta}}
+									</div>
+									
+									<div class="charts2-side-text">
+										De NPS van uw praktijk
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-3 col-xs-12">
+					<div class="panel panel-default charts2-min-box">
+						<div class="row charts2-stars-count">
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-icons">
+									<i class="fa fa-male green" ng-repeat="n in range(nps['45'])"></i>
+								</div>
+							</div>
+							
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-value">
+									{{data.average_nps['45']}} promotors
+								</div>
+							</div>
+						</div>
+						
+						<div class="row charts2-stars-count">
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-icons">
+									<i class="fa fa-male yellow" ng-repeat="n in range(nps['3'])"></i>
+								</div>
+							</div>
+							
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-value">
+									{{data.average_nps['3']}} passives
+								</div>
+							</div>
+						</div>
+						
+						<div class="row charts2-stars-count">
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-icons">
+									<i class="fa fa-male red" ng-repeat="n in range(nps['12'])"></i>
+								</div>
+							</div>
+							
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-value">
+									{{data.average_nps['12']}} detractors
+								</div>
+							</div>
+						</div>
+						
+						<div class="row charts2-stars-count">
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-icons">
+								</div>
+							</div>
+							
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-value">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-3 col-xs-12">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div id="pie_nps" style="height: 178px;"></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-xs-12">
+					<div class="panel panel-default">
+						<div id="area_nps" style="height: 300px;"></div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="charts2-dashed">
+			</div>
+			
+			<!--div class="row charts2-row">
+				<div class="col-md-6 col-xs-12">
+					<div class="panel panel-default">
+						<div class="row">
+							<div class="col-sm-5 col-xs-12">
+								<div class="charts2-side-icons">
+									<i class="fa fa-paper-plane"></i>
+								</div>
+							</div>
+							
+							<div class="col-sm-7 col-xs-12">
+								<div class="charts2-side-value">
+									<div class="charts2-side-amount">
+										{{data.reply}}%
+									</div>
+									
+									<div class="charts2-side-text">
+										Het percentage dat heeft geantwoord op uw uitnodigingen
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-3 col-xs-12">
+					<div class="panel panel-default charts2-min-box">
+						<div class="row charts2-stars-count">
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-icons">
+									<i class="fa fa-male green" ng-repeat="n in range(nps['45'])"></i>
+								</div>
+							</div>
+							
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-value">
+									{{data.average_nps['45']}} promotors
+								</div>
+							</div>
+						</div>
+						
+						<div class="row charts2-stars-count">
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-icons">
+									<i class="fa fa-male yellow" ng-repeat="n in range(nps['3'])"></i>
+								</div>
+							</div>
+							
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-value">
+									{{data.average_nps['3']}} passives
+								</div>
+							</div>
+						</div>
+						
+						<div class="row charts2-stars-count">
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-icons">
+									<i class="fa fa-male red" ng-repeat="n in range(nps['12'])"></i>
+								</div>
+							</div>
+							
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-value">
+									{{data.average_nps['12']}} detractors
+								</div>
+							</div>
+						</div>
+						
+						<div class="row charts2-stars-count">
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-icons">
+								</div>
+							</div>
+							
+							<div class="col-xs-6">
+								<div class="charts2-stars-count-value">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-3 col-xs-12">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div id="pie_nps" style="height: 178px;"></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-xs-12">
+					<div class="panel panel-default">
+						<div id="area_nps" style="height: 300px;"></div>
+					</div>
+				</div>
+			</div-->
 		</section>
 	</div>
 </div>

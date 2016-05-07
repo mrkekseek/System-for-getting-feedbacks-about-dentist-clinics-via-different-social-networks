@@ -4571,6 +4571,9 @@
 			if ($this->logged_in())
 			{
 				$users_id = $this->session->userdata("id");
+				$this->db->where('id', $users_id);
+				$this->db->limit(1);
+				$user = $this->db->get("users")->row_array();
 				
 				$this->db->order_by("last", "asc");
 				$this->db->where("status <>", 3);
@@ -4581,11 +4584,43 @@
 					$stat = array();
 					$stat['average'] = 0;
 					$stat['stars_count'] = array(0, 0, 0, 0, 0, 0);
+					$stat['average_month_x'] = array();
+					$stat['average_month'] = array();
+					$stat['average_nps'] = array('12' => 0, '3' => 0, '45' => 0, '12p' => 0, '3p' => 0, '45p' => 0, 'all' => 0, 'delta' => 0);
+					$stat['history_nps'] = array();
+					$stat['reply'] = array();
 
 					$count = array();
 					$count['all'] = 0;
 					$count['for_user'] = 0;
 					$count['average_sum'] = 0;
+
+					$month_finish = date('n');
+					$year_finish = date('Y');
+					for ($i = 1; $i <= 5; $i++)
+					{
+						$month_start = date('n', $user['activation']);
+						$year_start = date('Y', $user['activation']);
+
+						while ( ! ($month_start == $month_finish && $year_start == $year_finish))
+						{
+							$stat['average_month'][$i][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							if ($i == 1)
+							{
+								$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
+								$stat['history_nps']['12'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+								$stat['history_nps']['3'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+								$stat['history_nps']['45'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							}
+
+							$month_start++;
+							if ($month_start >= 12)
+							{
+								$month_start = 1;
+								$year_start++;
+							}
+						}
+					}
 					
 					foreach ($result as $row)
 					{
@@ -4595,6 +4630,38 @@
 							{
 								$count['for_user']++;
 								$count['average_sum'] += $row['stars'];
+								
+								$month = date('Y-m', $row['last']);
+								if (isset($stat['average_month'][$row['stars']][$month]))
+								{
+									$stat['average_month'][$row['stars']][$month]++;
+								}
+								
+								if ($row['stars'] <= 2)
+								{
+									$stat['average_nps']['12']++;
+									if (isset($stat['history_nps']['12'][$month]))
+									{
+										$stat['history_nps']['12'][$month]++;
+									}
+								}
+								elseif ($row['stars'] == 3)
+								{
+									$stat['average_nps']['3']++;
+									if (isset($stat['history_nps']['3'][$month]))
+									{
+										$stat['history_nps']['3'][$month]++;
+									}
+								}
+								else
+								{
+									$stat['average_nps']['45']++;
+									if (isset($stat['history_nps']['45'][$month]))
+									{
+										$stat['history_nps']['45'][$month]++;
+									}
+								}
+								$stat['average_nps']['all']++;
 							}
 							
 							$stat['stars_count'][$row['stars']]++;
@@ -4605,7 +4672,48 @@
 					
 					if ( ! empty($count['for_user']))
 					{
-						$stat['average'] = round($count['average_sum'] / $count['for_user'], 1);
+						$stat['average'] = number_format(round($count['average_sum'] / $count['for_user'], 1), 1);
+					}
+					
+					if ( ! empty($stat['average_nps']['all']))
+					{
+						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
+					}
+					
+					$list = $this->pub->get_questions();
+					$stat['questions'] = $this->pub->user_questions($list);
+					if ( ! empty($stat['questions']))
+					{
+						$q_sum = array();
+						$q_num = array();
+						$this->db->where('users_id', $users_id);
+						$result = $this->db->get('sent_questions')->result_array();
+						foreach ($result as $row)
+						{
+							if ( ! isset($q_sum[$row['questions_id']]))
+							{
+								$q_sum[$row['questions_id']] = 0;
+							}
+							$q_sum[$row['questions_id']] += $row['stars'];
+							
+							if ( ! isset($q_num[$row['questions_id']]))
+							{
+								$q_num[$row['questions_id']] = 0;
+							}
+							$q_num[$row['questions_id']]++;
+						}
+						
+						foreach ($stat['questions'] as $key => $row)
+						{
+							$stat['questions'][$key]['average'] = 0;
+							if ( ! empty($q_num[$row['id']]))
+							{
+								$stat['questions'][$key]['average'] = number_format(round($q_sum[$row['id']] / $q_num[$row['id']], 1), 1);
+							}
+						}
 					}
 
 					return $stat;

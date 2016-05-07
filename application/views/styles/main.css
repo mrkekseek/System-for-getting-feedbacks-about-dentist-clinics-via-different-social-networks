@@ -3067,3 +3067,75 @@ body .btn-primary.compose-prev:disabled {
 .charts2-stars-count:not(:last-child) {
 	border-bottom: solid #E5E5E5 1px;
 }
+
+.charts2-questions-icon {
+	padding: 20px 0;
+	text-align: center;
+	font-size: 45px;
+	color: #fff;
+	background: #494949;
+}
+
+.charts2-questions-info {
+	padding: 20px 0;
+	text-align: center;
+}
+
+.charts2-questions-average {
+	font-size: 40px;
+	font-weight: 300;
+}
+
+.charts2-dashed {
+	border-top: dashed #D0D0D0 3px;
+	margin: 0 -15px 15px;
+}
+
+.charts2-side-nps {
+	display: inline-block;
+	line-height: 1.4;
+	width: 160px;
+	vertical-align: middle;
+}
+
+.charts2-side-nps .fa-male {
+	font-size: 45px;
+	color: #fff;
+	margin: 1px;
+}
+
+.charts2-side-nps .fa-male.o3 {
+	opacity: 0.3;
+}
+
+.charts2-side-nps .fa-male.o5 {
+	opacity: 0.5;
+}
+
+.charts2-stars-count-icons .fa.green {
+	margin: 0 1px;
+	color: #98EA3D;
+	font-size: 20px;
+}
+
+.charts2-stars-count-icons .fa.yellow {
+	margin: 0 1px;
+	color: #FFE165;
+	font-size: 20px;
+}
+
+.charts2-stars-count-icons .fa.red {
+	margin: 0 1px;
+	color: #EE4C61;
+	font-size: 20px;
+}
+
+.charts2-min-box {
+	min-height: 210px;
+}
+
+.charts2-side-icons .fa-paper-plane {
+	font-size: 55px;
+	color: #fff;
+	vertical-align: middle;
+}

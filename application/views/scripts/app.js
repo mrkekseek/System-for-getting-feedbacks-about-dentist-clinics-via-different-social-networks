@@ -903,157 +903,8 @@
         .controller('Charts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', Charts2Ctrl]); // overall control
 
     function Charts2Ctrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
-		/*$scope.first_time = false;
-		$scope.ready = false;
-		$scope.show_difference = false;
-		$scope.stat = {};
-		$scope.filter = {average: 0,
-						 stars: 0,
-						 feedbacks: 0,
-						 diagram: 0,
-						 online: 0,
-						 doctors: 0,
-						 vs: 0,
-						 days: 2,
-						 nps: {bad: 0, good: 0, delta: 0},
-						 doctor: 0,
-						 compare: 0};
-		$scope.donutChart2 = {};
-		$scope.donutChartOnline = {};
-		$scope.donutChartDoctors = {};
-		
-		$scope.doctors = [];
-		$http.post("/pub/get_doctors/").success(function(data, status, headers, config) {
-			var result = logger.check(data);
-			$scope.doctors = [];
-			for (var key in result)
-			{
-				$scope.doctors.push(result[key]);
-			}
-		});
-
-        $scope.donutChart2.data = [
-			{
-                label: "Geen reactie",
-                data: 0
-            }, {
-                label: "1 ster",
-                data: 0
-            }, {
-                label: "2 sterren",
-                data: 0
-            }, {
-                label: "3 sterren",
-                data: 0
-            }, {
-                label: "4 sterren",
-                data: 0
-            }, {
-                label: "5 sterren",
-                data: 0
-            }
-        ];
-		
-        $scope.donutChart2.options = {
-            series: {
-                pie: {
-                    show: true,
-                    innerRadius: 0.45
-                }
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
-            },
-            colors: ["#1BB7A0", "#39B5B9", "#52A3BB", "#619CC4", "#6D90C5"],
-            tooltip: true,
-            tooltipOpts: {
-                content: "%p.0%, %s",
-                defaultTheme: false
-            }
-        };
-		
-		$scope.donutChartOnline.data = [];
-		$scope.donutChartOnline.options = {
-            series: {
-                pie: {
-                    show: true,
-                    innerRadius: 0.45
-                }
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
-            },
-            colors: ["#1BB7A0", "#39B5B9", "#52A3BB", "#619CC4", "#6D90C5"],
-            tooltip: true,
-            tooltipOpts: {
-                content: "%p.0%, %s",
-                defaultTheme: false
-            }
-        };
-		
-		$scope.donutChartDoctors.data = [];
-		$scope.donutChartDoctors.options = {
-            series: {
-                pie: {
-                    show: true,
-                    innerRadius: 0.45
-                }
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
-            },
-            colors: ["#1BB7A0", "#39B5B9", "#52A3BB", "#619CC4", "#6D90C5"],
-            tooltip: true,
-            tooltipOpts: {
-                content: "%p.0%, %s",
-                defaultTheme: false
-            }
-        };
-
-		$scope.easypiechart = {
-            percent: 0,
-            options: {
-                animate: {
-                    duration: 1000,
-                    enabled: true
-                },
-                barColor: $scope.color.primary,
-                lineCap: 'round',
-                size: 180,
-                lineWidth: 5
-            }
-        };
-
-		$scope.largeChart1 = {
-            data: [],
-            options: {
-                type: 'line',
-                lineColor: $scope.color.info,
-                highlightLineColor: '#fff',
-                fillColor: $scope.color.info,
-                spotColor: false,
-                minSpotColor: false,
-                maxSpotColor: false,
-                width: '100%',
-                height: '190px',
-				chartRangeMin: 0,
-				chartRangeMax: 5
-            }
-        };
-*/
 		$scope.data = {};
+		$scope.nps = {};
 		$scope.pie_stars = echarts.init(document.getElementById('pie_stars'));
 		$scope.pie_stars.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
@@ -1069,13 +920,35 @@
 		$scope.area_stars.setOption({
 				tooltip: {trigger: "axis"},
 				calculable: true,
-				xAxis: [{type: 'category', boundaryGap: false, data: ['Sep "16', 'Oct "16', 'Nov "16', 'Dec "16', 'Jan "17']}],
+				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
-				series:[{type: 'line', name: '5.00', stack: '5.00', data: [1.5, 2.8, 1.1, 5.0, 4.8], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
-						{type: 'line', name: '4.00', stack: '4.00', data: [1.5, 2.8, 1.1, 5.0, 4.8], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
-						{type: 'line', name: '3.00', stack: '3.00', data: [1.5, 2.8, 1.1, 5.0, 4.8], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
-						{type: 'line', name: '2.00', stack: '2.00', data: [1.5, 2.8, 1.1, 5.0, 4.8], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
-						{type: 'line', name: '1.00', stack: '1.00', data: [1.5, 2.8, 1.1, 5.0, 4.8], itemStyle: {normal: {areaStyle: {type: 'default'}}}}]
+				series:[{type: 'line', name: '5.00', stack: '5.00', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
+						{type: 'line', name: '4.00', stack: '4.00', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
+						{type: 'line', name: '3.00', stack: '3.00', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
+						{type: 'line', name: '2.00', stack: '2.00', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
+						{type: 'line', name: '1.00', stack: '1.00', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}}]
+		});
+		
+		$scope.pie_nps = echarts.init(document.getElementById('pie_nps'));
+		$scope.pie_nps.setOption({
+				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				legend: {orient: "vertical", x: "left", data: ["Promotors", "Passives", "Detractors"]},
+				calculable: true,
+				series:[{type: "pie", radius:["50%", "88%"],
+						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
+									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "13", fontWeight: "normal"}}}},
+						data:[{name: 'Promotors', value: 0, itemStyle: {normal: {color: '#98EA3D'}}}, {name: 'Passives', value: 0, itemStyle: {normal: {color: '#FFE165'}}}, {name: 'Detractors', value: 0, itemStyle: {normal: {color: '#EE4C61'}}}] }]
+		});
+		
+		$scope.area_nps = echarts.init(document.getElementById('area_nps'));
+		$scope.area_nps.setOption({
+				tooltip: {trigger: "axis"},
+				calculable: true,
+				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
+				yAxis: [{type: 'value', boundaryGap: false}],
+				series:[{type: 'line', name: 'Promotors', stack: 'Promotors', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
+						{type: 'line', name: 'Passives', stack: 'Passives', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
+						{type: 'line', name: 'Detractors', stack: 'Detractors', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}}]
 		});
 		
 		$scope.get = function() {
@@ -1088,10 +961,75 @@
 						$scope.pie_stars.addData([[0, {name: i.toFixed(2) + '', value: ($scope.data.stars_count[i] ? $scope.data.stars_count[i] : 0) * 1}, false, false]]);
 					}
 				}
+				
+				if ($scope.data && $scope.data.average_month)
+				{
+					$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}]});
+					var series = [];
+					for (var i = 1; i <= 5; i++)
+					{
+						var data = [];
+						for (var m in $scope.data.average_month[i])
+						{
+							data.push($scope.data.average_month[i][m]);
+						}
+						series.push({type: 'line', name: (i + '.00'), stack: (i + '.00'), data: data, itemStyle: {normal: {areaStyle: {type: 'default'}}}});
+					}
+					$scope.area_stars.setOption({series: series});
+				}
+				
+				if ($scope.data && $scope.data.average_nps.all)
+				{
+					$scope.nps['12'] = Math.round($scope.data.average_nps['12p'] / 10);
+					$scope.nps['45'] = Math.round($scope.data.average_nps['45p'] / 10);
+					$scope.nps['3'] = 10 - ($scope.nps['12'] + $scope.nps['45']);
+					
+					$scope.pie_nps.addData([[0, {name: 'Promotors', value: $scope.data.average_nps['45']}, false, false]]);
+					$scope.pie_nps.addData([[0, {name: 'Passives', value: $scope.data.average_nps['3']}, false, false]]);
+					$scope.pie_nps.addData([[0, {name: 'Detractors', value: $scope.data.average_nps['12']}, false, false]]);
+				}
+				
+				if ($scope.data && $scope.data.history_nps)
+				{
+					$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}]});
+					var series = [];
+					var data = [];
+					for (var m in $scope.data.history_nps['45'])
+					{
+						data.push($scope.data.history_nps['45'][m]);
+					}
+					series.push({type: 'line', name: 'Promotors', stack: 'Promotors', data: data, itemStyle: {normal: {areaStyle: {type: 'default'}}}});
+					
+					data = [];
+					for (var m in $scope.data.history_nps['3'])
+					{
+						data.push($scope.data.history_nps['3'][m]);
+					}
+					series.push({type: 'line', name: 'Passives', stack: 'Passives', data: data, itemStyle: {normal: {areaStyle: {type: 'default'}}}});
+					
+					data = [];
+					for (var m in $scope.data.history_nps['12'])
+					{
+						data.push($scope.data.history_nps['12'][m]);
+					}
+					series.push({type: 'line', name: 'Detractors', stack: 'Detractors', data: data, itemStyle: {normal: {areaStyle: {type: 'default'}}}});
+
+					$scope.area_nps.setOption({series: series});
+				}
 			});
 		};
 
 		$scope.get();
+		
+		$scope.range = function(num)
+		{
+			var array = [];
+			for (var i = 0; i < num; i++)
+			{
+				array.push(i);
+			}
+			return array;
+		}
 
 		$scope.online = function()
 		{
