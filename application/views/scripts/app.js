@@ -921,14 +921,15 @@
 		$window.onresize = function() { $scope.area_stars.resize(); };
 		$scope.area_stars.setOption({
 				tooltip: {trigger: "axis"},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['5.00', '4.00', '3.00', '2.00', '1.00']},
 				calculable: true,
 				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
-				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: '5.00', data: [0], itemStyle: {normal: {borderColor: '#2F91D5', lineStyle: {color: '#2F91D5'}, areaStyle: {color: 'rgba(47, 88, 116, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '4.00', data: [0], itemStyle: {normal: {borderColor: '#0F75BC', lineStyle: {color: '#0F75BC'}, areaStyle: {color: 'rgba(15, 117, 188, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '3.00', data: [0], itemStyle: {normal: {borderColor: '#3E769D', lineStyle: {color: '#3E769D'}, areaStyle: {color: 'rgba(62, 118, 157, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '2.00', data: [0], itemStyle: {normal: {borderColor: '#2D5775', lineStyle: {color: '#2D5775'}, areaStyle: {color: 'rgba(45, 87, 117, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '1.00', data: [0], itemStyle: {normal: {borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}}]
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: '5.00', data: [0], itemStyle: {normal: {color: '#2F91D5', borderColor: '#2F91D5', lineStyle: {color: '#2F91D5'}, areaStyle: {color: 'rgba(47, 88, 116, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '4.00', data: [0], itemStyle: {normal: {color: '#0F75BC', borderColor: '#0F75BC', lineStyle: {color: '#0F75BC'}, areaStyle: {color: 'rgba(15, 117, 188, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '3.00', data: [0], itemStyle: {normal: {color: '#3E769D', borderColor: '#3E769D', lineStyle: {color: '#3E769D'}, areaStyle: {color: 'rgba(62, 118, 157, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '2.00', data: [0], itemStyle: {normal: {color: '#2D5775', borderColor: '#2D5775', lineStyle: {color: '#2D5775'}, areaStyle: {color: 'rgba(45, 87, 117, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '1.00', data: [0], itemStyle: {normal: {color: '#04090C', borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}}]
 		});
 		
 		$scope.pie_nps = echarts.init(document.getElementById('pie_nps'));
@@ -947,12 +948,13 @@
 		$window.onresize = function() { $scope.area_nps.resize(); };
 		$scope.area_nps.setOption({
 				tooltip: {trigger: "axis"},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['Promotors', 'Passives', 'Detractors']},
 				calculable: true,
 				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
-				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Promotors', data: [0], itemStyle: {normal: {borderColor: '#98EA3D', lineStyle: {color: '#98EA3D'}, areaStyle: {color: 'rgba(152, 234, 61, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Passives', data: [0], itemStyle: {normal: {borderColor: '#FFE165', lineStyle: {color: '#FFE165'}, areaStyle: {color: 'rgba(255, 255, 101, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Detractors', data: [0], itemStyle: {normal: {borderColor: '#EE4C61', lineStyle: {color: '#EE4C61'}, areaStyle: {color: 'rgba(238, 76, 97, 0.5)'}}}}]
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Promotors', data: [0], itemStyle: {normal: {color: '#98EA3D', borderColor: '#98EA3D', lineStyle: {color: '#98EA3D'}, areaStyle: {color: 'rgba(152, 234, 61, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Passives', data: [0], itemStyle: {normal: {color: '#FFE165', borderColor: '#FFE165', lineStyle: {color: '#FFE165'}, areaStyle: {color: 'rgba(255, 255, 101, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Detractors', data: [0], itemStyle: {normal: {color: '#EE4C61', borderColor: '#EE4C61', lineStyle: {color: '#EE4C61'}, areaStyle: {color: 'rgba(238, 76, 97, 0.5)'}}}}]
 		});
 		
 		$scope.pie_reply = echarts.init(document.getElementById('pie_reply'));
@@ -980,18 +982,21 @@
 				
 				if ($scope.data && $scope.data.average_month)
 				{
-					$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}]});
 					var series = [];
-					for (var i = 1; i <= 5; i++)
+					var max = 0;
+					for (var i = 5; i > 0; i--)
 					{
 						var data = [];
 						for (var m in $scope.data.average_month[i])
 						{
 							data.push($scope.data.average_month[i][m]);
+							max = Math.max(max, $scope.data.average_month[i][m] * 1);
 						}
 						series.push({type: 'line', name: (i + '.00'), data: data});
 					}
-					$scope.area_stars.setOption({series: series});
+					$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}],
+												 yAxis: [{min: 0, max: max}],
+												 series: series});
 				}
 				
 				if ($scope.data && $scope.data.average_nps.all)
@@ -1007,12 +1012,14 @@
 				
 				if ($scope.data && $scope.data.history_nps)
 				{
-					$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}]});
+					$scope.area_nps.setOption({});
 					var series = [];
 					var data = [];
+					var max = 0;
 					for (var m in $scope.data.history_nps['45'])
 					{
 						data.push($scope.data.history_nps['45'][m]);
+						max = Math.max(max, $scope.data.history_nps['45'][m] * 1);
 					}
 					series.push({type: 'line', name: 'Promotors', data: data});
 					
@@ -1020,6 +1027,7 @@
 					for (var m in $scope.data.history_nps['3'])
 					{
 						data.push($scope.data.history_nps['3'][m]);
+						max = Math.max(max, $scope.data.history_nps['3'][m] * 1);
 					}
 					series.push({type: 'line', name: 'Passives', data: data});
 					
@@ -1027,10 +1035,13 @@
 					for (var m in $scope.data.history_nps['12'])
 					{
 						data.push($scope.data.history_nps['12'][m]);
+						max = Math.max(max, $scope.data.history_nps['12'][m] * 1);
 					}
 					series.push({type: 'line', name: 'Detractors', data: data});
 
-					$scope.area_nps.setOption({series: series});
+					$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}],
+											   yAxis: [{min: 0, max: max}],
+											   series: series});
 				}
 				
 				if ($scope.data && $scope.data.reply_chart)
