@@ -23,7 +23,7 @@
 			<div class="row charts2-row">
 				<div class="col-lg-6 col-slg-12 col-xs-12">
 					<div class="panel panel-default">
-						<div class="row">
+						<div class="row" ng-class="{'red-row': data.average < 3}">
 							<div class="col-sm-6 col-xs-12">
 								<div class="charts2-side-icons">
 									<i class="fa fa-star-o" ng-show="data.average == 0"></i>
