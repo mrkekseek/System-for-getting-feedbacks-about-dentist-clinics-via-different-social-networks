@@ -909,27 +909,27 @@
 		$window.onresize = function() { $scope.pie_stars.resize(); };
 		$scope.pie_stars.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
-				legend: {orient: "vertical", x: "left", data: ["5.00", "4.00", "3.00", "2.00", "1.00"]},
+				legend: {orient: "vertical", x: "left", data: ["5 sterren", "4 sterren", "3 sterren", "2 sterren", "1 sterren"]},
 				calculable: true,
 				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
 						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
 									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "30", fontWeight: "bold"}}}},
-						data:[{name: '5.00', value: 0, itemStyle: {normal: {color: '#2F91D5'}}}, {name: '4.00', value: 0, itemStyle: {normal: {color: '#0F75BC'}}}, {name: '3.00', value: 0, itemStyle: {normal: {color: '#3E769D'}}}, {name: '2.00', value: 0, itemStyle: {normal: {color: '#2D5775'}}}, {name: '1.00', value: 0, itemStyle: {normal: {color: '#04090C'}}}] }]
+						data:[{name: '5 sterren', value: 0, itemStyle: {normal: {color: '#2F91D5'}}}, {name: '4 sterren', value: 0, itemStyle: {normal: {color: '#0F75BC'}}}, {name: '3 sterren', value: 0, itemStyle: {normal: {color: '#3E769D'}}}, {name: '2 sterren', value: 0, itemStyle: {normal: {color: '#2D5775'}}}, {name: '1 sterren', value: 0, itemStyle: {normal: {color: '#04090C'}}}] }]
 		});
 		
 		$scope.area_stars = echarts.init(document.getElementById('area_stars'));
 		$window.onresize = function() { $scope.area_stars.resize(); };
 		$scope.area_stars.setOption({
 				tooltip: {trigger: "axis"},
-				legend: {orient: "horizontal", x: "center", y: "30", data: ['5.00', '4.00', '3.00', '2.00', '1.00']},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['5 sterren', '4 sterren', '3 sterren', '2 sterren', '1 sterren']},
 				calculable: true,
 				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
-				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: '5.00', data: [0], itemStyle: {normal: {color: '#2F91D5', borderColor: '#2F91D5', lineStyle: {color: '#2F91D5'}, areaStyle: {color: 'rgba(47, 88, 116, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '4.00', data: [0], itemStyle: {normal: {color: '#0F75BC', borderColor: '#0F75BC', lineStyle: {color: '#0F75BC'}, areaStyle: {color: 'rgba(15, 117, 188, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '3.00', data: [0], itemStyle: {normal: {color: '#3E769D', borderColor: '#3E769D', lineStyle: {color: '#3E769D'}, areaStyle: {color: 'rgba(62, 118, 157, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '2.00', data: [0], itemStyle: {normal: {color: '#2D5775', borderColor: '#2D5775', lineStyle: {color: '#2D5775'}, areaStyle: {color: 'rgba(45, 87, 117, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '1.00', data: [0], itemStyle: {normal: {color: '#04090C', borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}}]
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: '5 sterren', data: [0], itemStyle: {normal: {color: '#2F91D5', borderColor: '#2F91D5', lineStyle: {color: '#2F91D5'}, areaStyle: {color: 'rgba(47, 88, 116, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '4 sterren', data: [0], itemStyle: {normal: {color: '#0F75BC', borderColor: '#0F75BC', lineStyle: {color: '#0F75BC'}, areaStyle: {color: 'rgba(15, 117, 188, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '3 sterren', data: [0], itemStyle: {normal: {color: '#3E769D', borderColor: '#3E769D', lineStyle: {color: '#3E769D'}, areaStyle: {color: 'rgba(62, 118, 157, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '2 sterren', data: [0], itemStyle: {normal: {color: '#2D5775', borderColor: '#2D5775', lineStyle: {color: '#2D5775'}, areaStyle: {color: 'rgba(45, 87, 117, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '1 sterren', data: [0], itemStyle: {normal: {color: '#04090C', borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}}]
 		});
 		
 		$scope.pie_nps = echarts.init(document.getElementById('pie_nps'));
@@ -976,7 +976,7 @@
 				{
 					for (var i = 5; i > 0; i--)
 					{
-						$scope.pie_stars.addData([[0, {name: i.toFixed(2) + '', value: ($scope.data.stars_count[i] ? $scope.data.stars_count[i] : 0) * 1}, false, false]]);
+						$scope.pie_stars.addData([[0, {name: i + ' sterren', value: ($scope.data.stars_count[i] ? $scope.data.stars_count[i] : 0) * 1}, false, false]]);
 					}
 				}
 				
@@ -992,7 +992,7 @@
 							data.push($scope.data.average_month[i][m]);
 							max = Math.max(max, $scope.data.average_month[i][m] * 1);
 						}
-						series.push({type: 'line', name: (i + '.00'), data: data});
+						series.push({type: 'line', name: (i + ' sterren'), data: data});
 					}
 					$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}],
 												 yAxis: [{min: 0, max: max}],
