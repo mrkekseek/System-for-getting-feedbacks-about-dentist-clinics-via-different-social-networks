@@ -156,7 +156,8 @@
 				<div ng-repeat="q in data.questions" class="col-sm-{{12 / data.questions.length}} col-xs-12">
 					<div class="panel panel-default">
 						<div class="charts2-questions-icon">
-							<i class="{{q.stats_icon}}"></i>
+							<i class="{{q.stats_icon}}" ng-if="q.is_icon == '1'"></i>
+							<img src="{{q.stats_icon}}" ng-if="q.is_icon == '0'" alt="{{q.question_name}}" />
 						</div>
 						
 						<div class="charts2-questions-info">

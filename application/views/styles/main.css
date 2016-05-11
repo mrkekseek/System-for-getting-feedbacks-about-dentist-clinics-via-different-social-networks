@@ -3084,9 +3084,16 @@ body .btn-primary.compose-prev:disabled {
 .charts2-questions-icon {
 	padding: 20px 0;
 	text-align: center;
+	background: #494949;
+}
+
+.charts2-questions-icon > i {
 	font-size: 45px;
 	color: #fff;
-	background: #494949;
+}
+
+.charts2-questions-icon > img {
+	height: 45px;
 }
 
 .charts2-questions-info {
