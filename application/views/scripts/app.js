@@ -906,17 +906,19 @@
 		$scope.data = {};
 		$scope.nps = {};
 		$scope.pie_stars = echarts.init(document.getElementById('pie_stars'));
+		window.onresize = function() { $scope.pie_stars.resize(); };
 		$scope.pie_stars.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
 				legend: {orient: "vertical", x: "left", data: ["5.00", "4.00", "3.00", "2.00", "1.00"]},
 				calculable: true,
-				series:[{type: "pie", radius:["50%", "88%"],
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
 						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
 									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "30", fontWeight: "bold"}}}},
 						data:[{name: '5.00', value: 0, itemStyle: {normal: {color: '#2E91D5'}}}, {name: '4.00', value: 0, itemStyle: {normal: {color: '#0F75BD'}}}, {name: '3.00', value: 0, itemStyle: {normal: {color: '#2F5874'}}}, {name: '2.00', value: 0}, {name: '1.00', value: 0}] }]
 		});
 		
 		$scope.area_stars = echarts.init(document.getElementById('area_stars'));
+		window.onresize = function() { $scope.area_stars.resize(); };
 		$scope.area_stars.setOption({
 				tooltip: {trigger: "axis"},
 				calculable: true,
@@ -930,17 +932,19 @@
 		});
 		
 		$scope.pie_nps = echarts.init(document.getElementById('pie_nps'));
+		window.onresize = function() { $scope.pie_nps.resize(); };
 		$scope.pie_nps.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
 				legend: {orient: "vertical", x: "left", data: ["Promotors", "Passives", "Detractors"]},
 				calculable: true,
-				series:[{type: "pie", radius:["50%", "88%"],
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
 						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
 									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "13", fontWeight: "normal"}}}},
 						data:[{name: 'Promotors', value: 0, itemStyle: {normal: {color: '#98EA3D'}}}, {name: 'Passives', value: 0, itemStyle: {normal: {color: '#FFE165'}}}, {name: 'Detractors', value: 0, itemStyle: {normal: {color: '#EE4C61'}}}] }]
 		});
 		
 		$scope.area_nps = echarts.init(document.getElementById('area_nps'));
+		window.onresize = function() { $scope.area_nps.resize(); };
 		$scope.area_nps.setOption({
 				tooltip: {trigger: "axis"},
 				calculable: true,
@@ -949,6 +953,18 @@
 				series:[{type: 'line', name: 'Promotors', stack: 'Promotors', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
 						{type: 'line', name: 'Passives', stack: 'Passives', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
 						{type: 'line', name: 'Detractors', stack: 'Detractors', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}}]
+		});
+		
+		$scope.pie_reply = echarts.init(document.getElementById('pie_reply'));
+		window.onresize = function() { $scope.pie_reply.resize(); };
+		$scope.pie_reply.setOption({
+				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				legend: {orient: "vertical", x: "left", data: ["Beoordeeld", "Doorgeklikt", "Niet gereageerd"]},
+				calculable: true,
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
+						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
+									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "13", fontWeight: "normal"}}}},
+						data:[{name: 'Beoordeeld', value: 0, itemStyle: {normal: {color: '#2E91D5'}}}, {name: 'Doorgeklikt', value: 0, itemStyle: {normal: {color: '#0F75BD'}}}, {name: 'Niet gereageerd', value: 0, itemStyle: {normal: {color: '#2F5874'}}}] }]
 		});
 		
 		$scope.get = function() {
@@ -1015,6 +1031,13 @@
 					series.push({type: 'line', name: 'Detractors', stack: 'Detractors', data: data, itemStyle: {normal: {areaStyle: {type: 'default'}}}});
 
 					$scope.area_nps.setOption({series: series});
+				}
+				
+				if ($scope.data && $scope.data.reply_chart)
+				{
+					$scope.pie_reply.addData([[0, {name: 'Beoordeeld', value: $scope.data.reply_chart['reply']}, false, false]]);
+					$scope.pie_reply.addData([[0, {name: 'Doorgeklikt', value: $scope.data.reply_chart['click']}, false, false]]);
+					$scope.pie_reply.addData([[0, {name: 'Niet gereageerd', value: $scope.data.reply_chart['none']}, false, false]]);
 				}
 			});
 		};

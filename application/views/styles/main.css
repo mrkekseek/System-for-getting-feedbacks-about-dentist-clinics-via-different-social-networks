@@ -3044,7 +3044,7 @@ body .btn-primary.compose-prev:disabled {
 
 .charts2-side-value {
 	text-align: center;
-	padding: 54px 0;
+	padding: 49px 15px 49px 0;
 }
 
 .charts2-side-amount {
@@ -3052,15 +3052,28 @@ body .btn-primary.compose-prev:disabled {
 	font-weight: 300;
 }
 
+.charts2-stars-count {
+	margin: 0;
+}
+
+.charts2-stars-count > div {
+	padding: 0;
+}
+
 .charts2-stars-count-icons {
-	padding: 9px 15px;
+	padding: 9px 0 9px 15px;
 	color: #FFE166;
 	text-align: left;
 	font-size: 16px;
 }
 
-.charts2-stars-count-value {
+.charts2-stars-count-text {
 	padding: 10px 15px;
+	text-align: left;
+}
+
+.charts2-stars-count-value {
+	padding: 10px 15px 10px 0;
 	text-align: right;
 }
 
@@ -3138,4 +3151,8 @@ body .btn-primary.compose-prev:disabled {
 	font-size: 55px;
 	color: #fff;
 	vertical-align: middle;
+}
+
+.panel-body.small-padding-x {
+	padding: 15px 5px;
 }
