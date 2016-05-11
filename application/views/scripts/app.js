@@ -2115,32 +2115,34 @@
 			});
 		};
 		
+		$scope.upgrade_to_pro = function()
+		{
+			if ($scope.user.account_type == 0 && $scope.user.organization == 0)
+			{
+				var modalInstance;
+				modalInstance = $modal.open({
+					templateUrl: "questions_basic.html",
+					controller: 'ModalQuestionsBasicCtrl',
+					resolve: {
+						items: function() {
+							return [];
+						}
+					}
+				});
+				
+				modalInstance.result.then((function(items) {
+					$location.url("pages/activate/1");
+				}), function() {
+					console.log("Modal dismissed at: " + new Date());
+				});
+			}
+		};
+		
 		$scope.check_questions_for_user = function()
 		{
 			if ($scope.user.rating_questions)
 			{
-				if ($scope.user.account_type == 0 && $scope.user.organization == 0)
-				{
-					$scope.user.rating_questions = 0;
-					
-					var modalInstance;
-					modalInstance = $modal.open({
-						templateUrl: "questions_basic.html",
-						controller: 'ModalQuestionsBasicCtrl',
-						resolve: {
-							items: function() {
-								return [];
-							}
-						}
-					});
-					
-					modalInstance.result.then((function(items) {
-						$location.url("pages/activate/1");
-					}), function() {
-						console.log("Modal dismissed at: " + new Date());
-					});
-				}
-				else
+				if ($scope.user.account_type == 1 || $scope.user.organization == 1)
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
