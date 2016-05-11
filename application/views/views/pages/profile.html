@@ -285,7 +285,7 @@
 									<tr class="tr_questions" ng-class="{'edit_question': (edit_question[q.id] == 1)}" ng-repeat="q in user.questions">
 										<td class="question_first">
 											<span ng-show="edit_question[q.id] == 0">{{q.question_name}}</span>
-											<select ng-show="edit_question[q.id] == 1" ng-model="edit_questions[q.id].name" ng-change="change_edit_question(q.id)" class="form-control" ng-options="option.question_name for option in questions_list track by option.id">
+											<select ng-show="edit_question[q.id] == 1" ng-model="edit_questions[q.id].name" ng-change="change_edit_question(q.id)" class="form-control" ng-options="option.question_name for option in edit_questions_list[q.id] track by option.id">
 											</select>
 										</td>
 										<td class="question_second">

@@ -1404,6 +1404,29 @@
 			return $items;
 		}
 		
+		function free_questions($list, $users_list)
+		{
+			$items = array();
+			foreach ($list as $row)
+			{
+				$check = TRUE;
+				foreach ($users_list as $val)
+				{
+					if ($val['id'] == $row['id'])
+					{
+						$check = FALSE;
+					}
+				}
+				
+				if ($check)
+				{
+					$items[] = $row;
+				}
+			}
+
+			return $items;
+		}
+		
 		function get_questions()
 		{
 			return $this->db->get('rating_questions')->result_array();

@@ -2224,6 +2224,7 @@
 		
 		$scope.edit_question = {};
 		$scope.edit_questions = {};
+		$scope.edit_questions_list = {}
 		$scope.edit_init = function()
 		{
 			for (var k in $scope.user.questions)
@@ -2234,6 +2235,9 @@
 				$scope.edit_questions[item.id] = {};
 				$scope.edit_questions[item.id].name = item;
 				$scope.edit_questions[item.id].desc = item.question_description;
+				
+				$scope.edit_questions_list[item.id] = angular.copy($scope.questions_list);
+				$scope.edit_questions_list[item.id].push(item);
 			}
 		};
 		
@@ -2252,7 +2256,9 @@
 			if ($scope.new_question && $scope.new_question.id)
 			{
 				$http.post("/pub/questions_save/", {questions_id: $scope.new_question.id}).success(function(data, status, headers, config) {
-					$scope.user.questions = logger.check(data);
+					var result = logger.check(data);
+					$scope.user.questions = result.questions;
+					$scope.questions_list = result.questions_list;
 					$scope.add_new_question_hide();
 					
 					$scope.new_question = {};
@@ -2266,7 +2272,10 @@
 		$scope.remove_questions = function(questions_id)
 		{
 			$http.post("/pub/questions_remove/", {questions_id: questions_id}).success(function(data, status, headers, config) {
-				$scope.user.questions = logger.check(data);
+				var result = logger.check(data);
+				$scope.user.questions = result.questions;
+				$scope.questions_list = result.questions_list;
+				
 				if ( ! $scope.user.questions.length)
 				{
 					$scope.add_new_question_show();
@@ -2293,7 +2302,10 @@
 		$scope.save_questions = function(questions_id)
 		{
 			$http.post("/pub/questions_edit/", {questions_id: questions_id, new_id: $scope.edit_questions[questions_id].name.id}).success(function(data, status, headers, config) {
-				$scope.user.questions = logger.check(data);
+				var result = logger.check(data);
+				$scope.user.questions = result.questions;
+				$scope.questions_list = result.questions_list;
+				
 				$scope.add_new_question_hide();
 				
 				$scope.edit_init();
