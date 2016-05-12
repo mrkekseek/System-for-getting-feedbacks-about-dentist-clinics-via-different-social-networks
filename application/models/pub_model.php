@@ -4644,6 +4644,8 @@
 					$stat['stars_count'] = array(0, 0, 0, 0, 0, 0);
 					$stat['average_month_x'] = array();
 					$stat['average_month'] = array();
+					$stat['average_my_month'] = array();
+					$stat['average_all_month'] = array();
 					$stat['average_nps'] = array('12' => 0, '3' => 0, '45' => 0, '12p' => 0, '3p' => 0, '45p' => 0, 'all' => 0, 'delta' => 0);
 					$stat['history_nps'] = array();
 					$stat['reply'] = array();
@@ -4657,12 +4659,17 @@
 
 					$count = array();
 					$count['all'] = 0;
+					$count['my'] = 0;
 					$count['for_user'] = 0;
 					$count['average_sum'] = 0;
 					$count['reply_all'] = 0;
 					$count['reply_only'] = 0;
 					$count['reply_click'] = 0;
 					$count['reply_count'] = array();
+					$count['my_month_sum'] = array();
+					$count['all_month_sum'] = array();
+					$count['my_month_num'] = array();
+					$count['all_month_num'] = array();
 
 					$month_finish = date('n');
 					$year_finish = date('Y');
@@ -4674,6 +4681,10 @@
 						while ( ! ($month_start == $month_finish && $year_start == $year_finish))
 						{
 							$stat['average_month'][$i][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							$count['my_month_sum'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							$count['my_month_num'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							$count['all_month_sum'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							$count['all_month_num'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
 							if ($i == 1)
 							{
 								$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
@@ -4695,14 +4706,19 @@
 					
 					foreach ($result as $row)
 					{
+						$month = FALSE;
+						if ( ! empty($row['last']))
+						{
+							$month = date('Y-m', $row['last']);
+						}
+
 						if ($row['users_id'] == $this->session->userdata("id"))
 						{
 							if ($row['stars'] > 0)
 							{
 								$count['for_user']++;
 								$count['average_sum'] += $row['stars'];
-								
-								$month = date('Y-m', $row['last']);
+
 								if (isset($stat['average_month'][$row['stars']][$month]))
 								{
 									$stat['average_month'][$row['stars']][$month]++;
@@ -4778,8 +4794,20 @@
 							}
 							
 							$stat['stars_count'][$row['stars']]++;
+							
+							if ( ! empty($month) && isset($count['my_month_sum'][$month]))
+							{
+								$count['my_month_sum'][$month] += $row['stars'];
+								$count['my_month_num'][$month]++;
+							}
 						}
 
+						if ( ! empty($month) && isset($count['all_month_sum'][$month]))
+						{
+							$count['all_month_sum'][$month] += $row['stars'];
+							$count['all_month_num'][$month]++;
+						}
+						
 						$count['all']++;
 					}
 					
@@ -4794,6 +4822,12 @@
 						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
+					}
+
+					foreach ($count['my_month_num'] as $month => $val)
+					{
+						$stat['average_my_month'][$month] = empty($count['my_month_num'][$month]) ? 0 : round($count['my_month_sum'][$month] / $count['my_month_num'][$month], 1);
+						$stat['average_all_month'][$month] = empty($count['all_month_num'][$month]) ? 0 : round($count['all_month_sum'][$month] / $count['all_month_num'][$month], 1);
 					}
 					
 					$list = $this->pub->get_questions();
