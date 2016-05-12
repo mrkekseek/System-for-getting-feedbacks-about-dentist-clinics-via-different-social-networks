@@ -1453,6 +1453,24 @@
 			}
 		}
 		
+		function questions_ids_save($questions_ids)
+		{
+			if ($this->logged_in())
+			{
+				foreach ($questions_ids as $questions_id)
+				{
+					$this->db->where('questions_id', $questions_id);
+					$this->db->where('users_id', $this->session->userdata("id"));
+					if ( ! $this->db->count_all_results('users_questions'))
+					{
+						$data_array = array('questions_id' => $questions_id,
+											'users_id' => $this->session->userdata("id"));
+						$this->db->insert('users_questions', $data_array);
+					}
+				}
+			}
+		}
+		
 		function questions_remove($questions_id)
 		{
 			if ($this->logged_in())

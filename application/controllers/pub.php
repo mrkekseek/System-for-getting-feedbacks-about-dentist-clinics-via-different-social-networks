@@ -701,6 +701,16 @@
 			$this->response($result);
 		}
 		
+		function questions_ids_save()
+		{
+			$result = array();
+			$this->pub->questions_ids_save($this->post['questions_ids']);
+			$questions_list = $this->pub->get_questions();
+			$result['questions'] = $this->pub->user_questions($questions_list);
+			$result['questions_list'] = $this->pub->free_questions($questions_list, $result['questions']);
+			$this->response($result);
+		}
+		
 		function questions_remove()
 		{
 			$result = array();

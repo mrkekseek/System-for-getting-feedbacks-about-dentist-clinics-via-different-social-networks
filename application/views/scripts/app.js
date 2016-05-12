@@ -2205,6 +2205,12 @@
 						if (result)
 						{
 							$scope.email_text_class = 'open';
+							var ids = [];
+							for (var i = $scope.user.questions.length; i < 2; i++)
+							{
+								ids.push($scope.questions_list[i].id);
+							}
+							$scope.first_questions_save(ids);
 						}
 						else
 						{
@@ -2315,24 +2321,49 @@
 			}
 		};
 		
+		$scope.first_questions_save = function(ids)
+		{
+			if (ids && ids.length)
+			{
+				$http.post("/pub/questions_ids_save/", {questions_ids: ids}).success(function(data, status, headers, config) {
+					var result = logger.check(data);
+					$scope.user.questions = result.questions;
+					$scope.questions_list = result.questions_list;
+					$scope.add_new_question_hide();
+					
+					$scope.new_question = {};
+					$scope.question_desc = '';
+					
+					$scope.edit_init();
+				});
+			}
+		};
+		
 		$scope.remove_questions = function(questions_id)
 		{
-			$http.post("/pub/questions_remove/", {questions_id: questions_id}).success(function(data, status, headers, config) {
-				var result = logger.check(data);
-				$scope.user.questions = result.questions;
-				$scope.questions_list = result.questions_list;
-				
-				if ( ! $scope.user.questions.length)
-				{
-					$scope.add_new_question_show();
-				}
-				else
-				{
-					$scope.add_new_question_hide();
-				}
-				
-				$scope.edit_init();
-			});
+			if ($scope.user.questions.length == 2)
+			{
+				logger.logError("U dient minimaal twee vraagstellingen te gebruiken.");
+			}
+			else
+			{
+				$http.post("/pub/questions_remove/", {questions_id: questions_id}).success(function(data, status, headers, config) {
+					var result = logger.check(data);
+					$scope.user.questions = result.questions;
+					$scope.questions_list = result.questions_list;
+					
+					if ( ! $scope.user.questions.length)
+					{
+						$scope.add_new_question_show();
+					}
+					else
+					{
+						$scope.add_new_question_hide();
+					}
+					
+					$scope.edit_init();
+				});
+			}
 		};
 		
 		$scope.edit_questions = function(questions_id)
