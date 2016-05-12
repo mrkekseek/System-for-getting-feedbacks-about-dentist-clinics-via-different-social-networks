@@ -3844,12 +3844,10 @@
 						{
 							$data_array['status'] = 2; 
 						}
-						
-						if (empty($row['questions_id']))
-						{
-							$data_array['stars'] = $stars;
-							$row['stars'] = $stars;
-						}
+
+						$data_array['stars'] = $stars;
+						$row['stars'] = $stars;
+
 						$this->db->update("sent", $data_array);
 
 						if ( ! empty($row['questions_id']))
