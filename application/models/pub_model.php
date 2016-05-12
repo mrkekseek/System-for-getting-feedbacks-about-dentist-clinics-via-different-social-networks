@@ -4641,6 +4641,7 @@
 				{
 					$stat = array();
 					$stat['average'] = 0;
+					$stat['for_user'] = 0;
 					$stat['stars_count'] = array(0, 0, 0, 0, 0, 0);
 					$stat['average_month_x'] = array();
 					$stat['average_month'] = array();
@@ -4814,6 +4815,7 @@
 					if ( ! empty($count['for_user']))
 					{
 						$stat['average'] = number_format(round($count['average_sum'] / $count['for_user'], 1), 1);
+						$stat['for_user'] = $count['for_user'];
 					}
 					
 					if ( ! empty($stat['average_nps']['all']))

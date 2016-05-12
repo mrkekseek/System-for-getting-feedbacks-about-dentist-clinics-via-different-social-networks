@@ -973,119 +973,129 @@
 						data:[{name: 'Beoordeeld', value: 0, itemStyle: {normal: {color: '#2E91D5'}}}, {name: 'Doorgeklikt', value: 0, itemStyle: {normal: {color: '#0F75BD'}}}, {name: 'Niet gereageerd', value: 0, itemStyle: {normal: {color: '#2F5874'}}}] }]
 		});
 		
+		$scope.less_30 = false;
 		$scope.get = function() {
 			$http.post("/pub/stat_chart2/", {}).success(function(data, status, headers, config) {
 				$scope.data = logger.check(data);
-				if ($scope.data && $scope.data.stars_count)
+				if ($scope.data.for_user >= 30)
 				{
-					for (var i = 5; i > 0; i--)
-					{
-						$scope.pie_stars.addData([[0, {name: i + ' sterren', value: ($scope.data.stars_count[i] ? $scope.data.stars_count[i] : 0) * 1}, false, false]]);
-					}
-				}
-				
-				if ($scope.data && $scope.data.average_month)
-				{
-					var series = [];
-					var max = 0;
-					for (var i = 5; i > 0; i--)
-					{
-						var data = [];
-						for (var m in $scope.data.average_month[i])
-						{
-							data.push($scope.data.average_month[i][m]);
-							max = Math.max(max, $scope.data.average_month[i][m] * 1);
-						}
-						series.push({type: 'line', name: (i + ' sterren'), data: data});
-					}
-					
-					var data = [];
-					for (var m in $scope.data.average_my_month)
-					{
-						data.push($scope.data.average_my_month[m]);
-						max = Math.max(max, $scope.data.average_my_month[m] * 1);
-					}
-					series.push({type: 'line', name: 'Beoordeling van uw praktijk', data: data});
-					
-					data = [];
-					for (var m in $scope.data.average_all_month)
-					{
-						data.push($scope.data.average_all_month[m]);
-						max = Math.max(max, $scope.data.average_all_month[m] * 1);
-					}
-					series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
-					
-					$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}],
-												 yAxis: [{min: 0, max: max}],
-												 series: series});
-				}
-				
-				if ($scope.data && $scope.data.average_nps.all)
-				{
-					$scope.nps['12'] = Math.round($scope.data.average_nps['12p'] / 10);
-					$scope.nps['45'] = Math.round($scope.data.average_nps['45p'] / 10);
-					$scope.nps['3'] = 10 - ($scope.nps['12'] + $scope.nps['45']);
-					
-					$scope.pie_nps.addData([[0, {name: 'Promotors', value: $scope.data.average_nps['45']}, false, false]]);
-					$scope.pie_nps.addData([[0, {name: 'Passives', value: $scope.data.average_nps['3']}, false, false]]);
-					$scope.pie_nps.addData([[0, {name: 'Detractors', value: $scope.data.average_nps['12']}, false, false]]);
-				}
-				
-				if ($scope.data && $scope.data.history_nps)
-				{
-					$scope.area_nps.setOption({});
-					var series = [];
-					var data = [];
-					var max = 0;
-					for (var m in $scope.data.history_nps['45'])
-					{
-						data.push($scope.data.history_nps['45'][m]);
-						max = Math.max(max, $scope.data.history_nps['45'][m] * 1);
-					}
-					series.push({type: 'line', name: 'Promotors', data: data});
-					
-					data = [];
-					for (var m in $scope.data.history_nps['3'])
-					{
-						data.push($scope.data.history_nps['3'][m]);
-						max = Math.max(max, $scope.data.history_nps['3'][m] * 1);
-					}
-					series.push({type: 'line', name: 'Passives', data: data});
-					
-					data = [];
-					for (var m in $scope.data.history_nps['12'])
-					{
-						data.push($scope.data.history_nps['12'][m]);
-						max = Math.max(max, $scope.data.history_nps['12'][m] * 1);
-					}
-					series.push({type: 'line', name: 'Detractors', data: data});
-					
-					data = [];
-					for (var m in $scope.data.average_my_month)
-					{
-						data.push($scope.data.average_my_month[m]);
-						max = Math.max(max, $scope.data.average_my_month[m] * 1);
-					}
-					series.push({type: 'line', name: 'NPS van uw praktijk', data: data});
-					
-					data = [];
-					for (var m in $scope.data.average_all_month)
-					{
-						data.push($scope.data.average_all_month[m]);
-						max = Math.max(max, $scope.data.average_all_month[m] * 1);
-					}
-					series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
+					$scope.less_30 = false;
 
-					$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}],
-											   yAxis: [{min: 0, max: max}],
-											   series: series});
+					if ($scope.data && $scope.data.stars_count)
+					{
+						for (var i = 5; i > 0; i--)
+						{
+							$scope.pie_stars.addData([[0, {name: i + ' sterren', value: ($scope.data.stars_count[i] ? $scope.data.stars_count[i] : 0) * 1}, false, false]]);
+						}
+					}
+					
+					if ($scope.data && $scope.data.average_month)
+					{
+						var series = [];
+						var max = 0;
+						for (var i = 5; i > 0; i--)
+						{
+							var data = [];
+							for (var m in $scope.data.average_month[i])
+							{
+								data.push($scope.data.average_month[i][m]);
+								max = Math.max(max, $scope.data.average_month[i][m] * 1);
+							}
+							series.push({type: 'line', name: (i + ' sterren'), data: data});
+						}
+						
+						var data = [];
+						for (var m in $scope.data.average_my_month)
+						{
+							data.push($scope.data.average_my_month[m]);
+							max = Math.max(max, $scope.data.average_my_month[m] * 1);
+						}
+						series.push({type: 'line', name: 'Beoordeling van uw praktijk', data: data});
+						
+						data = [];
+						for (var m in $scope.data.average_all_month)
+						{
+							data.push($scope.data.average_all_month[m]);
+							max = Math.max(max, $scope.data.average_all_month[m] * 1);
+						}
+						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
+						
+						$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}],
+													 yAxis: [{min: 0, max: max}],
+													 series: series});
+					}
+					
+					if ($scope.data && $scope.data.average_nps.all)
+					{
+						$scope.nps['12'] = Math.round($scope.data.average_nps['12p'] / 10);
+						$scope.nps['45'] = Math.round($scope.data.average_nps['45p'] / 10);
+						$scope.nps['3'] = 10 - ($scope.nps['12'] + $scope.nps['45']);
+						
+						$scope.pie_nps.addData([[0, {name: 'Promotors', value: $scope.data.average_nps['45']}, false, false]]);
+						$scope.pie_nps.addData([[0, {name: 'Passives', value: $scope.data.average_nps['3']}, false, false]]);
+						$scope.pie_nps.addData([[0, {name: 'Detractors', value: $scope.data.average_nps['12']}, false, false]]);
+					}
+					
+					if ($scope.data && $scope.data.history_nps)
+					{
+						$scope.area_nps.setOption({});
+						var series = [];
+						var data = [];
+						var max = 0;
+						for (var m in $scope.data.history_nps['45'])
+						{
+							data.push($scope.data.history_nps['45'][m]);
+							max = Math.max(max, $scope.data.history_nps['45'][m] * 1);
+						}
+						series.push({type: 'line', name: 'Promotors', data: data});
+						
+						data = [];
+						for (var m in $scope.data.history_nps['3'])
+						{
+							data.push($scope.data.history_nps['3'][m]);
+							max = Math.max(max, $scope.data.history_nps['3'][m] * 1);
+						}
+						series.push({type: 'line', name: 'Passives', data: data});
+						
+						data = [];
+						for (var m in $scope.data.history_nps['12'])
+						{
+							data.push($scope.data.history_nps['12'][m]);
+							max = Math.max(max, $scope.data.history_nps['12'][m] * 1);
+						}
+						series.push({type: 'line', name: 'Detractors', data: data});
+						
+						data = [];
+						for (var m in $scope.data.average_my_month)
+						{
+							data.push($scope.data.average_my_month[m]);
+							max = Math.max(max, $scope.data.average_my_month[m] * 1);
+						}
+						series.push({type: 'line', name: 'NPS van uw praktijk', data: data});
+						
+						data = [];
+						for (var m in $scope.data.average_all_month)
+						{
+							data.push($scope.data.average_all_month[m]);
+							max = Math.max(max, $scope.data.average_all_month[m] * 1);
+						}
+						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
+
+						$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}],
+												   yAxis: [{min: 0, max: max}],
+												   series: series});
+					}
+					
+					if ($scope.data && $scope.data.reply_chart)
+					{
+						$scope.pie_reply.addData([[0, {name: 'Beoordeeld', value: $scope.data.reply_chart['reply']}, false, false]]);
+						$scope.pie_reply.addData([[0, {name: 'Doorgeklikt', value: $scope.data.reply_chart['click']}, false, false]]);
+						$scope.pie_reply.addData([[0, {name: 'Niet gereageerd', value: $scope.data.reply_chart['none']}, false, false]]);
+					}
 				}
-				
-				if ($scope.data && $scope.data.reply_chart)
+				else
 				{
-					$scope.pie_reply.addData([[0, {name: 'Beoordeeld', value: $scope.data.reply_chart['reply']}, false, false]]);
-					$scope.pie_reply.addData([[0, {name: 'Doorgeklikt', value: $scope.data.reply_chart['click']}, false, false]]);
-					$scope.pie_reply.addData([[0, {name: 'Niet gereageerd', value: $scope.data.reply_chart['none']}, false, false]]);
+					$scope.less_30 = true;
 				}
 			});
 		};
@@ -1100,7 +1110,12 @@
 				array.push(i);
 			}
 			return array;
-		}
+		};
+		
+		$scope.go_to_compose = function()
+		{
+			$location.url("/mail/compose");
+		};
 
 		$scope.online = function()
 		{
