@@ -149,7 +149,7 @@
 							<div class="cards-box" ng-if="onlines_col > 0" ng-class="{active: voted != 0}">
 								<div class="cards-box-content">
 									<div class="cards-number" ng-if="voted >= 0">
-										Stap <span ng-if=" ! is_vote">2</span><span ng-if="is_vote">1</span>
+										Stap <span ng-if=" ! is_vote || q_show">2</span><span ng-if="is_vote && ! q_show">1</span>
 									</div>
 									
 									<h2>Deel uw mening met anderen</h2>
