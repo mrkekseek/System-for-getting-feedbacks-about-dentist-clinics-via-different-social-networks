@@ -3206,7 +3206,7 @@
 														"feedback" => "");
 									if ($this->db->insert("sent", $data_array))
 									{
-										$row['q_name'] = empty($questions_info) ? '' : strtolower($questions_info['question_name']);
+										$row['q_name'] = empty($questions_info) ? '' : '<strong>'.strtolower($questions_info['question_name']).'</strong>';
 										$row['q_desc'] = empty($questions_info) ? '' : $questions_info['question_description'];
 										
 										$email_data['sent_id'] = $this->db->insert_id();
