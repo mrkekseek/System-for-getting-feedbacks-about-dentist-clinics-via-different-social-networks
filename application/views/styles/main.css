@@ -2378,7 +2378,7 @@ span.pro {
 }
 
 .cards-box-content .doctors-box {
-	padding: 30px;
+	padding: 10px 30px 30px;
 }
 
 .cards-box-content .doctors-box h3.sub {
@@ -3189,7 +3189,7 @@ body .btn-primary.compose-prev:disabled {
 }
 
 .questions-padding-box {
-	padding: 0 20px;
+	padding: 0 20px 20px;
 }
 
 .red-row .charts2-side-icons {

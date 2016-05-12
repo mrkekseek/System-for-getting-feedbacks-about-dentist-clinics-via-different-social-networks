@@ -57,7 +57,7 @@
 						</div>
 
 						<div class="cards-box-content" ng-class="{'no-padding': ! q_show, 'top-padding': q_show}">
-							<div class="cards-collapse" ng-if=" ! q_show" ng-class="{'closed': is_vote, 'opening': revote}">
+							<div class="cards-collapse" ng-show=" ! q_show" ng-class="{'closed': is_vote, 'opening': revote}">
 								<div class="cards-collapse-inner">
 									<div class="cards-number" ng-if=" ! is_vote">
 										Stap 1
@@ -82,7 +82,7 @@
 								</div>
 							</div>
 							
-							<div class="questions-padding-box" ng-if="q_show">
+							<div class="questions-padding-box" ng-show="q_show">
 								<div class="cards-number">
 									Stap 1
 								</div>
