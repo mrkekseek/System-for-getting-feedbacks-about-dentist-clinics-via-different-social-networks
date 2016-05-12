@@ -2552,13 +2552,15 @@
 		{
 			$this->db->where("id", $post['id']);
 			$this->db->where("start >=", time() - 7200);
-			if ($this->db->count_all_results('sent') || $post['id'] == 0)
+			$this->db->limit(1);
+			$row = $this->db->get('sent')->row_array();
+			if ( ! empty($row) || $post['id'] == 0)
 			{
 				if (empty($post['id']))
 				{
 					$data_array = array('users_id' => $post['users_id'],
 										'doctor' => $post['doctors_id'],
-										'stars' => 0,
+										'stars' => $row['questions_id'] == $post['questions_id'] ? $post['stars'] : $row['stars'],
 										'status' => 2,
 										'start' => time(),
 										'date' => time(),
@@ -2589,7 +2591,7 @@
 				else
 				{
 					$this->db->where("id", $post['id']);
-					if ($this->db->update("sent", array('stars' => 0, 'status' => 2, 'last' => time())))
+					if ($this->db->update("sent", array('stars' => $row['questions_id'] == $post['questions_id'] ? $post['stars'] : $row['stars'], 'status' => 2, 'last' => time())))
 					{
 						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
 						$post['last'] = time();
@@ -4204,8 +4206,45 @@
 			{
 				$row['date_time'] = date("d-m-y H:i", ($row['last'] > 0 ? $row['last'] : $row['date']));
 				$row['reply_time'] = $row['reply_time'] > 0 ? date("d-m-y H:i", $row['reply_time']) : "";
+				
+				$row['questions'] = array();
+				if ( ! empty($row['questions_id']))
+				{
+					$row['questions'] = $this->sent_questions($row['id']);
+				}
+				
+				$row['doctors_info'] = array();
+				if ( ! empty($row['doctor']))
+				{
+					$row['doctors_info'] = $this->doctor_info($row['doctor']);
+				}
 			}
+			
 			return $row;
+		}
+		
+		function sent_questions($sent_id)
+		{
+			$items = array();
+			$this->db->where('sent_id', $sent_id);
+			$result = $this->db->get('sent_questions')->result_array();
+			if ( ! empty($result))
+			{
+				$list = $this->get_questions();
+				foreach ($result as $row)
+				{
+					foreach ($list as $val)
+					{
+						if ($val['id'] == $row['questions_id'])
+						{
+							$val['stars'] = $row['stars'];
+							$items[] = $val;
+						}
+					}
+				}
+			}
+			
+			return $items;
 		}
 
 		function stat_dashboard()

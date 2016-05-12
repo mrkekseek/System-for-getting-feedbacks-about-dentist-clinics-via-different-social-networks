@@ -3228,3 +3228,72 @@ body .btn-primary.compose-prev:disabled {
 	right: 0;
 	background: rgba(255, 255, 255, 0.5);
 }
+
+.single-header .fa {
+	color: #F2DE00;
+	font-size: 30px;
+	margin-right: 3px;
+}
+
+.single-header.red,
+.single-header.red .fa {
+	color: #E96561;
+}
+
+.single-content-border {
+	border-right: solid #f1f1f1 1px;
+}
+
+.single-content {
+	min-height: 300px;
+	max-height: 600px;
+	overflow: auto;
+}
+
+.single-details {
+	text-transform: uppercase;
+	text-align: center;
+	font-size: 13px;
+}
+
+.row.single-questions {
+	margin: 0;
+}
+
+.row.single-questions > div {
+	padding: 0;
+}
+
+.single-questions .fa {
+	color: #F2DE00;
+}
+
+.single-questions .red.text-right,
+.single-questions .red .fa {
+	color: #E96561;
+}
+
+.single-message-box {
+	margin-bottom: 15px;
+}
+
+.single-message {
+	display: inline-block;
+	width: 50%;
+	background: #E5E5E5;
+	padding: 15px;
+	border-radius: 15px;
+	text-align: left;
+}
+
+.single-reply {
+	text-align: right;
+}
+
+.single-reply .single-message {
+	color: #fff;
+}
+
+.single-text {
+	border-color: transparent;
+}

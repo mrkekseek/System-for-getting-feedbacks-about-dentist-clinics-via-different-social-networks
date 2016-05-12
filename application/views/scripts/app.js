@@ -282,22 +282,6 @@
 			});
         };
 
-		$scope.reply = {};
-		$scope.send_reply = function(id)
-		{
-			$scope.loader = true;
-			$http.post("/pub/send_reply/", {id: id, reply: $scope.reply.text}).success(function(data, status, headers, config) {
-				$scope.loader = false;
-				logger.check(data);
-				$location.url("/mail/inbox");
-				$scope.reply.text = '';
-			});
-		};
-		
-		$scope.set_text = function(text) {
-			$scope.reply.text = text;
-		};
-
 		$scope.closeAlert = function(index)
 		{
 			return $scope.alerts.splice(index, 1);
@@ -4564,9 +4548,28 @@
 				if ($scope.result)
 				{
 					$scope.info = $scope.result;
-					$scope.info.feedback.replace(/\n/gi, "<br />");
-					$scope.info.reply.replace(/\n/gi, "<br />");
+					$scope.info.feedback = $scope.info.feedback.replace(/\n/gi, "<br />");
+					$scope.info.reply = $scope.info.reply.replace(/\n/gi, "<br />");
 				}
+			});
+		};
+		
+		$scope.range = function(num)
+		{
+			var array = [];
+			for (var i = 0; i < num; i++)
+			{
+				array.push(i);
+			}
+			return array;
+		};
+		
+		$scope.reply = '';
+		$scope.send_reply = function()
+		{
+			$http.post("/pub/send_reply/", {id: $scope.id, reply: $scope.reply}).success(function(data, status, headers, config) {
+				logger.check(data);
+				$scope.info.reply = $scope.reply.replace(/\n/gi, "<br />");
 			});
 		};
     }
