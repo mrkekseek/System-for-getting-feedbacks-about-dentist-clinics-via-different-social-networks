@@ -19,11 +19,15 @@
 						  'doctors_title' => '[AANHEF ZORGVERLENER]',
 						  'doctors_name' => '[VOORNAAM ZORGVERLENER]',
 						  'doctors_sname' => '[ACHTERNAAM ZORGVERLENER]',
-						  'username' => '[NAAM PRAKTIJK]');
+						  'username' => '[NAAM PRAKTIJK]',
+						  'q_name' => '[VRAAGSTELLING]',
+						  'q_desc' => '[Formulering van de vraagstelling]');
 						  
 		var $defaults = array('subject' => "Hoe was uw behandeling bij [NAAM PRAKTIJK]?",
 							  'header' => "Hoe was uw behandeling?",
+							  'header_mq' => "Hoe heeft u de [VRAAGSTELLING] ervaren?",
 							  'text1' => "Geachte heer/mevrouw,\n\nU bent onlangs behandeld in onze praktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw beoordeling te plaatsen op online kanalen.\n\nOp een schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of vrienden?",
+							  'text1_mq' => '[Formulering van de vraagstelling]',
 							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n[NAAM PRAKTIJK]",
 							  'promo' => "Beoordeel ons en win een ... t.w.v. €..,..!",
 							  'footer' => "U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het patiëntenbestand van [NAAM PRAKTIJK]. Deze e-mail is een eenmalige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend gebruikt voor het verzoek tot deelname aan dit patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar gemaakt.");
@@ -1320,7 +1324,9 @@
 
 			$result['subject'] = empty($result['subject']) ? $this->defaults['subject'] : $result['subject'];
 			$result['header'] = empty($result['header']) ? $this->defaults['header'] : $result['header'];
+			$result['header_mq'] = empty($result['header_mq']) ? $this->defaults['header_mq'] : $result['header_mq'];
 			$result['text1'] = empty($result['text1']) ? $this->defaults['text1'] : $result['text1'];
+			$result['text1_mq'] = empty($result['text1_mq']) ? $this->defaults['text1_mq'] : $result['text1_mq'];
 			$result['text2'] = empty($result['text2']) ? $this->defaults['text2'] : $result['text2'];
 			$result['promo'] = empty($result['promo']) ? $this->defaults['promo'] : $result['promo'];
 			$result['footer'] = empty($result['footer']) ? $this->defaults['footer'] : $result['footer'];
@@ -3182,6 +3188,9 @@
 														"feedback" => "");
 									if ($this->db->insert("sent", $data_array))
 									{
+										$row['q_name'] = empty($questions_info) ? '' : strtolower($questions_info['question_name']);
+										$row['q_desc'] = empty($questions_info) ? '' : $questions_info['question_description'];
+										
 										$email_data['sent_id'] = $this->db->insert_id();
 										$email_data['promo_checked'] = $row['promo_checked'];
 										$email_data['stars_type'] = $row['stars_type'];
@@ -3244,6 +3253,8 @@
 							empty($doc['firstname']) ? '[EMPTY]' : $doc['firstname'],
 							empty($doc['lastname']) ? '[EMPTY]' : $doc['lastname'],
 							empty($user['username']) ? '[EMPTY]' : $user['username'],
+							empty($user['q_name']) ? '[EMPTY]' : $user['q_name'],
+							empty($user['q_desc']) ? '[EMPTY]' : $user['q_desc'],
 							'<br />');
 			
 			$texts = $this->user_emails($user['id']);

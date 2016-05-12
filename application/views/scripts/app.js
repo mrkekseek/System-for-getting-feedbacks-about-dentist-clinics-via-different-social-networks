@@ -1985,7 +1985,30 @@
 			{
 				var rel = $event.target.getAttribute("rel");
 				var part = rel.split("|");
-				$scope.user.emails[part[0]] = $scope.user.emails[part[0]].replace(part[1], "");
+				if (part[1].toLowerCase() == '[vraagstelling]' || part[1].toLowerCase() == '[formulering van de vraagstelling]')
+				{
+					var modalInstance;
+					modalInstance = $modal.open({
+						templateUrl: "emails_remove_questions.html",
+						controller: 'ModalEmailsRemoveQuestionsCtrl',
+						resolve: {
+							items: function() {
+								return [];
+							}
+						}
+					});
+					
+					modalInstance.result.then((function(result) {
+						$scope.user.emails[part[0]] = $scope.user.emails[part[0]].replace(part[1], "");
+						$scope.user.rating_questions = '0';
+					}), function() {
+						console.log("Modal dismissed at: " + new Date());
+					});
+				}
+				else
+				{
+					$scope.user.emails[part[0]] = $scope.user.emails[part[0]].replace(part[1], "");
+				}
 			}
 			else
 			{
@@ -2001,7 +2024,30 @@
 				});
 				
 				modalInstance.result.then((function(items) {
-					$scope.user.emails[items.type] = items.value;
+					if (items.type == 'header_mq' && ! (items.value.toLowerCase().indexOf('[vraagstelling]') + 1) || items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('[formulering van de vraagstelling]') + 1))
+					{
+						var modalInstance;
+						modalInstance = $modal.open({
+							templateUrl: "emails_remove_questions.html",
+							controller: 'ModalEmailsRemoveQuestionsCtrl',
+							resolve: {
+								items: function() {
+									return [];
+								}
+							}
+						});
+						
+						modalInstance.result.then((function(result) {
+							$scope.user.emails[items.type] = items.value;
+							$scope.user.rating_questions = '0';
+						}), function() {
+							console.log("Modal dismissed at: " + new Date());
+						});
+					}
+					else
+					{
+						$scope.user.emails[items.type] = items.value;
+					}
 				}), function() {
 					console.log("Modal dismissed at: " + new Date());
 				});
@@ -6919,6 +6965,7 @@
 		.controller('ModalInstanceUpdatesCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceUpdatesCtrl])
 		.controller('ModalInstanceOnlineCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceOnlineCtrl])
 		.controller('ModalInstanceEmailsEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceEmailsEditCtrl])
+		.controller('ModalEmailsRemoveQuestionsCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalEmailsRemoveQuestionsCtrl])
 		.controller('ModalInstanceWidgetEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceWidgetEditCtrl])
 		.controller('ModalInstanceWidgetSaveCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceWidgetSaveCtrl])
 		.controller('ModalInstanceProfileSaveCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceProfileSaveCtrl])
@@ -7581,6 +7628,16 @@
 		
 		$scope.save = function() {
 			$modalInstance.close({value: $scope.value.replace(/\n/g, "<br />"), type: $scope.type});
+		};
+    };
+	
+	function ModalEmailsRemoveQuestionsCtrl($scope, $modalInstance, $http, $location, logger, items) {
+		$scope.undo = function() {
+			$modalInstance.dismiss("cancel");
+        };
+		
+		$scope.proceed = function() {
+			$modalInstance.close();
 		};
     };
 	
