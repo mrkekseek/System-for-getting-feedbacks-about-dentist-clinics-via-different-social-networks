@@ -193,6 +193,8 @@
 			{
 				$result['emails'] = $this->pub->user_emails();
 				$result['widget'] = $this->pub->user_widget();
+				$result['questions_list'] = $this->pub->get_questions();
+				$result['questions'] = $this->pub->user_questions($result['questions_list']);
 			}
 			
 			if ($param == "doctors")
@@ -393,6 +395,12 @@
 			$this->response($result);
 		}
 		
+		function vote_questions()
+		{
+			$result = $this->pub->vote_questions($this->post);
+			$this->response($result);
+		}
+		
 		function vote_doc()
 		{
 			$result = $this->pub->vote_doc($this->post);
@@ -525,6 +533,12 @@
 		function stat_chart()
 		{
 			$result = $this->pub->stat_chart($this->post);
+			$this->response($result);
+		}
+		
+		function stat_chart2()
+		{
+			$result = $this->pub->stat_chart2($this->post);
 			$this->response($result);
 		}
 		
@@ -673,6 +687,30 @@
 		function widget_save()
 		{
 			$result = $this->pub->widget_save($this->post['widget']);
+			$this->response($result);
+		}
+		
+		function questions_save()
+		{
+			$this->pub->questions_save($this->post['questions_id']);
+			$questions_list = $this->pub->get_questions();
+			$result = $this->pub->user_questions($questions_list);
+			$this->response($result);
+		}
+		
+		function questions_remove()
+		{
+			$this->pub->questions_remove($this->post['questions_id']);
+			$questions_list = $this->pub->get_questions();
+			$result = $this->pub->user_questions($questions_list);
+			$this->response($result);
+		}
+		
+		function questions_edit()
+		{
+			$this->pub->questions_edit($this->post['questions_id'], $this->post['new_id']);
+			$questions_list = $this->pub->get_questions();
+			$result = $this->pub->user_questions($questions_list);
 			$this->response($result);
 		}
 		

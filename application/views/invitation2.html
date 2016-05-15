@@ -46,9 +46,9 @@
 							<h3 class="sub">Om mee te doen aan deze promotie dient u alle stappen van deze beoordelingspagina te volgen. De winnaar(s) word(en) willekeurig gekozen uit het bestand van alle uitgenodigden. U ontvangt hierover per e-mail of telefoon bericht.</h3>
 						</div>
 					</div>
-							
+
 					<div class="cards-box" ng-show=" ! limit && ! errors">
-						<div class="cards-box-top" ng-if="is_vote" ng-class="{'negative-rating': vote <= 2, 'positive-rating': vote > 2}" ng-click="change_revote( ! revote)">
+						<div class="cards-box-top" ng-if="is_vote && ! q_show" ng-class="{'negative-rating': vote <= 2, 'positive-rating': vote > 2}" ng-click="change_revote( ! revote)">
 							<span class="cards-top-text" ng-if="vote <= 2">Nee, ik zou {{i.user.username}} niet aanbevelen.</span>
 							<span class="cards-top-text" ng-if="vote > 2">Ja, ik zou {{i.user.username}} aanbevelen.</span>
 							<i class="fa fa-star" style="color: {{color}};"></i>
@@ -56,8 +56,8 @@
 							<a href="javascript:void(0);" class="fa fa-chevron-down" style="color: {{color}};"></a>
 						</div>
 
-						<div class="cards-box-content no-padding">
-							<div class="cards-collapse" ng-class="{'closed': is_vote, 'opening': revote}">
+						<div class="cards-box-content" ng-class="{'no-padding': ! q_show, 'top-padding': q_show}">
+							<div class="cards-collapse" ng-if=" ! q_show" ng-class="{'closed': is_vote, 'opening': revote}">
 								<div class="cards-collapse-inner">
 									<div class="cards-number" ng-if=" ! is_vote">
 										Stap 1
@@ -82,6 +82,29 @@
 								</div>
 							</div>
 							
+							<div class="questions-padding-box" ng-if="q_show">
+								<div class="cards-number">
+									Stap 1
+								</div>
+								
+								<h2>{{questions.main.question_description}}</h2>
+								
+								<h3 class="sub">Gemeten op een schaal van 1 tot en met 5.</h3>
+								
+								<div class="stars-box" ng-init="stars_list = [1, 2, 3, 4, 5]">
+									<div class="stars-item" ng-repeat="(key, star) in stars_list" ng-click="click_question_star(star, questions.main.id)" ng-class="{active: star <= q_vote[questions.main.id]}">
+										<i class="fa fa-star-o" style="color: {{color}};"></i>
+										<i class="fa fa-star" style="color: {{color}};"></i>
+									</div>
+								</div>
+								
+								<div class="stars-number-box clearfix">
+									<div class="stars-number-item" ng-repeat="(key, star) in stars_list">
+										<div class="stars-number">{{star}}</div>
+									</div>
+								</div>
+							</div>
+							
 							<div class="doctors-box" ng-if="i.doctors.length">
 								<h3 class="sub">Door wie bent u geholpen?</h3>
 								<select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
@@ -89,14 +112,43 @@
 									<option ng-repeat="d in i.doctors" value="{{d.id}}" ng-selected="d.id == doc.id">{{[d.title, d.firstname, d.lastname].join(' ')}}</option>
 								</select>
 							</div>
+							
+							<a href="javascript:void(0);" class="more-questions" ng-click="show_other_questions()" ng-show="q_show && questions.others && questions.others.length" ng-class="{active: q_vote[questions.main.id] > 0}">Klik hier als u meer vragen wilt beantwoorden</a>
+						</div>
+					</div>
+					
+					<div class="cards-box" ng-if="questions.others && questions.others.length" ng-show=" ! limit && ! errors && show_other" ng-repeat="(i, q) in questions.others">
+						<div class="cards-box-content">
+							<div ng-if="q_show">
+								<div class="cards-number">
+									Stap 1{{abc[i]}}
+								</div>
+								
+								<h2>{{q.question_description}}</h2>
+								
+								<h3 class="sub">Gemeten op een schaal van 1 tot en met 5.</h3>
+								
+								<div class="stars-box" ng-init="stars_list = [1, 2, 3, 4, 5]">
+									<div class="stars-item" ng-repeat="(key, star) in stars_list" ng-click="click_question_star(star, q.id)" ng-class="{active: star <= q_vote[q.id]}">
+										<i class="fa fa-star-o" style="color: {{color}};"></i>
+										<i class="fa fa-star" style="color: {{color}};"></i>
+									</div>
+								</div>
+								
+								<div class="stars-number-box clearfix">
+									<div class="stars-number-item" ng-repeat="(key, star) in stars_list">
+										<div class="stars-number">{{star}}</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					
 					<div class="row rating-row" ng-show=" ! limit && ! errors">
-						<div class="col-xs-12" ng-class="{'col-md-6 pull-right': vote <= 2 && vote > 0}">
-							<div class="cards-box" ng-if="onlines_col > 0"  ng-class="{active: vote > 0}">
+						<div class="col-xs-12" ng-class="{'col-md-6 pull-right': voted < 0}">
+							<div class="cards-box" ng-if="onlines_col > 0" ng-class="{active: voted != 0}">
 								<div class="cards-box-content">
-									<div class="cards-number" ng-if="vote == 0 || vote > 2">
+									<div class="cards-number" ng-if="voted >= 0">
 										Stap <span ng-if=" ! is_vote">2</span><span ng-if="is_vote">1</span>
 									</div>
 									
@@ -127,10 +179,10 @@
 							</div>
 						</div>
 					
-						<div class="col-xs-12" ng-show="vote <= 2" ng-class="{'col-md-6': vote <= 2 && vote > 0}">
-							<div class="cards-box no-bottom-marging" ng-if="onlines_col > 0"  ng-class="{active: vote > 0}">
+						<div class="col-xs-12" ng-show="voted <= 0" ng-class="{'col-md-6': voted < 0}">
+							<div class="cards-box no-bottom-marging" ng-if="onlines_col > 0"  ng-class="{active: voted != 0}">
 								<div class="cards-box-content">
-									<div class="cards-number" ng-if="vote == 0 || vote > 2">
+									<div class="cards-number" ng-if="voted >= 0">
 										Stap <span ng-if=" ! is_vote">3</span><span ng-if="is_vote">2</span>
 									</div>
 									
@@ -140,7 +192,7 @@
 									
 									<form role="form" name="form.formOne">
 										<div class="row">
-											<div class="col-xs-12" ng-class="{'col-sm-8': vote == 0 || vote > 2}">
+											<div class="col-xs-12" ng-class="{'col-sm-8': voted >= 0}">
 												<div class="form-group">
 													<textarea class="form-control feedback-area" ng-model="feedback.one" required="required" ng-disabled="feedback.init != ''" placeholder="Typ hier uw feedback. Deze is alleen zichtbaar voor de praktijk en wordt niet openbaar gemaakt."></textarea>
 												</div>
@@ -165,7 +217,7 @@
 												</div>
 											</div>
 											
-											<div class="col-xs-12" ng-class="{'col-sm-4': vote == 0 || vote > 2, 'list-top': vote > 0 && vote <= 2}">
+											<div class="col-xs-12" ng-class="{'col-sm-4': voted >= 0, 'list-top': voted < 0}">
 												<h5>Tips voor goede feedback</h5>
 												<ul class="list">
 													<li>Geef opbouwende kritiek.</li>
