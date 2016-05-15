@@ -53,7 +53,7 @@
 				
 				if ( ! empty($row))
 				{
-					if ( ! empty($row['account_amount']))
+					if ( ! empty($row['account_amount']) &&  $row['account_amount'] != '0.00')
 					{
 						$this->account_amount = $row['account_amount'];
 					}
@@ -62,7 +62,7 @@
 						$this->account_amount = $row['account_type'] == '0' ? $this->base_amount : $this->pro_amount;
 					}
 					
-					if ( ! empty($row['doctors_amount']))
+					if ( ! empty($row['doctors_amount']) &&  $row['doctors_amount'] != '0.00')
 					{
 						$this->doctor_amount = $row['doctors_amount'];
 					}
@@ -880,6 +880,7 @@
 			$result['pro_amount'] = $this->pro_amount;
 			$result['account_amount'] = $this->account_amount;
 			$result['doctor_amount'] = $this->doctor_amount;
+			$result['doctor_number'] = $this->free_doctors_number;
 			$result['date'] = date("d-m-Y");
 			
 			$this->db->where("users_id", $this->session->userdata("id"));
