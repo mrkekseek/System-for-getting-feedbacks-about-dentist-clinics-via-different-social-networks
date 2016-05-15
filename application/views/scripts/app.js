@@ -2404,12 +2404,13 @@
 			});
 		}
 
-		$scope.check_link = function()
+		$scope.check_link = function(type)
 		{
+			type = type || 'doctor';
 			$scope.zorgkaart = "none";
-			if ($scope.doctor.zorgkaart)
+			if ($scope[type].zorgkaart && $scope[type].zorgkaart != '')
 			{
-				if ( ! ($scope.doctor.zorgkaart.indexOf("https://www.zorgkaartnederland.nl/zorgverlener/") + 1) && ! ($scope.doctor.zorgkaart.indexOf("http://www.zorgkaartnederland.nl/zorgverlener/") + 1) &&  ! ($scope.doctor.zorgkaart.indexOf("https://zorgkaartnederland.nl/zorgverlener/") + 1) && ! ($scope.doctor.zorgkaart.indexOf("http://zorgkaartnederland.nl/zorgverlener/") + 1))
+				if ( ! ($scope[type].zorgkaart.indexOf("https://www.zorgkaartnederland.nl/zorgverlener/") + 1) && ! ($scope[type].zorgkaart.indexOf("http://www.zorgkaartnederland.nl/zorgverlener/") + 1) &&  ! ($scope[type].zorgkaart.indexOf("https://zorgkaartnederland.nl/zorgverlener/") + 1) && ! ($scope[type].zorgkaart.indexOf("http://zorgkaartnederland.nl/zorgverlener/") + 1))
 				{
 					$scope.zorgkaart = "invalid";
 				}
@@ -2420,7 +2421,7 @@
 			}
 			else
 			{
-				$scope.zorgkaart = "invalid";
+				$scope.zorgkaart = type == 'doctor' ? 'invalid' : 'none';
 			}
 		};
 		
@@ -2450,12 +2451,16 @@
 		
 		$scope.save_location = function()
 		{
-			$http.post("/pub/save_location/", $scope.location).success(function(data, status, headers, config) {
-				if (logger.check(data))
-				{
-					$location.url($scope.redirect_url);
-				}
-			});
+			$scope.check_link('location');
+			if ($scope.zorgkaart != "invalid")
+			{
+				$http.post("/pub/save_location/", $scope.location).success(function(data, status, headers, config) {
+					if (logger.check(data))
+					{
+						$location.url($scope.redirect_url);
+					}
+				});
+			}
 		};
 		
 		$scope.short_class = "none";
@@ -2740,6 +2745,7 @@
 		$scope.id = 0;
 		$scope.doc = {};
 		$scope.doc.id = 0;
+		$scope.location = {};
 		$scope.short = false;
 		$scope.feedback_success = false;
 		$scope.feedback = {};
@@ -2828,6 +2834,11 @@
 					var temp = {"system": s,
 								"url": $scope.i.user[s],
 								"pos": $scope.i.user[s + '_pos'] * 1};
+								
+					if (s == "zorgkaart" && $scope.i.location && $scope.i.location.zorgkaart != '')
+					{
+						temp.url = $scope.i.location.zorgkaart;
+					}
 
 					if (s == "zorgkaart" && $scope.i.doctor && $scope.i.doctor.zorgkaart != '')
 					{
@@ -2855,7 +2866,12 @@
 		$scope.set_doctor = function() {
 			$scope.doctors_id = $scope.doc.id;
 			$http.post("/pub/vote_doc/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id}).success(function(data, status, headers, config) {
-				logger.check(data);
+				var result = logger.check(data);
+				if (result.doctor)
+				{
+					$scope.i.doctor = result.doctor;
+				}
+				$scope.rebuild_onlines();
 			});
 		};
 		
