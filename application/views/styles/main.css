@@ -3156,3 +3156,31 @@ body .btn-primary.compose-prev:disabled {
 .panel-body.small-padding-x {
 	padding: 15px 5px;
 }
+
+@media (max-width: 1320px) and (min-width: 1200px) {
+	.col-slg-12 {
+		width: 100%;
+	}
+	
+	.col-slg-6 {
+		width: 50%;
+	}
+}
+
+@media (max-width: 768px) {
+	.charts2-side-value {
+		padding: 15px;
+	}
+	
+	.charts2-side-icons {
+		padding: 15px 0;
+	}
+	
+	.charts2-min-box {
+		min-height: auto;
+	}
+}
+
+.questions-padding-box {
+	padding: 0 20px;
+}

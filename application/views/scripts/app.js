@@ -906,7 +906,7 @@
 		$scope.data = {};
 		$scope.nps = {};
 		$scope.pie_stars = echarts.init(document.getElementById('pie_stars'));
-		window.onresize = function() { $scope.pie_stars.resize(); };
+		$window.onresize = function() { $scope.pie_stars.resize(); };
 		$scope.pie_stars.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
 				legend: {orient: "vertical", x: "left", data: ["5.00", "4.00", "3.00", "2.00", "1.00"]},
@@ -918,7 +918,7 @@
 		});
 		
 		$scope.area_stars = echarts.init(document.getElementById('area_stars'));
-		window.onresize = function() { $scope.area_stars.resize(); };
+		$window.onresize = function() { $scope.area_stars.resize(); };
 		$scope.area_stars.setOption({
 				tooltip: {trigger: "axis"},
 				calculable: true,
@@ -932,7 +932,7 @@
 		});
 		
 		$scope.pie_nps = echarts.init(document.getElementById('pie_nps'));
-		window.onresize = function() { $scope.pie_nps.resize(); };
+		$window.onresize = function() { $scope.pie_nps.resize(); };
 		$scope.pie_nps.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
 				legend: {orient: "vertical", x: "left", data: ["Promotors", "Passives", "Detractors"]},
@@ -944,7 +944,7 @@
 		});
 		
 		$scope.area_nps = echarts.init(document.getElementById('area_nps'));
-		window.onresize = function() { $scope.area_nps.resize(); };
+		$window.onresize = function() { $scope.area_nps.resize(); };
 		$scope.area_nps.setOption({
 				tooltip: {trigger: "axis"},
 				calculable: true,
@@ -956,7 +956,7 @@
 		});
 		
 		$scope.pie_reply = echarts.init(document.getElementById('pie_reply'));
-		window.onresize = function() { $scope.pie_reply.resize(); };
+		$window.onresize = function() { $scope.pie_reply.resize(); };
 		$scope.pie_reply.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
 				legend: {orient: "vertical", x: "left", data: ["Beoordeeld", "Doorgeklikt", "Niet gereageerd"]},
