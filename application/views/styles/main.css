@@ -2378,7 +2378,7 @@ span.pro {
 }
 
 .cards-box-content .doctors-box {
-	padding: 30px;
+	padding: 10px 30px 30px;
 }
 
 .cards-box-content .doctors-box h3.sub {
@@ -3084,9 +3084,16 @@ body .btn-primary.compose-prev:disabled {
 .charts2-questions-icon {
 	padding: 20px 0;
 	text-align: center;
+	background: #494949;
+}
+
+.charts2-questions-icon > i {
 	font-size: 45px;
 	color: #fff;
-	background: #494949;
+}
+
+.charts2-questions-icon > img {
+	height: 45px;
 }
 
 .charts2-questions-info {
@@ -3155,4 +3162,138 @@ body .btn-primary.compose-prev:disabled {
 
 .panel-body.small-padding-x {
 	padding: 15px 5px;
+}
+
+@media (max-width: 1320px) and (min-width: 1200px) {
+	.col-slg-12 {
+		width: 100%;
+	}
+	
+	.col-slg-6 {
+		width: 50%;
+	}
+}
+
+@media (max-width: 768px) {
+	.charts2-side-value {
+		padding: 15px;
+	}
+	
+	.charts2-side-icons {
+		padding: 15px 0;
+	}
+	
+	.charts2-min-box {
+		min-height: auto;
+	}
+}
+
+.questions-padding-box {
+	padding: 0 20px 20px;
+}
+
+.red-row .charts2-side-icons {
+	background: #E3001E;
+}
+
+.red-row .charts2-side-amount {
+	color: #E3001E;
+	text-shadow: 0 0 10px rgba(227, 0, 30, 0.5);
+}
+
+.label.label-pro {
+	padding: 3px 8px;
+	text-transform: uppercase;
+	margin-left: 10px;
+}
+
+.basis-box {
+	position: relative;
+	z-index: 0;
+}
+
+.basis-box > * {
+	position: relative;
+	z-index: 0;
+}
+
+.basis-box:after {
+	content: "";
+	position: absolute;
+	z-index: 1;
+	display: block;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	background: rgba(255, 255, 255, 0.5);
+}
+
+.single-header .fa {
+	color: #F2DE00;
+	font-size: 30px;
+	margin-right: 3px;
+}
+
+.single-header.red,
+.single-header.red .fa {
+	color: #E96561;
+}
+
+.single-content-border {
+	border-right: solid #f1f1f1 1px;
+}
+
+.single-content {
+	min-height: 300px;
+	max-height: 600px;
+	overflow: auto;
+}
+
+.single-details {
+	text-transform: uppercase;
+	text-align: center;
+	font-size: 13px;
+}
+
+.row.single-questions {
+	margin: 0;
+}
+
+.row.single-questions > div {
+	padding: 0;
+}
+
+.single-questions .fa {
+	color: #F2DE00;
+}
+
+.single-questions .red.text-right,
+.single-questions .red .fa {
+	color: #E96561;
+}
+
+.single-message-box {
+	margin-bottom: 15px;
+}
+
+.single-message {
+	display: inline-block;
+	width: 50%;
+	background: #E5E5E5;
+	padding: 15px;
+	border-radius: 15px;
+	text-align: left;
+}
+
+.single-reply {
+	text-align: right;
+}
+
+.single-reply .single-message {
+	color: #fff;
+}
+
+.single-text {
+	border-color: transparent;
 }

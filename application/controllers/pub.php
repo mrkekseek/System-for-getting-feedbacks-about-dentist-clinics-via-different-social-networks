@@ -195,6 +195,7 @@
 				$result['widget'] = $this->pub->user_widget();
 				$result['questions_list'] = $this->pub->get_questions();
 				$result['questions'] = $this->pub->user_questions($result['questions_list']);
+				$result['questions_list'] = $this->pub->free_questions($result['questions_list'], $result['questions']);
 			}
 			
 			if ($param == "doctors")
@@ -692,25 +693,41 @@
 		
 		function questions_save()
 		{
+			$result = array();
 			$this->pub->questions_save($this->post['questions_id']);
 			$questions_list = $this->pub->get_questions();
-			$result = $this->pub->user_questions($questions_list);
+			$result['questions'] = $this->pub->user_questions($questions_list);
+			$result['questions_list'] = $this->pub->free_questions($questions_list, $result['questions']);
+			$this->response($result);
+		}
+		
+		function questions_ids_save()
+		{
+			$result = array();
+			$this->pub->questions_ids_save($this->post['questions_ids']);
+			$questions_list = $this->pub->get_questions();
+			$result['questions'] = $this->pub->user_questions($questions_list);
+			$result['questions_list'] = $this->pub->free_questions($questions_list, $result['questions']);
 			$this->response($result);
 		}
 		
 		function questions_remove()
 		{
+			$result = array();
 			$this->pub->questions_remove($this->post['questions_id']);
 			$questions_list = $this->pub->get_questions();
-			$result = $this->pub->user_questions($questions_list);
+			$result['questions'] = $this->pub->user_questions($questions_list);
+			$result['questions_list'] = $this->pub->free_questions($questions_list, $result['questions']);
 			$this->response($result);
 		}
 		
 		function questions_edit()
 		{
+			$result = array();
 			$this->pub->questions_edit($this->post['questions_id'], $this->post['new_id']);
 			$questions_list = $this->pub->get_questions();
-			$result = $this->pub->user_questions($questions_list);
+			$result['questions'] = $this->pub->user_questions($questions_list);
+			$result['questions_list'] = $this->pub->free_questions($questions_list, $result['questions']);
 			$this->response($result);
 		}
 		

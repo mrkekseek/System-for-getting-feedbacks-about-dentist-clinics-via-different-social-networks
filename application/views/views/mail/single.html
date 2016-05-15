@@ -17,16 +17,13 @@
             <section class="panel panel-default mail-container" ng-controller="SingleCtrl" ng-init="init(<?php echo $id; ?>)">
                 <div class="panel-heading">Bekijk feedback</div>
                 <div class="panel-body">
-                    <div class="mail-header row">
-                        <div class="col-md-8">
-                            <h3>{{words[info.stars]}}</h3>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="pull-right" ng-if=" ! info.reply">
-                                <a href="#/mail/reply/{{info.id}}" class="btn btn-sm btn-primary">Beantwoord</a>
-                            </div>
-                        </div>
+                    <div class="mail-header">
+						<h3 class="single-header" ng-class="{'red': info.stars < 3}">
+							<i class="fa fa-star-o" ng-repeat="s in range(info.stars)"></i>
+							{{words[info.stars]}}
+						</h3>
                     </div>
+
                     <div class="mail-info">
                         <div class="row">
                             <div class="col-md-8">
@@ -43,24 +40,62 @@
                         <p class="mail-content-reply" ng-bind-html="info.feedback">{{info.feedback}}</p>
                     </div>
 					
-                    <div class="mail-actions" ng-if=" ! info.reply">
-                        <a href="#/mail/reply/{{info.id}}" class="btn btn-sm btn-primary">Beantwoord</a>
-                    </div>
-
-					<div class="mail-info" ng-if="info.reply">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <strong>Uw reactie aan de patiënt</strong>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="pull-right">
-                                    {{info.reply_time}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="mail-content">
+
                         <p class="mail-content-reply" ng-bind-html="info.reply">{{info.reply}}</p>
+
+						<div class="row">
+							<div class="col-md-4 col-xs-12 pull-right">
+								<div class="form-group single-details muted">
+									Details van deze beoordeling
+								</div>
+								
+								<div class="form-group row" ng-show="info.doctors_info.firstname">
+									<div class="col-sm-5 col-xs-12">
+										Zorgveriener:
+									</div>
+									
+									<div class="col-sm-7 col-xs-12 text-right">
+										{{info.doctors_info.title + ' ' + info.doctors_info.firstname + ' ' + info.doctors_info.lastname}}
+									</div>
+								</div>
+								
+								<div class="form-group" ng-show="info.questions.length">
+									<div class="row single-questions" ng-repeat="q in info.questions">
+										<div class="col-sm-8 col-xs-12">
+											{{q.question_name}}
+										</div>
+										
+										<div class="col-sm-4 col-xs-12 text-right" ng-class="{'red': q.stars < 3}">
+											<i class="fa fa-star-o" ng-repeat="s in range(q.stars)"></i>
+											{{q.stars}}
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-8 col-xs-12 single-content-border">
+								<div class="single-content">
+									<div class="single-message-box" ng-show="info.feedback != ''">
+										<div class="single-message" ng-bind-html="info.feedback"></div>
+									</div>
+									
+									<div class="single-message-box single-reply" ng-show="info.reply != ''">
+										<div class="single-message" style="background-color: {{user.color}};" ng-bind-html="info.reply"></div>
+									</div>
+								</div>
+								
+								<div class="row" ng-show="info.reply == ''">
+									<div class="col-md-9 col-sm-6 col-xs-12">
+										<textarea class="form-control single-text" ng-model="reply" placeholder="Typ hier uw reactie aan de patient..."></textarea>
+									</div>
+									
+									<div class="col-md-3 col-sm-6 col-xs-12">
+										<button type="button" class="btn btn-primary btn-block" ng-click="send_reply()">Stuur reactie</button>
+									</div>
+								</div>
+							</div>
+						</div>
                     </div>
                 </div>
             </section>

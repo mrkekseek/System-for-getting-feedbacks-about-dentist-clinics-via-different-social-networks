@@ -56,11 +56,11 @@
                     </div>
                 </div>
 				
-				<div class="divider divider-dashed divider-lg pull-in" ng-if="user.account == '2' || user.account_type == '1'"></div>
+				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
-				<div class="form-group" ng-if="user.account == '2' || user.account_type == '1'">
-                    <label class="col-md-4">Promotiecampagne</label>
-                    <div class="col-md-8">
+				<div class="form-group">
+                    <label class="col-md-4">Promotiecampagne<span class="label label-primary label-pro" ng-show="user.account_type == '0'">Pro</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0'}" ng-click="upgrade_to_pro()">
                         <label class="ui-switch ui-switch-lg">
 							<input type="checkbox" name="promo_checked" ng-model="user.promo_checked" ng-checked="user.promo_checked == '1'" ng-change="user.promo_checked == '1' ? email_text_class = 'open' : ''" />
 							<i></i>
@@ -109,8 +109,8 @@
 									</tr>
 									
 									<tr ng-show="user.rating_questions == '1'">
-										<td ng-bind-html="find_tags(('Hoe heeft u de [QUESTION] ervaren?' || 'Klik om tekst in te voegen...'), 'question')" style="height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
-											{{ find_tags(('Hoe heeft u de [QUESTION] ervaren?' || 'Klik om tekst in te voegen...'), 'question') }}
+										<td ng-bind-html="find_tags((user.emails.header_mq || 'Klik om tekst in te voegen...'), 'header_mq')" ng-click="emails_edit('header_mq', $event)" class="emails-edit"  style="height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
+											{{ find_tags((user.emails.header_mq || 'Klik om tekst in te voegen...'), 'header_mq') }}
 										</td>
 									</tr>
 								</table>
@@ -121,8 +121,8 @@
 											{{ find_tags((user.emails.text1 || 'Klik om tekst in te voegen...'), 'text1') }}
 										</p>
 										
-										<p ng-show="user.rating_questions == '1'" ng-bind-html="find_tags(('[Formulering van de vraagstelling]' || 'Klik om tekst in te voegen...'), 'question')" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
-											{{ find_tags(('[Formulering van de vraagstelling]' || 'Klik om tekst in te voegen...'), 'question') }}
+										<p ng-show="user.rating_questions == '1'" ng-bind-html="find_tags((user.emails.text1_mq || 'Klik om tekst in te voegen...'), 'text1_mq')" ng-click="emails_edit('text1_mq', $event)" class="emails-edit" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
+											{{ find_tags((user.emails.text1_mq || 'Klik om tekst in te voegen...'), 'text1_mq') }}
 										</p>
 										
 										<p ng-bind-html="find_tags((user.emails.promo || 'Voer hier uw promotietekst in'), 'promo')" ng-click="emails_edit('promo', $event)" class="emails-edit" ng-if="user.promo_checked == '1'" style="padding: 15px; background-color: #F0A400; font: bold 14px/1.3 arial, sans-serif; color: #fff; text-align: center; margin: 0;">
@@ -261,8 +261,8 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">&nbsp;</label>
-                    <div class="col-md-8">
+                    <label class="col-md-4">Meervoudige vraagstelling<span class="label label-primary label-pro" ng-show="user.account_type == '0'">Pro</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0'}" ng-click="upgrade_to_pro()">
                         <label class="ui-switch ui-switch-lg">
 							<input type="checkbox" name="rating_questions" ng-model="user.rating_questions" ng-change="check_questions_for_user()" ng-checked="user.rating_questions == '1'" />
 							<i></i>
@@ -285,7 +285,7 @@
 									<tr class="tr_questions" ng-class="{'edit_question': (edit_question[q.id] == 1)}" ng-repeat="q in user.questions">
 										<td class="question_first">
 											<span ng-show="edit_question[q.id] == 0">{{q.question_name}}</span>
-											<select ng-show="edit_question[q.id] == 1" ng-model="edit_questions[q.id].name" ng-change="change_edit_question(q.id)" class="form-control" ng-options="option.question_name for option in questions_list track by option.id">
+											<select ng-show="edit_question[q.id] == 1" ng-model="edit_questions[q.id].name" ng-change="change_edit_question(q.id)" class="form-control" ng-options="option.question_name for option in edit_questions_list[q.id] track by option.id">
 											</select>
 										</td>
 										<td class="question_second">
@@ -496,11 +496,11 @@
                     </div>
                 </div>
 				
-				<div class="divider divider-dashed divider-lg pull-in" ng-if="user.account == '2' || user.account_type == '1'" id="intro4"></div>
+				<div class="divider divider-dashed divider-lg pull-in" id="intro4"></div>
 
-				<div class="form-group" ng-if="user.account == '2' || user.account_type == '1'">
-                    <label class="col-md-4">Logo en huisstijl</label>
-                    <div class="col-md-8">
+				<div class="form-group">
+                    <label class="col-md-4">Logo en huisstijl<span class="label label-primary label-pro" ng-show="user.account_type == '0'">Pro</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0'}" ng-click="upgrade_to_pro()">
 						<span class="logo_here"><img src="{{user.logo}}" alt="" ng-if="user.logo != ''" /><a href="javascript:void(0);" class="remove_logo" ng-if="user.logo != ''" ng-click="remove_logo()" ng-class="{show: user.logo != ''}"><i class="glyphicon glyphicon-remove"></i></a></span>
                         <upload-button class="btn btn-primary btn-upload" url="/pub/upload_logo/" on-success="onLogo(response)">Upload logo</upload-button>
 						<button class="btn btn-primary" colorpicker ng-model="user.color">Wijzig kleur</button>
@@ -741,5 +741,31 @@
 	<div class="modal-footer">
 		<button class="btn btn-primary" ng-click="ok()">Ga door</button>
 		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="emails_remove_questions.html">
+	<div class="modal-header">
+		<h3>
+			Meervoudige vraagstelling vereist specifieke variabelen
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			Het versturen van uw e-mails met meervoudige vraagstellingen wordt uitgeschakeld als u uw e-mailtekst bewaart zonder de vereiste variabelen:
+		</p>
+		
+		<ul>
+			<li>[Vraagstelling]</li>
+			<li>[Formulering van de vraagstelling]</li>
+		</ul>
+		
+		<p>
+			Als u uw e-mails met meervoudige vraagstellingen wilt blijven versturen en de e-mailtekst wilt bewaren, kunt u de vereiste variabelen toevoegen aan uw e-mailtekst en de meervoudige vraagstelling daarna weer inschakelen.
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="proceed()">Ga door</button>
+		<button class="btn btn-default" ng-click="undo()">Annuleer</button>
 	</div>
 </script>
