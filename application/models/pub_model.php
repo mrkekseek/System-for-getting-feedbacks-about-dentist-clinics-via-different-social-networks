@@ -19,11 +19,15 @@
 						  'doctors_title' => '[AANHEF ZORGVERLENER]',
 						  'doctors_name' => '[VOORNAAM ZORGVERLENER]',
 						  'doctors_sname' => '[ACHTERNAAM ZORGVERLENER]',
-						  'username' => '[NAAM PRAKTIJK]');
+						  'username' => '[NAAM PRAKTIJK]',
+						  'q_name' => '[VRAAGSTELLING]',
+						  'q_desc' => '[Formulering van de vraagstelling]');
 						  
 		var $defaults = array('subject' => "Hoe was uw behandeling bij [NAAM PRAKTIJK]?",
 							  'header' => "Hoe was uw behandeling?",
+							  'header_mq' => "Hoe heeft u de [VRAAGSTELLING] ervaren?",
 							  'text1' => "Geachte heer/mevrouw,\n\nU bent onlangs behandeld in onze praktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw beoordeling te plaatsen op online kanalen.\n\nOp een schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of vrienden?",
+							  'text1_mq' => '[Formulering van de vraagstelling]',
 							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n[NAAM PRAKTIJK]",
 							  'promo' => "Beoordeel ons en win een ... t.w.v. €..,..!",
 							  'footer' => "U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het patiëntenbestand van [NAAM PRAKTIJK]. Deze e-mail is een eenmalige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend gebruikt voor het verzoek tot deelname aan dit patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar gemaakt.");
@@ -1322,7 +1326,9 @@
 
 			$result['subject'] = empty($result['subject']) ? $this->defaults['subject'] : $result['subject'];
 			$result['header'] = empty($result['header']) ? $this->defaults['header'] : $result['header'];
+			$result['header_mq'] = empty($result['header_mq']) ? $this->defaults['header_mq'] : $result['header_mq'];
 			$result['text1'] = empty($result['text1']) ? $this->defaults['text1'] : $result['text1'];
+			$result['text1_mq'] = empty($result['text1_mq']) ? $this->defaults['text1_mq'] : $result['text1_mq'];
 			$result['text2'] = empty($result['text2']) ? $this->defaults['text2'] : $result['text2'];
 			$result['promo'] = empty($result['promo']) ? $this->defaults['promo'] : $result['promo'];
 			$result['footer'] = empty($result['footer']) ? $this->defaults['footer'] : $result['footer'];
@@ -1406,6 +1412,29 @@
 			return $items;
 		}
 		
+		function free_questions($list, $users_list)
+		{
+			$items = array();
+			foreach ($list as $row)
+			{
+				$check = TRUE;
+				foreach ($users_list as $val)
+				{
+					if ($val['id'] == $row['id'])
+					{
+						$check = FALSE;
+					}
+				}
+				
+				if ($check)
+				{
+					$items[] = $row;
+				}
+			}
+
+			return $items;
+		}
+		
 		function get_questions()
 		{
 			return $this->db->get('rating_questions')->result_array();
@@ -1422,6 +1451,24 @@
 					$data_array = array('questions_id' => $questions_id,
 										'users_id' => $this->session->userdata("id"));
 					$this->db->insert('users_questions', $data_array);
+				}
+			}
+		}
+		
+		function questions_ids_save($questions_ids)
+		{
+			if ($this->logged_in())
+			{
+				foreach ($questions_ids as $questions_id)
+				{
+					$this->db->where('questions_id', $questions_id);
+					$this->db->where('users_id', $this->session->userdata("id"));
+					if ( ! $this->db->count_all_results('users_questions'))
+					{
+						$data_array = array('questions_id' => $questions_id,
+											'users_id' => $this->session->userdata("id"));
+						$this->db->insert('users_questions', $data_array);
+					}
 				}
 			}
 		}
@@ -2507,13 +2554,15 @@
 		{
 			$this->db->where("id", $post['id']);
 			$this->db->where("start >=", time() - 7200);
-			if ($this->db->count_all_results('sent') || $post['id'] == 0)
+			$this->db->limit(1);
+			$row = $this->db->get('sent')->row_array();
+			if ( ! empty($row) || $post['id'] == 0)
 			{
 				if (empty($post['id']))
 				{
 					$data_array = array('users_id' => $post['users_id'],
 										'doctor' => $post['doctors_id'],
-										'stars' => 0,
+										'stars' => $row['questions_id'] == $post['questions_id'] ? $post['stars'] : $row['stars'],
 										'status' => 2,
 										'start' => time(),
 										'date' => time(),
@@ -2544,7 +2593,7 @@
 				else
 				{
 					$this->db->where("id", $post['id']);
-					if ($this->db->update("sent", array('stars' => 0, 'status' => 2, 'last' => time())))
+					if ($this->db->update("sent", array('stars' => $row['questions_id'] == $post['questions_id'] ? $post['stars'] : $row['stars'], 'status' => 2, 'last' => time())))
 					{
 						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
 						$post['last'] = time();
@@ -3163,6 +3212,9 @@
 														"feedback" => "");
 									if ($this->db->insert("sent", $data_array))
 									{
+										$row['q_name'] = empty($questions_info) ? '' : '<strong>'.strtolower($questions_info['question_name']).'</strong>';
+										$row['q_desc'] = empty($questions_info) ? '' : $questions_info['question_description'];
+										
 										$email_data['sent_id'] = $this->db->insert_id();
 										$email_data['promo_checked'] = $row['promo_checked'];
 										$email_data['stars_type'] = $row['stars_type'];
@@ -3225,6 +3277,8 @@
 							empty($doc['firstname']) ? '[EMPTY]' : $doc['firstname'],
 							empty($doc['lastname']) ? '[EMPTY]' : $doc['lastname'],
 							empty($user['username']) ? '[EMPTY]' : $user['username'],
+							empty($user['q_name']) ? '[EMPTY]' : $user['q_name'],
+							empty($user['q_desc']) ? '[EMPTY]' : $user['q_desc'],
 							'<br />');
 			
 			$texts = $this->user_emails($user['id']);
@@ -3801,12 +3855,10 @@
 						{
 							$data_array['status'] = 2; 
 						}
-						
-						if (empty($row['questions_id']))
-						{
-							$data_array['stars'] = $stars;
-							$row['stars'] = $stars;
-						}
+
+						$data_array['stars'] = $stars;
+						$row['stars'] = $stars;
+
 						$this->db->update("sent", $data_array);
 
 						if ( ! empty($row['questions_id']))
@@ -4165,8 +4217,45 @@
 				$row['reply_time'] = $row['reply_time'] > 0 ? date("d-m-y H:i", $row['reply_time']) : "";
 				$row['feedback'] = str_replace("\n", '<br />', $row['feedback']);
 				$row['reply'] = str_replace("\n", '<br />', $row['reply']);
+				
+				$row['questions'] = array();
+				if ( ! empty($row['questions_id']))
+				{
+					$row['questions'] = $this->sent_questions($row['id']);
+				}
+				
+				$row['doctors_info'] = array();
+				if ( ! empty($row['doctor']))
+				{
+					$row['doctors_info'] = $this->doctor_info($row['doctor']);
+				}
 			}
+			
 			return $row;
+		}
+		
+		function sent_questions($sent_id)
+		{
+			$items = array();
+			$this->db->where('sent_id', $sent_id);
+			$result = $this->db->get('sent_questions')->result_array();
+			if ( ! empty($result))
+			{
+				$list = $this->get_questions();
+				foreach ($result as $row)
+				{
+					foreach ($list as $val)
+					{
+						if ($val['id'] == $row['questions_id'])
+						{
+							$val['stars'] = $row['stars'];
+							$items[] = $val;
+						}
+					}
+				}
+			}
+			
+			return $items;
 		}
 
 		function stat_dashboard()
@@ -4600,9 +4689,12 @@
 				{
 					$stat = array();
 					$stat['average'] = 0;
+					$stat['for_user'] = 0;
 					$stat['stars_count'] = array(0, 0, 0, 0, 0, 0);
 					$stat['average_month_x'] = array();
 					$stat['average_month'] = array();
+					$stat['average_my_month'] = array();
+					$stat['average_all_month'] = array();
 					$stat['average_nps'] = array('12' => 0, '3' => 0, '45' => 0, '12p' => 0, '3p' => 0, '45p' => 0, 'all' => 0, 'delta' => 0);
 					$stat['history_nps'] = array();
 					$stat['reply'] = array();
@@ -4616,12 +4708,17 @@
 
 					$count = array();
 					$count['all'] = 0;
+					$count['my'] = 0;
 					$count['for_user'] = 0;
 					$count['average_sum'] = 0;
 					$count['reply_all'] = 0;
 					$count['reply_only'] = 0;
 					$count['reply_click'] = 0;
 					$count['reply_count'] = array();
+					$count['my_month_sum'] = array();
+					$count['all_month_sum'] = array();
+					$count['my_month_num'] = array();
+					$count['all_month_num'] = array();
 
 					$month_finish = date('n');
 					$year_finish = date('Y');
@@ -4633,6 +4730,10 @@
 						while ( ! ($month_start == $month_finish && $year_start == $year_finish))
 						{
 							$stat['average_month'][$i][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							$count['my_month_sum'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							$count['my_month_num'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							$count['all_month_sum'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							$count['all_month_num'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
 							if ($i == 1)
 							{
 								$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
@@ -4654,14 +4755,19 @@
 					
 					foreach ($result as $row)
 					{
+						$month = FALSE;
+						if ( ! empty($row['last']))
+						{
+							$month = date('Y-m', $row['last']);
+						}
+
 						if ($row['users_id'] == $this->session->userdata("id"))
 						{
 							if ($row['stars'] > 0)
 							{
 								$count['for_user']++;
 								$count['average_sum'] += $row['stars'];
-								
-								$month = date('Y-m', $row['last']);
+
 								if (isset($stat['average_month'][$row['stars']][$month]))
 								{
 									$stat['average_month'][$row['stars']][$month]++;
@@ -4737,14 +4843,27 @@
 							}
 							
 							$stat['stars_count'][$row['stars']]++;
+							
+							if ( ! empty($month) && isset($count['my_month_sum'][$month]))
+							{
+								$count['my_month_sum'][$month] += $row['stars'];
+								$count['my_month_num'][$month]++;
+							}
 						}
 
+						if ( ! empty($month) && isset($count['all_month_sum'][$month]))
+						{
+							$count['all_month_sum'][$month] += $row['stars'];
+							$count['all_month_num'][$month]++;
+						}
+						
 						$count['all']++;
 					}
 					
 					if ( ! empty($count['for_user']))
 					{
 						$stat['average'] = number_format(round($count['average_sum'] / $count['for_user'], 1), 1);
+						$stat['for_user'] = $count['for_user'];
 					}
 					
 					if ( ! empty($stat['average_nps']['all']))
@@ -4753,6 +4872,12 @@
 						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
+					}
+
+					foreach ($count['my_month_num'] as $month => $val)
+					{
+						$stat['average_my_month'][$month] = empty($count['my_month_num'][$month]) ? 0 : round($count['my_month_sum'][$month] / $count['my_month_num'][$month], 1);
+						$stat['average_all_month'][$month] = empty($count['all_month_num'][$month]) ? 0 : round($count['all_month_sum'][$month] / $count['all_month_num'][$month], 1);
 					}
 					
 					$list = $this->pub->get_questions();

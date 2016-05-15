@@ -282,22 +282,6 @@
 			});
         };
 
-		$scope.reply = {};
-		$scope.send_reply = function(id)
-		{
-			$scope.loader = true;
-			$http.post("/pub/send_reply/", {id: id, reply: $scope.reply.text}).success(function(data, status, headers, config) {
-				$scope.loader = false;
-				logger.check(data);
-				$location.url("/mail/inbox");
-				$scope.reply.text = '';
-			});
-		};
-		
-		$scope.set_text = function(text) {
-			$scope.reply.text = text;
-		};
-
 		$scope.closeAlert = function(index)
 		{
 			return $scope.alerts.splice(index, 1);
@@ -909,26 +893,29 @@
 		$window.onresize = function() { $scope.pie_stars.resize(); };
 		$scope.pie_stars.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
-				legend: {orient: "vertical", x: "left", data: ["5.00", "4.00", "3.00", "2.00", "1.00"]},
+				legend: {orient: "vertical", x: "left", data: ["5 sterren", "4 sterren", "3 sterren", "2 sterren", "1 sterren"]},
 				calculable: true,
 				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
 						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
 									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "30", fontWeight: "bold"}}}},
-						data:[{name: '5.00', value: 0, itemStyle: {normal: {color: '#2F91D5'}}}, {name: '4.00', value: 0, itemStyle: {normal: {color: '#0F75BC'}}}, {name: '3.00', value: 0, itemStyle: {normal: {color: '#3E769D'}}}, {name: '2.00', value: 0, itemStyle: {normal: {color: '#2D5775'}}}, {name: '1.00', value: 0, itemStyle: {normal: {color: '#04090C'}}}] }]
+						data:[{name: '5 sterren', value: 0, itemStyle: {normal: {color: '#2F91D5'}}}, {name: '4 sterren', value: 0, itemStyle: {normal: {color: '#0F75BC'}}}, {name: '3 sterren', value: 0, itemStyle: {normal: {color: '#3E769D'}}}, {name: '2 sterren', value: 0, itemStyle: {normal: {color: '#2D5775'}}}, {name: '1 sterren', value: 0, itemStyle: {normal: {color: '#04090C'}}}] }]
 		});
 		
 		$scope.area_stars = echarts.init(document.getElementById('area_stars'));
 		$window.onresize = function() { $scope.area_stars.resize(); };
 		$scope.area_stars.setOption({
 				tooltip: {trigger: "axis"},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['5 sterren', '4 sterren', '3 sterren', '2 sterren', '1 sterren', 'Beoordeling van uw praktijk', 'Landelijk gemiddelde']},
 				calculable: true,
 				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
-				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: '5.00', data: [0], itemStyle: {normal: {borderColor: '#2F91D5', lineStyle: {color: '#2F91D5'}, areaStyle: {color: 'rgba(47, 88, 116, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '4.00', data: [0], itemStyle: {normal: {borderColor: '#0F75BC', lineStyle: {color: '#0F75BC'}, areaStyle: {color: 'rgba(15, 117, 188, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '3.00', data: [0], itemStyle: {normal: {borderColor: '#3E769D', lineStyle: {color: '#3E769D'}, areaStyle: {color: 'rgba(62, 118, 157, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '2.00', data: [0], itemStyle: {normal: {borderColor: '#2D5775', lineStyle: {color: '#2D5775'}, areaStyle: {color: 'rgba(45, 87, 117, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '1.00', data: [0], itemStyle: {normal: {borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}}]
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: '5 sterren', data: [0], itemStyle: {normal: {color: '#2F91D5', borderColor: '#2F91D5', lineStyle: {color: '#2F91D5'}, areaStyle: {color: 'rgba(47, 88, 116, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '4 sterren', data: [0], itemStyle: {normal: {color: '#0F75BC', borderColor: '#0F75BC', lineStyle: {color: '#0F75BC'}, areaStyle: {color: 'rgba(15, 117, 188, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '3 sterren', data: [0], itemStyle: {normal: {color: '#3E769D', borderColor: '#3E769D', lineStyle: {color: '#3E769D'}, areaStyle: {color: 'rgba(62, 118, 157, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '2 sterren', data: [0], itemStyle: {normal: {color: '#2D5775', borderColor: '#2D5775', lineStyle: {color: '#2D5775'}, areaStyle: {color: 'rgba(45, 87, 117, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '1 sterren', data: [0], itemStyle: {normal: {color: '#04090C', borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Beoordeling van uw praktijk', data: [0], itemStyle: {normal: {color: '#04090C', borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Landelijk gemiddelde', data: [0], itemStyle: {normal: {color: '#04090C', borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}}]
 		});
 		
 		$scope.pie_nps = echarts.init(document.getElementById('pie_nps'));
@@ -947,12 +934,15 @@
 		$window.onresize = function() { $scope.area_nps.resize(); };
 		$scope.area_nps.setOption({
 				tooltip: {trigger: "axis"},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['Promotors', 'Passives', 'Detractors', 'NPS van uw praktijk', 'Landelijk gemiddelde']},
 				calculable: true,
 				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
-				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Promotors', data: [0], itemStyle: {normal: {borderColor: '#98EA3D', lineStyle: {color: '#98EA3D'}, areaStyle: {color: 'rgba(152, 234, 61, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Passives', data: [0], itemStyle: {normal: {borderColor: '#FFE165', lineStyle: {color: '#FFE165'}, areaStyle: {color: 'rgba(255, 255, 101, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Detractors', data: [0], itemStyle: {normal: {borderColor: '#EE4C61', lineStyle: {color: '#EE4C61'}, areaStyle: {color: 'rgba(238, 76, 97, 0.5)'}}}}]
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Promotors', data: [0], itemStyle: {normal: {color: '#98EA3D', borderColor: '#98EA3D', lineStyle: {color: '#98EA3D'}, areaStyle: {color: 'rgba(152, 234, 61, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Passives', data: [0], itemStyle: {normal: {color: '#FFE165', borderColor: '#FFE165', lineStyle: {color: '#FFE165'}, areaStyle: {color: 'rgba(255, 255, 101, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Detractors', data: [0], itemStyle: {normal: {color: '#EE4C61', borderColor: '#EE4C61', lineStyle: {color: '#EE4C61'}, areaStyle: {color: 'rgba(238, 76, 97, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'NPS van uw praktijk', data: [0], itemStyle: {normal: {color: '#EE4C61', borderColor: '#EE4C61', lineStyle: {color: '#EE4C61'}, areaStyle: {color: 'rgba(238, 76, 97, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Landelijk gemiddelde', data: [0], itemStyle: {normal: {color: '#EE4C61', borderColor: '#EE4C61', lineStyle: {color: '#EE4C61'}, areaStyle: {color: 'rgba(238, 76, 97, 0.5)'}}}}]
 		});
 		
 		$scope.pie_reply = echarts.init(document.getElementById('pie_reply'));
@@ -967,77 +957,129 @@
 						data:[{name: 'Beoordeeld', value: 0, itemStyle: {normal: {color: '#2E91D5'}}}, {name: 'Doorgeklikt', value: 0, itemStyle: {normal: {color: '#0F75BD'}}}, {name: 'Niet gereageerd', value: 0, itemStyle: {normal: {color: '#2F5874'}}}] }]
 		});
 		
+		$scope.less_30 = false;
 		$scope.get = function() {
 			$http.post("/pub/stat_chart2/", {}).success(function(data, status, headers, config) {
 				$scope.data = logger.check(data);
-				if ($scope.data && $scope.data.stars_count)
+				if ($scope.data.for_user >= 30)
 				{
-					for (var i = 5; i > 0; i--)
-					{
-						$scope.pie_stars.addData([[0, {name: i.toFixed(2) + '', value: ($scope.data.stars_count[i] ? $scope.data.stars_count[i] : 0) * 1}, false, false]]);
-					}
-				}
-				
-				if ($scope.data && $scope.data.average_month)
-				{
-					$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}]});
-					var series = [];
-					for (var i = 1; i <= 5; i++)
-					{
-						var data = [];
-						for (var m in $scope.data.average_month[i])
-						{
-							data.push($scope.data.average_month[i][m]);
-						}
-						series.push({type: 'line', name: (i + '.00'), data: data});
-					}
-					$scope.area_stars.setOption({series: series});
-				}
-				
-				if ($scope.data && $scope.data.average_nps.all)
-				{
-					$scope.nps['12'] = Math.round($scope.data.average_nps['12p'] / 10);
-					$scope.nps['45'] = Math.round($scope.data.average_nps['45p'] / 10);
-					$scope.nps['3'] = 10 - ($scope.nps['12'] + $scope.nps['45']);
-					
-					$scope.pie_nps.addData([[0, {name: 'Promotors', value: $scope.data.average_nps['45']}, false, false]]);
-					$scope.pie_nps.addData([[0, {name: 'Passives', value: $scope.data.average_nps['3']}, false, false]]);
-					$scope.pie_nps.addData([[0, {name: 'Detractors', value: $scope.data.average_nps['12']}, false, false]]);
-				}
-				
-				if ($scope.data && $scope.data.history_nps)
-				{
-					$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}]});
-					var series = [];
-					var data = [];
-					for (var m in $scope.data.history_nps['45'])
-					{
-						data.push($scope.data.history_nps['45'][m]);
-					}
-					series.push({type: 'line', name: 'Promotors', data: data});
-					
-					data = [];
-					for (var m in $scope.data.history_nps['3'])
-					{
-						data.push($scope.data.history_nps['3'][m]);
-					}
-					series.push({type: 'line', name: 'Passives', data: data});
-					
-					data = [];
-					for (var m in $scope.data.history_nps['12'])
-					{
-						data.push($scope.data.history_nps['12'][m]);
-					}
-					series.push({type: 'line', name: 'Detractors', data: data});
+					$scope.less_30 = false;
 
-					$scope.area_nps.setOption({series: series});
+					if ($scope.data && $scope.data.stars_count)
+					{
+						for (var i = 5; i > 0; i--)
+						{
+							$scope.pie_stars.addData([[0, {name: i + ' sterren', value: ($scope.data.stars_count[i] ? $scope.data.stars_count[i] : 0) * 1}, false, false]]);
+						}
+					}
+					
+					if ($scope.data && $scope.data.average_month)
+					{
+						var series = [];
+						var max = 0;
+						for (var i = 5; i > 0; i--)
+						{
+							var data = [];
+							for (var m in $scope.data.average_month[i])
+							{
+								data.push($scope.data.average_month[i][m]);
+								max = Math.max(max, $scope.data.average_month[i][m] * 1);
+							}
+							series.push({type: 'line', name: (i + ' sterren'), data: data});
+						}
+						
+						var data = [];
+						for (var m in $scope.data.average_my_month)
+						{
+							data.push($scope.data.average_my_month[m]);
+							max = Math.max(max, $scope.data.average_my_month[m] * 1);
+						}
+						series.push({type: 'line', name: 'Beoordeling van uw praktijk', data: data});
+						
+						data = [];
+						for (var m in $scope.data.average_all_month)
+						{
+							data.push($scope.data.average_all_month[m]);
+							max = Math.max(max, $scope.data.average_all_month[m] * 1);
+						}
+						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
+						
+						$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}],
+													 yAxis: [{min: 0, max: max}],
+													 series: series});
+					}
+					
+					if ($scope.data && $scope.data.average_nps.all)
+					{
+						$scope.nps['12'] = Math.round($scope.data.average_nps['12p'] / 10);
+						$scope.nps['45'] = Math.round($scope.data.average_nps['45p'] / 10);
+						$scope.nps['3'] = 10 - ($scope.nps['12'] + $scope.nps['45']);
+						
+						$scope.pie_nps.addData([[0, {name: 'Promotors', value: $scope.data.average_nps['45']}, false, false]]);
+						$scope.pie_nps.addData([[0, {name: 'Passives', value: $scope.data.average_nps['3']}, false, false]]);
+						$scope.pie_nps.addData([[0, {name: 'Detractors', value: $scope.data.average_nps['12']}, false, false]]);
+					}
+					
+					if ($scope.data && $scope.data.history_nps)
+					{
+						$scope.area_nps.setOption({});
+						var series = [];
+						var data = [];
+						var max = 0;
+						for (var m in $scope.data.history_nps['45'])
+						{
+							data.push($scope.data.history_nps['45'][m]);
+							max = Math.max(max, $scope.data.history_nps['45'][m] * 1);
+						}
+						series.push({type: 'line', name: 'Promotors', data: data});
+						
+						data = [];
+						for (var m in $scope.data.history_nps['3'])
+						{
+							data.push($scope.data.history_nps['3'][m]);
+							max = Math.max(max, $scope.data.history_nps['3'][m] * 1);
+						}
+						series.push({type: 'line', name: 'Passives', data: data});
+						
+						data = [];
+						for (var m in $scope.data.history_nps['12'])
+						{
+							data.push($scope.data.history_nps['12'][m]);
+							max = Math.max(max, $scope.data.history_nps['12'][m] * 1);
+						}
+						series.push({type: 'line', name: 'Detractors', data: data});
+						
+						data = [];
+						for (var m in $scope.data.average_my_month)
+						{
+							data.push($scope.data.average_my_month[m]);
+							max = Math.max(max, $scope.data.average_my_month[m] * 1);
+						}
+						series.push({type: 'line', name: 'NPS van uw praktijk', data: data});
+						
+						data = [];
+						for (var m in $scope.data.average_all_month)
+						{
+							data.push($scope.data.average_all_month[m]);
+							max = Math.max(max, $scope.data.average_all_month[m] * 1);
+						}
+						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
+
+						$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}],
+												   yAxis: [{min: 0, max: max}],
+												   series: series});
+					}
+					
+					if ($scope.data && $scope.data.reply_chart)
+					{
+						$scope.pie_reply.addData([[0, {name: 'Beoordeeld', value: $scope.data.reply_chart['reply']}, false, false]]);
+						$scope.pie_reply.addData([[0, {name: 'Doorgeklikt', value: $scope.data.reply_chart['click']}, false, false]]);
+						$scope.pie_reply.addData([[0, {name: 'Niet gereageerd', value: $scope.data.reply_chart['none']}, false, false]]);
+					}
 				}
-				
-				if ($scope.data && $scope.data.reply_chart)
+				else
 				{
-					$scope.pie_reply.addData([[0, {name: 'Beoordeeld', value: $scope.data.reply_chart['reply']}, false, false]]);
-					$scope.pie_reply.addData([[0, {name: 'Doorgeklikt', value: $scope.data.reply_chart['click']}, false, false]]);
-					$scope.pie_reply.addData([[0, {name: 'Niet gereageerd', value: $scope.data.reply_chart['none']}, false, false]]);
+					$scope.less_30 = true;
 				}
 			});
 		};
@@ -1052,7 +1094,12 @@
 				array.push(i);
 			}
 			return array;
-		}
+		};
+		
+		$scope.go_to_compose = function()
+		{
+			$location.url("/mail/compose");
+		};
 
 		$scope.online = function()
 		{
@@ -1955,7 +2002,7 @@
 		$scope.user = {};
 		$scope.old_user = {};
 		$scope.email_text_class = "close";
-		$scope.tags = ['[QUESTION]', '[Formulering van de vraagstelling]', '[AANHEF PATIËNT]', '[VOORNAAM PATIËNT]', '[ACHTERNAAM PATIËNT]', '[AANHEF ZORGVERLENER]', '[VOORNAAM ZORGVERLENER]', '[ACHTERNAAM ZORGVERLENER]', '[ONDERWERP VAN E-MAIL]', '[NAAM PRAKTIJK]'];
+		$scope.tags = ['[VRAAGSTELLING]', '[Formulering van de vraagstelling]', '[AANHEF PATIËNT]', '[VOORNAAM PATIËNT]', '[ACHTERNAAM PATIËNT]', '[AANHEF ZORGVERLENER]', '[VOORNAAM ZORGVERLENER]', '[ACHTERNAAM ZORGVERLENER]', '[ONDERWERP VAN E-MAIL]', '[NAAM PRAKTIJK]'];
 		
 		$scope.find_tags = function(text, key) {
 			if (text)
@@ -1974,7 +2021,30 @@
 			{
 				var rel = $event.target.getAttribute("rel");
 				var part = rel.split("|");
-				$scope.user.emails[part[0]] = $scope.user.emails[part[0]].replace(part[1], "");
+				if (part[1].toLowerCase() == '[vraagstelling]' || part[1].toLowerCase() == '[formulering van de vraagstelling]')
+				{
+					var modalInstance;
+					modalInstance = $modal.open({
+						templateUrl: "emails_remove_questions.html",
+						controller: 'ModalEmailsRemoveQuestionsCtrl',
+						resolve: {
+							items: function() {
+								return [];
+							}
+						}
+					});
+					
+					modalInstance.result.then((function(result) {
+						$scope.user.emails[part[0]] = $scope.user.emails[part[0]].replace(part[1], "");
+						$scope.user.rating_questions = '0';
+					}), function() {
+						console.log("Modal dismissed at: " + new Date());
+					});
+				}
+				else
+				{
+					$scope.user.emails[part[0]] = $scope.user.emails[part[0]].replace(part[1], "");
+				}
 			}
 			else
 			{
@@ -1990,7 +2060,30 @@
 				});
 				
 				modalInstance.result.then((function(items) {
-					$scope.user.emails[items.type] = items.value;
+					if (items.type == 'header_mq' && ! (items.value.toLowerCase().indexOf('[vraagstelling]') + 1) || items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('[formulering van de vraagstelling]') + 1))
+					{
+						var modalInstance;
+						modalInstance = $modal.open({
+							templateUrl: "emails_remove_questions.html",
+							controller: 'ModalEmailsRemoveQuestionsCtrl',
+							resolve: {
+								items: function() {
+									return [];
+								}
+							}
+						});
+						
+						modalInstance.result.then((function(result) {
+							$scope.user.emails[items.type] = items.value;
+							$scope.user.rating_questions = '0';
+						}), function() {
+							console.log("Modal dismissed at: " + new Date());
+						});
+					}
+					else
+					{
+						$scope.user.emails[items.type] = items.value;
+					}
 				}), function() {
 					console.log("Modal dismissed at: " + new Date());
 				});
@@ -2104,32 +2197,34 @@
 			});
 		};
 		
+		$scope.upgrade_to_pro = function()
+		{
+			if ($scope.user.account_type == 0 && $scope.user.organization == 0)
+			{
+				var modalInstance;
+				modalInstance = $modal.open({
+					templateUrl: "questions_basic.html",
+					controller: 'ModalQuestionsBasicCtrl',
+					resolve: {
+						items: function() {
+							return [];
+						}
+					}
+				});
+				
+				modalInstance.result.then((function(items) {
+					$location.url("pages/activate/1");
+				}), function() {
+					console.log("Modal dismissed at: " + new Date());
+				});
+			}
+		};
+		
 		$scope.check_questions_for_user = function()
 		{
 			if ($scope.user.rating_questions)
 			{
-				if ($scope.user.account_type == 0 && $scope.user.organization == 0)
-				{
-					$scope.user.rating_questions = 0;
-					
-					var modalInstance;
-					modalInstance = $modal.open({
-						templateUrl: "questions_basic.html",
-						controller: 'ModalQuestionsBasicCtrl',
-						resolve: {
-							items: function() {
-								return [];
-							}
-						}
-					});
-					
-					modalInstance.result.then((function(items) {
-						$location.url("pages/activate/1");
-					}), function() {
-						console.log("Modal dismissed at: " + new Date());
-					});
-				}
-				else
+				if ($scope.user.account_type == 1 || $scope.user.organization == 1)
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
@@ -2146,6 +2241,12 @@
 						if (result)
 						{
 							$scope.email_text_class = 'open';
+							var ids = [];
+							for (var i = $scope.user.questions.length; i < 2; i++)
+							{
+								ids.push($scope.questions_list[i].id);
+							}
+							$scope.first_questions_save(ids);
 						}
 						else
 						{
@@ -2211,6 +2312,7 @@
 		
 		$scope.edit_question = {};
 		$scope.edit_questions = {};
+		$scope.edit_questions_list = {}
 		$scope.edit_init = function()
 		{
 			for (var k in $scope.user.questions)
@@ -2221,6 +2323,9 @@
 				$scope.edit_questions[item.id] = {};
 				$scope.edit_questions[item.id].name = item;
 				$scope.edit_questions[item.id].desc = item.question_description;
+				
+				$scope.edit_questions_list[item.id] = angular.copy($scope.questions_list);
+				$scope.edit_questions_list[item.id].push(item);
 			}
 		};
 		
@@ -2239,7 +2344,27 @@
 			if ($scope.new_question && $scope.new_question.id)
 			{
 				$http.post("/pub/questions_save/", {questions_id: $scope.new_question.id}).success(function(data, status, headers, config) {
-					$scope.user.questions = logger.check(data);
+					var result = logger.check(data);
+					$scope.user.questions = result.questions;
+					$scope.questions_list = result.questions_list;
+					$scope.add_new_question_hide();
+					
+					$scope.new_question = {};
+					$scope.question_desc = '';
+					
+					$scope.edit_init();
+				});
+			}
+		};
+		
+		$scope.first_questions_save = function(ids)
+		{
+			if (ids && ids.length)
+			{
+				$http.post("/pub/questions_ids_save/", {questions_ids: ids}).success(function(data, status, headers, config) {
+					var result = logger.check(data);
+					$scope.user.questions = result.questions;
+					$scope.questions_list = result.questions_list;
 					$scope.add_new_question_hide();
 					
 					$scope.new_question = {};
@@ -2252,19 +2377,29 @@
 		
 		$scope.remove_questions = function(questions_id)
 		{
-			$http.post("/pub/questions_remove/", {questions_id: questions_id}).success(function(data, status, headers, config) {
-				$scope.user.questions = logger.check(data);
-				if ( ! $scope.user.questions.length)
-				{
-					$scope.add_new_question_show();
-				}
-				else
-				{
-					$scope.add_new_question_hide();
-				}
-				
-				$scope.edit_init();
-			});
+			if ($scope.user.questions.length == 2)
+			{
+				logger.logError("U dient minimaal twee vraagstellingen te gebruiken.");
+			}
+			else
+			{
+				$http.post("/pub/questions_remove/", {questions_id: questions_id}).success(function(data, status, headers, config) {
+					var result = logger.check(data);
+					$scope.user.questions = result.questions;
+					$scope.questions_list = result.questions_list;
+					
+					if ( ! $scope.user.questions.length)
+					{
+						$scope.add_new_question_show();
+					}
+					else
+					{
+						$scope.add_new_question_hide();
+					}
+					
+					$scope.edit_init();
+				});
+			}
 		};
 		
 		$scope.edit_questions = function(questions_id)
@@ -2280,7 +2415,10 @@
 		$scope.save_questions = function(questions_id)
 		{
 			$http.post("/pub/questions_edit/", {questions_id: questions_id, new_id: $scope.edit_questions[questions_id].name.id}).success(function(data, status, headers, config) {
-				$scope.user.questions = logger.check(data);
+				var result = logger.check(data);
+				$scope.user.questions = result.questions;
+				$scope.questions_list = result.questions_list;
+				
 				$scope.add_new_question_hide();
 				
 				$scope.edit_init();
@@ -4426,7 +4564,28 @@
 				if ($scope.result)
 				{
 					$scope.info = $scope.result;
+					$scope.info.feedback = $scope.info.feedback.replace(/\n/gi, "<br />");
+					$scope.info.reply = $scope.info.reply.replace(/\n/gi, "<br />");
 				}
+			});
+		};
+		
+		$scope.range = function(num)
+		{
+			var array = [];
+			for (var i = 0; i < num; i++)
+			{
+				array.push(i);
+			}
+			return array;
+		};
+		
+		$scope.reply = '';
+		$scope.send_reply = function()
+		{
+			$http.post("/pub/send_reply/", {id: $scope.id, reply: $scope.reply}).success(function(data, status, headers, config) {
+				logger.check(data);
+				$scope.info.reply = $scope.reply.replace(/\n/gi, "<br />");
 			});
 		};
     }
@@ -6908,6 +7067,7 @@
 		.controller('ModalInstanceUpdatesCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceUpdatesCtrl])
 		.controller('ModalInstanceOnlineCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceOnlineCtrl])
 		.controller('ModalInstanceEmailsEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceEmailsEditCtrl])
+		.controller('ModalEmailsRemoveQuestionsCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalEmailsRemoveQuestionsCtrl])
 		.controller('ModalInstanceWidgetEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceWidgetEditCtrl])
 		.controller('ModalInstanceWidgetSaveCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceWidgetSaveCtrl])
 		.controller('ModalInstanceProfileSaveCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceProfileSaveCtrl])
@@ -7570,6 +7730,16 @@
 		
 		$scope.save = function() {
 			$modalInstance.close({value: $scope.value.replace(/\n/g, "<br />"), type: $scope.type});
+		};
+    };
+	
+	function ModalEmailsRemoveQuestionsCtrl($scope, $modalInstance, $http, $location, logger, items) {
+		$scope.undo = function() {
+			$modalInstance.dismiss("cancel");
+        };
+		
+		$scope.proceed = function() {
+			$modalInstance.close();
 		};
     };
 	
