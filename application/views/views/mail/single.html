@@ -40,7 +40,7 @@
                         </div>
                     </div>
                     <div class="mail-content">
-                        <p class="mail-content-reply">{{info.feedback}}</p>
+                        <p class="mail-content-reply" ng-bind-html="info.feedback">{{info.feedback}}</p>
                     </div>
 					
                     <div class="mail-actions" ng-if=" ! info.reply">
@@ -60,7 +60,7 @@
                         </div>
                     </div>
                     <div class="mail-content">
-                        <p class="mail-content-reply">{{info.reply}}</p>
+                        <p class="mail-content-reply" ng-bind-html="info.reply">{{info.reply}}</p>
                     </div>
                 </div>
             </section>
