@@ -21,10 +21,10 @@
 	<div class="page page-charts">
 		<section>
 			<div class="row charts2-row">
-				<div class="col-md-6 col-xs-12">
+				<div class="col-lg-6 col-xs-12">
 					<div class="panel panel-default">
 						<div class="row">
-							<div class="col-sm-5 col-xs-12">
+							<div class="col-sm-6 col-xs-12">
 								<div class="charts2-side-icons">
 									<i class="fa fa-star-o" ng-show="data.average == 0"></i>
 									<i class="fa fa-star-half-o" ng-show="data.average > 0 && data.average < 1"></i>
@@ -48,7 +48,7 @@
 								</div>
 							</div>
 							
-							<div class="col-sm-7 col-xs-12">
+							<div class="col-sm-6 col-xs-12">
 								<div class="charts2-side-value">
 									<div class="charts2-side-amount">
 										{{data.average}}
@@ -63,20 +63,16 @@
 					</div>
 				</div>
 				
-				<div class="col-md-3 col-xs-12">
+				<div class="col-lg-3 col-md-6 col-xs-12">
 					<div class="panel panel-default">
 						<div class="row charts2-stars-count">
-							<div class="col-xs-6">
+							<div class="col-xs-5">
 								<div class="charts2-stars-count-icons">
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
+									<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
 								</div>
 							</div>
 							
-							<div class="col-xs-6">
+							<div class="col-xs-7">
 								<div class="charts2-stars-count-value">
 									{{data.stars_count[5]}} beoordelingen
 								</div>
@@ -84,16 +80,13 @@
 						</div>
 						
 						<div class="row charts2-stars-count">
-							<div class="col-xs-6">
+							<div class="col-xs-5">
 								<div class="charts2-stars-count-icons">
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
+									<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
 								</div>
 							</div>
 							
-							<div class="col-xs-6">
+							<div class="col-xs-7">
 								<div class="charts2-stars-count-value">
 									{{data.stars_count[4]}} beoordelingen
 								</div>
@@ -101,15 +94,13 @@
 						</div>
 						
 						<div class="row charts2-stars-count">
-							<div class="col-xs-6">
+							<div class="col-xs-5">
 								<div class="charts2-stars-count-icons">
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
+									<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
 								</div>
 							</div>
 							
-							<div class="col-xs-6">
+							<div class="col-xs-7">
 								<div class="charts2-stars-count-value">
 									{{data.stars_count[3]}} beoordelingen
 								</div>
@@ -117,14 +108,13 @@
 						</div>
 						
 						<div class="row charts2-stars-count">
-							<div class="col-xs-6">
+							<div class="col-xs-5">
 								<div class="charts2-stars-count-icons">
-									<i class="fa fa-star-o"></i>
-									<i class="fa fa-star-o"></i>
+									<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
 								</div>
 							</div>
 							
-							<div class="col-xs-6">
+							<div class="col-xs-7">
 								<div class="charts2-stars-count-value">
 									{{data.stars_count[2]}} beoordelingen
 								</div>
@@ -132,13 +122,13 @@
 						</div>
 						
 						<div class="row charts2-stars-count">
-							<div class="col-xs-6">
+							<div class="col-xs-5">
 								<div class="charts2-stars-count-icons">
 									<i class="fa fa-star-o"></i>
 								</div>
 							</div>
 							
-							<div class="col-xs-6">
+							<div class="col-xs-7">
 								<div class="charts2-stars-count-value">
 									{{data.stars_count[1]}} beoordelingen
 								</div>
@@ -147,9 +137,9 @@
 					</div>
 				</div>
 				
-				<div class="col-md-3 col-xs-12">
+				<div class="col-lg-3 col-md-6 col-xs-12">
 					<div class="panel panel-default">
-						<div class="panel-body">
+						<div class="panel-body small-padding-x">
 							<div id="pie_stars" style="height: 178px;"></div>
 						</div>
 					</div>
@@ -272,7 +262,7 @@
 				
 				<div class="col-md-3 col-xs-12">
 					<div class="panel panel-default">
-						<div class="panel-body">
+						<div class="panel-body small-padding-x">
 							<div id="pie_nps" style="height: 178px;"></div>
 						</div>
 					</div>
@@ -288,7 +278,7 @@
 			<div class="charts2-dashed">
 			</div>
 			
-			<!--div class="row charts2-row">
+			<div class="row charts2-row">
 				<div class="col-md-6 col-xs-12">
 					<div class="panel panel-default">
 						<div class="row">
@@ -301,7 +291,7 @@
 							<div class="col-sm-7 col-xs-12">
 								<div class="charts2-side-value">
 									<div class="charts2-side-amount">
-										{{data.reply}}%
+										{{data.reply_percent}}%
 									</div>
 									
 									<div class="charts2-side-text">
@@ -317,42 +307,28 @@
 					<div class="panel panel-default charts2-min-box">
 						<div class="row charts2-stars-count">
 							<div class="col-xs-6">
-								<div class="charts2-stars-count-icons">
-									<i class="fa fa-male green" ng-repeat="n in range(nps['45'])"></i>
+								<div class="charts2-stars-count-text">
+									Hoogst
 								</div>
 							</div>
 							
 							<div class="col-xs-6">
 								<div class="charts2-stars-count-value">
-									{{data.average_nps['45']}} promotors
+									{{data.reply_highest}}%
 								</div>
 							</div>
 						</div>
 						
 						<div class="row charts2-stars-count">
 							<div class="col-xs-6">
-								<div class="charts2-stars-count-icons">
-									<i class="fa fa-male yellow" ng-repeat="n in range(nps['3'])"></i>
+								<div class="charts2-stars-count-text">
+									Laagst
 								</div>
 							</div>
 							
 							<div class="col-xs-6">
 								<div class="charts2-stars-count-value">
-									{{data.average_nps['3']}} passives
-								</div>
-							</div>
-						</div>
-						
-						<div class="row charts2-stars-count">
-							<div class="col-xs-6">
-								<div class="charts2-stars-count-icons">
-									<i class="fa fa-male red" ng-repeat="n in range(nps['12'])"></i>
-								</div>
-							</div>
-							
-							<div class="col-xs-6">
-								<div class="charts2-stars-count-value">
-									{{data.average_nps['12']}} detractors
+									{{data.reply_lowest}}%
 								</div>
 							</div>
 						</div>
@@ -374,17 +350,37 @@
 				<div class="col-md-3 col-xs-12">
 					<div class="panel panel-default">
 						<div class="panel-body">
-							<div id="pie_nps" style="height: 178px;"></div>
+							<div id="pie_reply" style="height: 178px;"></div>
 						</div>
 					</div>
 				</div>
 				
 				<div class="col-xs-12">
 					<div class="panel panel-default">
-						<div id="area_nps" style="height: 300px;"></div>
+						<div class="table_responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Verzenddatum</th>
+										<th>Aantal uitnodigingen</th>
+										<th>Gereageerd</th>
+										<th>Doorgeklikt</th>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr ng-repeat="b in data.batches">
+										<td>{{b.date}}</td>
+										<td>{{b.amount}}</td>
+										<td>{{b.reply}}%</td>
+										<td>{{b.click}}%</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
-			</div-->
+			</div>
 		</section>
 	</div>
 </div>

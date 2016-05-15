@@ -3059,9 +3059,14 @@
 		{
 			if ( ! empty($post['emails']))
 			{
+				$batches_id = 0;
 				if ( ! $sent)
 				{
-					$this->db->insert("sent_dates", array("users_id" => $this->session->userdata("id"), "sent_date" => time()));
+					$data_array = array("users_id" => $this->session->userdata("id"),
+										"emails_amount" => count($post['emails']),
+										"sent_date" => time());
+					$this->db->insert("sent_dates", $data_array);
+					$batches_id = $this->db->insert_id();
 				}
 				
 				$users_id = $this->session->userdata("id");
@@ -3143,6 +3148,7 @@
 														
 									$data_array = array("users_id" => $this->session->userdata("id"),
 														"questions_id" => empty($questions_info) ? 0 : $questions_info['id'],
+														"batches_id" => $batches_id,
 														"title" => ( ! empty($list['title']) && ! empty($post['column']['title'])) ? $list['title'] : "",
 														"name" => ( ! empty($list['name']) && ! empty($post['column']['name'])) ? $list['name'] : "",
 														"sname" => ( ! empty($list['sname']) && ! empty($post['column']['sname'])) ? $list['sname'] : "",
@@ -4600,11 +4606,22 @@
 					$stat['average_nps'] = array('12' => 0, '3' => 0, '45' => 0, '12p' => 0, '3p' => 0, '45p' => 0, 'all' => 0, 'delta' => 0);
 					$stat['history_nps'] = array();
 					$stat['reply'] = array();
+					$stat['reply_percent'] = 0;
+					$stat['reply_click'] = 0;
+					$stat['reply_percents'] = array();
+					$stat['reply_clicks'] = array();
+					$stat['reply_highest'] = 0;
+					$stat['reply_lowest'] = 0;
+					$stat['reply_chart'] = array('reply' => 0, 'click' => 0, 'none' => 0);
 
 					$count = array();
 					$count['all'] = 0;
 					$count['for_user'] = 0;
 					$count['average_sum'] = 0;
+					$count['reply_all'] = 0;
+					$count['reply_only'] = 0;
+					$count['reply_click'] = 0;
+					$count['reply_count'] = array();
 
 					$month_finish = date('n');
 					$year_finish = date('Y');
@@ -4632,6 +4649,8 @@
 							}
 						}
 					}
+					
+					$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
 					
 					foreach ($result as $row)
 					{
@@ -4673,6 +4692,48 @@
 									}
 								}
 								$stat['average_nps']['all']++;
+							}
+							
+							$count['reply_all']++;
+							if ($row['status'] == 2)
+							{
+								$count['reply_only']++;
+								$check = 0;
+								foreach ($onlines as $key)
+								{
+									$check += $row[$key];
+								}
+
+								if ( ! empty($check))
+								{
+									$count['reply_click']++;
+								}
+							}
+							
+							if ( ! empty($row['batches_id']))
+							{
+								if ( ! isset($count['reply_count'][$row['batches_id']]))
+								{
+									$count['reply_count'][$row['batches_id']]['all'] = 0;
+									$count['reply_count'][$row['batches_id']]['only'] = 0;
+									$count['reply_count'][$row['batches_id']]['click'] = 0;
+								}
+								
+								$count['reply_count'][$row['batches_id']]['all']++;
+								if ($row['status'] == 2)
+								{
+									$count['reply_count'][$row['batches_id']]['only']++;
+									$check = 0;
+									foreach ($onlines as $key)
+									{
+										$check += $row[$key];
+									}
+
+									if ( ! empty($check))
+									{
+										$count['reply_count'][$row['batches_id']]['click']++;
+									}
+								}
 							}
 							
 							$stat['stars_count'][$row['stars']]++;
@@ -4725,6 +4786,48 @@
 								$stat['questions'][$key]['average'] = number_format(round($q_sum[$row['id']] / $q_num[$row['id']], 1), 1);
 							}
 						}
+					}
+					
+					if ( ! empty($count['reply_all']))
+					{
+						$stat['reply_percent'] = round($count['reply_only'] / $count['reply_all'] * 100, 1);
+						$stat['reply_click'] = round($count['reply_click'] / $count['reply_all'] * 100, 1);
+						
+						$stat['reply_chart']['click'] = $stat['reply_click'];
+						$stat['reply_chart']['none'] = 100 - $stat['reply_percent'];
+						$stat['reply_chart']['reply'] = $stat['reply_percent'] - $stat['reply_click'];
+					}
+					
+					if ( ! empty($count['reply_count']))
+					{
+						foreach ($count['reply_count'] as $id => $row)
+						{
+							$value = round($row['only'] / $row['all'] * 100, 1);
+							$stat['reply_percents'][$id] = $value;
+							$stat['reply_highest'] = max($stat['reply_highest'], $value);
+							if (empty($stat['reply_lowest']))
+							{
+								$stat['reply_lowest'] = $value;
+							}
+							else
+							{
+								$stat['reply_lowest'] = min($stat['reply_lowest'], $value);
+							}
+							
+							$value = round($row['click'] / $row['all'] * 100, 1);
+							$stat['reply_clicks'][$id] = $value;
+						}
+					}
+					
+					$this->db->order_by('sent_date', 'desc');
+					$this->db->where('users_id', $users_id);
+					$result = $this->db->get('sent_dates')->result_array();
+					foreach ($result as $row)
+					{
+						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
+												   'amount' => $row['emails_amount'],
+												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
 					}
 
 					return $stat;

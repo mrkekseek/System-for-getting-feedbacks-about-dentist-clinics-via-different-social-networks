@@ -906,49 +906,65 @@
 		$scope.data = {};
 		$scope.nps = {};
 		$scope.pie_stars = echarts.init(document.getElementById('pie_stars'));
+		window.onresize = function() { $scope.pie_stars.resize(); };
 		$scope.pie_stars.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
 				legend: {orient: "vertical", x: "left", data: ["5.00", "4.00", "3.00", "2.00", "1.00"]},
 				calculable: true,
-				series:[{type: "pie", radius:["50%", "88%"],
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
 						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
 									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "30", fontWeight: "bold"}}}},
-						data:[{name: '5.00', value: 0, itemStyle: {normal: {color: '#2E91D5'}}}, {name: '4.00', value: 0, itemStyle: {normal: {color: '#0F75BD'}}}, {name: '3.00', value: 0, itemStyle: {normal: {color: '#2F5874'}}}, {name: '2.00', value: 0}, {name: '1.00', value: 0}] }]
+						data:[{name: '5.00', value: 0, itemStyle: {normal: {color: '#2F91D5'}}}, {name: '4.00', value: 0, itemStyle: {normal: {color: '#0F75BC'}}}, {name: '3.00', value: 0, itemStyle: {normal: {color: '#3E769D'}}}, {name: '2.00', value: 0, itemStyle: {normal: {color: '#2D5775'}}}, {name: '1.00', value: 0, itemStyle: {normal: {color: '#04090C'}}}] }]
 		});
 		
 		$scope.area_stars = echarts.init(document.getElementById('area_stars'));
+		window.onresize = function() { $scope.area_stars.resize(); };
 		$scope.area_stars.setOption({
 				tooltip: {trigger: "axis"},
 				calculable: true,
 				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
-				series:[{type: 'line', name: '5.00', stack: '5.00', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
-						{type: 'line', name: '4.00', stack: '4.00', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
-						{type: 'line', name: '3.00', stack: '3.00', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
-						{type: 'line', name: '2.00', stack: '2.00', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
-						{type: 'line', name: '1.00', stack: '1.00', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}}]
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: '5.00', data: [0], itemStyle: {normal: {borderColor: '#2F91D5', lineStyle: {color: '#2F91D5'}, areaStyle: {color: 'rgba(47, 88, 116, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '4.00', data: [0], itemStyle: {normal: {borderColor: '#0F75BC', lineStyle: {color: '#0F75BC'}, areaStyle: {color: 'rgba(15, 117, 188, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '3.00', data: [0], itemStyle: {normal: {borderColor: '#3E769D', lineStyle: {color: '#3E769D'}, areaStyle: {color: 'rgba(62, 118, 157, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '2.00', data: [0], itemStyle: {normal: {borderColor: '#2D5775', lineStyle: {color: '#2D5775'}, areaStyle: {color: 'rgba(45, 87, 117, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '1.00', data: [0], itemStyle: {normal: {borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}}]
 		});
 		
 		$scope.pie_nps = echarts.init(document.getElementById('pie_nps'));
+		window.onresize = function() { $scope.pie_nps.resize(); };
 		$scope.pie_nps.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
 				legend: {orient: "vertical", x: "left", data: ["Promotors", "Passives", "Detractors"]},
 				calculable: true,
-				series:[{type: "pie", radius:["50%", "88%"],
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
 						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
 									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "13", fontWeight: "normal"}}}},
 						data:[{name: 'Promotors', value: 0, itemStyle: {normal: {color: '#98EA3D'}}}, {name: 'Passives', value: 0, itemStyle: {normal: {color: '#FFE165'}}}, {name: 'Detractors', value: 0, itemStyle: {normal: {color: '#EE4C61'}}}] }]
 		});
 		
 		$scope.area_nps = echarts.init(document.getElementById('area_nps'));
+		window.onresize = function() { $scope.area_nps.resize(); };
 		$scope.area_nps.setOption({
 				tooltip: {trigger: "axis"},
 				calculable: true,
 				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
-				series:[{type: 'line', name: 'Promotors', stack: 'Promotors', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
-						{type: 'line', name: 'Passives', stack: 'Passives', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}},
-						{type: 'line', name: 'Detractors', stack: 'Detractors', data: [0], itemStyle: {normal: {areaStyle: {type: 'default'}}}}]
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Promotors', data: [0], itemStyle: {normal: {borderColor: '#98EA3D', lineStyle: {color: '#98EA3D'}, areaStyle: {color: 'rgba(152, 234, 61, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Passives', data: [0], itemStyle: {normal: {borderColor: '#FFE165', lineStyle: {color: '#FFE165'}, areaStyle: {color: 'rgba(255, 255, 101, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Detractors', data: [0], itemStyle: {normal: {borderColor: '#EE4C61', lineStyle: {color: '#EE4C61'}, areaStyle: {color: 'rgba(238, 76, 97, 0.5)'}}}}]
+		});
+		
+		$scope.pie_reply = echarts.init(document.getElementById('pie_reply'));
+		window.onresize = function() { $scope.pie_reply.resize(); };
+		$scope.pie_reply.setOption({
+				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				legend: {orient: "vertical", x: "left", data: ["Beoordeeld", "Doorgeklikt", "Niet gereageerd"]},
+				calculable: true,
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
+						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
+									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "13", fontWeight: "normal"}}}},
+						data:[{name: 'Beoordeeld', value: 0, itemStyle: {normal: {color: '#2E91D5'}}}, {name: 'Doorgeklikt', value: 0, itemStyle: {normal: {color: '#0F75BD'}}}, {name: 'Niet gereageerd', value: 0, itemStyle: {normal: {color: '#2F5874'}}}] }]
 		});
 		
 		$scope.get = function() {
@@ -973,7 +989,7 @@
 						{
 							data.push($scope.data.average_month[i][m]);
 						}
-						series.push({type: 'line', name: (i + '.00'), stack: (i + '.00'), data: data, itemStyle: {normal: {areaStyle: {type: 'default'}}}});
+						series.push({type: 'line', name: (i + '.00'), data: data});
 					}
 					$scope.area_stars.setOption({series: series});
 				}
@@ -998,23 +1014,30 @@
 					{
 						data.push($scope.data.history_nps['45'][m]);
 					}
-					series.push({type: 'line', name: 'Promotors', stack: 'Promotors', data: data, itemStyle: {normal: {areaStyle: {type: 'default'}}}});
+					series.push({type: 'line', name: 'Promotors', data: data});
 					
 					data = [];
 					for (var m in $scope.data.history_nps['3'])
 					{
 						data.push($scope.data.history_nps['3'][m]);
 					}
-					series.push({type: 'line', name: 'Passives', stack: 'Passives', data: data, itemStyle: {normal: {areaStyle: {type: 'default'}}}});
+					series.push({type: 'line', name: 'Passives', data: data});
 					
 					data = [];
 					for (var m in $scope.data.history_nps['12'])
 					{
 						data.push($scope.data.history_nps['12'][m]);
 					}
-					series.push({type: 'line', name: 'Detractors', stack: 'Detractors', data: data, itemStyle: {normal: {areaStyle: {type: 'default'}}}});
+					series.push({type: 'line', name: 'Detractors', data: data});
 
 					$scope.area_nps.setOption({series: series});
+				}
+				
+				if ($scope.data && $scope.data.reply_chart)
+				{
+					$scope.pie_reply.addData([[0, {name: 'Beoordeeld', value: $scope.data.reply_chart['reply']}, false, false]]);
+					$scope.pie_reply.addData([[0, {name: 'Doorgeklikt', value: $scope.data.reply_chart['click']}, false, false]]);
+					$scope.pie_reply.addData([[0, {name: 'Niet gereageerd', value: $scope.data.reply_chart['none']}, false, false]]);
 				}
 			});
 		};
