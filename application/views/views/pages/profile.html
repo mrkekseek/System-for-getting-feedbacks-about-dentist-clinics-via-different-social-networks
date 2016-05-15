@@ -102,21 +102,27 @@
 								</div>
 								
 								<table cellpadding="0" cellspacing="0" width="100%" ng-if="user.emails.header != ''">
-									<tr>
+									<tr ng-show="user.rating_questions == '0'">
 										<td ng-bind-html="find_tags((user.emails.header || 'Klik om tekst in te voegen...'), 'header')" ng-click="emails_edit('header', $event)" class="emails-edit" style="height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
 											{{ find_tags((user.emails.header || 'Klik om tekst in te voegen...'), 'header') }}
+										</td>
+									</tr>
+									
+									<tr ng-show="user.rating_questions == '1'">
+										<td ng-bind-html="find_tags(('Hoe heeft u de [QUESTION] ervaren?' || 'Klik om tekst in te voegen...'), 'question')" style="height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
+											{{ find_tags(('Hoe heeft u de [QUESTION] ervaren?' || 'Klik om tekst in te voegen...'), 'question') }}
 										</td>
 									</tr>
 								</table>
 								
 								<div style="background: #fff; max-width: 700px; margin: 0 auto;">
 									<div style="padding: 30px;">
-										<p ng-bind-html="find_tags((user.emails.gray || 'Klik om tekst in te voegen...'), 'gray')" ng-click="emails_edit('gray', $event)" class="emails-edit" style="margin: 0 0 20px; font: 14px/1.3 arial, sans-serif; color: #525354; padding: 15px; background-color: #F3F3F3; border: solid #D3D3D3 1px;">
-											{{ find_tags((user.emails.gray || 'Klik om tekst in te voegen...'), 'gray') }}
+										<p ng-show="user.rating_questions == '0'" ng-bind-html="find_tags((user.emails.text1 || 'Klik om tekst in te voegen...'), 'text1')" ng-click="emails_edit('text1', $event)" class="emails-edit" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
+											{{ find_tags((user.emails.text1 || 'Klik om tekst in te voegen...'), 'text1') }}
 										</p>
 										
-										<p ng-bind-html="find_tags((user.emails.text1 || 'Klik om tekst in te voegen...'), 'text1')" ng-click="emails_edit('text1', $event)" class="emails-edit" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
-											{{ find_tags((user.emails.text1 || 'Klik om tekst in te voegen...'), 'text1') }}
+										<p ng-show="user.rating_questions == '1'" ng-bind-html="find_tags(('[Formulering van de vraagstelling]' || 'Klik om tekst in te voegen...'), 'question')" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
+											{{ find_tags(('[Formulering van de vraagstelling]' || 'Klik om tekst in te voegen...'), 'question') }}
 										</p>
 										
 										<p ng-bind-html="find_tags((user.emails.promo || 'Voer hier uw promotietekst in'), 'promo')" ng-click="emails_edit('promo', $event)" class="emails-edit" ng-if="user.promo_checked == '1'" style="padding: 15px; background-color: #F0A400; font: bold 14px/1.3 arial, sans-serif; color: #fff; text-align: center; margin: 0;">
@@ -164,39 +170,6 @@
 														</td>
 													</tr>
 												</table>
-												<!--span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;">
-													Waarschijnlijk
-												</span>
-												<div class="inner" style="display: inline-block; width: 60%; vertical-align: middle;">
-													<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
-														<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
-															<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
-														</a>
-													</div>
-													<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
-														<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
-															<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
-														</a>
-													</div>
-													<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
-														<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
-															<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
-														</a>
-													</div>
-													<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
-														<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
-															<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
-														</a>
-													</div>
-													<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
-														<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
-															<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
-														</a>
-													</div>
-												</div>
-												<span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;">
-													Waarschijnlijk
-												</span-->
 											</div>
 											
 											<div ng-if="user.stars_type == 0" style="width: 100%; margin: 0 auto; padding: 30px 0; font-size: 0;">
@@ -259,72 +232,17 @@
 														</td>
 													</tr>
 												</table>
-												<!--div style="white-space: nowrap;">
-													<span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;">
-														&nbsp;
-													</span>
-													<div class="inner" style="display: inline-block; width: 60%; vertical-align: middle;">
-														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
-															<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; opacity: 0.2;">
-																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%;" />
-															</a>
-														</div>
-														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
-															<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; opacity: 0.4;">
-																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%;" />
-															</a>
-														</div>
-														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
-															<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; opacity: 0.6;">
-																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%;" />
-															</a>
-														</div>
-														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
-															<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; opacity: 0.8;">
-																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%;" />
-															</a>
-														</div>
-														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0;">
-															<a href="javascript:void(0);" style="display: inline-block; text-decoration: none; opacity: 1;">
-																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%;" />
-															</a>
-														</div>
-													</div>
-													<span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;">
-														&nbsp;
-													</span>
-												</div>
-												
-												<div style="white-space: nowrap; padding-top: 10px;">
-													<span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;">
-														Onwaarschijnlijk
-													</span>
-													<div class="inner" style="display: inline-block; width: 60%; vertical-align: middle;">
-														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: center;">
-															1
-														</div>
-														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: center;">
-															2
-														</div>
-														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: center;">
-															3
-														</div>
-														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: center;">
-															4
-														</div>
-														<div style="display: inline-block; vertical-align: middle; width: 20%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: center;">
-															5
-														</div>
-													</div>
-													<span style="display: inline-block; vertical-align: middle; width: 18%; position: relative; z-index: 0; font: 14px/1.3 arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;">
-														Waarschijnlijk
-													</span>
-												</div-->
 											</div>
 										</div>
 										
-										<p ng-bind-html="find_tags((user.emails.text2 || 'Klik om tekst in te voegen...'), 'text2')" ng-click="emails_edit('text2', $event)" class="emails-edit" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
+										<p ng-show="user.rating_questions == '0'" ng-bind-html="find_tags((user.emails.text2 || 'Klik om tekst in te voegen...'), 'text2')" ng-click="emails_edit('text2', $event)" class="emails-edit" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
 											{{ find_tags((user.emails.text2 || 'Klik om tekst in te voegen...'), 'text2') }}
+										</p>
+										
+										<p ng-show="user.rating_questions == '1'"style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
+											Als u op een van de sterretjes heeft geklikt kunt u desgewenst een beoordeling geven op andere vragen.
+											<br /><br />
+											<?php echo @$user['username']; ?>
 										</p>
 									</div>
 								</div>
@@ -337,6 +255,71 @@
 						
 						<br />
 						<a href="javascript:void(0);" class="btn btn-primary" ng-click="test_email_modal()" ng-show="email_text_class == 'open' || intro_open == 'open'">Stuur een voorbeeld...</a>
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">&nbsp;</label>
+                    <div class="col-md-8">
+                        <label class="ui-switch ui-switch-lg">
+							<input type="checkbox" name="rating_questions" ng-model="user.rating_questions" ng-change="check_questions_for_user()" ng-checked="user.rating_questions == '1'" />
+							<i></i>
+						</label>
+						<span class="help-block">
+							U kunt tot maximaal vier verschillende vraagstellingen gebruiken voor uw uitnodigingen.
+						</span>
+						
+						<div class="table-responsive" ng-show="user.rating_questions == '1'">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th class="question_first">Vraagstelling</th>
+										<th class="question_second">Formulering in e-mail en op patiëntenpagina <a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="Dit is de formulering van de vraagstelling zoals die in uw e-mailuitnodigingen en op de beoordelingspagina zal worden weergegeven."><i class="fa fa-question-circle"></i></a></th>
+										<th class="question_third"></th>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr class="tr_questions" ng-class="{'edit_question': (edit_question[q.id] == 1)}" ng-repeat="q in user.questions">
+										<td class="question_first">
+											<span ng-show="edit_question[q.id] == 0">{{q.question_name}}</span>
+											<select ng-show="edit_question[q.id] == 1" ng-model="edit_questions[q.id].name" ng-change="change_edit_question(q.id)" class="form-control" ng-options="option.question_name for option in questions_list track by option.id">
+											</select>
+										</td>
+										<td class="question_second">
+											<span ng-show="edit_question[q.id] == 0">{{q.question_description}}</span>
+											<span ng-show="edit_question[q.id] == 1" ng-bind="edit_questions[q.id].desc"></span>
+										</td>
+										<td class="question_third">
+											<a href="javascript:void(0);" ng-show="edit_question[q.id] == 0" class="question_icon" ng-click="edit_questions(q.id)"><i class="fa fa-pencil"></i></a>
+											<a href="javascript:void(0);" ng-show="edit_question[q.id] == 1" class="question_icon" ng-click="save_questions(q.id)"><i class="fa fa-floppy-o"></i></a>
+											<a href="javascript:void(0);" class="question_icon" ng-click="remove_questions(q.id)"><i class="fa fa-trash"></i></a>
+										</td>
+									</tr>
+									
+									<tr ng-show="add_new_question == '1'">
+										<td class="question_first">
+											<select ng-model="new_question" ng-change="change_new_question()" class="form-control" ng-options="option.question_name for option in questions_list track by option.id">
+												<option value="">Kies bestaande...</option>
+											</select>
+										</td>
+										<td class="question_second" ng-bind="question_desc"></td>
+										<td class="question_third">
+											<a href="javascript:void(0);" class="question_icon" ng-click="add_new_question_save()"><i class="fa fa-floppy-o"></i></a>
+											<a href="javascript:void(0);" class="question_icon" ng-click="add_new_question_hide()"><i class="fa fa-trash"></i></a>
+										</td>
+									</tr>
+									
+									<tr class="last_question_tr" ng-show="user.questions.length < 4">
+										<td></td>
+										<td class="text-right"><a href="javascript:void(0);" class="add_question_link" ng-click="add_new_question_show()">Voeg vraagstelling toe</a></td>
+										<td class="question_third"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
                     </div>
                 </div>
 			</form>
@@ -720,6 +703,43 @@
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-primary" ng-click="save()">Bewaar</button>
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="questions_basic.html">
+	<div class="modal-header">
+		<h3>
+			Upgrade om deze Pro functie te gebruiken
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			Deze functie is beschikbaar voor Patiëntenreview Pro. Door te upgraden ontvangt u toegang tot 
+			deze en een scala aan andere uitgebreide mogelijkheden.
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="ok()">Bekijk voordelen</button>
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="questions_confirm.html">
+	<div class="modal-header">
+		<h3>
+			Uw e-mailtekst en onderwerp zal worden aangepast
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			Om de meervoudige vraagstelling te kunnen gebruiken dient de e-mail naar uw 
+			patiënten de juiste tekst te bevatten. De tekst zal automatisch worden aangepast. Wilt u 
+			doorgaan?
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="ok()">Ga door</button>
 		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
 	</div>
 </script>

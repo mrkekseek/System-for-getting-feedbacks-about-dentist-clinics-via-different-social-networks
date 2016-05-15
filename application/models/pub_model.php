@@ -23,7 +23,6 @@
 						  
 		var $defaults = array('subject' => "Hoe was uw behandeling bij [NAAM PRAKTIJK]?",
 							  'header' => "Hoe was uw behandeling?",
-							  'gray' => "Zou u [NAAM PRAKTIJK] aanbevelen?",
 							  'text1' => "Geachte heer/mevrouw,\n\nU bent onlangs behandeld in onze praktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw beoordeling te plaatsen op online kanalen.\n\nOp een schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of vrienden?",
 							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n[NAAM PRAKTIJK]",
 							  'promo' => "Beoordeel ons en win een ... t.w.v. €..,..!",
@@ -1323,7 +1322,6 @@
 
 			$result['subject'] = empty($result['subject']) ? $this->defaults['subject'] : $result['subject'];
 			$result['header'] = empty($result['header']) ? $this->defaults['header'] : $result['header'];
-			$result['gray'] = empty($result['gray']) ? $this->defaults['gray'] : $result['gray'];
 			$result['text1'] = empty($result['text1']) ? $this->defaults['text1'] : $result['text1'];
 			$result['text2'] = empty($result['text2']) ? $this->defaults['text2'] : $result['text2'];
 			$result['promo'] = empty($result['promo']) ? $this->defaults['promo'] : $result['promo'];
@@ -1385,6 +1383,66 @@
 			}
 			
 			return $row;
+		}
+		
+		function user_questions($questions)
+		{
+			$id = $this->session->userdata("id");
+			$this->db->where("users_id", $id);
+			$result = $this->db->get("users_questions")->result_array();
+			
+			$items = array();
+			foreach ($result as $row)
+			{
+				foreach ($questions as $q)
+				{
+					if ($q['id'] == $row['questions_id'])
+					{
+						$items[] = $q;
+					}
+				}
+			}
+
+			return $items;
+		}
+		
+		function get_questions()
+		{
+			return $this->db->get('rating_questions')->result_array();
+		}
+		
+		function questions_save($questions_id)
+		{
+			if ($this->logged_in())
+			{
+				$this->db->where('questions_id', $questions_id);
+				$this->db->where('users_id', $this->session->userdata("id"));
+				if ( ! $this->db->count_all_results('users_questions'))
+				{
+					$data_array = array('questions_id' => $questions_id,
+										'users_id' => $this->session->userdata("id"));
+					$this->db->insert('users_questions', $data_array);
+				}
+			}
+		}
+		
+		function questions_remove($questions_id)
+		{
+			if ($this->logged_in())
+			{
+				$this->db->where('questions_id', $questions_id);
+				$this->db->where('users_id', $this->session->userdata("id"));
+				$this->db->delete('users_questions');
+			}
+		}
+		
+		function questions_edit($questions_id, $new_id)
+		{
+			if ($this->logged_in())
+			{
+				$this->questions_remove($questions_id);
+				$this->questions_save($new_id);
+			}
 		}
 
 		function get_users()
@@ -1978,7 +2036,8 @@
 												"short_checked" => $post['short_checked'],
 												"short" => strtolower($post['short']),
 												"stars_type" => $post['stars_type'],
-												"stars_text" => $post['stars_text']);
+												"stars_text" => $post['stars_text'],
+												"rating_questions" => $post['rating_questions']);
 
 							if ( ! empty($post['color']))
 							{
@@ -2428,6 +2487,89 @@
 						$post['last'] = time();
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+						return $post;
+					}
+					else
+					{
+						$this->errors[] = array("Database error");
+					}
+				}
+			}
+			else
+			{
+				$this->errors[] = array("U kunt uw beoordeling niet meer wijzigen.");
+			}
+
+			return FALSE;
+		}
+		
+		function vote_questions($post)
+		{
+			$this->db->where("id", $post['id']);
+			$this->db->where("start >=", time() - 7200);
+			if ($this->db->count_all_results('sent') || $post['id'] == 0)
+			{
+				if (empty($post['id']))
+				{
+					$data_array = array('users_id' => $post['users_id'],
+										'doctor' => $post['doctors_id'],
+										'stars' => 0,
+										'status' => 2,
+										'start' => time(),
+										'date' => time(),
+										'last' => time(),
+										'ip' => $_SERVER['REMOTE_ADDR']);
+					if ($this->db->insert("sent", $data_array))
+					{
+						$post['id'] = $this->db->insert_id();
+						$post['last'] = $data_array['last'];
+						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+						
+						$data_array = array('sent_id' => $post['id'],
+											'users_id' => $post['users_id'],
+											'questions_id' => $post['questions_id'],
+											'stars' => $post['stars'],
+											'date' => time());
+						$this->db->insert('sent_questions', $data_array);
+				
+						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						return $post;
+					}
+					else
+					{
+						$this->errors[] = array("Database error");
+					}
+				}
+				else
+				{
+					$this->db->where("id", $post['id']);
+					if ($this->db->update("sent", array('stars' => 0, 'status' => 2, 'last' => time())))
+					{
+						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						$post['last'] = time();
+						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+						
+						$data_array = array('sent_id' => $post['id'],
+											'users_id' => $post['users_id'],
+											'questions_id' => $post['questions_id'],
+											'stars' => $post['stars'],
+											'date' => time());
+
+						$this->db->where('sent_id', $post['id']);
+						$this->db->where('questions_id', $post['questions_id']);
+						if ($this->db->count_all_results('sent_questions'))
+						{
+							$this->db->where('sent_id', $post['id']);
+							$this->db->where('questions_id', $post['questions_id']);
+							$this->db->update('sent_questions', $data_array);
+						}
+						else
+						{
+							$this->db->insert('sent_questions', $data_array);
+						}
+						
 						return $post;
 					}
 					else
@@ -2917,9 +3059,27 @@
 		{
 			if ( ! empty($post['emails']))
 			{
+				$batches_id = 0;
 				if ( ! $sent)
 				{
-					$this->db->insert("sent_dates", array("users_id" => $this->session->userdata("id"), "sent_date" => time()));
+					$data_array = array("users_id" => $this->session->userdata("id"),
+										"emails_amount" => count($post['emails']),
+										"sent_date" => time());
+					$this->db->insert("sent_dates", $data_array);
+					$batches_id = $this->db->insert_id();
+				}
+				
+				$users_id = $this->session->userdata("id");
+				$this->db->where("id", $users_id);
+				$this->db->limit(1);
+				$row = $this->db->get("users")->row_array();
+				
+				$questions = array();
+				$q_counter = 0;
+				if ( ! empty($row['rating_questions']))
+				{
+					$questions_list = $this->pub->get_questions();
+					$questions = $this->pub->user_questions($questions_list);
 				}
 				
 				$error = TRUE;
@@ -2964,26 +3124,31 @@
 						}
 						else
 						{
-							$users_id = $this->session->userdata("id");
-							$this->db->where("id", $users_id);
-							$this->db->limit(1);
-							$row = $this->db->get("users")->row_array();
-
 							if ( ! empty($row))
 							{
 								$email = strtolower($list['text']);
 								$this->db->where("email", $email);
 								if ( ! $this->db->count_all_results("unsubscribes"))
-								{	
+								{
+									$questions_info = array();
+									if (count($questions))
+									{
+										$questions_info = $questions[$q_counter];
+										$q_counter = ($q_counter + 1) >= count($questions) ? 0 : ($q_counter + 1);
+									}
+
 									$email_data = array('domain' => (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/',
 														'logo' => ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png'),
 														'username' => $row['username'],
 														'id' => md5($row['id']),
 														'color' => empty($row['color']) ? "#0f75bc" : $row['color'],
 														'account_type' => $row['account_type'],
-														'account' => $row['account']);
+														'account' => $row['account'],
+														'questions_info' => $questions_info);
 														
 									$data_array = array("users_id" => $this->session->userdata("id"),
+														"questions_id" => empty($questions_info) ? 0 : $questions_info['id'],
+														"batches_id" => $batches_id,
 														"title" => ( ! empty($list['title']) && ! empty($post['column']['title'])) ? $list['title'] : "",
 														"name" => ( ! empty($list['name']) && ! empty($post['column']['name'])) ? $list['name'] : "",
 														"sname" => ( ! empty($list['sname']) && ! empty($post['column']['sname'])) ? $list['sname'] : "",
@@ -3521,6 +3686,7 @@
 				if ( ! empty($check))
 				{
 					$return['info'] = $this->check_short_results($check['users_id'], $check['doctors_id']);
+					$return['questions'] = array();
 					$return['user'] = $this->user_info($check['users_id']);
 					if ( ! empty($return['user']['promo_checked']))
 					{
@@ -3542,6 +3708,7 @@
 				if ($segments[0] == 'invitation')
 				{
 					$return['info'] = $this->invitation($segments[1]);
+					$return['questions'] = $this->rating_questions($return['info']);
 					$return['user'] = $this->user_info($return['info']['users_id']);
 					if ( ! empty($return['user']['promo_checked']))
 					{
@@ -3629,13 +3796,41 @@
 					if ( ! $ex)
 					{
 						$this->db->where("id", $row['id']);
-						$data_array = array("stars" => $stars, 'last' => time(), 'start' => time());
+						$data_array = array('last' => time(), 'start' => time());
 						if ($row['status'] != 3)
 						{
 							$data_array['status'] = 2; 
 						}
+						
+						if (empty($row['questions_id']))
+						{
+							$data_array['stars'] = $stars;
+							$row['stars'] = $stars;
+						}
 						$this->db->update("sent", $data_array);
-						$row['stars'] = $stars;
+
+						if ( ! empty($row['questions_id']))
+						{
+							$data_array = array('sent_id' => $row['id'],
+												'users_id' => $row['users_id'],
+												'questions_id' => $row['questions_id'],
+												'stars' => $stars,
+												'date' => time());
+							
+							$this->db->where('sent_id', $row['id']);
+							$this->db->where('questions_id', $row['questions_id']);
+							if ($this->db->count_all_results('sent_questions'))
+							{
+								$this->db->where('sent_id', $row['id']);
+								$this->db->where('questions_id', $row['questions_id']);
+								$this->db->update('sent_questions', $data_array);
+							}
+							else
+							{
+								$this->db->insert('sent_questions', $data_array);
+							}
+						}
+
 						$row['last_date'] = date("d-m-Y", $row['last'] + 48 * 3600);
 						$row['last_time'] = date("H:i", $row['last'] + 48 * 3600);
 					}
@@ -3655,6 +3850,51 @@
 			}
 
 			return FALSE;
+		}
+		
+		function rating_questions($info)
+		{
+			$items = array();
+			if ($info['questions_id'])
+			{
+				$ids = array();
+				$this->db->where('users_id', $info['users_id']);
+				$result = $this->db->get('users_questions')->result_array();
+				foreach ($result as $row)
+				{
+					$ids[] = $row['questions_id'];
+				}
+				
+				if (in_array($info['questions_id'], $ids))
+				{
+					$this->db->where_in('id', $ids);
+					$result = $this->db->get('rating_questions')->result_array();
+					foreach ($result as $row)
+					{
+						$row['stars'] = 0;
+
+						$this->db->where('sent_id', $info['id']);
+						$this->db->where('questions_id', $row['id']);
+						$this->db->limit(1);
+						$val = $this->db->get('sent_questions')->row_array();
+						if ( ! empty($val))
+						{
+							$row['stars'] = $val['stars'];
+						}
+						
+						if ($row['id'] == $info['questions_id'])
+						{
+							$items['main'] = $row;
+						}
+						else
+						{
+							$items['others'][] = $row;
+						}
+					}
+				}
+			}
+			
+			return $items;
 		}
 		
 		function check_url($short)
@@ -4335,6 +4575,260 @@
 					$stat['zorgkaart'] = isset($ratings['zorgkaart']) ? $ratings['zorgkaart'] : $empty;
 					$stat['independer'] = isset($ratings['independer']) ? $ratings['independer'] : $empty;
 					$stat['telefoonboek'] = isset($ratings['telefoonboek']) ? $ratings['telefoonboek'] : $empty;
+
+					return $stat;
+				}
+			}
+
+			return FALSE;
+		}
+		
+		function stat_chart2($post)
+		{
+			if ($this->logged_in())
+			{
+				$users_id = $this->session->userdata("id");
+				$this->db->where('id', $users_id);
+				$this->db->limit(1);
+				$user = $this->db->get("users")->row_array();
+				
+				$this->db->order_by("last", "asc");
+				$this->db->where("status <>", 3);
+				$result = $this->db->get("sent")->result_array();
+
+				if ( ! empty($result))
+				{
+					$stat = array();
+					$stat['average'] = 0;
+					$stat['stars_count'] = array(0, 0, 0, 0, 0, 0);
+					$stat['average_month_x'] = array();
+					$stat['average_month'] = array();
+					$stat['average_nps'] = array('12' => 0, '3' => 0, '45' => 0, '12p' => 0, '3p' => 0, '45p' => 0, 'all' => 0, 'delta' => 0);
+					$stat['history_nps'] = array();
+					$stat['reply'] = array();
+					$stat['reply_percent'] = 0;
+					$stat['reply_click'] = 0;
+					$stat['reply_percents'] = array();
+					$stat['reply_clicks'] = array();
+					$stat['reply_highest'] = 0;
+					$stat['reply_lowest'] = 0;
+					$stat['reply_chart'] = array('reply' => 0, 'click' => 0, 'none' => 0);
+
+					$count = array();
+					$count['all'] = 0;
+					$count['for_user'] = 0;
+					$count['average_sum'] = 0;
+					$count['reply_all'] = 0;
+					$count['reply_only'] = 0;
+					$count['reply_click'] = 0;
+					$count['reply_count'] = array();
+
+					$month_finish = date('n');
+					$year_finish = date('Y');
+					for ($i = 1; $i <= 5; $i++)
+					{
+						$month_start = date('n', $user['activation']);
+						$year_start = date('Y', $user['activation']);
+
+						while ( ! ($month_start == $month_finish && $year_start == $year_finish))
+						{
+							$stat['average_month'][$i][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							if ($i == 1)
+							{
+								$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
+								$stat['history_nps']['12'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+								$stat['history_nps']['3'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+								$stat['history_nps']['45'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							}
+
+							$month_start++;
+							if ($month_start >= 12)
+							{
+								$month_start = 1;
+								$year_start++;
+							}
+						}
+					}
+					
+					$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
+					
+					foreach ($result as $row)
+					{
+						if ($row['users_id'] == $this->session->userdata("id"))
+						{
+							if ($row['stars'] > 0)
+							{
+								$count['for_user']++;
+								$count['average_sum'] += $row['stars'];
+								
+								$month = date('Y-m', $row['last']);
+								if (isset($stat['average_month'][$row['stars']][$month]))
+								{
+									$stat['average_month'][$row['stars']][$month]++;
+								}
+								
+								if ($row['stars'] <= 2)
+								{
+									$stat['average_nps']['12']++;
+									if (isset($stat['history_nps']['12'][$month]))
+									{
+										$stat['history_nps']['12'][$month]++;
+									}
+								}
+								elseif ($row['stars'] == 3)
+								{
+									$stat['average_nps']['3']++;
+									if (isset($stat['history_nps']['3'][$month]))
+									{
+										$stat['history_nps']['3'][$month]++;
+									}
+								}
+								else
+								{
+									$stat['average_nps']['45']++;
+									if (isset($stat['history_nps']['45'][$month]))
+									{
+										$stat['history_nps']['45'][$month]++;
+									}
+								}
+								$stat['average_nps']['all']++;
+							}
+							
+							$count['reply_all']++;
+							if ($row['status'] == 2)
+							{
+								$count['reply_only']++;
+								$check = 0;
+								foreach ($onlines as $key)
+								{
+									$check += $row[$key];
+								}
+
+								if ( ! empty($check))
+								{
+									$count['reply_click']++;
+								}
+							}
+							
+							if ( ! empty($row['batches_id']))
+							{
+								if ( ! isset($count['reply_count'][$row['batches_id']]))
+								{
+									$count['reply_count'][$row['batches_id']]['all'] = 0;
+									$count['reply_count'][$row['batches_id']]['only'] = 0;
+									$count['reply_count'][$row['batches_id']]['click'] = 0;
+								}
+								
+								$count['reply_count'][$row['batches_id']]['all']++;
+								if ($row['status'] == 2)
+								{
+									$count['reply_count'][$row['batches_id']]['only']++;
+									$check = 0;
+									foreach ($onlines as $key)
+									{
+										$check += $row[$key];
+									}
+
+									if ( ! empty($check))
+									{
+										$count['reply_count'][$row['batches_id']]['click']++;
+									}
+								}
+							}
+							
+							$stat['stars_count'][$row['stars']]++;
+						}
+
+						$count['all']++;
+					}
+					
+					if ( ! empty($count['for_user']))
+					{
+						$stat['average'] = number_format(round($count['average_sum'] / $count['for_user'], 1), 1);
+					}
+					
+					if ( ! empty($stat['average_nps']['all']))
+					{
+						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
+					}
+					
+					$list = $this->pub->get_questions();
+					$stat['questions'] = $this->pub->user_questions($list);
+					if ( ! empty($stat['questions']))
+					{
+						$q_sum = array();
+						$q_num = array();
+						$this->db->where('users_id', $users_id);
+						$result = $this->db->get('sent_questions')->result_array();
+						foreach ($result as $row)
+						{
+							if ( ! isset($q_sum[$row['questions_id']]))
+							{
+								$q_sum[$row['questions_id']] = 0;
+							}
+							$q_sum[$row['questions_id']] += $row['stars'];
+							
+							if ( ! isset($q_num[$row['questions_id']]))
+							{
+								$q_num[$row['questions_id']] = 0;
+							}
+							$q_num[$row['questions_id']]++;
+						}
+						
+						foreach ($stat['questions'] as $key => $row)
+						{
+							$stat['questions'][$key]['average'] = 0;
+							if ( ! empty($q_num[$row['id']]))
+							{
+								$stat['questions'][$key]['average'] = number_format(round($q_sum[$row['id']] / $q_num[$row['id']], 1), 1);
+							}
+						}
+					}
+					
+					if ( ! empty($count['reply_all']))
+					{
+						$stat['reply_percent'] = round($count['reply_only'] / $count['reply_all'] * 100, 1);
+						$stat['reply_click'] = round($count['reply_click'] / $count['reply_all'] * 100, 1);
+						
+						$stat['reply_chart']['click'] = $stat['reply_click'];
+						$stat['reply_chart']['none'] = 100 - $stat['reply_percent'];
+						$stat['reply_chart']['reply'] = $stat['reply_percent'] - $stat['reply_click'];
+					}
+					
+					if ( ! empty($count['reply_count']))
+					{
+						foreach ($count['reply_count'] as $id => $row)
+						{
+							$value = round($row['only'] / $row['all'] * 100, 1);
+							$stat['reply_percents'][$id] = $value;
+							$stat['reply_highest'] = max($stat['reply_highest'], $value);
+							if (empty($stat['reply_lowest']))
+							{
+								$stat['reply_lowest'] = $value;
+							}
+							else
+							{
+								$stat['reply_lowest'] = min($stat['reply_lowest'], $value);
+							}
+							
+							$value = round($row['click'] / $row['all'] * 100, 1);
+							$stat['reply_clicks'][$id] = $value;
+						}
+					}
+					
+					$this->db->order_by('sent_date', 'desc');
+					$this->db->where('users_id', $users_id);
+					$result = $this->db->get('sent_dates')->result_array();
+					foreach ($result as $row)
+					{
+						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
+												   'amount' => $row['emails_amount'],
+												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
+					}
 
 					return $stat;
 				}
