@@ -893,6 +893,7 @@
 		$window.onresize = function() { $scope.pie_stars.resize(); };
 		$scope.pie_stars.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
 				legend: {orient: "vertical", x: "left", data: ["5 sterren", "4 sterren", "3 sterren", "2 sterren", "1 sterren"]},
 				calculable: true,
 				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
@@ -905,6 +906,7 @@
 		$window.onresize = function() { $scope.area_stars.resize(); };
 		$scope.area_stars.setOption({
 				tooltip: {trigger: "axis"},
+				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
 				legend: {orient: "horizontal", x: "center", y: "30", data: ['5 sterren', '4 sterren', '3 sterren', '2 sterren', '1 sterren', 'Beoordeling van uw praktijk', 'Landelijk gemiddelde']},
 				calculable: true,
 				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
@@ -922,6 +924,7 @@
 		$window.onresize = function() { $scope.pie_nps.resize(); };
 		$scope.pie_nps.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
 				legend: {orient: "vertical", x: "left", data: ["Promotors", "Passives", "Detractors"]},
 				calculable: true,
 				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
@@ -934,6 +937,7 @@
 		$window.onresize = function() { $scope.area_nps.resize(); };
 		$scope.area_nps.setOption({
 				tooltip: {trigger: "axis"},
+				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
 				legend: {orient: "horizontal", x: "center", y: "30", data: ['Promotors', 'Passives', 'Detractors', 'NPS van uw praktijk', 'Landelijk gemiddelde']},
 				calculable: true,
 				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
@@ -949,6 +953,7 @@
 		$window.onresize = function() { $scope.pie_reply.resize(); };
 		$scope.pie_reply.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
 				legend: {orient: "vertical", x: "left", data: ["Beoordeeld", "Doorgeklikt", "Niet gereageerd"]},
 				calculable: true,
 				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
