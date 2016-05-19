@@ -2413,7 +2413,7 @@
 					$data_array['password'] = crypt($post['password'], substr(md5($post['password']), 0, 8));
 					$data_array['status'] = 1;
 					$data_array['signup'] = time();
-					$data_array['suspension'] = $data_array['activation'] + 30 * 24 * 3600;
+					$data_array['suspension'] = $data_array['activation'] + $this->period * 24 * 3600;
 					$data_array['trial_end'] = $data_array['suspension'];
 					$data_array['account'] = 2;
 					unset($data_array['suspension_str']);
@@ -2468,7 +2468,7 @@
 					$data_array['status'] = 1;
 					$data_array['signup'] = time();
 					$data_array['activation'] = mktime(0, 0, 0, date('m'), date('j'), date('Y'));
-					$data_array['suspension'] = $data_array['activation'] + 30 * 24 * 3600;
+					$data_array['suspension'] = $data_array['activation'] + $this->period * 24 * 3600;
 					$data_array['trial_end'] = $data_array['suspension'];
 					$data_array['reminder_checked'] = TRUE;
 					$data_array['reminder_period'] = 0;
