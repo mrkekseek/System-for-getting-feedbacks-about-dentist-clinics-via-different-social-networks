@@ -4947,6 +4947,7 @@
 					
 					$this->db->order_by('sent_date', 'desc');
 					$this->db->where('users_id', $users_id);
+					$this->db->limit(10);
 					$result = $this->db->get('sent_dates')->result_array();
 					foreach ($result as $row)
 					{
