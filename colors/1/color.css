@@ -1,57 +1,57 @@
 body .btn-primary {
-	background-color: #007bc2 !important;
-	border-color: #005E95 !important;
+	background-color: #bc0f0f !important;
+	border-color: #900B0B !important;
 }
 
 body .btn-primary:not(.future) {
-	border-color: #005E95 !important;
+	border-color: #900B0B !important;
 }
 
 body .btn-primary:hover {
-	background-color: #005E95 !important;
+	background-color: #900B0B !important;
 }
 
 body .header-container > .top-header .top-nav .nav-right > li > a > .top-label {
-	background-color: #007bc2 !important;
+	background-color: #bc0f0f !important;
 }
 
 body span.tag-box {
-	background-color: #007bc2 !important;
+	background-color: #bc0f0f !important;
 }
 
 body .ui-switch *:checked + i {
-	box-shadow: 0 0 1px rgba(0, 0, 0, 0.5) inset, 0 0 50px #007bc2 inset !important;
+	box-shadow: 0 0 1px rgba(0, 0, 0, 0.5) inset, 0 0 50px #bc0f0f inset !important;
 }
 
 body .icon-dashboard.bg-primary,
 body .icon-dashboard.bg-warning {
-	background-color: #007bc2 !important;
+	background-color: #bc0f0f !important;
 }
 
 body .mail-categories .list-group .list-group-item.active > a,
 body .mail-categories .list-group .list-group-item > a:hover,
 body a {
-	color: #007bc2;
+	color: #bc0f0f;
 }
 
 body a:hover,
 body a:focus,
 body a:active {
-	color: #007bc2;
+	color: #bc0f0f;
 	text-decoration: underline;
 }
 
 body .btn-invoice-label.past {
-    background-color: #005E95 !important;
-    border-color: #005E95 !important;
+    background-color: #900B0B !important;
+    border-color: #900B0B !important;
 }
 
 body span.pro {
-	background-color: #007bc2 !important;
+	background-color: #bc0f0f !important;
 }
 
 body .ui-radio input[type="radio"]:checked + span:after {
-	background-color: #007bc2 !important;
+	background-color: #bc0f0f !important;
 }
 
 body .ui-radio input[type="radio"]:checked + span:before,
@@ -63,13 +63,13 @@ body .pagination > .active > span:focus,
 body .pagination > .active > span:hover,
 body .ui-checkbox input[type="checkbox"]:checked + span::before,
 body .ui-checkbox input[type="checkbox"] + span:hover::before {
-	border-color: #007bc2 !important;
+	border-color: #bc0f0f !important;
 }
 
 body .emails-edit:hover,
 body .widget-edit:hover,
 body .ui-checkbox input[type="checkbox"]:checked + span::after {
-	background-color: #007bc2 !important;
+	background-color: #bc0f0f !important;
 }
 
 body .badge-primary,
@@ -79,9 +79,9 @@ body .pagination > .active > a:hover,
 body .pagination > .active > span,
 body .pagination > .active > span:focus,
 body .pagination > .active > span:hover {
-	background-color: #007bc2 !important;
+	background-color: #bc0f0f !important;
 }
 
 body .btn-link {
-	color: #007bc2 !important;
+	color: #bc0f0f !important;
 }
