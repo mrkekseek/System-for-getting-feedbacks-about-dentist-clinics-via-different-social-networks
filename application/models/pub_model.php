@@ -4698,6 +4698,8 @@
 					$stat['average_all_month'] = array();
 					$stat['average_nps'] = array('12' => 0, '3' => 0, '45' => 0, '12p' => 0, '3p' => 0, '45p' => 0, 'all' => 0, 'delta' => 0);
 					$stat['history_nps'] = array();
+					$stat['nps_my_month'] = array();
+					$stat['nps_all_month'] = array();
 					$stat['reply'] = array();
 					$stat['reply_percent'] = 0;
 					$stat['reply_click'] = 0;
@@ -4720,6 +4722,7 @@
 					$count['all_month_sum'] = array();
 					$count['my_month_num'] = array();
 					$count['all_month_num'] = array();
+					$count['all_nps'] = array();
 
 					$month_finish = date('n');
 					$year_finish = date('Y');
@@ -4735,6 +4738,8 @@
 							$count['my_month_num'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
 							$count['all_month_sum'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
 							$count['all_month_num'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							$count['all_nps']['12'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
+							$count['all_nps']['45'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
 							if ($i == 1)
 							{
 								$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
@@ -4744,7 +4749,7 @@
 							}
 
 							$month_start++;
-							if ($month_start >= 12)
+							if ($month_start > 12)
 							{
 								$month_start = 1;
 								$year_start++;
@@ -4850,6 +4855,18 @@
 								$count['my_month_sum'][$month] += $row['stars'];
 								$count['my_month_num'][$month]++;
 							}
+							
+							if ( ! empty($month) && isset($count['all_nps']['12'][$month]))
+							{
+								if ($row['stars'] <= 2 && isset($count['all_nps']['12'][$month]))
+								{
+									$count['all_nps']['12'][$month]++;
+								}
+								elseif ($row['stars'] >= 4 && isset($count['all_nps']['45'][$month]))
+								{
+									$count['all_nps']['45'][$month]++;
+								}
+							}
 						}
 
 						if ( ! empty($month) && isset($count['all_month_sum'][$month]))
@@ -4872,15 +4889,41 @@
 						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
-						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
+						$stat['average_nps']['delta'] = $stat['average_nps']['45'] - $stat['average_nps']['12'];
 					}
 
+					$sum_my_month = 0;
+					$num_my_month = 0;
+					$sum_all_month = 0;
+					$num_all_month = 0;
+					$nps_my_45 = 0;
+					$nps_my_12 = 0;
+					$nps_all_45 = 0;
+					$nps_all_12 = 0;
+					
 					foreach ($count['my_month_num'] as $month => $val)
 					{
-						$stat['average_my_month'][$month] = empty($count['my_month_num'][$month]) ? 0 : round($count['my_month_sum'][$month] / $count['my_month_num'][$month], 1);
-						$stat['average_all_month'][$month] = empty($count['all_month_num'][$month]) ? 0 : round($count['all_month_sum'][$month] / $count['all_month_num'][$month], 1);
+						$my_sum = empty($count['my_month_sum'][$month]) ? 0 : $count['my_month_sum'][$month];
+						$sum_my_month += $my_sum;
+						$my_num = empty($count['my_month_num'][$month]) ? 0 : $count['my_month_num'][$month];
+						$num_my_month += $my_num;
+						$stat['average_my_month'][$month] = empty($num_my_month) ? 0 : round($sum_my_month / $num_my_month, 1);
+						
+						$all_sum = empty($count['all_month_sum'][$month]) ? 0 : $count['all_month_sum'][$month];
+						$sum_all_month += $all_sum;
+						$all_num = empty($count['all_month_num'][$month]) ? 0 : $count['all_month_num'][$month];
+						$num_all_month += $all_num;
+						$stat['average_all_month'][$month] = empty($num_all_month) ? 0 : round($sum_all_month / $num_all_month, 1);
+						
+						$nps_my_45 += $stat['history_nps']['45'][$month];
+						$nps_my_12 += $stat['history_nps']['12'][$month];
+						$stat['nps_my_month'][$month] = $nps_my_45 - $nps_my_12;
+						
+						$nps_all_45 += $count['all_nps']['45'][$month];
+						$nps_all_12 += $count['all_nps']['12'][$month];
+						$stat['nps_all_month'][$month] = $nps_all_45 - $nps_all_12;
 					}
-					
+
 					$list = $this->pub->get_questions();
 					$stat['questions'] = $this->pub->user_questions($list);
 					if ( ! empty($stat['questions']))
