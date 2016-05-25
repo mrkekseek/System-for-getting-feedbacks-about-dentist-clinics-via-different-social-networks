@@ -3544,6 +3544,11 @@
 						temp.url = $scope.i.doctor.zorgkaart;
 					}
 					
+					if ($scope.voted < 0)
+					{
+						temp.url = 'http://zorgkaartnederland.nl/';
+					}
+					
 					if ($scope.voted < 0 && ! onlines.length || $scope.voted > 0)
 					{
 						cols++;
