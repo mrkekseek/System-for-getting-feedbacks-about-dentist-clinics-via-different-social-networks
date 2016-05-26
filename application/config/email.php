@@ -3,10 +3,10 @@
 	if (ENVIRONMENT == 'development')
 	{
 		$config['protocol'] = 'smtp';
-		$config['smtp_user'] = 'postmaster@mg.patientenreview.nl';
-		$config['smtp_pass'] = '4add968a0a17e23db8752874334c9ae2';
-		$config['smtp_host'] = 'ssl://smtp.mailgun.org';
-		$config['smtp_port'] = '465';
+		$config['smtp_user'] = 'hallo@cloudrocket.co';
+		$config['smtp_pass'] = 'mango1906';
+		$config['smtp_host'] = 'mail.cloudrocket.co';
+		$config['smtp_port'] = '587';
 		$config['smtp_timeout'] = '4';
 		$config['charset'] = 'utf-8';
 		$config['mailtype'] = 'html';

@@ -4233,7 +4233,7 @@
 				$row['reply_time'] = $row['reply_time'] > 0 ? date("d-m-y H:i", $row['reply_time']) : "";
 				$row['feedback'] = str_replace("\n", '<br />', $row['feedback']);
 				$row['reply'] = str_replace("\n", '<br />', $row['reply']);
-				
+
 				$row['questions'] = array();
 				if ( ! empty($row['questions_id']))
 				{
