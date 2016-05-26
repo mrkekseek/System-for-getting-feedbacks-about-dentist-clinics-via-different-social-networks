@@ -111,7 +111,7 @@
 					<table class="table table-hover table-responsive" ng-if="letters.length" ng-init="words = {0: 'Geen reactie', 1: '1 ster', 2: '2 sterren', 3: '3 sterren', 4: '4 sterren', 5: '5 sterren'}">
 						<thead>
 							<tr>
-								<th ng-show="filter == 'positive'"><div class="th">
+								<th ng-show="filter == 'positive' || filter == 'with_feedback'"><div class="th">
 										<label class="ui-checkbox"><input type="checkbox" ng-model="check_all[0]" ng-change="check_all_letters()" /><span></span></label>
 									</div>
 								</th>
@@ -196,7 +196,7 @@
 						</thead>
 						<tbody>
 							<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" data-ng-repeat="l in currentPageStores" ng-click="more(l.id, l.feedback != '', l.email, $event)">
-								<td ng-show="filter == 'positive'">
+								<td ng-show="filter == 'positive' || filter == 'with_feedback'">
 									<label class="ui-checkbox"><input type="checkbox" ng-model="check_letter[l.id]" ng-change="check_one_letter(l.id)"/><span></span></label>
 								</td>
 								<td>{{l.date_time}}</td>

@@ -514,7 +514,7 @@
 		
 		function read_letters()
 		{
-			$this->pub->read_letters();
+			$this->pub->read_letters($this->post);
 			$result = $this->pub->inbox($this->post);
 			$this->response($result);
 		}

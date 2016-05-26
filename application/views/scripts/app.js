@@ -3914,7 +3914,7 @@
 				filter.doctor = $scope.doctor;
 			}
 
-			$http.post("/pub/read_letters/", {filter: filter}).success(function(data, status, headers, config) {
+			$http.post("/pub/read_letters/", {filter: filter, letters: $scope.check_letter}).success(function(data, status, headers, config) {
 				$scope.hide_badge = true;
 				$scope.letters = logger.check(data);
 				for (var key in $scope.letters)
@@ -4035,7 +4035,7 @@
 				}
 			}
 			
-			return count > 0;
+			return count > 0 && $scope.filter == 'positive';
 		};
 		
 		$scope.bulk_modal = function() {

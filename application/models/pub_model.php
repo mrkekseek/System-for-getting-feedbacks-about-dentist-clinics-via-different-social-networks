@@ -1689,6 +1689,14 @@
 							$this->db->where("id", $row['id']);
 							$this->db->update("users", $data_array);
 							
+							$data_array = array('users_id' => $row['id'],
+												'ip_address' => $_SERVER['REMOTE_ADDR'],
+												'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+												'date' => date('d-m-Y'),
+												'time' => date('H:i:s'),
+												'timestamp' => time());
+							$this->db->insert('login_attempts', $data_array);
+							
 							if ($row['first_time'])
 							{
 								$this->db->where_in("type", array(0, 1));
@@ -4042,17 +4050,25 @@
 			return empty($row['promo']) ? FALSE : $row['promo'];
 		}
 		
-		function read_letters()
+		function read_letters($post)
 		{
 			if ($this->logged_in())
 			{
-				$users_id = $this->session->userdata("id");
+				/*$users_id = $this->session->userdata("id");
 				$this->db->where("users_id", $users_id);
 				$this->db->where("(`stars` IN (1, 2) OR `feedback` <> '')");
 				$this->db->where("reply", "");
 				$this->db->where("email <>", "");
 				$this->db->where("marked_as_read", 0);
-				$this->db->update("sent", array('marked_as_read' => TRUE));
+				$this->db->update("sent", array('marked_as_read' => TRUE));*/
+				foreach ($post['letters'] as $id => $value)
+				{
+					if ($value)
+					{
+						$this->db->where("id", $id);
+						$this->db->update("sent", array('marked_as_read' => TRUE));
+					}
+				}
 				
 			}
 		}
