@@ -99,10 +99,10 @@
 							$this->data['info'] = $this->pub->feedback_info($id);
 						}
 						
-						if ($part == "pages/invoice")
+						/*if ($part == "pages/invoice")
 						{
 							$this->data['invoice'] = $this->pub->get_invoice($id);
-						}
+						}*/
 					}
 				}
 				else
@@ -806,10 +806,10 @@
 		
 		function invoice($hash)
 		{
-			$this->data['print'] = TRUE;
+			/*$this->data['print'] = TRUE;
 			$this->data['invoice'] = $this->pub->get_invoice($hash, TRUE);
 			$this->data['user'] = $this->pub->user($this->data['invoice']['users_id']);
-			$this->data['content'] = $this->load->view('views/pages/invoice.html', $this->data, TRUE);
+			$this->data['content'] = $this->load->view('views/pages/invoice.html', $this->data, TRUE);*/
 			$this->load->view('tpl.html', $this->data);
 		}
 		

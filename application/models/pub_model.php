@@ -317,6 +317,8 @@
 		
 		function generate_invoices()
 		{
+			return TRUE;
+			
 			$time = time() - 24 * 3600;
 			$today = mktime(0, 0, 0, date("m", $time), date("j", $time), date("Y", $time));
 			
@@ -458,7 +460,7 @@
 							$this->db->limit(1);
 							$user = $this->db->get("users")->row_array();
 
-							$response = file_get_contents("https://www.mollie.com/xml/ideal?a=createlink&partnerid=1959041&amount=".round($amount * 100)."&description=".$this->db->insert_id());
+							$response = file_get_contents("https://www.mollie.com/xml/ideal?a=createlink&partnerid=1959041&amount=".round($amount * 100)."&description=");
 							$xml = simplexml_load_string($response);
 							$data = array("email" => $user['email'],
 										  "username" => $user['username'],
@@ -525,7 +527,7 @@
 					}
 				}
 				
-				$result['invoices'] = array();
+				/*$result['invoices'] = array();
 				$result['last_invoice'] = "";
 				$this->db->order_by("date", "desc");
 				$this->db->where("users_id", $this->session->userdata("id"));
@@ -541,7 +543,7 @@
 					}
 
 					$result['invoices'][] = $row;
-				}
+				}*/
 			}
 
 			return $result;
@@ -730,7 +732,7 @@
 					$row['today'] = date("d-m-Y", $time);
 					$this->send_notifications($row, "start_sub");
 
-					$this->db->where("users_id", $this->session->userdata("id"));
+					/*$this->db->where("users_id", $this->session->userdata("id"));
 					$this->db->where("name", $name);
 					$this->db->limit(1);
 					$in = $this->db->get("invoices")->row_array();
@@ -743,11 +745,11 @@
 						{
 							unlink("./invoices/".$in['code'].".pdf");
 						}
-					}
+					}*/
 					
 					$amount = $this->invoice_info($this->session->userdata("id"), $post['type']);
 					
-					$year = date("Y", $time);
+					/*$year = date("Y", $time);
 					$month = date("m", $time);
 					
 					$this->db->where("date >", mktime(0, 0, 0, $month, 1, $year));
@@ -776,12 +778,12 @@
 												'doctors_amount' => $this->doctor_amount,
 												'free' => $doc['free']);
 							$this->db->insert("invoices_doctors", $data_array);
-						}
+						}*/
 						
 						$this->db->where("id", $row['id']);
 						$this->db->update("users", array("account_type" => $post['type'], "account" => 1, "account_stop" => 0, "activation" => $time, "suspension" => ($time + $this->period * 24 * 3600)));
 						
-						$domain = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+						/*$domain = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 						$curlconnect = curl_init();
 						curl_setopt($curlconnect, CURLOPT_URL, 'http://www.spurdoc.com/api/make?url='.urlencode($domain.'pub/invoice/'.md5($invoices_id.$time).'/'));
 						curl_setopt($curlconnect, CURLOPT_RETURNTRANSFER, TRUE); 
@@ -793,9 +795,9 @@
 							{
 								$attach = "./invoices/".$code.".pdf";
 							}
-						}
+						}*/
 
-						$response = file_get_contents("https://www.mollie.com/xml/ideal?a=createlink&partnerid=1959041&amount=".round($amount['amount'] * 100)."&description=".$this->db->insert_id());
+						$response = file_get_contents("https://www.mollie.com/xml/ideal?a=createlink&partnerid=1959041&amount=".round($amount['amount'] * 100)."&description=");
 						$xml = simplexml_load_string($response);
 						$data = array("email" => $row['email'],
 									  "username" => $row['username'],
@@ -803,9 +805,9 @@
 									  "current_date" => date("d-m-Y", $row['activation']),
 									  "end_date" => date("d-m-Y", $row['suspension']),
 									  "payment_link" => (string)$xml->link->URL,
-									  "attach" => $attach);
+									  "attach" => ''/*$attach*/);
 						$this->send_payment($data);
-					}
+					//}
 				}
 				
 				$this->errors[] = array("Success" => "Uw abonnement is geactiveerd.");
@@ -1074,7 +1076,7 @@
 				$row = $this->db->get("users")->row_array();
 				if ( ! empty($row))
 				{
-					$this->db->where("users_id", $this->session->userdata("id"));
+					/*$this->db->where("users_id", $this->session->userdata("id"));
 					$this->db->where("name", $name);
 					$this->db->limit(1);
 					$in = $this->db->get("invoices")->row_array();
@@ -1136,9 +1138,9 @@
 							{
 								$attach = "./invoices/".$code.".pdf";
 							}
-						}
+						}*/
 
-						$response = file_get_contents("https://www.mollie.com/xml/ideal?a=createlink&partnerid=1959041&amount=".round($amount * 100)."&description=".$invoices_id);
+						$response = file_get_contents("https://www.mollie.com/xml/ideal?a=createlink&partnerid=1959041&amount=".round($amount * 100)."&description=");
 						$xml = simplexml_load_string($response);
 						$data = array("email" => $row['email'],
 									  "username" => $row['username'],
@@ -1146,13 +1148,13 @@
 									  "current_date" => date("d-m-Y", $row['activation']),
 									  "end_date" => date("d-m-Y", $row['suspension']),
 									  "payment_link" => (string)$xml->link->URL,
-									  "attach" => $attach);
+									  "attach" => ''/*$attach*/);
 
 						if ( ! empty($amount))
 						{
 							$this->send_payment($data);
 						}
-					}
+					//}
 				}
 				
 				$this->errors[] = array("Success" => "Uw abonnement is geactiveerd.");
