@@ -2787,6 +2787,14 @@
 					}                              
 					fclose($fp);
 				}
+				if ($ext == 'csv')
+				{
+					$lines = file($dest);
+					foreach ($lines as $row)
+					{
+						$rows[] = str_getcsv($row, ";");
+					}
+				}
 				else
 				{	
 					$this->load->library('excel');

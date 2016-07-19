@@ -296,7 +296,7 @@
 			$result = array();
 			if ($this->pub->logged_in())
 			{
-				if ( ! empty($_FILES['file']['tmp_name']) && (strpos(strtolower($_FILES['file']['name']), 'xls') !== FALSE || strpos(strtolower($_FILES['file']['name']), 'tab') !== FALSE))
+				if ( ! empty($_FILES['file']['tmp_name']) && (strpos(strtolower($_FILES['file']['name']), 'xls') !== FALSE || strpos(strtolower($_FILES['file']['name']), 'tab') !== FALSE || strpos(strtolower($_FILES['file']['name']), 'csv') !== FALSE))
 				{
 					$result = $this->pub->parse_xls($_FILES['file']['tmp_name'], TRUE, strtolower($_FILES['file']['name']));
 				}
