@@ -671,10 +671,10 @@
 			
 				$result['suspension'] = date("d-m-Y", empty($row['suspension']) ? ($row['trial_end'] + $this->period * 24 * 3600) : $row['suspension']);
 				$end = $row['suspension'];
-				$result['days'] = (mktime(0, 0, 0, date("n", $end), date("j", $end), date("Y", $end)) - $time) / (24 * 3600);
+				$result['days'] = ceil((mktime(0, 0, 0, date("n", $end), date("j", $end), date("Y", $end)) - $time) / (24 * 3600));
 				$result['half_pro'] = round(($this->account_amount / $this->period) * $result['days'], 2);
 				$result['half_basic'] = round(($this->account_amount / $this->period) * $result['days'], 2);
-				
+
 				$result['amount'] = 0;
 				if ($row['account'] == 1 && $row['account_type'] == 0)
 				{
