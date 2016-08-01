@@ -4293,6 +4293,7 @@
 			$scope.data = [];
 			$scope.send_emails = [];
 			$scope.rows_all = $scope.all_data.length;
+			$scope.all_data.sort(function(a, b) { return a.sname > b.sname ? 1 : (b.sname > a.sname ? -1 : 0)});
 			$scope.all_data.sort(function(a, b) { return b.error - a.error});
 			for (var key in $scope.all_data)
 			{
