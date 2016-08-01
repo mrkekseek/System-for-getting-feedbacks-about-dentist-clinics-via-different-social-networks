@@ -163,6 +163,9 @@ if (defined('ENVIRONMENT'))
  */
 	// The name of THIS file
 	define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
+	
+	// The name of ROOT directory
+	define('ROOT', __DIR__);
 
 	// The PHP file extension
 	// this global constant is deprecated.

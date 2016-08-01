@@ -1,6 +1,10 @@
 <?php
 
 	if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+	
+	require 'mailgun-php/vendor/autoload.php';
+	use Mailgun\Mailgun;
+	
 	class Pub_model extends CI_Model
 	{
 		var $errors = array();
@@ -673,10 +677,10 @@
 			
 				$result['suspension'] = date("d-m-Y", empty($row['suspension']) ? ($row['trial_end'] + $this->period * 24 * 3600) : $row['suspension']);
 				$end = $row['suspension'];
-				$result['days'] = (mktime(0, 0, 0, date("n", $end), date("j", $end), date("Y", $end)) - $time) / (24 * 3600);
+				$result['days'] = ceil((mktime(0, 0, 0, date("n", $end), date("j", $end), date("Y", $end)) - $time) / (24 * 3600));
 				$result['half_pro'] = round(($this->account_amount / $this->period) * $result['days'], 2);
 				$result['half_basic'] = round(($this->account_amount / $this->period) * $result['days'], 2);
-				
+
 				$result['amount'] = 0;
 				if ($row['account'] == 1 && $row['account_type'] == 0)
 				{
@@ -910,7 +914,7 @@
 			$days = 0;
 			
 			$this->db->where("id", $id);
-			$this->db->where("account_type", 1);
+			//$this->db->where("account_type", 1);
 			$this->db->limit(1);
 			$row = $this->db->get("users")->row_array();
 			if ( ! empty($row))
@@ -2423,7 +2427,7 @@
 					$data_array['password'] = crypt($post['password'], substr(md5($post['password']), 0, 8));
 					$data_array['status'] = 1;
 					$data_array['signup'] = time();
-					$data_array['suspension'] = $data_array['activation'] + 30 * 24 * 3600;
+					$data_array['suspension'] = $data_array['activation'] + $this->period * 24 * 3600;
 					$data_array['trial_end'] = $data_array['suspension'];
 					$data_array['account'] = 2;
 					unset($data_array['suspension_str']);
@@ -2478,7 +2482,7 @@
 					$data_array['status'] = 1;
 					$data_array['signup'] = time();
 					$data_array['activation'] = mktime(0, 0, 0, date('m'), date('j'), date('Y'));
-					$data_array['suspension'] = $data_array['activation'] + 30 * 24 * 3600;
+					$data_array['suspension'] = $data_array['activation'] + $this->period * 24 * 3600;
 					$data_array['trial_end'] = $data_array['suspension'];
 					$data_array['reminder_checked'] = TRUE;
 					$data_array['reminder_period'] = 0;
@@ -3676,7 +3680,8 @@
 
 		function real_send($types = array(), $id = FALSE)
 		{
-			if ($id)
+			return $this->mailgun_send($types, $id);
+			/*if ($id)
 			{
 				$this->db->where("letters_id", $id);
 			}
@@ -3744,7 +3749,7 @@
 				}
 			}
 			
-			return TRUE;
+			return TRUE;*/
 		}
 		
 		function rating_page_get($segments)
@@ -4973,6 +4978,7 @@
 					
 					$this->db->order_by('sent_date', 'desc');
 					$this->db->where('users_id', $users_id);
+					$this->db->limit(10);
 					$result = $this->db->get('sent_dates')->result_array();
 					foreach ($result as $row)
 					{
@@ -5975,6 +5981,87 @@
 				}
 			}
 
+			return TRUE;
+		}
+		
+		function mailgun_send($types = array(), $id = FALSE)
+		{
+			$config = array();
+			include(ROOT.'/application/config/email.php');
+			
+			$mg = new Mailgun($config['key']);
+			$domain = $config['domain'];
+			
+			if ($id)
+			{
+				$this->db->where("letters_id", $id);
+			}
+			else
+			{
+				if ( ! empty($types))
+				{
+					$this->db->where_in("letters_type", $types);
+				}
+			}
+			$this->db->order_by("letters_id", "asc");
+			$result = $this->db->get("letters")->result_array();
+
+			if ( ! empty($result))
+			{
+				foreach ($result as $row)
+				{
+					$data = array('from' => $row['letters_from'].' <info@patientenreview.nl>', 
+								  'to' => $row['letters_to'], 
+								  'subject' => $row['letters_subject'],
+								  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',							  
+								  'html' => $row['letters_message']);
+					$attachment = array();
+
+					if ($row['letters_type'] == "reminder")
+					{
+						$this->db->where("email", $row['letters_to']);
+						$this->db->limit(1);
+						$val = $this->db->get("users")->row_array();
+						if ($val['account'] == 1 && $val['account_type'] == 0)
+						{
+							$attachment[] = ROOT.'/excel-basis-tpl.xls';
+						}
+						else
+						{
+							$attachment[] = ROOT.'/excel-tpl.xls';
+						}
+					}
+					
+					if ( ! empty($row['letters_attach']))
+					{
+						$attach = explode('&&', $row['letters_attach']);
+						foreach ($attach as $file)
+						{
+							$attachment[] = str_replace('./', ROOT.'/', $file);
+						}
+					}
+
+					$result = $mg->sendMessage($domain, $data, array('attachment' => $attachment));
+					$code = $result->http_response_code;
+					
+					if ($code == 200)
+					{
+						$this->db->where("letters_id", $row['letters_id']);
+						$this->db->delete("letters");
+					}
+					else
+					{
+						$content = '';
+						$logItems = $result->http_response_body->items;
+						foreach($logItems as $logItem)
+						{
+							$content .= $logItem->message_id."\n";
+						}
+						file_put_contents("log.txt", $content);
+					}
+				}
+			}
+			
 			return TRUE;
 		}
 	}

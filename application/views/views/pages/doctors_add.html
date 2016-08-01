@@ -125,7 +125,7 @@
 												</tr>
 												
 												<tr>
-													<td>Totaal incl. BTW</td>
+													<td>Totaal excl. BTW</td>
 													<td>€{{((user.account_type == 0 ? amount.base_amount : amount.pro_amount) + (amount.doctor_amount * (amount.doctors_pay.length + 1))).toFixed(2).replace(".", ",")}}</td>
 												</tr>
 											</tbody-->
@@ -139,7 +139,7 @@
 												</tr>
 												
 												<tr>
-													<td>Totaal INCL. BTW</td>
+													<td>Totaal excl. BTW</td>
 													<td>€{{(amount.doctor_amount).toFixed(2).replace(".", ",")}}</td>
 												</tr>
 											</tbody>
