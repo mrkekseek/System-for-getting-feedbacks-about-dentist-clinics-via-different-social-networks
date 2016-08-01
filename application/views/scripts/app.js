@@ -887,6 +887,19 @@
         .controller('Charts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', Charts2Ctrl]); // overall control
 
     function Charts2Ctrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.hex_to_rgba = function(hex, opacity)
+		{
+			hex = hex.replace('#', '');
+			var r = parseInt(hex.substring(0, 2), 16);
+			var g = parseInt(hex.substring(2, 4), 16);
+			var b = parseInt(hex.substring(4, 6), 16);
+
+			var result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
+			return result;
+		};
+		$scope.color = $scope.user.color || '#0F75BC';
+		$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
+		
 		$scope.data = {};
 		$scope.nps = {};
 		$scope.pie_stars = echarts.init(document.getElementById('pie_stars'));
@@ -899,7 +912,24 @@
 				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
 						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
 									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "30", fontWeight: "bold"}}}},
-						data:[{name: '5 sterren', value: 0, itemStyle: {normal: {color: '#2F91D5'}}}, {name: '4 sterren', value: 0, itemStyle: {normal: {color: '#0F75BC'}}}, {name: '3 sterren', value: 0, itemStyle: {normal: {color: '#3E769D'}}}, {name: '2 sterren', value: 0, itemStyle: {normal: {color: '#2D5775'}}}, {name: '1 sterren', value: 0, itemStyle: {normal: {color: '#04090C'}}}] }]
+						data:[{name: '5 sterren', value: 0, itemStyle: {normal: {color: '#2F91D5'}}},
+							  {name: '4 sterren', value: 0, itemStyle: {normal: {color: '#0F75BC'}}},
+							  {name: '3 sterren', value: 0, itemStyle: {normal: {color: '#3E769D'}}},
+							  {name: '2 sterren', value: 0, itemStyle: {normal: {color: '#2D5775'}}},
+							  {name: '1 sterren', value: 0, itemStyle: {normal: {color: '#04090C'}}}]
+						}]
+		});
+		
+		$scope.area_averages = echarts.init(document.getElementById('area_averages'));
+		$window.onresize = function() { $scope.area_averages.resize(); };
+		$scope.area_averages.setOption({
+				tooltip: {trigger: "axis"},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['Landelijk gemiddelde', 'Beoordeling van uw praktijk']},
+				calculable: true,
+				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
+				yAxis: [{type: 'value', boundaryGap: false}],
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Landelijk gemiddelde', data: [0], itemStyle: {normal: {color: '#D3D3D3', borderColor: '#D3D3D3', lineStyle: {color: '#D3D3D3'}, areaStyle: {color: 'rgba(211, 211, 211, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Beoordeling van uw praktijk', data: [0], itemStyle: {normal: {color: $scope.color, borderColor: $scope.color, lineStyle: {color: $scope.color}, areaStyle: {color: $scope.color_a}}}}]
 		});
 		
 		$scope.area_stars = echarts.init(document.getElementById('area_stars'));
@@ -909,15 +939,13 @@
 				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
 				legend: {orient: "horizontal", x: "center", y: "30", data: ['5 sterren', '4 sterren', '3 sterren', '2 sterren', '1 sterren', 'Beoordeling van uw praktijk', 'Landelijk gemiddelde']},
 				calculable: true,
-				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
+				xAxis: [{type: 'category', data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
-				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: '5 sterren', data: [0], itemStyle: {normal: {color: '#2F91D5', borderColor: '#2F91D5', lineStyle: {color: '#2F91D5'}, areaStyle: {color: 'rgba(47, 88, 116, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '4 sterren', data: [0], itemStyle: {normal: {color: '#0F75BC', borderColor: '#0F75BC', lineStyle: {color: '#0F75BC'}, areaStyle: {color: 'rgba(15, 117, 188, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '3 sterren', data: [0], itemStyle: {normal: {color: '#3E769D', borderColor: '#3E769D', lineStyle: {color: '#3E769D'}, areaStyle: {color: 'rgba(62, 118, 157, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '2 sterren', data: [0], itemStyle: {normal: {color: '#2D5775', borderColor: '#2D5775', lineStyle: {color: '#2D5775'}, areaStyle: {color: 'rgba(45, 87, 117, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: '1 sterren', data: [0], itemStyle: {normal: {color: '#04090C', borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Beoordeling van uw praktijk', data: [0], itemStyle: {normal: {color: '#04090C', borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Landelijk gemiddelde', data: [0], itemStyle: {normal: {color: '#04090C', borderColor: '#04090C', lineStyle: {color: '#04090C'}, areaStyle: {color: 'rgba(4, 9, 12, 0.5)'}}}}]
+				series:[{type: 'bar', name: '5 sterren', data: [0], itemStyle: {normal: {color: '#2F91D5', barBorderRadius: 5}}},
+						{type: 'bar', name: '4 sterren', data: [0], itemStyle: {normal: {color: '#0F75BC', barBorderRadius: 5}}},
+						{type: 'bar', name: '3 sterren', data: [0], itemStyle: {normal: {color: '#3E769D', barBorderRadius: 5}}},
+						{type: 'bar', name: '2 sterren', data: [0], itemStyle: {normal: {color: '#2D5775', barBorderRadius: 5}}},
+						{type: 'bar', name: '1 sterren', data: [0], itemStyle: {normal: {color: '#04090C', barBorderRadius: 5}}}]
 		});
 		
 		$scope.pie_nps = echarts.init(document.getElementById('pie_nps'));
@@ -930,7 +958,22 @@
 				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
 						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
 									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "13", fontWeight: "normal"}}}},
-						data:[{name: 'Promotors', value: 0, itemStyle: {normal: {color: '#98EA3D'}}}, {name: 'Passives', value: 0, itemStyle: {normal: {color: '#FFE165'}}}, {name: 'Detractors', value: 0, itemStyle: {normal: {color: '#EE4C61'}}}] }]
+						data:[{name: 'Promotors', value: 0, itemStyle: {normal: {color: '#98EA3D'}}},
+							  {name: 'Passives', value: 0, itemStyle: {normal: {color: '#FFE165'}}},
+							  {name: 'Detractors', value: 0, itemStyle: {normal: {color: '#EE4C61'}}}]
+						}]
+		});
+		
+		$scope.area_nps_average = echarts.init(document.getElementById('area_nps_average'));
+		$window.onresize = function() { $scope.area_nps_average.resize(); };
+		$scope.area_nps_average.setOption({
+				tooltip: {trigger: "axis"},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['Landelijk gemiddelde', 'NPS van uw praktijk']},
+				calculable: true,
+				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
+				yAxis: [{type: 'value', boundaryGap: false}],
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Landelijk gemiddelde', data: [0], itemStyle: {normal: {color: '#D3D3D3', borderColor: '#D3D3D3', lineStyle: {color: '#D3D3D3'}, areaStyle: {color: 'rgba(211, 211, 211, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'NPS van uw praktijk', data: [0], itemStyle: {normal: {color: $scope.color, borderColor: $scope.color, lineStyle: {color: $scope.color}, areaStyle: {color: $scope.color_a}}}}]
 		});
 		
 		$scope.area_nps = echarts.init(document.getElementById('area_nps'));
@@ -940,13 +983,11 @@
 				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
 				legend: {orient: "horizontal", x: "center", y: "30", data: ['Promotors', 'Passives', 'Detractors', 'NPS van uw praktijk', 'Landelijk gemiddelde']},
 				calculable: true,
-				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
+				xAxis: [{type: 'category', data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
-				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Promotors', data: [0], itemStyle: {normal: {color: '#98EA3D', borderColor: '#98EA3D', lineStyle: {color: '#98EA3D'}, areaStyle: {color: 'rgba(152, 234, 61, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Passives', data: [0], itemStyle: {normal: {color: '#FFE165', borderColor: '#FFE165', lineStyle: {color: '#FFE165'}, areaStyle: {color: 'rgba(255, 255, 101, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Detractors', data: [0], itemStyle: {normal: {color: '#EE4C61', borderColor: '#EE4C61', lineStyle: {color: '#EE4C61'}, areaStyle: {color: 'rgba(238, 76, 97, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'NPS van uw praktijk', data: [0], itemStyle: {normal: {color: '#EE4C61', borderColor: '#EE4C61', lineStyle: {color: '#EE4C61'}, areaStyle: {color: 'rgba(238, 76, 97, 0.5)'}}}},
-						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Landelijk gemiddelde', data: [0], itemStyle: {normal: {color: '#EE4C61', borderColor: '#EE4C61', lineStyle: {color: '#EE4C61'}, areaStyle: {color: 'rgba(238, 76, 97, 0.5)'}}}}]
+				series:[{type: 'bar', name: 'Promotors', data: [0], itemStyle: {normal: {color: '#98EA3D', barBorderRadius: 5}}},
+						{type: 'bar', name: 'Passives', data: [0], itemStyle: {normal: {color: '#FFE165', barBorderRadius: 5}}},
+						{type: 'bar', name: 'Detractors', data: [0], itemStyle: {normal: {color: '#EE4C61', barBorderRadius: 5}}}]
 		});
 		
 		$scope.pie_reply = echarts.init(document.getElementById('pie_reply'));
@@ -966,6 +1007,9 @@
 		$scope.get = function() {
 			$http.post("/pub/stat_chart2/", {}).success(function(data, status, headers, config) {
 				$scope.data = logger.check(data);
+				$scope.color = $scope.user.color || '#0F75BC';
+				$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
+		
 				if ($scope.data.for_user >= 30)
 				{
 					$scope.less_30 = false;
@@ -978,37 +1022,56 @@
 						}
 					}
 					
+					if ($scope.data && $scope.data.average_my_month)
+					{
+						var series = [];
+						var max = 5;
+						var data = [];
+						for (var m in $scope.data.average_all_month)
+						{
+							data.push($scope.data.average_all_month[m]);
+							//max = Math.max(max, $scope.data.average_all_month[m] * 1);
+						}
+						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
+						
+						data = [];
+						for (var m in $scope.data.average_my_month)
+						{
+							data.push($scope.data.average_my_month[m]);
+							//max = Math.max(max, $scope.data.average_my_month[m] * 1);
+						}
+						series.push({type: 'line', name: 'Beoordeling van uw praktijk', data: data, itemStyle: {normal: {color: $scope.color, borderColor: $scope.color, lineStyle: {color: $scope.color}, areaStyle: {color: $scope.color_a}}}});
+						
+						$scope.area_averages.setOption({xAxis: [{data: $scope.data.average_month_x}],
+														yAxis: [{min: 0, max: max}],
+														series: series});
+					}
+					
 					if ($scope.data && $scope.data.average_month)
 					{
 						var series = [];
 						var max = 0;
+						var max_num = {};
 						for (var i = 5; i > 0; i--)
 						{
 							var data = [];
 							for (var m in $scope.data.average_month[i])
 							{
 								data.push($scope.data.average_month[i][m]);
-								max = Math.max(max, $scope.data.average_month[i][m] * 1);
+								if ( ! max_num[m])
+								{
+									max_num[m] = 0;
+								}
+								max_num[m] += $scope.data.average_month[i][m] * 1;
 							}
-							series.push({type: 'line', name: (i + ' sterren'), data: data});
+							series.push({type: 'bar', stack: m, name: (i + ' sterren'), data: data});
 						}
 						
-						var data = [];
-						for (var m in $scope.data.average_my_month)
+						for (var m in max_num)
 						{
-							data.push($scope.data.average_my_month[m]);
-							max = Math.max(max, $scope.data.average_my_month[m] * 1);
+							max = Math.max(max, max_num[m]);
 						}
-						series.push({type: 'line', name: 'Beoordeling van uw praktijk', data: data});
-						
-						data = [];
-						for (var m in $scope.data.average_all_month)
-						{
-							data.push($scope.data.average_all_month[m]);
-							max = Math.max(max, $scope.data.average_all_month[m] * 1);
-						}
-						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
-						
+
 						$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}],
 													 yAxis: [{min: 0, max: max}],
 													 series: series});
@@ -1025,50 +1088,94 @@
 						$scope.pie_nps.addData([[0, {name: 'Detractors', value: $scope.data.average_nps['12']}, false, false]]);
 					}
 					
-					if ($scope.data && $scope.data.history_nps)
+					if ($scope.data && $scope.data.nps_my_month)
 					{
-						$scope.area_nps.setOption({});
 						var series = [];
 						var data = [];
 						var max = 0;
+						var min = false;
+
+						for (var m in $scope.data.nps_all_month)
+						{
+							data.push($scope.data.nps_all_month[m]);
+							max = Math.max(max, $scope.data.nps_all_month[m] * 1);
+							if (min === false)
+							{
+								min = $scope.data.nps_all_month[m] * 1
+							}
+							else
+							{
+								min = Math.max(min, $scope.data.nps_all_month[m] * 1);
+							}
+						}
+						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
+						
+						data = [];
+						for (var m in $scope.data.nps_my_month)
+						{
+							data.push($scope.data.nps_my_month[m]);
+							max = Math.max(max, $scope.data.nps_my_month[m] * 1);
+							if (min === false)
+							{
+								min = $scope.data.nps_my_month[m] * 1
+							}
+							else
+							{
+								min = Math.max(min, $scope.data.nps_my_month[m] * 1);
+							}
+						}
+						series.push({type: 'line', name: 'NPS van uw praktijk', data: data});
+
+						$scope.area_nps_average.setOption({xAxis: [{data: $scope.data.average_month_x}],
+														   yAxis: [{min: (min > 0 ? 0 : Math.round(min * 1.2)), max: Math.round(max * 1.2)}],
+														   series: series});
+					}
+					
+					if ($scope.data && $scope.data.history_nps)
+					{
+						var series = [];
+						var data = [];
+						var max = 0;
+						var max_num = {};
 						for (var m in $scope.data.history_nps['45'])
 						{
 							data.push($scope.data.history_nps['45'][m]);
-							max = Math.max(max, $scope.data.history_nps['45'][m] * 1);
+							if ( ! max_num[m])
+							{
+								max_num[m] = 0;
+							}
+							max_num[m] += $scope.data.history_nps['45'][m] * 1;
 						}
-						series.push({type: 'line', name: 'Promotors', data: data});
+						series.push({type: 'bar', stack: m, name: 'Promotors', data: data});
 						
 						data = [];
 						for (var m in $scope.data.history_nps['3'])
 						{
 							data.push($scope.data.history_nps['3'][m]);
-							max = Math.max(max, $scope.data.history_nps['3'][m] * 1);
+							if ( ! max_num[m])
+							{
+								max_num[m] = 0;
+							}
+							max_num[m] += $scope.data.history_nps['3'][m] * 1;
 						}
-						series.push({type: 'line', name: 'Passives', data: data});
+						series.push({type: 'bar', stack: m, name: 'Passives', data: data});
 						
 						data = [];
 						for (var m in $scope.data.history_nps['12'])
 						{
 							data.push($scope.data.history_nps['12'][m]);
-							max = Math.max(max, $scope.data.history_nps['12'][m] * 1);
+							if ( ! max_num[m])
+							{
+								max_num[m] = 0;
+							}
+							max_num[m] += $scope.data.history_nps['12'][m] * 1;
 						}
-						series.push({type: 'line', name: 'Detractors', data: data});
+						series.push({type: 'bar', stack: m, name: 'Detractors', data: data});
 						
-						data = [];
-						for (var m in $scope.data.average_my_month)
+						for (var m in max_num)
 						{
-							data.push($scope.data.average_my_month[m]);
-							max = Math.max(max, $scope.data.average_my_month[m] * 1);
+							max = Math.max(max, max_num[m]);
 						}
-						series.push({type: 'line', name: 'NPS van uw praktijk', data: data});
-						
-						data = [];
-						for (var m in $scope.data.average_all_month)
-						{
-							data.push($scope.data.average_all_month[m]);
-							max = Math.max(max, $scope.data.average_all_month[m] * 1);
-						}
-						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
 
 						$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}],
 												   yAxis: [{min: 0, max: max}],
