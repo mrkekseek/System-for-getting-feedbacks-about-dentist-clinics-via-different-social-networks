@@ -1,6 +1,7 @@
 <?php
 
 	if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+	
 	class Pub extends CI_Controller
 	{
 		var $data = array();
@@ -18,7 +19,7 @@
 
 			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/stat');
 		}
-		
+
 		function cron()
 		{
 			if (strpos($_SERVER['HTTP_USER_AGENT'], "Wget") === 0)
