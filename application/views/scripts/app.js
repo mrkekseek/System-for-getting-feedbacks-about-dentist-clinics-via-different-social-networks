@@ -2953,13 +2953,7 @@
 						logger.logError("Vergeet niet de achternaam in te vullen!");
 						error = 0;
 					}
-					
-					if ( ! $scope.doctor.title)
-					{
-						logger.logError("Vergeet niet de aanhef in te vullen!");
-						error = 0;
-					}
-					
+
 					if (error)
 					{
 						$scope.step = 1;
@@ -2973,14 +2967,6 @@
 					{
 						logger.logError("Vergeet niet het Zorgkaart profiel in te vullen!");
 						error = 0;
-					}
-					else
-					{
-						if ( ! ($scope.doctor.zorgkaart.indexOf("https://www.zorgkaartnederland.nl/zorgverlener/") + 1) && ! ($scope.doctor.zorgkaart.indexOf("http://www.zorgkaartnederland.nl/zorgverlener/") + 1) &&  ! ($scope.doctor.zorgkaart.indexOf("https://zorgkaartnederland.nl/zorgverlener/") + 1) && ! ($scope.doctor.zorgkaart.indexOf("http://zorgkaartnederland.nl/zorgverlener/") + 1))
-						{
-							logger.logError("Deze Zorgkaart link is niet correct");
-							error = 0;
-						}
 					}
 					
 					if (error)
