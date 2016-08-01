@@ -908,7 +908,7 @@
 			$days = 0;
 			
 			$this->db->where("id", $id);
-			$this->db->where("account_type", 1);
+			//$this->db->where("account_type", 1);
 			$this->db->limit(1);
 			$row = $this->db->get("users")->row_array();
 			if ( ! empty($row))
