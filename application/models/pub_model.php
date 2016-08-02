@@ -2856,6 +2856,7 @@
 						setLocale(LC_CTYPE, 'nl_NL.UTF-8');
 						$emails = array();
 						$init_count = count($rows[0]);
+						
 						for ($i = $first, $count = count($rows); $i < $count; $i++)
 						{
 							if ($init_count == count($rows[$i]))
@@ -2912,21 +2913,36 @@
 											}
 										}
 										
-										if ($tag == 'birth' && ! empty($line[$tag]))
+										if ($tag == 'birth')
 										{
-											$temp = explode((strpos($line[$tag], '/') ? '/' : '-'), $line[$tag]);
-											if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
+											if ( ! empty($line[$tag]))
+											{
+												$temp = explode((strpos($line[$tag], '/') ? '/' : '-'), $line[$tag]);
+												if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
+												{
+													$line[$tag] = '<b>!</b>';
+												}
+											}
+											else
 											{
 												$line[$tag] = '<b>!</b>';
-												$line['error'] = 2;
-												$result['check'] = FALSE;
 											}
 										}
 										
-										if (empty($line[$tag]) && (in_array($tag, $tags_required) || $tag == 'email'))
+										if (empty($line[$tag]))
 										{
-											$line['error'] = 2;
-											$result['check'] = FALSE;
+											if (in_array($tag, $tags_required) || $tag == 'email')
+											{
+												$line['error'] = 2;
+												$result['check'] = FALSE;
+											}
+											else
+											{
+												if ($tag == 'name' || $tag == 'sname')
+												{
+													$line[$tag] = '<b>!</b>';
+												}
+											}
 										}
 									}
 									else
