@@ -2806,7 +2806,7 @@
 					$lines = file($dest);
 					foreach ($lines as $row)
 					{
-						$rows[] = str_getcsv($row, ";");
+						$rows[] = str_getcsv($row);
 					}
 				}
 				else
@@ -2846,10 +2846,24 @@
 						{
 							$result['cols_check'][$tag] = $result['cols'][$col];
 						}
-						
 						$result['headers'][$tag] = $fields[$tag];
 					}
+					
 					$result['cols'] = array_values($result['cols']);
+					$unique = array();
+					foreach ($result['cols'] as $val)
+					{
+						if ( ! empty($val))
+						{
+							if (in_array($val, $unique))
+							{
+								$val = $val.'[2]';
+							}
+
+							$unique[] = $val;
+						}
+					}
+					$result['cols'] = $unique;
 					
 					if ( ! empty($cols))
 					{
@@ -3014,6 +3028,7 @@
 		{
 			if ($this->logged_in())
 			{
+				$post['value'] = str_replace('[2]', '', $post['value']);
 				$this->db->where("users_id", $this->session->userdata("id"));
 				$this->db->where("field", $post['field']);
 				$this->db->delete("sheet_variables");
