@@ -25,6 +25,7 @@
 					<label class="col-md-4">Aanhef</label>
 					<div class="col-md-8">
 						<select class="form-control" name="title" ng-model="doctor.title">
+							<option value=""></option>
 							<option value="heer">heer</option>
 							<option value="mevrouw">mevrouw</option>
 							<option value="Dr.">Dr.</option>
@@ -47,7 +48,7 @@
 				<div class="form-group">
                     <label class="col-md-4">Zorgkaart</label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" ng-class="zorgkaart" name="zorgkaart" ng-model="doctor.zorgkaart" ng-change="check_link()" value="" />
+                        <input type="text" class="form-control" name="zorgkaart" ng-model="doctor.zorgkaart" value="" />
                     </div>
                 </div>
 				
