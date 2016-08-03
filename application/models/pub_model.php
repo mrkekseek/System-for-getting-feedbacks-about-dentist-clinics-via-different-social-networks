@@ -3038,7 +3038,7 @@
 			$message = $this->load->view('views/mail/tpl_help.html', $post, TRUE);
 			$attach = $file."&&".(($row['account'] == 1 && $row['account_type'] == 0) ? './excel-basis-tpl.xls' : './excel-tpl.xls');
 			$this->send("help", $help_email, 'Hulpverzoek upload patiëntenbestand '.$row['username'], $message, 'Patiëntenreview', 'info@patientenreview.nl', $attach);
-			$this->errors[] = array("Success" => "Patiëntenbestand verstuurd");
+			$this->errors[] = array("Success" => "Support-verzoek verstuurd");
 			return $this->real_send(array('help'), $this->db->insert_id());
 		}
 		

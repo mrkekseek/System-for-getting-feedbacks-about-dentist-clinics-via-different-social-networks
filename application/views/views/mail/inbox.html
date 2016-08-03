@@ -152,6 +152,7 @@
 										  data-ng-click=" order('-sname') "
 										  data-ng-class="{active: row == '-sname'}"></span>
 								</div></th>
+								<th><div class="th">Doorgeklikt naar</div></th>
 								<th><div class="th">
 									Geboortedatum
 									<span class="fa fa-angle-up"
@@ -189,7 +190,7 @@
 										  data-ng-class="{active: row == '-email'}"></span>
 								</div></th>
 								
-								<th><div class="th">Doorgeklikt naar</div></th>
+								
 								
 								
 							</tr>
@@ -211,17 +212,16 @@
 								<td><i class="ti-comment" ng-if="(l.feedback != '' && l.reply == '') || (l.feedback == '' && l.reply != '')"></i><i class="ti-comments" ng-if="l.feedback != '' && l.reply != ''"></i></td>
 								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.name}}</td>
 								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.sname}}</td>
-								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.birth}}</td>
-								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.doctor_name}}</td>
-								<td ng-class="{'color-danger bold': l.stars <= 2}" ng-if="user.organization">{{l.location_name}}</td>
-								<td ng-class="{'color-danger bold': l.stars <= 2 && l.email != '', 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
 								<td>
 									<span class='socials-inbox-icons' ng-if="l.google == 1"><i class="ti-google"></i></span>
 									<span class='socials-inbox-icons' ng-if="l.zorgkaart == 1"><img src="/application/views/images/zorgkaart-icon.gif" alt="" /></span>
 									<span class='socials-inbox-icons' ng-if="l.facebook == 1"><i class="ti-facebook"></i></span>
 									<span class='socials-inbox-icons' ng-if="l.independer == 1"><img src="/application/views/images/independer-icon.png" alt="" /></span>
 								</td>
-								
+								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.birth}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.doctor_name}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2}" ng-if="user.organization">{{l.location_name}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2 && l.email != '', 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
 								
 							</tr>
 						</tbody>
