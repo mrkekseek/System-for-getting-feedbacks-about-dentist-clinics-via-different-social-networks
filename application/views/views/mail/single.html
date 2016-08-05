@@ -37,14 +37,12 @@
                         </div>
                     </div>
 
-                    <div class="mail-content">
+                    <div class="mail-content" ng-show="info.feedback != ''">
                         <p class="mail-content-reply" ng-bind-html="info.feedback">{{info.feedback}}</p>
                     </div>
 					
                     <div class="mail-content">
-
                         <p class="mail-content-reply" ng-bind-html="info.reply">{{info.reply}}</p>
-
 						<div class="row">
 							<div class="col-md-4 col-xs-12 pull-right">
 								<div class="form-group single-details muted">
@@ -83,10 +81,13 @@
 									
 									<div class="single-message-box single-reply" ng-show="info.reply != ''">
 										<div class="single-message" style="background-color: {{user.color}};" ng-bind-html="info.reply"></div>
+										<div class="single-logo" ng-show="user.logo != ''">
+											<img src="{{user.logo}}" alt="" />
+										</div>
 									</div>
 								</div>
 								
-								<div class="row" ng-show="info.reply == ''">
+								<div class="row single-top-line" ng-show="info.reply == ''">
 									<div class="col-md-9 col-sm-6 col-xs-12">
 										<textarea class="form-control single-text" ng-model="reply" placeholder="Typ hier uw reactie aan de patient..."></textarea>
 									</div>
