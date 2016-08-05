@@ -2801,13 +2801,11 @@
 					}                              
 					fclose($fp);
 				}
-				if ($ext == 'csv')
+				elseif ($ext == 'csv')
 				{
-					$lines = file($dest);
-					foreach ($lines as $row)
-					{
-						$rows[] = str_getcsv($row);
-					}
+					$this->load->library('csv');
+					$obj = $this->csv->load($dest);
+					$rows = $this->csv->rows($obj);
 				}
 				else
 				{	
