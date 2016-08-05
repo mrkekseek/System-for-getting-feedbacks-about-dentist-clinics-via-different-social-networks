@@ -88,8 +88,9 @@
 							<thead>
 								<tr>
 									<th>Controle</th>
-									<th ng-repeat="key in keys">
+									<th ng-repeat="key in keys" ng-class="{'nowrap-cell': headers[key] == 'Zorgverlenernummer'}">
 										{{headers[key]}}
+										<a ng-show="headers[key] == 'Zorgverlenernummer'" href="javascript:void(0);" class="question_icon" tooltip-placement="left" tooltip="Om beoordelingen automatisch aan individuele zorgverleners toe te wijzen moet u een uniek nummer koppelen aan de zorgverleners in uw account. Als er nummers in deze kolom voorkomen die nog niet zijn gekoppeld, wordt u automatisch gevraagd om dit te doen."><i class="fa fa-question-circle"></i></a>
 									</th>
 								</tr>
 								

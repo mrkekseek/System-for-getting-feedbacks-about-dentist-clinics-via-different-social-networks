@@ -2876,6 +2876,14 @@ body .btn-primary.compose-prev:disabled {
 	vertical-align: middle;
 }
 
+.nowrap-cell {
+	white-space: nowrap;
+}
+
+.nowrap-cell .tooltip {
+	white-space: normal;
+}
+
 .question_icon:not(:first-of-type) {
 	margin-left: 10px;
 }
