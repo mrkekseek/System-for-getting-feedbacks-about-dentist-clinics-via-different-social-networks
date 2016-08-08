@@ -479,6 +479,117 @@
 				}
 			}
 		}
+		
+		function rating_history()
+		{
+			$this->db->order_by('id', 'asc');
+			$this->db->where('status', 1);
+			$this->db->where('activation >', 0);
+			$result = $this->db->get('users')->result_array();
+			if ( ! empty($result))
+			{
+				$now = mktime(0, 0, 0, date('n'), date('j'), date('Y'));
+				foreach ($result as $row)
+				{
+					if ($row['history'] <= ($now - (7 * 24 * 3600)))
+					{
+						$from = 0;
+						$to = 0;
+						if ($row['history'] == 0)
+						{
+							$from = mktime(0, 0, 0, date('n', $row['activation']), date('j', $row['activation']), date('Y', $row['activation']));
+							$to = $from;
+							while (date('N', $to) != 7)
+							{
+								$to += (24 * 3600);
+							}
+						}
+						else
+						{
+							$from = $row['history'] + (24 * 3600);
+							$to = $row['history'] + (7 * 24 * 3600);
+						}
+						
+						if ( ! empty($from) && ! empty($to))
+						{
+							while ($to <= $now)
+							{
+								$stars = 0;
+								$count = 0;
+								$data_array = array('users_id' => $row['id'],
+													'date_from' => $from,
+													'date_to' => $to,
+													'stars_1' => 0,
+													'stars_2' => 0,
+													'stars_3' => 0,
+													'stars_4' => 0,
+													'stars_5' => 0,
+													'stars_all' => 0,
+													'average_week' => 0,
+													'average_all' => 0);
+								
+								$this->db->where('users_id', $row['id']);
+								$this->db->where('status', 2);
+								$this->db->where('stars >', 0);
+								$this->db->where('last >=', $from);
+								$this->db->where('last <', $to + (24 * 3600));
+								$res = $this->db->get('sent')->result_array();
+								foreach ($res as $val)
+								{
+									$data_array['stars_'.$val['stars']] += 1;
+									$data_array['stars_all'] += 1;
+									$stars += $val['stars'];
+									$count++;
+								}
+								
+								if ($count > 0)
+								{
+									$data_array['average_week'] = round($stars / $count, 1);
+								}
+								
+								$average_all = 0;
+								$average_count = 0;
+								$this->db->order_by('date_to', 'asc');
+								$this->db->where('users_id', $row['id']);
+								$this->db->where('average_week >', 0);
+								$this->db->where('date_to <', $to);
+								$res = $this->db->get('rating_history')->result_array();
+								foreach ($res as $val)
+								{
+									$average_all += $val['average_week'];
+									$average_count++;
+								}
+								
+								if ($data_array['average_week'] > 0)
+								{
+									$average_all += $data_array['average_week'];
+									$average_count++;
+								}
+								
+								if ($average_count > 0)
+								{
+									$data_array['average_all'] = round($average_all / $average_count, 1);
+								}
+								
+								$this->db->where('users_id', $row['id']);
+								$this->db->where('date_from', $from);
+								$this->db->where('date_to', $to);
+								$this->db->delete('rating_history');
+								
+								if ($this->db->insert('rating_history', $data_array))
+								{
+									$this->db->where('id', $row['id']);
+									$this->db->update('users', array('history' => $to));
+								}
+								
+								$from = $to + (24 * 3600);
+								$to = $to + (7 * 24 * 3600);
+							}
+						}
+					}
+				}
+			}
+		}
 
 		function logged_in()
 		{
@@ -4735,7 +4846,7 @@
 			return FALSE;
 		}
 		
-		function stat_chart2($post)
+		function stat_chart3($post)
 		{
 			if ($this->logged_in())
 			{
@@ -5015,6 +5126,263 @@
 							if ( ! empty($q_num[$row['id']]))
 							{
 								$stat['questions'][$key]['average'] = number_format(round($q_sum[$row['id']] / $q_num[$row['id']], 1), 1);
+							}
+						}
+					}
+					
+					if ( ! empty($count['reply_all']))
+					{
+						$stat['reply_percent'] = round($count['reply_only'] / $count['reply_all'] * 100, 1);
+						$stat['reply_click'] = round($count['reply_click'] / $count['reply_all'] * 100, 1);
+						
+						$stat['reply_chart']['click'] = $stat['reply_click'];
+						$stat['reply_chart']['none'] = 100 - $stat['reply_percent'];
+						$stat['reply_chart']['reply'] = $stat['reply_percent'] - $stat['reply_click'];
+					}
+					
+					if ( ! empty($count['reply_count']))
+					{
+						foreach ($count['reply_count'] as $id => $row)
+						{
+							$value = round($row['only'] / $row['all'] * 100, 1);
+							$stat['reply_percents'][$id] = $value;
+							$stat['reply_highest'] = max($stat['reply_highest'], $value);
+							if (empty($stat['reply_lowest']))
+							{
+								$stat['reply_lowest'] = $value;
+							}
+							else
+							{
+								$stat['reply_lowest'] = min($stat['reply_lowest'], $value);
+							}
+							
+							$value = round($row['click'] / $row['all'] * 100, 1);
+							$stat['reply_clicks'][$id] = $value;
+						}
+					}
+					
+					$this->db->order_by('sent_date', 'desc');
+					$this->db->where('users_id', $users_id);
+					$this->db->limit(10);
+					$result = $this->db->get('sent_dates')->result_array();
+					foreach ($result as $row)
+					{
+						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
+												   'amount' => $row['emails_amount'],
+												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
+					}
+
+					return $stat;
+				}
+			}
+
+			return FALSE;
+		}
+		
+		function stat_chart2($post)
+		{
+			if ($this->logged_in())
+			{
+				$users_id = $this->session->userdata("id");
+				$this->db->where('id', $users_id);
+				$this->db->limit(1);
+				$user = $this->db->get("users")->row_array();
+				
+				$this->db->order_by("date_to", "asc");
+				$result = $this->db->get("rating_history")->result_array();
+
+				if ( ! empty($result))
+				{
+					$stat = array();
+					$stat['average'] = 0;
+					$stat['for_user'] = 0;
+					$stat['stars_count'] = array(0, 0, 0, 0, 0, 0);
+					$stat['average_month_x'] = array();
+					$stat['average_month'] = array();
+					$stat['average_my_month'] = array();
+					$stat['average_all_month'] = array();
+					$stat['average_nps'] = array('12' => 0, '3' => 0, '45' => 0, '12p' => 0, '3p' => 0, '45p' => 0, 'all' => 0, 'delta' => 0);
+					$stat['history_nps'] = array();
+					$stat['nps_my_month'] = array();
+					$stat['nps_all_month'] = array();
+					$stat['reply_percent'] = 0;
+					$stat['reply_click'] = 0;
+					$stat['reply_percents'] = array();
+					$stat['reply_clicks'] = array();
+					$stat['reply_highest'] = 0;
+					$stat['reply_lowest'] = 0;
+					$stat['reply_chart'] = array('reply' => 0, 'click' => 0, 'none' => 0);
+
+					$count = array();
+					$count['reply_all'] = 0;
+					$count['reply_only'] = 0;
+					$count['reply_click'] = 0;
+					$count['reply_count'] = array();
+					$count['all_month_sum'] = array();
+					$count['all_month_num'] = array();
+					$count['all_nps'] = array();
+
+					$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
+					
+					foreach ($result as $row)
+					{
+						$month = 0;
+						if ($row['users_id'] == $this->session->userdata("id"))
+						{
+							$month = date('Y-m-d', $row['date_to']);
+							
+							$stat['average'] = $row['average_all'];
+							$stat['for_user'] += $row['stars_all'];
+							$stat['average_month_x'][] = $month;
+							for ($i = 1; $i <= 5; $i++)
+							{
+								$stat['stars_count'][$i] += $row['stars_'.$i];
+								$stat['average_month'][$i][$month] = $row['stars_'.$i];
+							}
+							$stat['average_my_month'][$month] = $row['average_all'];
+							$stat['average_nps']['12'] += ($row['stars_1'] + $row['stars_2']);
+							$stat['average_nps']['3'] += $row['stars_3'];
+							$stat['average_nps']['45'] += ($row['stars_4'] + $row['stars_5']);
+							$stat['average_nps']['all'] += $row['stars_all'];
+							
+							$stat['history_nps']['12'][$month] = ($row['stars_1'] + $row['stars_2']);
+							$stat['history_nps']['3'][$month] = $row['stars_3'];
+							$stat['history_nps']['45'][$month] = ($row['stars_4'] + $row['stars_5']);
+						}
+						
+						if ( ! empty($month))
+						{
+							if ( ! isset($count['all_nps']['12'][$month]))
+							{
+								$count['all_nps']['12'][$month] = 0;
+							}
+							$count['all_nps']['12'][$month] += ($row['stars_1'] + $row['stars_2']);
+							
+							if ( ! isset($count['all_nps']['45'][$month]))
+							{
+								$count['all_nps']['45'][$month] = 0;
+							}
+							$count['all_nps']['45'][$month] += ($row['stars_4'] + $row['stars_5']);
+						}
+
+						if ( ! isset($count['all_month_sum'][$month]))
+						{
+							$count['all_month_sum'][$month] = 0;
+							$count['all_month_num'][$month] = 0;
+						}
+						
+						$count['all_month_sum'][$month] += $row['average_week'];
+						$count['all_month_num'][$month]++;
+					}
+
+					if ( ! empty($stat['average_nps']['all']))
+					{
+						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['delta'] = $stat['average_nps']['45'] - $stat['average_nps']['12'];
+					}
+
+					$sum_all_month = 0;
+					$num_all_month = 0;
+					$nps_my_45 = 0;
+					$nps_my_12 = 0;
+					$nps_all_45 = 0;
+					$nps_all_12 = 0;
+
+					foreach ($stat['average_my_month'] as $month => $val)
+					{
+						$all_sum = empty($count['all_month_sum'][$month]) ? 0 : $count['all_month_sum'][$month];
+						$sum_all_month += $all_sum;
+						$all_num = empty($count['all_month_num'][$month]) ? 0 : $count['all_month_num'][$month];
+						$num_all_month += $all_num;
+						$stat['average_all_month'][$month] = empty($num_all_month) ? 0 : round($sum_all_month / $num_all_month, 1);
+						
+						$nps_my_45 += $stat['history_nps']['45'][$month];
+						$nps_my_12 += $stat['history_nps']['12'][$month];
+						$stat['nps_my_month'][$month] = $nps_my_45 - $nps_my_12;
+						
+						$nps_all_45 += $count['all_nps']['45'][$month];
+						$nps_all_12 += $count['all_nps']['12'][$month];
+						$stat['nps_all_month'][$month] = $nps_all_45 - $nps_all_12;
+					}
+
+					$list = $this->pub->get_questions();
+					$stat['questions'] = $this->pub->user_questions($list);
+					if ( ! empty($stat['questions']))
+					{
+						$q_sum = array();
+						$q_num = array();
+						$this->db->where('users_id', $users_id);
+						$result = $this->db->get('sent_questions')->result_array();
+						foreach ($result as $row)
+						{
+							if ( ! isset($q_sum[$row['questions_id']]))
+							{
+								$q_sum[$row['questions_id']] = 0;
+							}
+							$q_sum[$row['questions_id']] += $row['stars'];
+							
+							if ( ! isset($q_num[$row['questions_id']]))
+							{
+								$q_num[$row['questions_id']] = 0;
+							}
+							$q_num[$row['questions_id']]++;
+						}
+						
+						foreach ($stat['questions'] as $key => $row)
+						{
+							$stat['questions'][$key]['average'] = 0;
+							if ( ! empty($q_num[$row['id']]))
+							{
+								$stat['questions'][$key]['average'] = number_format(round($q_sum[$row['id']] / $q_num[$row['id']], 1), 1);
+							}
+						}
+					}
+					
+					$this->db->where('users_id', $users_id);
+					$this->db->where('batches_id >', 0);
+					$this->db->where('status <>', 3);
+					$result = $this->db->get('sent')->result_array();
+					foreach ($result as $row)
+					{
+						$count['reply_all']++;
+						if ($row['status'] == 2)
+						{
+							$count['reply_only']++;
+							$check = 0;
+							foreach ($onlines as $key)
+							{
+								$check += $row[$key];
+							}
+
+							if ( ! empty($check))
+							{
+								$count['reply_click']++;
+							}
+						}
+							
+						if ( ! isset($count['reply_count'][$row['batches_id']]))
+						{
+							$count['reply_count'][$row['batches_id']]['all'] = 0;
+							$count['reply_count'][$row['batches_id']]['only'] = 0;
+							$count['reply_count'][$row['batches_id']]['click'] = 0;
+						}
+						
+						$count['reply_count'][$row['batches_id']]['all']++;
+						if ($row['status'] == 2)
+						{
+							$count['reply_count'][$row['batches_id']]['only']++;
+							$check = 0;
+							foreach ($onlines as $key)
+							{
+								$check += $row[$key];
+							}
+
+							if ( ! empty($check))
+							{
+								$count['reply_count'][$row['batches_id']]['click']++;
 							}
 						}
 					}

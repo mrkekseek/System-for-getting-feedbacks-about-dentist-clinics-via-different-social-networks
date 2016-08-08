@@ -937,7 +937,7 @@
 		$scope.area_stars.setOption({
 				tooltip: {trigger: "axis"},
 				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
-				legend: {orient: "horizontal", x: "center", y: "30", data: ['5 sterren', '4 sterren', '3 sterren', '2 sterren', '1 sterren', 'Beoordeling van uw praktijk', 'Landelijk gemiddelde']},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['5 sterren', '4 sterren', '3 sterren', '2 sterren', '1 sterren']},
 				calculable: true,
 				xAxis: [{type: 'category', data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
@@ -981,7 +981,7 @@
 		$scope.area_nps.setOption({
 				tooltip: {trigger: "axis"},
 				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
-				legend: {orient: "horizontal", x: "center", y: "30", data: ['Promotors', 'Passives', 'Detractors', 'NPS van uw praktijk', 'Landelijk gemiddelde']},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['Promotors', 'Passives', 'Detractors']},
 				calculable: true,
 				xAxis: [{type: 'category', data: ['Wait']}],
 				yAxis: [{type: 'value', boundaryGap: false}],
@@ -1009,7 +1009,7 @@
 				$scope.data = logger.check(data);
 				$scope.color = $scope.user.color || '#0F75BC';
 				$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
-		
+
 				if ($scope.data.for_user >= 30)
 				{
 					$scope.less_30 = false;
@@ -1030,7 +1030,6 @@
 						for (var m in $scope.data.average_all_month)
 						{
 							data.push($scope.data.average_all_month[m]);
-							//max = Math.max(max, $scope.data.average_all_month[m] * 1);
 						}
 						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
 						
@@ -1038,7 +1037,6 @@
 						for (var m in $scope.data.average_my_month)
 						{
 							data.push($scope.data.average_my_month[m]);
-							//max = Math.max(max, $scope.data.average_my_month[m] * 1);
 						}
 						series.push({type: 'line', name: 'Beoordeling van uw praktijk', data: data, itemStyle: {normal: {color: $scope.color, borderColor: $scope.color, lineStyle: {color: $scope.color}, areaStyle: {color: $scope.color_a}}}});
 						

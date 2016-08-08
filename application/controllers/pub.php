@@ -40,7 +40,8 @@
 		
 		function welcome()
 		{
-			redirect("/#/pages/online");
+			//redirect("/#/pages/online");
+			$this->pub->rating_history();
 		}
 		
 		function send_new()
