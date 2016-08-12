@@ -2871,9 +2871,9 @@ body .btn-primary.compose-prev:disabled {
 }
 
 .question_icon {
-	font-size: 20px;
+	font-size: 16px;
 	color: #B1B1B1;
-	vertical-align: middle;
+	vertical-align: baseline;
 }
 
 .nowrap-cell {
