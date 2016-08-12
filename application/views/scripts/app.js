@@ -3477,6 +3477,8 @@
 		$scope.doc = {};
 		$scope.doc.id = 0;
 		$scope.location = {};
+		$scope.loc = {};
+		$scope.loc.id = 0;
 		$scope.short = false;
 		$scope.feedback_success = false;
 		$scope.feedback = {};
@@ -3519,6 +3521,8 @@
 					$scope.users_id = $scope.i.user ? $scope.i.user.id : 0;
 					$scope.doctors_id = ($scope.i.info && $scope.i.info.doctor) ? $scope.i.info.doctor : 0;
 					$scope.doc.id = $scope.doctors_id * 1;
+					$scope.locations_id = ($scope.i.info && $scope.i.info.location) ? $scope.i.info.location : 0;
+					$scope.loc.id = $scope.locations_id * 1;
 					$scope.ex = $scope.i.info ? $scope.i.info.ex : $scope.ex;
 					$scope.limit = $scope.i.info ? $scope.i.info.limit : $scope.limit;
 					$scope.errors = $scope.i.info ? $scope.i.info.errors : $scope.errors;
@@ -3640,6 +3644,11 @@
 						temp.url = $scope.i.doctor.zorgkaart;
 					}
 					
+					if (s == "zorgkaart" && $scope.i.location && $scope.i.location.zorgkaart != '')
+					{
+						temp.url = $scope.i.location.zorgkaart;
+					}
+					
 					if ($scope.voted < 0)
 					{
 						temp.url = 'http://zorgkaartnederland.nl/';
@@ -3670,6 +3679,18 @@
 				if (result.doctor)
 				{
 					$scope.i.doctor = result.doctor;
+				}
+				$scope.rebuild_onlines();
+			});
+		};
+		
+		$scope.set_location = function() {
+			$scope.locations_id = $scope.loc.id;
+			$http.post("/pub/vote_loc/", {id: $scope.id, users_id: $scope.users_id, locations_id: $scope.locations_id}).success(function(data, status, headers, config) {
+				var result = logger.check(data);
+				if (result.location)
+				{
+					$scope.i.location = result.location;
 				}
 				$scope.rebuild_onlines();
 			});
