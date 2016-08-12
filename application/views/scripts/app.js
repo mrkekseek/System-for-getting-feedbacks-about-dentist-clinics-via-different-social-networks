@@ -4307,6 +4307,7 @@
 					$scope.result = logger.check(file.result);
 					if ($scope.result.error)
 					{
+						file.progress = 100;
 						$scope.status = 3;
 					}
 					else
@@ -4327,6 +4328,7 @@
 			{
 				if (response.status > 0)
 				{
+					file.progress = 100;
 					$scope.status = 3;
 				}
 			}, function (evt)
