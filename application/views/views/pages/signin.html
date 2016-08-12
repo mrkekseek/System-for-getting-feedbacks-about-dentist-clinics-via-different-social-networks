@@ -1,4 +1,4 @@
-<div class="page-signin" ng-class="{logged_in: logged_in}" ng-controller="authCtrl">
+<div class="page-signin" ng-class="{logged_in: logged_in, tfa: tfa}" ng-controller="authCtrl">
     <div class="signin-header">
         <section class="logo">
 			<div class="signin_logo">
@@ -52,200 +52,75 @@
 									ontvangt waardevolle feedback van uw patiënten.
 								</p>
 							</div>
-							
-							<!--div class="login_slide" ng-class="{prev: slide_step > 2, current: slide_step == 2, next: slide_step < 2}">
-								<p class="login_blue_title">
-									Waar bent u online te vinden?
-								</p>
-								
-								<p class="login_blue_text text-center">
-									Voordat u aan de slag gaat moeten we ervoor zorgen dat uw patiënten u
-									online kunnen vinden. Controleer of alles klopt en vul aan wat er mist.
-								</p>
-								
-								<div class="login_sep_10">
-								</div>
-
-								<div class="login_facebook_logo">
-									<img src="/application/views/images/login-facebook-logo.jpg" alt="Facebook" />
-								</div>
-								
-								<div class="login_sep_10">
-								</div>
-								
-								<p class="login_blue_text text-social">
-									Met 9 miljoen dagelijkse gebruikers in Nederland is Facebook de
-									plek waar Nederland online samenkomt. De ideale plek om uw
-									praktijk op de kaart te zetten.
-								</p>
-								
-								<div class="text-social">
-									<div class="row" ng-show=" ! facebook_login">
-										<div class="col-sm-5">
-											<a href="javascript:void(0);" class="btn btn-primary" ng-click="fb_login()">Log in met Facebook</a>
-										</div>
-										
-										<div class="col-sm-7">
-											<p class="facebook-login-text">
-												Log in met het persoonlijke Facebook account
-												waarmee u uw bedrijfspagina beheert.
-											</p>
-										</div>
-									</div>
-									
-									<div ng-show="facebook_login">
-										<input type="text" class="form-control simple-input" ng-model="user.facebook" placeholder="Plak hier de link naar uw bedrijfspagina." />
-									</div>
-								</div>
-								
-								<div class="login_sep_15">
-								</div>
-								
-								<p class="login-small-text text-center">
-									Nog geen Facebook bedrijfspagina?<br />
-									<a href="https://www.facebook.com/" target="_blank">Klik hier om er een te maken</a>
-								</p>
-							</div>
-							
-							<div class="login_slide" ng-class="{prev: slide_step > 3, current: slide_step == 3, next: slide_step < 3}">
-								<p class="login_blue_title">
-									Waar bent u online te vinden?
-								</p>
-
-								<div class="login_zorgkaart_logo">
-									<img src="/application/views/images/login-zorgkaart-logo.jpg" alt="Zorgkaart" />
-								</div>
-								
-								<div class="login_sep_10">
-								</div>
-								
-								<p class="login_blue_text text-social">
-									Zorgkaart is het grootste online platform voor het waarderen en
-									vergelijken van zorgverleners. De plek bij uitstek voor patiënten
-									die zoeken naar kwaliteitszorg.
-								</p>
-								
-								<div class="text-social">
-									<div>
-										<input type="text" class="form-control simple-input" ng-model="user.zorgkaart" placeholder="Plak hier de link naar uw bedrijfspagina." />
-									</div>
-								</div>
-								
-								<div class="login_sep_10">
-								</div>
-								
-								<p class="login-small-text">
-									U kunt de juiste URL voor uw Zorgkaart profiel vinden door op
-									www.zorgkaartnederland.nl naar uw praktijk te zoeken, op uw praktijk te klikken en
-									de URL te kopiëren van de pagina waarop u terechtkomt.
-								</p>
-								
-								<div class="login_sep_15">
-								</div>
-								
-								<p class="login-small-text text-center">
-									Nog geen Zorgkaart profiel?<br />
-									<a href="https://www.zorgkaartnederland.nl/" target="_blank">Klik hier om er een te maken</a>
-								</p>
-							</div>
-							
-							<div class="login_slide" ng-class="{prev: slide_step > 4, current: slide_step == 4, next: slide_step < 4}">
-								<p class="login_blue_title">
-									Waar bent u online te vinden?
-								</p>
-
-								<div class="login_google_logo">
-									<img src="/application/views/images/login-google-logo.png" alt="Google+" />
-								</div>
-								
-								<div class="login_sep_10">
-								</div>
-								
-								<p class="login_blue_text text-social">
-									Gewaardeerd worden op Google betekent sneller gevonden
-									worden. Ideaal, want de meeste patiënten gebruiken Google om
-									te zoeken naar zorgverleners bij hen in de buurt.
-								</p>
-								
-								<div class="text-social">
-									<div>
-										<input type="text" class="form-control simple-input" ng-model="user.google" placeholder="Plak hier de link naar uw bedrijfspagina." />
-									</div>
-								</div>
-								
-								<div class="login_sep_10">
-								</div>
-								
-								<p class="login-small-text">
-									U kunt de juiste URL voor uw bedrijfspagina vinden door op www.googleplus.com
-									naar uw praktijk te zoeken, op uw praktijk te klikken en de URL te kopiëren van de
-									pagina waarop u terechtkomt.
-								</p>
-								
-								<div class="login_sep_15">
-								</div>
-								
-								<p class="login-small-text text-center">
-									Nog geen Google bedrijfspagina?<br />
-									<a href="http://plus.google.com" target="_blank">Klik hier om er een te maken</a>
-								</p>
-							</div>
-							
-							<div class="login_slide" ng-class="{prev: slide_step > 5, current: slide_step == 5, next: slide_step < 5}">
-								<p class="login_blue_title">
-									Vul uw gegevens aan
-								</p>
-
-								<div class="login_sep_10">
-								</div>
-								
-								<p class="login_blue_text text-social text-center">
-									Om er zeker van te zijn dat alles klopt, willen we u vragen om deze
-									gegevens te controleren.
-								</p>
-								
-								<div class="text-social">
-									<div>
-										<label>Praktijknaam</label>
-										<input type="text" class="form-control simple-input" ng-model="user.username" value="" placeholder="Praktijknaam" />
-									</div>
-								</div>
-								
-								<div class="login_sep_10">
-								</div>
-								
-								<div class="text-social">
-									<div>
-										<label>Telefoonnummer</label>
-										<input type="text" class="form-control simple-input" ng-model="user.phone" value="" placeholder="Telefoonnummer" />
-									</div>
-								</div>
-							</div-->
 						</div>
-						
-						<!--div class="login_slide_controls">
-							<a href="javascript:void(0);" ng-class="{active: slide_step == 1}" ng-click="slide_step = 1"></a>
-							<a href="javascript:void(0);" ng-class="{active: slide_step == 2}" ng-click="slide_step = 2"></a>
-							<a href="javascript:void(0);" ng-class="{active: slide_step == 3}" ng-click="slide_step = 3"></a>
-							<a href="javascript:void(0);" ng-class="{active: slide_step == 4}" ng-click="slide_step = 4"></a>
-							<a href="javascript:void(0);" ng-class="{active: slide_step == 5}" ng-click="slide_step = 5"></a>
-						</div-->
+					</div>
+				</div>
+				
+				<div class="tfa-box">
+					<h1><a href="#/"><img src="application/views/images/logo_full.png" alt="{{main.brand}}" /></a></h1>
+					
+					<div class="login_line_gray">
 					</div>
 					
-					<!--div class="final_screen">
-						<p class="login_blue_title">
-							Gefeliciteerd!
-						</p>
-
-						<div class="login_sep_10">
+					<div class="login_slide_outer">
+						<div class="login_slide_box">
+							<div class="login_slide current" ng-class="{'hide': blocked}">
+								<p class="tfa-title" ng-show="code_valid != '0'">
+									Veilig inloggen op Patiëntenreview
+								</p>
+								
+								<p class="tfa-title error" ng-show="code_valid == '0'">
+									Deze code is onjuist. Probeer het opnieuw.
+								</p>
+								
+								<p class="tfa-text">
+									We hebben een SMS-bericht met een 5-cijferige inlogcode gestuurd naar het mobiele telefoonnummer dat aan uw account is gekoppeld. Vut de code hieronder in.
+								</p>
+								
+								<div class="tfa-inputs">
+									<div class="tfa-input">
+										<input type="text" class="form-control" ng-class="{'valid': code_valid == '1', 'invalid': code_valid == '0'}" id="code_1" ng-model="code_1" ng-keyup="code_change($event, 1)" maxlength="1" />
+									</div>
+									
+									<div class="tfa-input">
+										<input type="text" class="form-control" ng-class="{'valid': code_valid == '1', 'invalid': code_valid == '0'}" id="code_2" ng-model="code_2" ng-keyup="code_change($event, 2)" maxlength="1" />
+									</div>
+									
+									<div class="tfa-input">
+										<input type="text" class="form-control" ng-class="{'valid': code_valid == '1', 'invalid': code_valid == '0'}" id="code_3" ng-model="code_3" ng-keyup="code_change($event, 3)" maxlength="1" />
+									</div>
+									
+									<div class="tfa-input">
+										<input type="text" class="form-control" ng-class="{'valid': code_valid == '1', 'invalid': code_valid == '0'}" id="code_4" ng-model="code_4" ng-keyup="code_change($event, 4)"  maxlength="1" />
+									</div>
+									
+									<div class="tfa-input">
+										<input type="text" class="form-control" ng-class="{'valid': code_valid == '1', 'invalid': code_valid == '0'}" id="code_5" ng-model="code_5" ng-keyup="code_change($event, 5)"  maxlength="1" />
+									</div>
+								</div>
+								
+								<p class="tfa-small">
+									<a href="javascript:void(0);" ng-click="code_resend()" ng-show=" ! code_wait && count_valid != '0'">Ik heb geen code ontvangen</a>
+									<img src="/application/views/images/loader.gif" alt="" ng-show="code_wait" />
+									<span class="code_count" ng-show=" ! code_wait && count_valid == '0'">Poging {{code_count}} van 3. Na drie pogingen wordt de toegang tot uw account geblokkeerd.</span>
+								</p>
+							</div>
+							
+							<div class="login_slide current" ng-class="{'hide': ! blocked}">
+								<p class="tfa-title error">
+									De toegang tot uw account is geblokkeerd.
+								</p>
+								
+								<p class="tfa-text">
+									Neem contact op met de Patiëntenreview klantenservice voor het verkrijgen van instructies om de toegang tot uw account te herstellen.
+								</p>
+								
+								<p class="tfa-text">
+									Telefoonnummer: 040 304 15 96
+								</p>
+							</div>
 						</div>
-						
-						<p class="login_blue_text text-social text-center">
-							U bent nu klaar voor het sturen van de eerste beoordelingsverzoeken naar
-							uw patiënten. Dat kunt u doen door in het volgende scherm een Excel
-							bestand met e-mailadressen van patiënten te uploaden!
-						</p>
-					</div-->
+					</div>
 				</div>
 			</div>
         </section>
@@ -281,6 +156,7 @@
                 </form>
 
                 <div class="divider"></div>
+				
                 <section class="additional-info">
                     <p class="text-right">
                         <a href="#/pages/forgot-password">Hulp bij inloggen</a>
@@ -290,9 +166,6 @@
 			
 			<div class="after_login_button">
 				<button class="btn btn-success btn-lg btn-block text-center" ng-click="go()">Start rondleiding</button>
-				<!--button ng-show=" ! last_slide" class="btn btn-success btn-lg btn-block text-center" ng-click="inc_slide()">Ga verder</button>
-				<span></span>
-				<button ng-show="last_slide" class="btn btn-success btn-lg btn-block text-center" ng-click="go()">Stuur de eerste uitnodigingen</button-->
 			</div>
         </div>
     </div>

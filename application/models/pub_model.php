@@ -1752,87 +1752,229 @@
 				}
 				else
 				{
-					$now = time();
-					if ($row['status'] != 2 && $now >= $row['suspension'] && $row['account'] != 2)
+					if ($row['status'] != 2 && ! empty($row['mobile']))
 					{
-						$this->db->where("id", $row['id']);
-						$this->db->update("users", array("account" => 0, "account_stop" => 1));
-					}
-					
-					if ($row['status'] != 2 && $now <= $row['suspension'] && $row['account'] == 0)
-					{
-						$this->db->where("id", $row['id']);
-						$this->db->update("users", array("account" => 1, "account_stop" => 0));
-					}
-
-					$this->session->set_userdata(array("logged_in" => TRUE,
-													   "id" => $row['id'],
-													   "username" => $row['username'],
-													   "email" => $row['email'],
-													   "status" => $row['status'],
-													   "login" => $row['now'],
-													   "first" => (empty($row['login']) ? TRUE : FALSE)));
-					
-
-					if ($row['status'] == 2)
-					{
-						$this->session->set_userdata("admin_id", $row['id']);
-					}
-
-					if ($row['status'] != 2)
-					{
-						if ($row['admin_stop'])
+						if ( ! empty($row['sms_blocked']))
 						{
-							$this->errors[] = array("Dit account is inactief. Neem contact met ons op om de toegang tot uw account te herstellen.");
+							$this->errors[] = array("Account is blocked");
+							return FALSE;
 						}
 						else
 						{
-							$sessions_id = $now.'-'.$row['id'];
-							$this->session->set_userdata(array("sessions_id" => $sessions_id));
-							$this->db->insert("sessions", array("sessions_id" => $sessions_id, "users_id" => $row['id'], "users_login" => $now, "users_logout" => $now + 60));
-							
-							$row['first_time'] = empty($row['now']) ? TRUE : FALSE;
-							
-							$data_array = array("login" => $row['now'],
-												"now" => $now,
-												"average_last" => $row['average_now'],
-												"average_online_last" => $row['average_online_now']);
-												
-							if ($row['first_time'])
+							return $this->send_code($row['id'], $row['mobile']);
+						}
+					}
+					else
+					{
+						return $this->set_login_session($row['id']);
+					}
+				}
+			}
+		}
+		
+		function code_resend()
+		{
+			if ($this->session->userdata('tfa_id'))
+			{
+				$this->db->where('id', $this->session->userdata('tfa_id'));
+				$this->db->limit(1);
+				$row = $this->db->get('users')->row_array();
+				if ( ! empty($row['mobile']))
+				{
+					if ( ! empty($row['sms_blocked']))
+					{
+						$this->errors[] = array("Account is blocked");
+						return FALSE;
+					}
+					else
+					{
+						return $this->send_code($row['id'], $row['mobile']);
+					}
+				}
+			}
+			
+			return FALSE;
+		}
+		
+		function send_code($id = FALSE, $mobile = '')
+		{
+			mt_srand();
+			$code = mt_rand(10000, 99999);
+			$expire = time() + (15 * 60);
+			
+			$this->load->library('sms');
+			if ($this->sms->message($mobile, $code, date('d-m-Y H:m', $expire)))
+			{
+				$this->session->set_userdata(array('tfa_id' => $id));
+				
+				$data_array = array('sms_code' => $code,
+									'sms_expire' => $expire);
+				$this->db->where('id', $id);
+				if ($this->db->update('users', $data_array))
+				{
+					return TRUE;
+				}
+			}
+			
+			return FALSE;
+		}
+		
+		function code_check($post)
+		{
+			$this->db->where('id', $this->session->userdata('tfa_id'));
+			$this->db->limit(1);
+			$row = $this->db->get('users')->row_array();
+			if ( ! empty($row))
+			{
+				if ( ! empty($row['sms_blocked']))
+				{
+					$this->errors[] = array("Account is blocked");
+					return FALSE;
+				}
+				else
+				{
+					if ($post['code'] == $row['sms_code'])
+					{
+						if (time() <= $row['sms_expire'])
+						{
+							return $this->set_login_session();
+						}
+						else
+						{
+							$this->errors[] = array("SMS Code has expired");
+						}
+					}
+					else
+					{
+						$data_array = array();
+						$count = $row['sms_error_count'] + 1;
+						if ($row['sms_error_date'] == 0 || $row['sms_error_date'] <= (time() - 24 * 3600))
+						{
+							$data_array = array('sms_error_date' => time(),
+												'sms_error_count' => $count);
+							$this->db->where('id', $this->session->userdata('tfa_id'));
+							$this->db->update('users', $data_array);
+							$this->errors[] = array("Wrong SMS Code");
+							return array('count' => $count);
+						}
+						else
+						{
+							if ($count >= 3)
 							{
-								$data_array['trial_end'] = $now + 30 * 24 * 3600;
+								$data_array = array('sms_blocked' => TRUE,
+													'sms_error_date' => 0,
+													'sms_error_count' => 0);
+								$this->db->where('id', $this->session->userdata('tfa_id'));
+								$this->db->update('users', $data_array);
 							}
-
-							$this->db->where("id", $row['id']);
-							$this->db->update("users", $data_array);
-							
-							$data_array = array('users_id' => $row['id'],
-												'ip_address' => $_SERVER['REMOTE_ADDR'],
-												'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-												'date' => date('d-m-Y'),
-												'time' => date('H:i:s'),
-												'timestamp' => time());
-							$this->db->insert('login_attempts', $data_array);
-							
-							if ($row['first_time'])
+							else
 							{
-								$this->db->where_in("type", array(0, 1));
-								$result = $this->db->get("updates")->result_array();
-								foreach ($result as $val)
-								{
-									$data_array = array("users_id" => $row['id'],
-														"updates_id" => $val['id']);
-									$this->db->insert("updates_users", $data_array);
-								}
-								
-								$this->session->set_userdata(array("intro" => TRUE, "intro_step" => 1, "intro_online_step" => 0));
+								$data_array = array('sms_error_count' => $count);
+								$this->db->where('id', $this->session->userdata('tfa_id'));
+								$this->db->update('users', $data_array);
+								$this->errors[] = array("Wrong SMS Code");
+								return array('count' => $count);
 							}
 						}
 					}
-					
-					return $row;
 				}
 			}
+			
+			return FALSE;
+		}
+		
+		function set_login_session($id = FALSE)
+		{
+			$this->db->where("id", $id ? $id : $this->session->userdata('tfa_id'));
+			$this->db->limit(1);
+			$row = $this->db->get("users")->row_array();
+
+			if ( ! empty($row))
+			{
+				$this->session->unset_userdata(array('tfa_id'));
+				
+				$now = time();
+				if ($row['status'] != 2 && $now >= $row['suspension'] && $row['account'] != 2)
+				{
+					$this->db->where("id", $row['id']);
+					$this->db->update("users", array("account" => 0, "account_stop" => 1));
+				}
+				
+				if ($row['status'] != 2 && $now <= $row['suspension'] && $row['account'] == 0)
+				{
+					$this->db->where("id", $row['id']);
+					$this->db->update("users", array("account" => 1, "account_stop" => 0));
+				}
+
+				$this->session->set_userdata(array("logged_in" => TRUE,
+												   "id" => $row['id'],
+												   "username" => $row['username'],
+												   "email" => $row['email'],
+												   "status" => $row['status'],
+												   "login" => $row['now'],
+												   "first" => (empty($row['login']) ? TRUE : FALSE)));
+				
+
+				if ($row['status'] == 2)
+				{
+					$this->session->set_userdata("admin_id", $row['id']);
+				}
+
+				if ($row['status'] != 2)
+				{
+					if ($row['admin_stop'])
+					{
+						$this->errors[] = array("Dit account is inactief. Neem contact met ons op om de toegang tot uw account te herstellen.");
+					}
+					else
+					{
+						$sessions_id = $now.'-'.$row['id'];
+						$this->session->set_userdata(array("sessions_id" => $sessions_id));
+						$this->db->insert("sessions", array("sessions_id" => $sessions_id, "users_id" => $row['id'], "users_login" => $now, "users_logout" => $now + 60));
+						
+						$row['first_time'] = empty($row['now']) ? TRUE : FALSE;
+						
+						$data_array = array("login" => $row['now'],
+											"now" => $now,
+											"average_last" => $row['average_now'],
+											"average_online_last" => $row['average_online_now']);
+											
+						if ($row['first_time'])
+						{
+							$data_array['trial_end'] = $now + 30 * 24 * 3600;
+						}
+
+						$this->db->where("id", $row['id']);
+						$this->db->update("users", $data_array);
+						
+						$data_array = array('users_id' => $row['id'],
+											'ip_address' => $_SERVER['REMOTE_ADDR'],
+											'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+											'date' => date('d-m-Y'),
+											'time' => date('H:i:s'),
+											'timestamp' => time());
+						$this->db->insert('login_attempts', $data_array);
+						
+						if ($row['first_time'])
+						{
+							$this->db->where_in("type", array(0, 1));
+							$result = $this->db->get("updates")->result_array();
+							foreach ($result as $val)
+							{
+								$data_array = array("users_id" => $row['id'],
+													"updates_id" => $val['id']);
+								$this->db->insert("updates_users", $data_array);
+							}
+							
+							$this->session->set_userdata(array("intro" => TRUE, "intro_step" => 1, "intro_online_step" => 0));
+						}
+					}
+				}
+				
+				return $row;
+			}
+			
+			return FALSE;
 		}
 		
 		function login_as_user($post)

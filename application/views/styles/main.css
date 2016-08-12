@@ -637,11 +637,13 @@ section.logo {
 	max-height: 50px;
 }
 
-.logged_in .signin_logo > h1 {
+.logged_in .signin_logo > h1,
+.tfa .signin_logo > h1 {
 	height: 0;
 }
 
-.logged_in .signin_logo {
+.logged_in .signin_logo,
+.tfa .signin_logo {
 	margin-bottom: 20px;
 }
 
@@ -657,6 +659,85 @@ section.logo {
 
 .after_login.last_slide {
 	height: 221px;
+}
+
+.tfa-box {
+	overflow: hidden;
+	height: 0;
+	transition: all 0.3s ease 0s;
+}
+
+.tfa .tfa-box {
+	height: 310px;
+}
+
+.tfa-title {
+	color: #0F75BC;
+	text-align: center;
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.tfa-title.error {
+	color: #e96562;
+}
+
+.tfa-text {
+	color: #999;
+	text-align: center;
+	font-size: 14px;
+	padding: 15px 30px;
+}
+
+.tfa-inputs {
+	display: table;
+	margin: 0 auto;
+}
+
+.tfa-input {
+	width: 45px;
+	float: left;
+}
+
+.tfa-input:not(:first-of-type) {
+	margin-left: 10px;
+}
+
+.tfa-input .form-control {
+	font-size: 30px;
+	border: solid #999 1px;
+	color: #999;
+	padding: 5px;
+	border-radius: 5px;
+	text-align: center;
+	height: 50px;
+	font-weight: bold;
+	border: solid transparent 2px;
+	box-shadow: inset 0 -1px 3px rgba(0, 0, 0, 0.2);
+	background: linear-gradient(to bottom, #fff, #f0f0f0);
+}
+
+.tfa-input .form-control:not(.valid):not(.invalid):focus {
+	border-color: #0f75bc;
+}
+
+.tfa-small {
+	text-align: center;
+	padding-top: 5px;
+}
+
+.tfa-small a {
+	font-size: 13px;
+	color: #bbb;
+}
+
+.tfa-small span {
+	font-size: 13px;
+	color: #e96562;
+}
+
+.page-signin .logo .tfa-small a:hover {
+	text-decoration: underline;
 }
 
 .login_slide_outer {
@@ -911,7 +992,8 @@ section.logo {
 	transition: all 0.3s ease 0s;
 }
 
-.logged_in  .form-container.login-form-container {
+.logged_in .form-container.login-form-container,
+.tfa .form-container.login-form-container {
 	height: 0;
 }
 
@@ -923,7 +1005,7 @@ section.logo {
 	transition: all 0.3s ease 0s;
 }
 
-.logged_in  .after_login_button {
+.logged_in .after_login_button {
 	height: 46px;
 }
 

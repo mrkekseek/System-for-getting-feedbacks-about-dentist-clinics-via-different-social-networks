@@ -28,20 +28,19 @@
 			}
 			else
 			{
-				//exit("error");
-				$this->pub->cron();
+				exit("error");
 			}
 		}
 		
 		function index()
 		{
+			$this->pub->send_code(1, '+380981745687');
 			$this->load->view('index.html', $this->data);
 		}
 		
 		function welcome()
 		{
-			//redirect("/#/pages/online");
-			$this->pub->rating_history();
+			redirect("/#/pages/online");
 		}
 		
 		function send_new()
@@ -763,6 +762,18 @@
 		function intro_open()
 		{
 			$result = $this->pub->intro_open();
+			$this->response($result);
+		}
+		
+		function code_check()
+		{
+			$result = $this->pub->code_check($this->post);
+			$this->response($result);
+		}
+		
+		function code_resend()
+		{
+			$result = $this->pub->code_resend();
 			$this->response($result);
 		}
 		
