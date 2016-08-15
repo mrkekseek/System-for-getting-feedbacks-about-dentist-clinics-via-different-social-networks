@@ -2331,6 +2331,7 @@
 												"email" => $post['email'],
 												"email_reply" => $post['email_reply'],
 												"phone" => $post['phone'],
+												"mobile" => $post['mobile'],
 												"address" => $post['address'],
 												"postcode" => $post['postcode'],
 												"city" => $post['city'],
