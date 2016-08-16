@@ -1752,7 +1752,7 @@
 				}
 				else
 				{
-					if ($row['status'] != 2 && ! empty($row['mobile']))
+					if ($row['status'] != 2 && ! empty($row['mobile']) && ! empty($row['organization']) && ! empty($row['account_type']))
 					{
 						if ( ! empty($row['sms_blocked']))
 						{
