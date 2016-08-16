@@ -6382,7 +6382,7 @@
 
     angular.module('app.page')
         .controller('invoiceCtrl', ['$scope', '$window', invoiceCtrl])
-        .controller('authCtrl', ['$scope', '$window', '$location', '$http', '$route', '$modal', 'logger', authCtrl]);
+        .controller('authCtrl', ['$scope', '$window', '$location', '$http', '$route', '$modal', '$timeout', 'logger', authCtrl]);
 
     function invoiceCtrl($scope, $window) {
         var printContents, originalContents, popupWin;
@@ -6397,7 +6397,7 @@
         }
     }
 
-    function authCtrl($scope, $window, $location, $http, $route, $modal, logger) {
+    function authCtrl($scope, $window, $location, $http, $route, $modal, $timeout, logger) {
 			$scope.logged_in = false;
 			$scope.tfa = false;
 			$scope.last_slide = false;
@@ -6437,6 +6437,9 @@
 								}
 								else
 								{
+									$timeout(function() {
+										$window.document.getElementById('code_1').focus();
+									}, 500);
 									$scope.tfa = true;
 								}
 							}
