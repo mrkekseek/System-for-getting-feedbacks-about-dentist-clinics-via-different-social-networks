@@ -4844,7 +4844,138 @@
 			return FALSE;
 		}
 		
-		function stat_chart3($post)
+		function stat_filter()
+		{
+			$data = array();
+			if ($this->logged_in())
+			{
+				$users_id = $this->session->userdata("id");
+				$this->db->where('id', $users_id);
+				$this->db->limit(1);
+				$user = $this->db->get("users")->row_array();
+				
+				$this->db->where("status <>", 3);
+				$this->db->where("users_id", $users_id);
+				$result = $this->db->get("sent")->result_array();
+				foreach ($result as $row)
+				{
+					if ( ! empty($row['treatment']))
+					{
+						$data['treatment'][] = $row['treatment'];
+					}
+					
+					if ( ! empty($row['doctor']))
+					{
+						$data['doctor'][] = $row['doctor'];
+					}
+					
+					if ( ! empty($row['location']))
+					{
+						$data['location'][] = $row['location'];
+					}
+					
+					if ( ! empty($row['facebook']))
+					{
+						$data['online'][] = array('id' => 'facebook', 'name' => 'Facebook');
+					}
+					
+					if ( ! empty($row['google']))
+					{
+						$data['online'][] = array('id' => 'google', 'name' => 'Google');
+					}
+					
+					if ( ! empty($row['zorgkaart']))
+					{
+						$data['online'][] = array('id' => 'zorgkaart', 'name' => 'Zorgkaart Nederland');
+					}
+					
+					if ( ! empty($row['telefoonboek']))
+					{
+						$data['online'][] = array('id' => 'telefoonboek', 'name' => 'Telefoonboek');
+					}
+					
+					if ( ! empty($row['vergelijkmondzorg']))
+					{
+						$data['online'][] = array('id' => 'vergelijkmondzorg', 'name' => 'Vergelijk Mondzorg');
+					}
+					
+					if ( ! empty($row['independer']))
+					{
+						$data['online'][] = array('id' => 'independer', 'name' => 'Independer');
+					}
+					
+					if ( ! empty($row['kliniekoverzicht']))
+					{
+						$data['online'][] = array('id' => 'kliniekoverzicht', 'name' => 'Kliniekoverzicht');
+					}
+					
+					if ( ! empty($row['own']))
+					{
+						$data['online'][] = array('id' => 'own', 'name' => empty($user['own_name']) ? 'Aangepaste doorverwijzing' : $user['own_name']);
+					}
+				}
+				
+				$data['treatment'] = array_values(array_unique($data['treatment']));
+				$data['doctor'] = array_values(array_unique($data['doctor']));
+				$data['location'] = array_values(array_unique($data['location']));
+			}
+			
+			sort($data['treatment']);
+			sort($data['online']);
+			
+			if ( ! empty($data['doctor']))
+			{
+				$items = array();
+				$this->db->order_by('firstname asc, lastname asc');
+				$this->db->where_in('id', $data['doctor']);
+				$result = $this->db->get('doctors')->result_array();
+				foreach ($result as $row)
+				{
+					$items[] = array('id' => $row['id'], 'name' => implode(' ', array($row['title'], $row['firstname'], $row['lastname'])));
+				}
+				$data['doctor'] = $items;
+			}
+			
+			if ( ! empty($data['location']))
+			{
+				$items = array();
+				$this->db->order_by('title asc');
+				$this->db->where_in('id', $data['location']);
+				$result = $this->db->get('locations')->result_array();
+				foreach ($result as $row)
+				{
+					$items[] = array('id' => $row['id'], 'name' => $row['title']);
+				}
+				$data['location'] = $items;
+			}
+			
+			$questions_ids = array();
+			$this->db->group_by('questions_id');
+			$this->db->where('users_id', $users_id);
+			$result = $this->db->get('sent_questions')->result_array();
+			foreach ($result as $row)
+			{
+				$questions_ids[] = $row['questions_id'];
+			}
+			
+			$data['question'] = array();
+			if ( ! empty($questions_ids))
+			{
+				$items = array();
+				$this->db->order_by('question_name asc');
+				$this->db->where_in('id', $questions_ids);
+				$result = $this->db->get('rating_questions')->result_array();
+				foreach ($result as $row)
+				{
+					$items[] = array('id' => $row['id'], 'name' => $row['question_name']);
+				}
+				$data['question'] = $items;
+			}
+
+			return $data;
+		}
+		
+		function stat_chart2($post)
 		{
 			if ($this->logged_in())
 			{
@@ -4852,6 +4983,82 @@
 				$this->db->where('id', $users_id);
 				$this->db->limit(1);
 				$user = $this->db->get("users")->row_array();
+				
+				if ( ! empty($post['filter']))
+				{
+					$filter = array();
+					foreach ($post['filter'] as $row)
+					{
+						if ( ! empty($row['value']))
+						{
+							$filter[$row['filter']][] = $row['value'];
+						}
+					}
+					
+					$sent_ids = array();
+					if ( ! empty($filter['question']))
+					{
+						$this->db->where_in('questions_id', $filter['question']);
+						$this->db->where('users_id', $users_id);
+						$result = $this->db->get('sent_questions')->result_array();
+						foreach ($result as $row)
+						{
+							$sent_ids[] = $row['sent_id'];
+						}
+					}
+					
+					if ( ! empty($sent_id))
+					{
+						$this->db->where_in('id', $sent_ids);
+					}
+					
+					foreach ($filter as $key => $val)
+					{
+						if ( ! empty($val))
+						{
+							if (in_array($key, array('doctor', 'location', 'treatment')))
+							{
+								$this->db->where_in($key, $val);
+							}
+							
+							if ($key == 'online')
+							{
+								foreach ($val as $online)
+								{
+									$this->db->where($online.' >', 0);
+								}
+							}
+							
+							if ($key == 'date')
+							{
+								$query = array();
+								foreach ($val as $date)
+								{
+									$time = array();
+									if ( ! empty($date['from']))
+									{
+										$time[] = "`last` >= ".strtotime($date['from']);
+									}
+									
+									if ( ! empty($date['to']))
+									{
+										$time[] = "`last` < ".strtotime($date['to']);
+									}
+									
+									if ( ! empty($time))
+									{
+										$query[] = '('.implode(' AND ', $time).')';
+									}
+								}
+								
+								if ( ! empty($query))
+								{
+									$this->db->where('('.implode(' OR ', $query).')');
+								}
+							}
+						}
+					}
+				}
 				
 				$this->db->order_by("last", "asc");
 				$this->db->where("status <>", 3);
@@ -4864,6 +5071,7 @@
 					$stat['for_user'] = 0;
 					$stat['stars_count'] = array(0, 0, 0, 0, 0, 0);
 					$stat['average_month_x'] = array();
+					$stat['average_month_key'] = array();
 					$stat['average_month'] = array();
 					$stat['average_my_month'] = array();
 					$stat['average_all_month'] = array();
@@ -4895,37 +5103,44 @@
 					$count['all_month_num'] = array();
 					$count['all_nps'] = array();
 
+					$start_date = (time() - 365 * 24 * 3600) > $user['signup'] ? (time() - 365 * 24 * 3600) : $user['signup'];
+					$month_start = date('n', $start_date);
+					$year_start = date('Y', $start_date);
 					$month_finish = date('n');
 					$year_finish = date('Y');
+					while ( ! ($month_start >= $month_finish && $year_start >= $year_finish))
+					{
+						$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
+						$stat['average_month_key'][] = $year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT);
+						
+						$month_start++;
+						if ($month_start > 12)
+						{
+							$month_start = 1;
+							$year_start++;
+						}
+					}
+
 					for ($i = 1; $i <= 5; $i++)
 					{
-						$month_start = date('n', $user['activation']);
-						$year_start = date('Y', $user['activation']);
-
-						while ( ! ($month_start == $month_finish && $year_start == $year_finish))
+						foreach ($stat['average_month_key'] as $key)
 						{
-							$stat['average_month'][$i][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
-							$count['my_month_sum'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
-							$count['my_month_num'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
-							$count['all_month_sum'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
-							$count['all_month_num'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
-							$count['all_nps']['12'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
-							$count['all_nps']['45'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
-							if ($i == 1)
-							{
-								$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
-								$stat['history_nps']['12'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
-								$stat['history_nps']['3'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
-								$stat['history_nps']['45'][$year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT)] = 0;
-							}
-
-							$month_start++;
-							if ($month_start > 12)
-							{
-								$month_start = 1;
-								$year_start++;
-							}
+							$stat['average_month'][$i][$key] = 0;
 						}
+					}
+
+					foreach ($stat['average_month_key'] as $key)
+					{
+						$stat['history_nps']['12'][$key] = 0;
+						$stat['history_nps']['3'][$key] = 0;
+						$stat['history_nps']['45'][$key] = 0;
+						
+						$count['my_month_sum'][$key] = 0;
+						$count['my_month_num'][$key] = 0;
+						$count['all_month_sum'][$key] = 0;
+						$count['all_month_num'][$key] = 0;
+						$count['all_nps']['12'][$key] = 0;
+						$count['all_nps']['45'][$key] = 0;
 					}
 					
 					$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
@@ -4938,7 +5153,7 @@
 							$month = date('Y-m', $row['last']);
 						}
 
-						if ($row['users_id'] == $this->session->userdata("id"))
+						if ($row['users_id'] == $users_id)
 						{
 							if ($row['stars'] > 0)
 							{
@@ -5178,7 +5393,7 @@
 			return FALSE;
 		}
 		
-		function stat_chart2($post)
+		function stat_chart2_new($post)
 		{
 			if ($this->logged_in())
 			{
