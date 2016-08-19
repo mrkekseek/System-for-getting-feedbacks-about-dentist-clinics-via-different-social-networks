@@ -40,8 +40,19 @@
 		
 		function welcome()
 		{
-			//redirect("/#/pages/online");
-			$this->pub->rating_history();
+			redirect("/#/pages/online");
+		}
+		
+		function fb_logged()
+		{
+			$this->load->library('Facebook');
+			$fb_token = $this->facebook->save_token();
+			$this->pub->save_facebook_token($fb_token);
+			
+			echo "<script type='text/javascript'>";
+			echo "window.opener.fb_callback();";
+			echo "window.close();";
+			echo "</script>";
 		}
 		
 		function send_new()
@@ -568,13 +579,7 @@
 			$result = $this->pub->click($this->post);
 			$this->response($result);
 		}
-		
-		function save_facebook_token()
-		{
-			$result = $this->pub->save_facebook_token($this->post);
-			$this->response($result);
-		}
-		
+
 		function send_feedback()
 		{
 			$result = $this->pub->send_feedback($this->post);

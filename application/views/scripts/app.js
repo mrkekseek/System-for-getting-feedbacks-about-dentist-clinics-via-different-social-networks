@@ -572,100 +572,64 @@
 		$scope.first_time = true;
 		$scope.ready = false;
 		$scope.stat = {};
-		$scope.donutChart2 = {};
-		$scope.type = "all";
-		$scope.show_difference = false;
 
-        $scope.donutChart2.data = [
-			{
-                label: "Geen reactie",
-                data: 0
-            }, {
-                label: "1 ster",
-                data: 0
-            }, {
-                label: "2 sterren",
-                data: 0
-            }, {
-                label: "3 sterren",
-                data: 0
-            }, {
-                label: "4 sterren",
-                data: 0
-            }, {
-                label: "5 sterren",
-                data: 0
-            }
-        ];
+		$scope.get_dashboard = function() {
+			$http.get("/pub/stat_dashboard/").success(function(data, status, headers, config) {
+				$scope.stat = logger.check(data);
+				$scope.ready = true;
 
-        $scope.donutChart2.options = {
-            series: {
-                pie: {
-                    show: true,
-                    innerRadius: 0.45
-                }
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
-            },
-            colors: ["#1BB7A0", "#39B5B9", "#52A3BB", "#619CC4", "#6D90C5"],
-            tooltip: true,
-            tooltipOpts: {
-                content: "%p.0%, %s",
-                defaultTheme: false
-            }
-        };
-
-		$http.get("/pub/stat_dashboard/").success(function(data, status, headers, config) {
-			var average_online = $scope.stat.average_online ? $scope.stat.average_online : 0;
-			$scope.stat = logger.check(data);
-			$scope.show_difference = ($scope.stat.all >= 10);
-			$scope.ready = true;
-			$scope.show_average_online = false;
-			$scope.show_fb_login = false;
-
-			if ($scope.stat.average)
-			{
-				$scope.stat.average = ($scope.stat.average * 1).toFixed(1);
-				$scope.first_time = false;
-				for (var key in $scope.stat.diagram)
+				if ($scope.stat.average)
 				{
-					$scope.donutChart2.data[key].data = $scope.stat.diagram[key];
+					$scope.stat.average = ($scope.stat.average * 1).toFixed(1);
+					$scope.first_time = false;
 				}
-			}
-
-			$scope.stat.reviews = [];
-			if ($scope.stat.google && $scope.stat.google.reviews && $scope.stat.google.reviews[0])
-			{
-				for (var key in $scope.stat.google.reviews)
+				
+				if ($scope.stat.average_online)
 				{
-					$scope.stat.reviews.push($scope.stat.google.reviews[key]);
+					$scope.stat.average = ($scope.stat.average_online * 1).toFixed(1);
 				}
-			}
 
-			if ($scope.stat.zorgkaart && $scope.stat.zorgkaart.reviews && $scope.stat.zorgkaart.reviews[0])
-			{
-				for (var key in $scope.stat.zorgkaart.reviews)
+				$scope.stat.reviews = [];
+				if ($scope.stat.facebook && $scope.stat.facebook.reviews && $scope.stat.facebook.reviews[0])
 				{
-					$scope.stat.reviews.push($scope.stat.zorgkaart.reviews[key]);
+					for (var key in $scope.stat.facebook.reviews)
+					{
+						$scope.stat.reviews.push($scope.stat.facebook.reviews[key]);
+					}
 				}
-			}
-			
-			if ($scope.stat.independer && $scope.stat.independer.reviews && $scope.stat.independer.reviews[0])
-			{
-				for (var key in $scope.stat.independer.reviews)
+				
+				if ($scope.stat.google && $scope.stat.google.reviews && $scope.stat.google.reviews[0])
 				{
-					$scope.stat.reviews.push($scope.stat.independer.reviews[key]);
+					for (var key in $scope.stat.google.reviews)
+					{
+						$scope.stat.reviews.push($scope.stat.google.reviews[key]);
+					}
 				}
-			}
 
-			$scope.stat.average_online = average_online;
-			$scope.online();
-		});
+				if ($scope.stat.zorgkaart && $scope.stat.zorgkaart.reviews && $scope.stat.zorgkaart.reviews[0])
+				{
+					for (var key in $scope.stat.zorgkaart.reviews)
+					{
+						$scope.stat.reviews.push($scope.stat.zorgkaart.reviews[key]);
+					}
+				}
+				
+				if ($scope.stat.independer && $scope.stat.independer.reviews && $scope.stat.independer.reviews[0])
+				{
+					for (var key in $scope.stat.independer.reviews)
+					{
+						$scope.stat.reviews.push($scope.stat.independer.reviews[key]);
+					}
+				}
+				
+				if ($scope.stat.reviews)
+				{
+					$scope.stat.reviews.sort(function(a, b) { return (a.time > b.time) ? -1 : ((a.time < b.time) ? 1 : 0); });
+				}
+			});
+		};
+		
+		$scope.get_dashboard();
 
 		$scope.letters = [];
 		$http.post("/pub/inbox/", {filter: {stars: "none"}, limit: 10}).success(function(data, status, headers, config) {
@@ -685,196 +649,15 @@
 			}
 		};
 
-		$scope.facebook = 0;
-		$scope.facebook_link = "";
-		$scope.facebook_token = "";
-		$scope.init = function(facebook_link, facebook_token)
-		{
-			$scope.facebook_link = facebook_link;
-			$scope.facebook_token = facebook_token;
-		};
-
-		$scope.online = function()
-		{
-			if ($scope.facebook_link != "")
-			{
-				FB.getLoginStatus(function(response) {
-					if (response.status === 'connected')
-					{
-						$scope.online_continue();
-					}
-					else
-					{
-						$timeout(function() {
-							$scope.show_fb_login = '1';
-						});
-					}
-				 });
-			}
-			else
-			{
-				$scope.print_online();
-			}
-		};
-
 		$scope.fb_login = function()
 		{
-			FB.login(function() {
-				$scope.online_continue();
-			}, {scope: 'manage_pages'});
+			$window['fb_callback'] = $scope.fb_callback;
+			$window.open($scope.stat.fb_link, "Facebook Login", "height=300,width=500");
 		};
-
-		$scope.get_facebook_token = function()
+		
+		$scope.fb_callback = function()
 		{
-			if ($scope.facebook_token == "")
-			{
-				var id = $scope.facebook_link.split("/")[3];
-				FB.api("/" + id, function (response) {
-					if (response && ! response.error)
-					{
-						$scope.facebook_id = response.id;
-						FB.api("/me/accounts", function (response) {
-							if (response && ! response.error && response.data)
-							{
-								for (var key in response.data)
-								{
-									if (response.data[key].id == id)
-									{
-										$scope.facebook_token = response.data[key].access_token;
-
-										$http.post("/pub/save_facebook_token/", {token: $scope.facebook_token});
-									}
-								}
-							}
-						});
-					}
-				});
-			}
-
-			return $scope.facebook_token;
-		};
-
-		$scope.facebook_id = 0;
-		$scope.online_continue = function()
-		{
-			var token = $scope.get_facebook_token();
-			if (token)
-			{
-				FB.api("/" + $scope.facebook_id + "/ratings?access_token=" + token, function (response) {
-					if (response && ! response.error)
-					{
-						var reviews = [];
-						for (var key in response.data)
-						{
-							if (response.data[key].review_text)
-							{
-								reviews.push({text: response.data[key].review_text, rating: response.data[key].rating, link: $scope.facebook_link, date: "", time: 0});
-							}
-						}
-
-						$scope.stat.facebook.reviews = reviews;
-
-						if ($scope.stat.facebook.reviews && $scope.stat.facebook.reviews[0])
-						{
-							$scope.stat.reviews.push($scope.stat.facebook.reviews[0]);
-						}
-
-						var average = 0;
-						for (var i = 0; i < response.data.length; i++)
-						{
-							average += response.data[i].rating;
-						}
-
-						if (average > 0)
-						{
-							$scope.facebook = Math.round(average / response.data.length * 100) / 100;
-						}
-					}
-
-					$scope.print_online();
-				});
-			}
-			else
-			{
-				$scope.print_online();
-			}
-		};
-
-		$scope.last = {average: 0, average_online: 0};
-		$scope.first_time_init = true;
-		$scope.print_online = function(type)
-		{
-			$scope.type = type || "all";
-
-			$scope.stat.average_online = 0;
-			var all_count = 0;
-			if ($scope.facebook > 0)
-			{
-				$scope.stat.average_online += $scope.facebook * 1;
-				all_count++;
-			}
-
-			if ($scope.stat.google && $scope.stat.google.rating && $scope.stat.google.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.google.rating * 1;
-				all_count++;
-			}
-
-			if ($scope.stat.zorgkaart && $scope.stat.zorgkaart && $scope.stat.zorgkaart.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.zorgkaart.rating * 1;
-				all_count++;
-			}
-	
-			if ($scope.stat.independer && $scope.stat.independer && $scope.stat.independer.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.independer.rating * 1;
-				all_count++;
-			}
-
-			if ($scope.stat.telefoonboek && $scope.stat.telefoonboek && $scope.stat.telefoonboek.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.telefoonboek.rating * 1;
-				all_count++;
-			}
-
-			if (all_count > 0)
-			{
-				$scope.stat.average_online = Math.round($scope.stat.average_online / all_count * 10) / 10;
-			}
-
-			switch ($scope.type)
-			{
-				case "facebook": $scope.stat.average_online = $scope.facebook; break;
-				case "google": $scope.stat.average_online = $scope.stat.google.rating; break;
-				case "zorgkaart": $scope.stat.average_online = $scope.stat.zorgkaart.rating; break;
-				case "independer": $scope.stat.average_online = $scope.stat.independer.rating; break;
-				case "telefoonboek": $scope.stat.average_online = $scope.stat.telefoonboek.rating; break;
-			}
-
-			if ($scope.first_time_init)
-			{
-				$scope.first_time_init = false;
-
-				$http.post("/pub/last_dashboard/", {average: $scope.stat.average, average_online: $scope.stat.average_online}).success(function(data, status, headers, config) {
-					$scope.last = logger.check(data);
-				});
-			}
-			
-			if ($scope.stat.average_online)
-			{
-				$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
-			}
-
-			$timeout(function() {
-				$scope.show_average_online = '1';
-				$scope.show_fb_login = false;
-			});
-			
-			if ($scope.stat.reviews)
-			{
-				$scope.stat.reviews.sort(function(a, b) { return (a.time > b.time) ? -1 : ((a.time < b.time) ? 1 : 0); });
-			}
+			$scope.get_dashboard();
 		};
     }
 
@@ -1204,582 +987,6 @@
 				array.push(i);
 			}
 			return array;
-		};
-		
-		$scope.go_to_compose = function()
-		{
-			$location.url("/mail/compose");
-		};
-
-		$scope.online = function()
-		{
-			if ($scope.facebook_link != "")
-			{
-				FB.getLoginStatus(function(response) {
-					if (response.status === 'connected')
-					{
-						$scope.online_continue();
-					}
-					else
-					{
-						$timeout(function() {
-							$scope.show_fb_login = '1';
-						});
-					}
-				 });
-			}
-			else
-			{
-				$scope.print_online();
-			}
-		};
-
-		$scope.fb_login = function()
-		{
-			FB.login(function() {
-				$scope.online_continue();
-			}, {scope: 'manage_pages'});
-		};
-
-		$scope.get_facebook_token = function()
-		{
-			if ($scope.facebook_token == "")
-			{
-				var id = $scope.facebook_link.split("/")[3];
-				FB.api("/" +id, function (response) {
-					if (response && ! response.error)
-					{
-						$scope.facebook_id = response.id;
-						FB.api("/me/accounts", function (response) {
-							if (response && ! response.error && response.data)
-							{
-								for (var key in response.data)
-								{
-									if (response.data[key].id == id)
-									{
-										$scope.facebook_token = response.data[key].access_token;
-
-										$http.post("/pub/save_facebook_token/", {token: $scope.facebook_token});
-									}
-								}
-							}
-						});
-					}
-				});
-			}
-
-			return $scope.facebook_token;
-		};
-
-		$scope.facebook_reviews = [];
-		$scope.facebook_id = 0;
-		$scope.online_continue = function()
-		{
-			var token = $scope.get_facebook_token();
-			if (token)
-			{
-				FB.api("/" + $scope.facebook_id + "/ratings?access_token=" + token, function (response) {
-					if (response && ! response.error)
-					{
-						var reviews = [];
-						for (var key in response.data)
-						{
-							if (response.data[key].review_text && reviews.length < 2)
-							{
-								reviews.push({text: response.data[key].review_text, rating: response.data[key].rating, link: $scope.facebook_link});
-							}
-						}
-
-						$scope.facebook_reviews = reviews;
-
-						var average = 0;
-						for (var i = 0; i < response.data.length; i++)
-						{
-							average += response.data[i].rating;
-						}
-
-						if (average > 0)
-						{
-							$scope.facebook = Math.round(average / response.data.length * 100) / 100;
-						}
-					}
-
-					$scope.print_online();
-				});
-			}
-			else
-			{
-				$scope.print_online();
-			}
-		};
-
-		$scope.last = {average: 0, average_online: 0};
-		$scope.first_time_init = true;
-		$scope.print_online = function(type)
-		{
-			$scope.type = type || "all";
-
-			$scope.stat.average_online = 0;
-			var all_count = 0;
-			if ($scope.facebook > 0)
-			{
-				$scope.stat.average_online += $scope.facebook * 1;
-				all_count++;
-			}
-
-			if ($scope.stat.google && $scope.stat.google.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.google.rating * 1;
-				all_count++;
-			}
-
-			if ($scope.stat.zorgkaart && $scope.stat.zorgkaart.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.zorgkaart.rating * 1;
-				all_count++;
-			}
-			
-			if ($scope.stat.independer && $scope.stat.independer.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.independer.rating * 1;
-				all_count++;
-			}
-			
-			if ($scope.stat.telefoonboek && $scope.stat.telefoonboek.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.telefoonboek.rating * 1;
-				all_count++;
-			}
-
-			$scope.stat.average_online = Math.round($scope.stat.average_online / all_count * 100) / 100;
-
-			switch ($scope.type)
-			{
-				case "facebook": $scope.stat.average_online = $scope.facebook; break;
-				case "google": $scope.stat.average_online = $scope.stat.google.rating; break;
-				case "zorgkaart": $scope.stat.average_online = $scope.stat.zorgkaart.rating; break;
-				case "independer": $scope.stat.average_online = $scope.stat.independer.rating; break;
-				case "telefoonboek": $scope.stat.average_online = $scope.stat.telefoonboek.rating; break;
-			}
-
-			if ($scope.first_time_init)
-			{
-				$scope.first_time_init = false;
-
-				$http.post("/pub/last_dashboard/", {average: $scope.stat.average, average_online: $scope.stat.average_online}).success(function(data, status, headers, config) {
-					$scope.last = logger.check(data);
-				});
-			}
-
-			if ($scope.stat.average_online)
-			{
-				$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
-			}
-			
-			$timeout(function() {
-				$scope.show_average_online = '1';
-				$scope.show_fb_login = false;
-			});
-		};
-    }
-
-})();
-;
-(function () {
-    'use strict';
-
-    angular.module('app')
-        .controller('ChartsCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', ChartsCtrl]); // overall control
-
-    function ChartsCtrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
-		$scope.first_time = false;
-		$scope.ready = false;
-		$scope.show_difference = false;
-		$scope.stat = {};
-		$scope.filter = {average: 0,
-						 stars: 0,
-						 feedbacks: 0,
-						 diagram: 0,
-						 online: 0,
-						 doctors: 0,
-						 vs: 0,
-						 days: 2,
-						 nps: {bad: 0, good: 0, delta: 0},
-						 doctor: 0,
-						 compare: 0};
-		$scope.donutChart2 = {};
-		$scope.donutChartOnline = {};
-		$scope.donutChartDoctors = {};
-		
-		$scope.doctors = [];
-		$http.post("/pub/get_doctors/").success(function(data, status, headers, config) {
-			var result = logger.check(data);
-			$scope.doctors = [];
-			for (var key in result)
-			{
-				$scope.doctors.push(result[key]);
-			}
-		});
-
-        $scope.donutChart2.data = [
-			{
-                label: "Geen reactie",
-                data: 0
-            }, {
-                label: "1 ster",
-                data: 0
-            }, {
-                label: "2 sterren",
-                data: 0
-            }, {
-                label: "3 sterren",
-                data: 0
-            }, {
-                label: "4 sterren",
-                data: 0
-            }, {
-                label: "5 sterren",
-                data: 0
-            }
-        ];
-		
-        $scope.donutChart2.options = {
-            series: {
-                pie: {
-                    show: true,
-                    innerRadius: 0.45
-                }
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
-            },
-            colors: ["#1BB7A0", "#39B5B9", "#52A3BB", "#619CC4", "#6D90C5"],
-            tooltip: true,
-            tooltipOpts: {
-                content: "%p.0%, %s",
-                defaultTheme: false
-            }
-        };
-		
-		$scope.donutChartOnline.data = [];
-		$scope.donutChartOnline.options = {
-            series: {
-                pie: {
-                    show: true,
-                    innerRadius: 0.45
-                }
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
-            },
-            colors: ["#1BB7A0", "#39B5B9", "#52A3BB", "#619CC4", "#6D90C5"],
-            tooltip: true,
-            tooltipOpts: {
-                content: "%p.0%, %s",
-                defaultTheme: false
-            }
-        };
-		
-		$scope.donutChartDoctors.data = [];
-		$scope.donutChartDoctors.options = {
-            series: {
-                pie: {
-                    show: true,
-                    innerRadius: 0.45
-                }
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
-            },
-            colors: ["#1BB7A0", "#39B5B9", "#52A3BB", "#619CC4", "#6D90C5"],
-            tooltip: true,
-            tooltipOpts: {
-                content: "%p.0%, %s",
-                defaultTheme: false
-            }
-        };
-
-		$scope.easypiechart = {
-            percent: 0,
-            options: {
-                animate: {
-                    duration: 1000,
-                    enabled: true
-                },
-                barColor: $scope.color.primary,
-                lineCap: 'round',
-                size: 180,
-                lineWidth: 5
-            }
-        };
-
-		$scope.largeChart1 = {
-            data: [],
-            options: {
-                type: 'line',
-                lineColor: $scope.color.info,
-                highlightLineColor: '#fff',
-                fillColor: $scope.color.info,
-                spotColor: false,
-                minSpotColor: false,
-                maxSpotColor: false,
-                width: '100%',
-                height: '190px',
-				chartRangeMin: 0,
-				chartRangeMax: 5
-            }
-        };
-
-		$scope.get = function() {
-			$http.post("/pub/stat_chart/", $scope.filter).success(function(data, status, headers, config) {
-				var average_online = $scope.stat.average_online ? $scope.stat.average_online : 0;
-				$scope.stat = logger.check(data);
-				$scope.show_difference = ($scope.stat.all >= 10);
-				$scope.ready = true;
-
-				if ($scope.stat.average)
-				{
-					$scope.stat.average = ($scope.stat.average * 1).toFixed(1);
-					
-					for (var key in $scope.stat.diagram)
-					{
-						$scope.donutChart2.data[key].data = $scope.stat.diagram[key];
-					}
-					
-					$scope.donutChartOnline.data = [];
-					for (var key in $scope.stat.online)
-					{
-						$scope.donutChartOnline.data.push({label: $scope.stat.online[key].label,
-														   data: $scope.stat.online[key].data});
-					}
-					
-					$scope.donutChartDoctors.data = [];
-					for (var key in $scope.stat.doctors)
-					{
-						$scope.donutChartDoctors.data.push({label: $scope.stat.doctors[key].label,
-														    data: $scope.stat.doctors[key].data});
-					}
-
-					$.plot($(".donutChart2"), $scope.donutChart2.data, $scope.donutChart2.options);
-					$.plot($(".donutChartOnline"), $scope.donutChartOnline.data, $scope.donutChartOnline.options);
-					$.plot($(".donutChartDoctors"), $scope.donutChartDoctors.data, $scope.donutChartDoctors.options);
-
-					$scope.easypiechart.percent = $scope.stat.vs;
-					$scope.largeChart1.data = $scope.stat.days;
-					$scope.largeChart1.options.tooltipFormat = '<span style="color: {{color}}">&#9679;</span> {{offset:names}} ({{y}})';
-					$scope.largeChart1.options.tooltipValueLookups = {
-						names: $scope.stat.days_y
-					};
-
-					$("#days_chart").sparkline($scope.largeChart1.data, $scope.largeChart1.options);
-				}
-				else
-				{
-					$scope.first_time = true;
-				}
-				$scope.stat.average_online = average_online;
-
-				$scope.online();
-			});
-		};
-		
-		$scope.go_to_compose = function()
-		{
-			$location.url("/mail/compose");
-		};
-
-		$scope.get();
-
-		$scope.facebook = 0;
-		$scope.facebook_link = "";
-		$scope.facebook_token = "";
-		$scope.init = function(facebook_link, facebook_token)
-		{
-			$scope.facebook_link = facebook_link;
-			$scope.facebook_token = facebook_token;
-		};
-
-		$scope.online = function()
-		{
-			if ($scope.facebook_link != "")
-			{
-				FB.getLoginStatus(function(response) {
-					if (response.status === 'connected')
-					{
-						$scope.online_continue();
-					}
-					else
-					{
-						$timeout(function() {
-							$scope.show_fb_login = '1';
-						});
-					}
-				 });
-			}
-			else
-			{
-				$scope.print_online();
-			}
-		};
-
-		$scope.fb_login = function()
-		{
-			FB.login(function() {
-				$scope.online_continue();
-			}, {scope: 'manage_pages'});
-		};
-
-		$scope.get_facebook_token = function()
-		{
-			if ($scope.facebook_token == "")
-			{
-				var id = $scope.facebook_link.split("/")[3];
-				FB.api("/" +id, function (response) {
-					if (response && ! response.error)
-					{
-						$scope.facebook_id = response.id;
-						FB.api("/me/accounts", function (response) {
-							if (response && ! response.error && response.data)
-							{
-								for (var key in response.data)
-								{
-									if (response.data[key].id == id)
-									{
-										$scope.facebook_token = response.data[key].access_token;
-
-										$http.post("/pub/save_facebook_token/", {token: $scope.facebook_token});
-									}
-								}
-							}
-						});
-					}
-				});
-			}
-
-			return $scope.facebook_token;
-		};
-
-		$scope.facebook_reviews = [];
-		$scope.facebook_id = 0;
-		$scope.online_continue = function()
-		{
-			var token = $scope.get_facebook_token();
-			if (token)
-			{
-				FB.api("/" + $scope.facebook_id + "/ratings?access_token=" + token, function (response) {
-					if (response && ! response.error)
-					{
-						var reviews = [];
-						for (var key in response.data)
-						{
-							if (response.data[key].review_text && reviews.length < 2)
-							{
-								reviews.push({text: response.data[key].review_text, rating: response.data[key].rating, link: $scope.facebook_link});
-							}
-						}
-
-						$scope.facebook_reviews = reviews;
-
-						var average = 0;
-						for (var i = 0; i < response.data.length; i++)
-						{
-							average += response.data[i].rating;
-						}
-
-						if (average > 0)
-						{
-							$scope.facebook = Math.round(average / response.data.length * 100) / 100;
-						}
-					}
-
-					$scope.print_online();
-				});
-			}
-			else
-			{
-				$scope.print_online();
-			}
-		};
-
-		$scope.last = {average: 0, average_online: 0};
-		$scope.first_time_init = true;
-		$scope.print_online = function(type)
-		{
-			$scope.type = type || "all";
-
-			$scope.stat.average_online = 0;
-			var all_count = 0;
-			if ($scope.facebook > 0)
-			{
-				$scope.stat.average_online += $scope.facebook * 1;
-				all_count++;
-			}
-
-			if ($scope.stat.google && $scope.stat.google.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.google.rating * 1;
-				all_count++;
-			}
-
-			if ($scope.stat.zorgkaart && $scope.stat.zorgkaart.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.zorgkaart.rating * 1;
-				all_count++;
-			}
-			
-			if ($scope.stat.independer && $scope.stat.independer.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.independer.rating * 1;
-				all_count++;
-			}
-			
-			if ($scope.stat.telefoonboek && $scope.stat.telefoonboek.rating > 0)
-			{
-				$scope.stat.average_online += $scope.stat.telefoonboek.rating * 1;
-				all_count++;
-			}
-
-			$scope.stat.average_online = Math.round($scope.stat.average_online / all_count * 100) / 100;
-
-			switch ($scope.type)
-			{
-				case "facebook": $scope.stat.average_online = $scope.facebook; break;
-				case "google": $scope.stat.average_online = $scope.stat.google.rating; break;
-				case "zorgkaart": $scope.stat.average_online = $scope.stat.zorgkaart.rating; break;
-				case "independer": $scope.stat.average_online = $scope.stat.independer.rating; break;
-				case "telefoonboek": $scope.stat.average_online = $scope.stat.telefoonboek.rating; break;
-			}
-
-			if ($scope.first_time_init)
-			{
-				$scope.first_time_init = false;
-
-				$http.post("/pub/last_dashboard/", {average: $scope.stat.average, average_online: $scope.stat.average_online}).success(function(data, status, headers, config) {
-					$scope.last = logger.check(data);
-				});
-			}
-
-			if ($scope.stat.average_online)
-			{
-				$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
-			}
-			
-			$timeout(function() {
-				$scope.show_average_online = '1';
-				$scope.show_fb_login = false;
-			});
 		};
     }
 
@@ -2401,22 +1608,6 @@
 				$scope.rating = $scope.user.rating;
 				$scope.user.short = $scope.user.short == '' ? $scope.user.username.replace(/ /ig, '-').toLowerCase() : $scope.user.short;
 				angular.copy($scope.user, $scope.old_user);
-
-				if ($scope.user.facebook != "")
-				{
-					FB.getLoginStatus(function(response) {
-						if (response.status === 'connected')
-						{
-							$scope.user.fb_logged_in = '1';
-							$scope.old_user.fb_logged_in = '1';
-						}
-						else
-						{
-							$scope.user.fb_logged_in = '0';
-							$scope.old_user.fb_logged_in = '0';
-						}
-					});
-				}
 			}
 		});
 		
@@ -2633,16 +1824,6 @@
 			}
 		};
 
-		$scope.fb_login = function()
-		{
-			if ($scope.user.facebook != "" && $scope.user.fb_logged_in == '0')
-			{
-				FB.login(function() {
-					$scope.user.fb_logged_in = '1';
-				}, {scope: 'manage_pages'});
-			}
-		};
-		
 		$scope.$on("$locationChangeStart", function(event, next, current) {
 			if ( ! angular.equals($scope.user, $scope.old_user))
 			{
@@ -6493,21 +5674,7 @@
             };
 
 			$scope.user = {};
-			$scope.facebook_login = false;
-			FB.getLoginStatus(function(response) {
-				if (response.status === 'connected')
-				{
-					$scope.$apply("facebook_login = true");
-				}
-			});
-
-			$scope.fb_login = function()
-			{
-				FB.login(function() {
-					$scope.$apply("facebook_login = true");
-				}, {scope: 'manage_pages'});
-			};
-
+			
 			$scope.inc_slide = function()
 			{
 				if ($scope.slide_step == 5)
@@ -7167,7 +6334,7 @@
 		.controller('ModalInstanceFeedbackCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceFeedbackCtrl])
 		.controller('ModalInstanceSuspendedCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceSuspendedCtrl])
 		.controller('ModalInstanceUpdatesCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceUpdatesCtrl])
-		.controller('ModalInstanceOnlineCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceOnlineCtrl])
+		.controller('ModalInstanceOnlineCtrl', ['$scope', '$modalInstance', '$http', '$window', '$timeout', '$location', 'logger', 'items', ModalInstanceOnlineCtrl])
 		.controller('ModalInstanceEmailsEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceEmailsEditCtrl])
 		.controller('ModalEmailsRemoveQuestionsCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalEmailsRemoveQuestionsCtrl])
 		.controller('ModalInstanceWidgetEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceWidgetEditCtrl])
@@ -7180,7 +6347,7 @@
 		.controller('ModalInstanceSuspendPopupCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceSuspendPopupCtrl])
 		.controller('ModalInstanceTestEmailCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceTestEmailCtrl])
 		.controller('ModalInstanceStarsEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceStarsEditCtrl])
-		.controller('ModalInstanceIntroCtrl', ['$scope', '$modalInstance', '$http', '$location', '$timeout', 'logger', 'items', ModalInstanceIntroCtrl])
+		.controller('ModalInstanceIntroCtrl', ['$scope', '$modalInstance', '$http', '$window', '$location', '$timeout', 'logger', 'items', ModalInstanceIntroCtrl])
 		.controller('ModalExampleCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalExampleCtrl])
 		.controller('ModalExampleInvCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalExampleInvCtrl])
 		.controller('ModalExampleNegativeCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalExampleNegativeCtrl])
@@ -7639,7 +6806,7 @@
 		};
     };
 	
-	function ModalInstanceOnlineCtrl($scope, $modalInstance, $http, $location, logger, items) {
+	function ModalInstanceOnlineCtrl($scope, $modalInstance, $http, $window, $timeout, $location, logger, items) {
         $scope.data = items.data;
 		$scope.system = items.system;
 		$scope.m = {};
@@ -7649,26 +6816,21 @@
 		$scope.name_limit = 50;
 		$scope.show_well = false;
 		$scope.valid = "none";
-		$scope.facebook_button = "Log In";
-		
-		if ($scope.system == "facebook")
-		{
-			FB.getLoginStatus(function(response) {
-				if (response.status === 'connected')
-				{
-					$scope.facebook_button = "Logged In";
-				}
-			});
-		}
-		
+
 		$scope.fb_login = function()
 		{
-			if ($scope.m.url != "" && $scope.validate())
+			if ( ! $scope.data.fb_logged_in)
 			{
-				FB.login(function() {
-					$scope.facebook_button = "Logged In";
-				}, {scope: 'manage_pages'});
+				$window['fb_callback'] = $scope.fb_modal_callback;
+				$window.open($scope.data.fb_link, "Facebook Login", "height=300,width=500");
 			}
+		};
+		
+		$scope.fb_modal_callback = function()
+		{
+			$timeout(function() {
+				$scope.data.fb_logged_in = '1';
+			});
 		};
 		
 		$scope.cancel = function() {
@@ -7680,27 +6842,24 @@
 			{
 				if ($scope.system == "facebook")
 				{
-					FB.getLoginStatus(function(response) {
-						console.log(response.status);
-						if (response.status === 'connected')
+					if ($scope.data.fb_logged_in == '1')
+					{
+						$scope.data[$scope.system] = $scope.m.url;
+						if ($scope.system == "own")
 						{
-							$scope.data[$scope.system] = $scope.m.url;
-							if ($scope.system == "own")
-							{
-								$scope.data[$scope.system + "_name"] = $scope.m.name;
-							}
-							
-							if ($scope.system == "independer")
-							{
-								$scope.data[$scope.system + "_scrap"] = $scope.m.url_scrap;
-							}
-							$modalInstance.close({data: $scope.data, system: $scope.system});
+							$scope.data[$scope.system + "_name"] = $scope.m.name;
 						}
-						else
+						
+						if ($scope.system == "independer")
 						{
-							logger.logError("U dient bij Facebook in te loggen om dit profiel te kunnen gebruiken.");
+							$scope.data[$scope.system + "_scrap"] = $scope.m.url_scrap;
 						}
-					});
+						$modalInstance.close({data: $scope.data, system: $scope.system});
+					}
+					else
+					{
+						logger.logError("U dient bij Facebook in te loggen om dit profiel te kunnen gebruiken.");
+					}
 				}
 				else
 				{
@@ -7990,7 +7149,7 @@
         };
     };
 	
-	function ModalInstanceIntroCtrl($scope, $modalInstance, $http, $location, $timeout, logger, items) {
+	function ModalInstanceIntroCtrl($scope, $modalInstance, $http, $window, $location, $timeout, logger, items) {
 		$scope.user_intro = items.user;
 		$scope.username = items.user.username;
 		$scope.step = {};
@@ -8002,27 +7161,22 @@
 		$scope.intro_class[0] = "intro-popup-show";
 		
 		$scope.valid = "none";
-		$scope.facebook_button = "Log In";
 		$scope.name_limit = 50;
-		
-		if ($scope.online_step == 2)
-		{
-			FB.getLoginStatus(function(response) {
-				if (response.status === 'connected')
-				{
-					$scope.facebook_button = "Logged In";
-				}
-			});
-		}
-		
+
 		$scope.fb_login = function()
 		{
-			if ($scope.user_intro['facebook'] != "")
+			if ($scope.user_intro['facebook'] != "" && $scope.user_intro.fb_logged_in == '0')
 			{
-				FB.login(function() {
-					$scope.facebook_button = "Logged In";
-				}, {scope: 'manage_pages'});
+				$window['fb_callback'] = $scope.fb_intro_callback;
+				$window.open($scope.user_intro.fb_link, "Facebook Login", "height=300,width=500");
 			}
+		};
+		
+		$scope.fb_intro_callback = function()
+		{
+			$timeout(function() {
+				$scope.user_intro.fb_logged_in = '1';
+			});
 		};
 		
 		$scope.online = ['google', 'facebook', 'zorgkaart', 'independer'];

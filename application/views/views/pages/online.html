@@ -98,7 +98,7 @@
 		<div class="input-group" style="margin-bottom:30px; margin-top:30px;">
 			<input type="text" class="form-control" placeholder="http://" ng-model="m.url" ng-class="valid" />
 			<span class="input-group-btn">
-				<button class="btn btn-primary" type="button" ng-click="fb_login()">{{facebook_button}}</button>
+				<button class="btn btn-primary" type="button" ng-click="fb_login()">{{(data.fb_logged_in == '1' ? 'Logged In' : 'Log In')}}</button>
 			</span>
 		</div>
 		
