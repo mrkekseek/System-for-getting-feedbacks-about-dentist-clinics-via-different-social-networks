@@ -556,6 +556,12 @@
 			$this->response($result);
 		}
 		
+		function stat_online()
+		{
+			$result = $this->pub->stat_online($this->post);
+			$this->response($result);
+		}
+		
 		function stat_achart()
 		{
 			$result = $this->pub->stat_achart($this->post);

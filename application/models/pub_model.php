@@ -5489,6 +5489,43 @@
 
 			return FALSE;
 		}
+		
+		function stat_online()
+		{
+			if ($this->logged_in())
+			{
+				$users_id = $this->session->userdata("id");
+				$onlines = array('zorgkaart', 'facebook', 'independer', 'google');
+				$stat = array();
+				$this->db->order_by('date', 'asc');
+				$this->db->where('users_id', $users_id);
+				$result = $this->db->get('reviews_history')->result_array();
+				foreach ($result as $row)
+				{
+					$month = date('Y-m', $row['date']);
+					$stat['months'][] = date("M 'y", $row['date']);
+					foreach ($onlines as $o)
+					{
+						$stat['average'][$o] = $row[$o];
+						$stat['history'][$month][$o] = $row[$o];
+					}
+				}
+				
+				$this->db->order_by('time', 'desc');
+				$this->db->where('users_id', $users_id);
+				$result = $this->db->get('reviews')->result_array();
+				foreach ($result as $row)
+				{
+					$stat['reviews'][$row['profile']][] = $row;
+				}
+				
+				$this->db->where('users_id', $users_id);
+				$this->db->update('reviews', array('marked_as_read' => TRUE));
+
+				return $stat;
+			}
+			return FALSE;
+		}
 
 		function stat_achart($post)
 		{
@@ -6221,6 +6258,8 @@
 									$rating = round($rating / $count, 1);
 								}
 								
+								$this->save_reviews_history($users_id, 'facebook', $rating);
+								
 								foreach ($ratings as $row)
 								{
 									if ( ! empty($row['review_text']))
@@ -6295,6 +6334,8 @@
 						}
 						$rating = round($av / count($place['result']['reviews']), 2);
 					}
+					
+					$this->save_reviews_history($users_id, 'google', $rating);
 
 					if ( ! empty($place['result']['reviews']))
 					{
@@ -6351,6 +6392,8 @@
 					$zorgkaart = substr($last, 0, 3);
 					$rating = round($zorgkaart / 2, 2);
 				}
+				
+				$this->save_reviews_history($users_id, 'zorgkaart', $rating);
 
 				$feed = file_get_contents(rtrim($url, '/')."/rss");
 				$feed = str_replace('<media:', '<', $feed);
@@ -6464,6 +6507,8 @@
 						$independer = substr($last[1], 0, 3);
 						$rating = round(str_replace(",", ".", $independer) / 2, 2);
 					}
+					
+					$this->save_reviews_history($users_id, 'independer', $rating);
 
 					if (strpos($content, '<div id="reviews" class="reviewList">') !== FALSE)
 					{
@@ -6548,6 +6593,28 @@
 			}
 
 			return TRUE;
+		}
+		
+		function save_reviews_history($users_id, $online, $rating)
+		{
+			$date = mktime(0, 0, 0, date('n'), date('j'), date('Y'));
+			$data_array = array('users_id' => $users_id,
+								$online => $rating,
+								'date' => $date);
+
+			$this->db->where('users_id', $users_id);
+			$this->db->where('date', $date);
+			$this->db->limit(1);
+			$row = $this->db->get('reviews_history')->row_array();
+			if ( ! empty($row))
+			{
+				$this->db->where('rows_id', $row['rows_id']);
+				$this->db->update('reviews_history', $data_array);
+			}
+			else
+			{
+				$this->db->insert('reviews_history', $data_array);
+			}
 		}
 		
 		function mailgun_send($types = array(), $id = FALSE)

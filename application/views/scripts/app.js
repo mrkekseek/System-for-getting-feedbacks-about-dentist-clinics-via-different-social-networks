@@ -670,6 +670,8 @@
         .controller('Charts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', Charts2Ctrl]); // overall control
 
     function Charts2Ctrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.type = 'email';
+		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
 		{
 			hex = hex.replace('#', '');
@@ -682,6 +684,15 @@
 		};
 		$scope.color = $scope.user.color || '#0F75BC';
 		$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
+		
+		$scope.change_type = function(type)
+		{
+			if (type != $scope.type)
+			{
+				$scope.type = type;
+				$scope.get();
+			}
+		};
 		
 		$scope.data = {};
 		$scope.nps = {};
@@ -787,8 +798,8 @@
 		});
 		
 		$scope.less_30 = false;
-		$scope.get = function() {
-			$http.post("/pub/stat_chart2/", {}).success(function(data, status, headers, config) {
+		$scope.get_email = function() {
+			$http.post('/pub/stat_chart2/', {}).success(function(data, status, headers, config) {
 				$scope.data = logger.check(data);
 				$scope.color = $scope.user.color || '#0F75BC';
 				$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
@@ -975,6 +986,76 @@
 					$scope.less_30 = true;
 				}
 			});
+		};
+		
+		$scope.pie_online = echarts.init(document.getElementById('pie_online'));
+		$window.onresize = function() { $scope.pie_online.resize(); };
+		$scope.pie_online.setOption({
+				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				/*toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},*/
+				legend: {orient: "vertical", x: "left", data: ["Zorgkaart", "Facebook", "Independer", "Google"]},
+				calculable: true,
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
+						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
+									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "30", fontWeight: "bold"}}}},
+						data:[{name: 'Zorgkaart', value: 0, itemStyle: {normal: {color: '#F29619'}}},
+							  {name: 'Facebook', value: 0, itemStyle: {normal: {color: '#3B589E'}}},
+							  {name: 'Independer', value: 0, itemStyle: {normal: {color: '#825F87'}}},
+							  {name: 'Google', value: 0, itemStyle: {normal: {color: '#C1C1C1'}}}]
+						}]
+		});
+		
+		$scope.area_online = echarts.init(document.getElementById('area_online'));
+		$window.onresize = function() { $scope.area_online.resize(); };
+		$scope.area_online.setOption({
+				tooltip: {trigger: "axis"},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['Zorgkaart', 'Facebook', 'Independer', 'Google']},
+				calculable: true,
+				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
+				yAxis: [{type: 'value', boundaryGap: false}],
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Zorgkaart', data: [0], itemStyle: {normal: {color: '#F29619', borderColor: '#F29619', lineStyle: {color: '#F29619'}, areaStyle: {color: 'rgba(242, 150, 25, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Facebook', data: [0], itemStyle: {normal: {color: '#3B589E', borderColor: '#3B589E', lineStyle: {color: '#3B589E'}, areaStyle: {color: 'rgba(59, 88, 158, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Independer', data: [0], itemStyle: {normal: {color: '#825F87', borderColor: '#825F87', lineStyle: {color: '#825F87'}, areaStyle: {color: 'rgba(130, 95, 135, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Google', data: [0], itemStyle: {normal: {color: '#C1C1C1', borderColor: '#C1C1C1', lineStyle: {color: '#C1C1C1'}, areaStyle: {color: 'rgba(193, 193, 193, 0.5)'}}}}]
+		});
+		
+		$scope.onl = {};
+		$scope.get_online = function()
+		{
+			$http.post('/pub/stat_online/', {}).success(function(data, status, headers, config) {
+				$scope.onl = logger.check(data);
+				if ($scope.onl && $scope.onl.history)
+				{
+					var series = [];
+					var max = 5;
+					var data = [];
+					for (var k in $scope.onlines)
+					{
+						data = [];
+						for (var m in $scope.onl.history)
+						{
+							data.push($scope.onl.history[m][$scope.onlines[k].toLowerCase()]);
+						}
+						series.push({type: 'line', name: $scope.onlines[k], data: data});
+					}
+					
+					$scope.area_averages.setOption({xAxis: [{data: $scope.onl.months}],
+													yAxis: [{min: 0, max: max}],
+													series: series});
+				}
+			});
+		};
+		
+		$scope.get = function()
+		{
+			if ($scope.type == 'email')
+			{
+				$scope.get_email();
+			}
+			else
+			{
+				$scope.get_online();
+			}
 		};
 
 		$scope.get();
