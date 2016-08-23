@@ -5506,8 +5506,48 @@
 					$stat['months'][] = date("M 'y", $row['date']);
 					foreach ($onlines as $o)
 					{
-						$stat['average'][$o] = $row[$o];
-						$stat['history'][$month][$o] = $row[$o];
+						$stat['average'][$o] = $row[$o] * 1;
+						if ( ! isset($stat['history'][$month][$o]))
+						{
+							$stat['history'][$month][$o]['sum'] = 0;
+							$stat['history'][$month][$o]['num'] = 0;
+						}
+						$stat['history'][$month][$o]['sum'] += $row[$o];
+						$stat['history'][$month][$o]['num']++;
+					}
+				}
+				
+				if ( ! empty($stat['history']))
+				{
+					foreach ($stat['history'] as $month => $list)
+					{
+						foreach ($list as $o => $row)
+						{
+							$stat['history'][$month][$o] = $row['num'] > 0 ? round($row['sum'] / $row['num'], 1) : 0;
+						}
+					}
+				}
+				
+				if ( ! empty($stat['average']))
+				{
+					$sum = 0;
+					foreach ($onlines as $o)
+					{
+						$sum += isset($stat['average'][$o]) ? $stat['average'][$o] : 0;
+					}
+					
+					$left = 0;
+					foreach ($onlines as $k => $o)
+					{
+						if ($k < (count($onlines) - 1))
+						{
+							$stat['pie'][$o] = isset($stat['average'][$o]) ? round($stat['average'][$o] * 100 / $sum, 1) : 0;
+							$left += $stat['pie'][$o];
+						}
+						else
+						{
+							$stat['pie'][$o] = 100 - $left;
+						}
 					}
 				}
 				
@@ -5517,8 +5557,13 @@
 				foreach ($result as $row)
 				{
 					$stat['reviews'][$row['profile']][] = $row;
+					if ( ! isset($stat['stars'][$row['profile']][$row['score'] * 1]))
+					{
+						$stat['stars'][$row['profile']][$row['score'] * 1] = 0;
+					}
+					$stat['stars'][$row['profile']][$row['score'] * 1]++;
 				}
-				
+
 				$this->db->where('users_id', $users_id);
 				$this->db->update('reviews', array('marked_as_read' => TRUE));
 

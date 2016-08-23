@@ -41,6 +41,7 @@
 		function welcome()
 		{
 			redirect("/#/pages/online");
+			//$this->pub->onlines(1);
 		}
 		
 		function fb_logged()
