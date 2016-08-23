@@ -3368,6 +3368,11 @@ body .btn-primary.compose-prev:disabled {
 	display: none;
 }
 
+.empty_reviews_inner .fa-filter {
+	color: #BDBDBD;
+	font-size: 80px;
+}
+
 @media (max-width: 1200px) {
 	.first-filter.form-inline label {
 		display: none;

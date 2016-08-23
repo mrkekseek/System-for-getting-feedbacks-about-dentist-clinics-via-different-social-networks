@@ -4854,6 +4854,7 @@
 				$this->db->limit(1);
 				$user = $this->db->get("users")->row_array();
 				
+				$is_onlines = array();
 				$this->db->where("status <>", 3);
 				$this->db->where("users_id", $users_id);
 				$result = $this->db->get("sent")->result_array();
@@ -4874,43 +4875,51 @@
 						$data['location'][] = $row['location'];
 					}
 					
-					if ( ! empty($row['facebook']))
+					if ( ! empty($row['facebook']) && ! in_array('facebook', $is_onlines))
 					{
+						$is_onlines[] = 'facebook';
 						$data['online'][] = array('id' => 'facebook', 'name' => 'Facebook');
 					}
 					
-					if ( ! empty($row['google']))
+					if ( ! empty($row['google']) && ! in_array('google', $is_onlines))
 					{
+						$is_onlines[] = 'google';
 						$data['online'][] = array('id' => 'google', 'name' => 'Google');
 					}
 					
-					if ( ! empty($row['zorgkaart']))
+					if ( ! empty($row['zorgkaart']) && ! in_array('zorgkaart', $is_onlines))
 					{
+						$is_onlines[] = 'zorgkaart';
 						$data['online'][] = array('id' => 'zorgkaart', 'name' => 'Zorgkaart Nederland');
 					}
 					
-					if ( ! empty($row['telefoonboek']))
+					if ( ! empty($row['telefoonboek']) && ! in_array('telefoonboek', $is_onlines))
 					{
+						$is_onlines[] = 'telefoonboek';
 						$data['online'][] = array('id' => 'telefoonboek', 'name' => 'Telefoonboek');
 					}
 					
-					if ( ! empty($row['vergelijkmondzorg']))
+					if ( ! empty($row['vergelijkmondzorg']) && ! in_array('vergelijkmondzorg', $is_onlines))
 					{
+						$is_onlines[] = 'vergelijkmondzorg';
 						$data['online'][] = array('id' => 'vergelijkmondzorg', 'name' => 'Vergelijk Mondzorg');
 					}
 					
-					if ( ! empty($row['independer']))
+					if ( ! empty($row['independer']) && ! in_array('independer', $is_onlines))
 					{
+						$is_onlines[] = 'independer';
 						$data['online'][] = array('id' => 'independer', 'name' => 'Independer');
 					}
 					
-					if ( ! empty($row['kliniekoverzicht']))
+					if ( ! empty($row['kliniekoverzicht']) && ! in_array('kliniekoverzicht', $is_onlines))
 					{
+						$is_onlines[] = 'kliniekoverzicht';
 						$data['online'][] = array('id' => 'kliniekoverzicht', 'name' => 'Kliniekoverzicht');
 					}
 					
-					if ( ! empty($row['own']))
+					if ( ! empty($row['own']) && ! in_array('own', $is_onlines))
 					{
+						$is_onlines[] = 'own';
 						$data['online'][] = array('id' => 'own', 'name' => empty($user['own_name']) ? 'Aangepaste doorverwijzing' : $user['own_name']);
 					}
 				}

@@ -82,7 +82,7 @@
 		</div>
 		
 		<div class="page page-charts">
-			<section>
+			<section ng-class="{'hide': empty_filter}">
 				<div class="row charts2-row">
 					<div class="col-lg-6 col-slg-12 col-xs-12">
 						<div class="panel panel-default">
@@ -458,6 +458,15 @@
 					</div>
 				</div>
 			</section>
+			
+			<div class="empty_reviews" ng-class="{'show': empty_filter}">
+				<div class="empty_reviews_inner text-center">
+					<i class="fa fa-filter" aria-hidden="true"></i>
+					<p>
+						Er zijn onvoldoende resultaten om weer te geven met de gekozen filters.
+					</p>
+				</div>
+			</div>
 		</div>
 	</div>
 	

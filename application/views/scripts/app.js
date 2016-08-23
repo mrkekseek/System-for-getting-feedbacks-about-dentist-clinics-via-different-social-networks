@@ -1070,15 +1070,23 @@
 		});
 		
 		$scope.less_30 = false;
+		$scope.empty_filter = false;
 		$scope.get = function() {
 			$http.post("/pub/stat_chart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
 				$scope.data = logger.check(data);
 				$scope.color = $scope.user.color || '#0F75BC';
 				$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
+				
+				var is_filter = false;
+				for (var k in $scope.stat_filter_list)
+				{
+					is_filter = true;
+				}
 
-				if ($scope.data.for_user >= 30)
+				if ($scope.data.for_user >= 30 || (is_filter && $scope.data.for_user > 0))
 				{
 					$scope.less_30 = false;
+					$scope.empty_filter = false;
 
 					if ($scope.data && $scope.data.stars_count)
 					{
@@ -1255,7 +1263,14 @@
 				}
 				else
 				{
-					$scope.less_30 = true;
+					if ( ! is_filter)
+					{
+						$scope.less_30 = true;
+					}
+					else
+					{
+						$scope.empty_filter = true;
+					}
 				}
 			});
 		};
