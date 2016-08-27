@@ -410,6 +410,12 @@
 			$this->response($result);
 		}
 		
+		function vote_loc()
+		{
+			$result = $this->pub->vote_loc($this->post);
+			$this->response($result);
+		}
+		
 		function feedback()
 		{
 			$result = $this->pub->feedback($this->post);

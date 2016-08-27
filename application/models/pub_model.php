@@ -2800,6 +2800,47 @@
 
 			return FALSE;
 		}
+		
+		function vote_loc($post)
+		{
+			$this->db->where("id", $post['id']);
+			$this->db->where("start >=", time() - 7200);
+			if ($this->db->count_all_results('sent') || $post['id'] == 0)
+			{
+				if (empty($post['id']))
+				{
+					$data_array = array('users_id' => $post['users_id'],
+										'location' => $post['locations_id'],
+										'start' => time(),
+										'date' => time(),
+										'last' => time(),
+										'ip' => $_SERVER['REMOTE_ADDR']);
+					if ($this->db->insert("sent", $data_array))
+					{
+						$post['id'] = $this->db->insert_id();
+						$post['last'] = $data_array['last'];
+						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+						$post['location'] = $this->location_info($post['locations_id']);
+						return $post;
+					}
+				}
+				else
+				{
+					$this->db->where("id", $post['id']);
+					if ($this->db->update("sent", array('location' => $post['locations_id'], 'last' => time())))
+					{
+						$post['last'] = time();
+						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+						$post['location'] = $this->location_info($post['locations_id']);
+						return $post;
+					}
+				}
+			}
+
+			return FALSE;
+		}
 
 		function feedback($post)
 		{
@@ -3944,6 +3985,10 @@
 					if ( ! empty($return['info']['location']))
 					{
 						$return['location'] = $this->location_info($return['info']['location']);
+					}
+					else
+					{
+						$return['locations'] = $this->get_locations($return['info']['users_id']);
 					}
 				}
 			}
