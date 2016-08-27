@@ -3094,12 +3094,10 @@ body .btn-primary.compose-prev:disabled {
 	text-align: left;
 }
 
-.charts-filter-panel .row > div:last-child {
-	text-align: right;
-}
-
 .charts-filter-panel select,
-.charts-filter-panel .btn-group .btn {
+.charts-filter-panel .form-control,
+.charts-filter-panel .input-group-addon,
+.charts-filter-panel .btn-group .btn-default {
 	background: #DFDFDF;
 	font-weight: bold;
 	font-size: 13px;
@@ -3412,4 +3410,75 @@ body .btn-primary.compose-prev:disabled {
 
 .single-text {
 	border-color: transparent;
+}
+
+.stat-filter-row {
+	margin: 0 -5px;
+}
+
+.stat-filter-row:not(:last-child) {
+	margin-bottom: 10px;
+}
+
+@media (max-width: 991px) {
+	.stat-filter-row:last-child {
+		margin-bottom: 10px;
+	}
+}
+
+.stat-filter-row > div {
+	padding: 0 5px;
+}
+
+.stat-filter-row label {
+	padding-top: 7px;
+}
+
+.btn-filter {
+	background-color: #dfdfdf;
+	width: 34px;
+	line-height: 32px;
+	font-size: 20px;
+	font-weight: bold;
+	padding: 0 6px;
+	color: #bbb;
+}
+
+.show-filter {
+	display: block;
+}
+
+.hide-filter {
+	display: none;
+}
+
+.empty_reviews_inner .fa-filter {
+	color: #BDBDBD;
+	font-size: 80px;
+}
+
+@media (max-width: 1200px) {
+	.first-filter.form-inline label {
+		display: none;
+	}
+	
+	.first-filter.form-inline .form-control {
+		display: block;
+		width: 100%;
+	}
+}
+
+@media (max-width: 768px) {
+	.stat-filter-row > div.stat-filter-buttons {
+		text-align: right;
+	}
+	
+	.btn-filter {
+		margin-top: 10px;
+		margin-bottom: 15px;
+	}
+	
+	.show-filter .input-group {
+		margin-top: 10px;
+	}
 }

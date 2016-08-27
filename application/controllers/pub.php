@@ -550,6 +550,12 @@
 			$this->response($result);
 		}
 		
+		function stat_filter()
+		{
+			$result = $this->pub->stat_filter($this->post);
+			$this->response($result);
+		}
+		
 		function stat_achart()
 		{
 			$result = $this->pub->stat_achart($this->post);
