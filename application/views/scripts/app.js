@@ -2573,61 +2573,95 @@
 			$scope.user.reminder_time = new_date.getTime();
 			if ( ! $scope.form.$error.required && ! $scope.form.$error.email)
 			{
-				if ($scope.user.color.toLowerCase() == "#fff" || $scope.user.color.toLowerCase() == "#ffffff")
+				var mobile_check = true;
+				if ($scope.user.mobile != '')
 				{
-					logger.logError("Om de leesbaarheid van de gebruikersinterface te waarborgen kunt u niet de kleur wit gebruiken voor uw huisstijl. Kies alstublieft een andere kleur.");
-				}
-				else
-				{
-					var check = true;
-					if ($scope.short_checked && ! $scope.validate_url())
+					var numeric = true;
+					for (var k in $scope.user.mobile)
 					{
-						check = false;
-						logger.logError("Voer alstublieft een geldige URL in.");
+						if (k == 0 && $scope.user.mobile[k] != '+')
+						{
+							logger.logError("Het telefoonnummer moet beginnen met een landcode");
+							mobile_check = false;
+						}
+						
+						if (k > 0 && ! ( ! isNaN(parseFloat($scope.user.mobile[k])) && isFinite($scope.user.mobile[k])))
+						{
+							numeric = false;
+						}
 					}
 					
-					if (check)
+					if ( ! numeric)
 					{
-						$http.post("/pub/profile_save/", $scope.user).success(function(data, status, headers, config) {
-							var result = logger.check(data);
-							angular.copy($scope.user, $scope.old_user);
-							
-							var logo_box = document.getElementsByClassName("logo")[0];
-							var logo = logo_box.getElementsByTagName("img")[0];
-							logo.src = $scope.user.logo == '' ? './application/views/images/logo_full.png' : $scope.user.logo;
-							
-							if ($scope.user.color != "")
-							{
-								var css = "/colors/" + $scope.user.id + "/color.css";
-								var links = document.getElementsByTagName("link");
-								var to_remove = false;
-								for (var i = 0, count = links.length; i < count; i++)
+						logger.logError("Het telefoonnummer kan enkel nummers bevatten");
+						mobile_check = false;
+					}
+					
+					if ($scope.user.mobile.length < 12 || $scope.user.mobile.length > 13)
+					{
+						logger.logError("Het telefoonnummer moet tussen de 11 en 12 tekens bevatten");
+						mobile_check = false;
+					}
+				}
+				
+				if (mobile_check)
+				{
+					if ($scope.user.color.toLowerCase() == "#fff" || $scope.user.color.toLowerCase() == "#ffffff")
+					{
+						logger.logError("Om de leesbaarheid van de gebruikersinterface te waarborgen kunt u niet de kleur wit gebruiken voor uw huisstijl. Kies alstublieft een andere kleur.");
+					}
+					else
+					{
+						var check = true;
+						if ($scope.short_checked && ! $scope.validate_url())
+						{
+							check = false;
+							logger.logError("Voer alstublieft een geldige URL in.");
+						}
+						
+						if (check)
+						{
+							$http.post("/pub/profile_save/", $scope.user).success(function(data, status, headers, config) {
+								var result = logger.check(data);
+								angular.copy($scope.user, $scope.old_user);
+								
+								var logo_box = document.getElementsByClassName("logo")[0];
+								var logo = logo_box.getElementsByTagName("img")[0];
+								logo.src = $scope.user.logo == '' ? './application/views/images/logo_full.png' : $scope.user.logo;
+								
+								if ($scope.user.color != "")
 								{
-									if (links[i].href.indexOf(css) + 1)
+									var css = "/colors/" + $scope.user.id + "/color.css";
+									var links = document.getElementsByTagName("link");
+									var to_remove = false;
+									for (var i = 0, count = links.length; i < count; i++)
 									{
-										to_remove = links[i];
+										if (links[i].href.indexOf(css) + 1)
+										{
+											to_remove = links[i];
+										}
 									}
+									
+									if (to_remove)
+									{
+										to_remove.parentNode.removeChild(to_remove)
+									}
+									
+									var date = new Date();
+									
+									var link = document.createElement("link");
+									link.rel = "stylesheet";
+									link.href = "." + css + "?v=" + date.getSeconds();
+									
+									document.getElementsByTagName("head")[0].appendChild(link);
 								}
 								
-								if (to_remove)
+								if (callback)
 								{
-									to_remove.parentNode.removeChild(to_remove)
+									callback();
 								}
-								
-								var date = new Date();
-								
-								var link = document.createElement("link");
-								link.rel = "stylesheet";
-								link.href = "." + css + "?v=" + date.getSeconds();
-								
-								document.getElementsByTagName("head")[0].appendChild(link);
-							}
-							
-							if (callback)
-							{
-								callback();
-							}
-						});
+							});
+						}
 					}
 				}
 			}
@@ -6388,6 +6422,7 @@
 
     function authCtrl($scope, $window, $location, $http, $route, $modal, logger) {
 			$scope.logged_in = false;
+			$scope.tfa = false;
 			$scope.last_slide = false;
 			$scope.slide_step = 1;
 
@@ -6412,17 +6447,7 @@
 							var result;
 							if (result = logger.check(data))
 							{
-								$scope.user.facebook = result.facebook;
-								$scope.user.zorgkaart = result.zorgkaart;
-								$scope.user.google = result.google;
-								$scope.user.username = result.username;
-								$scope.user.phone = result.phone;
-								
-								if (result.first_time)
-								{
-									$scope.logged_in = true;
-								}
-								else
+								if (result.id)
 								{
 									if ($location.path() == "/pages/signin")
 									{
@@ -6432,6 +6457,10 @@
 									{
 										$window.location.reload(true);
 									}
+								}
+								else
+								{
+									$scope.tfa = true;
 								}
 							}
 						}
@@ -6454,6 +6483,107 @@
 
 				}), function() {
 					console.log("Modal dismissed at: " + new Date());
+				});
+			};
+			
+			$scope.prev = '';
+			$scope.code_change = function($event, num) {
+				$scope.code_valid = '';
+				$scope.count_valid = '';
+				var next = 0;
+				if (($scope['code_' + num] >= 0 && $scope['code_' + num] <= 9) || $event.keyCode == 8)
+				{
+					if ($event.keyCode != 8)
+					{
+						next = num + 1;
+						if (next > 5)
+						{
+							next = 5;
+							$scope.code_check();
+						}
+					}
+					else
+					{
+						if ($scope.prev == '')
+						{
+							next = num - 1;
+							next = (next <= 0) ? 1 : next;
+							$scope['code_' + next] = '';
+						}
+						else
+						{
+							next = num;
+						}
+					}
+					$scope.prev = $scope['code_' + next] || '';
+					$window.document.getElementById('code_' + next).focus();
+				}
+				else
+				{
+					$scope['code_' + num] = '';
+				}
+			};
+			
+			$scope.code_wait = false;
+			$scope.blocked = false;
+			$scope.count_valid = '';
+			$scope.code_valid = '';
+			$scope.code_count = 0;
+			$scope.code_check = function() {
+				$scope.code_wait = true;
+				$scope.code_valid = '';
+				var post_mas = {code: ($scope.code_1 + $scope.code_2 + $scope.code_3 + $scope.code_4 + $scope.code_5)};
+				$http.post("/pub/code_check/", post_mas).success(function(data, status, headers, config) {
+					$scope.code_wait = false;
+					var result = logger.check(data);
+					if (result)
+					{
+						if (result.count)
+						{
+							$scope.code_valid = '0';
+							$scope.count_valid = '0';
+							$scope.code_count = result.count;
+						}
+						else
+						{
+							$scope.count_valid = '1';
+							$scope.code_valid = '1';
+							if (result.first_time)
+							{
+								$scope.tfa = false;
+								$scope.logged_in = true;
+										
+								$scope.user.facebook = result.facebook;
+								$scope.user.zorgkaart = result.zorgkaart;
+								$scope.user.google = result.google;
+								$scope.user.username = result.username;
+								$scope.user.phone = result.phone;
+							}
+							else
+							{
+								if ($location.path() == "/pages/signin")
+								{
+									$window.location.href = "/";
+								}
+								else
+								{
+									$window.location.reload(true);
+								}
+							}
+						}
+					}
+					else
+					{
+						$scope.code_valid = '0';
+						$scope.blocked = true;
+					}
+				});
+			};
+			
+			$scope.code_resend = function() {
+				$scope.code_wait = true;
+				$http.post("/pub/code_resend/", {}).success(function(data, status, headers, config) {
+					$scope.code_wait = false;
 				});
 			};
 
@@ -6517,12 +6647,15 @@
 
 			$scope.user = {};
 			$scope.facebook_login = false;
-			FB.getLoginStatus(function(response) {
-				if (response.status === 'connected')
-				{
-					$scope.$apply("facebook_login = true");
-				}
-			});
+			if ($window['FB'])
+			{
+				FB.getLoginStatus(function(response) {
+					if (response.status === 'connected')
+					{
+						$scope.$apply("facebook_login = true");
+					}
+				});
+			}
 
 			$scope.fb_login = function()
 			{
