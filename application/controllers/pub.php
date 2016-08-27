@@ -409,6 +409,12 @@
 			$this->response($result);
 		}
 		
+		function vote_loc()
+		{
+			$result = $this->pub->vote_loc($this->post);
+			$this->response($result);
+		}
+		
 		function feedback()
 		{
 			$result = $this->pub->feedback($this->post);
@@ -541,6 +547,12 @@
 		function stat_chart2()
 		{
 			$result = $this->pub->stat_chart2($this->post);
+			$this->response($result);
+		}
+		
+		function stat_filter()
+		{
+			$result = $this->pub->stat_filter($this->post);
 			$this->response($result);
 		}
 		

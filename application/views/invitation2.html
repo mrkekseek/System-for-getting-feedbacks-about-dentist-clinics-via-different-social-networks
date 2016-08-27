@@ -123,6 +123,14 @@
 								</select>
 							</div>
 							
+							<div class="doctors-box" ng-if="i.locations.length">
+								<h3 class="sub">Waar ga je helpen?</h3>
+								<select class="form-control doctors-list" ng-change="set_location()" ng-model="loc.id">
+									<option value="0">Kies een locatie...</option>
+									<option ng-repeat="l in i.locations" value="{{l.id}}" ng-selected="l.id == loc.id">{{l.title}}</option>
+								</select>
+							</div>
+							
 							<a href="javascript:void(0);" class="more-questions" ng-click="show_other_questions()" ng-show="q_show && questions.others && questions.others.length" ng-class="{active: q_vote[questions.main.id] > 0}">Klik hier als u meer vragen wilt beantwoorden</a>
 						</div>
 					</div>

@@ -900,6 +900,72 @@
 		$scope.color = $scope.user.color || '#0F75BC';
 		$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
 		
+		$scope.stat_filter_list = [{'filter': '', 'value': ''}];
+		$scope.stat_filter_data = {};
+		
+		$http.get("/pub/stat_filter/").success(function(data, status, headers, config) {
+			$scope.stat_filter_data = logger.check(data);
+		});
+		
+		$scope.change_filter = function(filter) {
+			if (filter.filter == 'date')
+			{
+				filter.value = {'from': '', 'to': ''};
+			}
+			else
+			{
+				filter.value = '';
+			}
+		};
+		
+		$scope.add_filter = function() {
+			$scope.stat_filter_list.push({'filter': '', 'value': ''});
+		};
+		
+		$scope.remove_filter = function(i) {
+			var filter_list = [];
+			for (var k in $scope.stat_filter_list)
+			{
+				if (k != i)
+				{
+					filter_list.push($scope.stat_filter_list[k]);
+				}
+			}
+			$scope.stat_filter_list = filter_list;
+		};
+		
+		$scope.stat_filter_dates = {'from': '', 'to': ''};
+		$scope.today = function(type) {
+			return $scope.stat_filter_dates[type] = new Date();
+		};
+
+		$scope.showWeeks = true;
+		$scope.clear = function(type) {
+			$scope.stat_filter_dates[type] = null;
+		};
+
+		$scope.disabled = function(date, mode) {
+			mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+		};
+
+		$scope.open_date = function($event, type, i) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope['opened_' + type + '_' + i] = true;
+		};
+
+		$scope.dateOptions = {
+			'year-format': "'yy'",
+			'starting-day': 1
+		};
+
+		$scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd/MM/yy', 'shortDate'];
+		$scope.format = $scope.formats[2];
+
+		$scope.run_filter = function() {
+			$scope.get();
+		};
+		
 		$scope.data = {};
 		$scope.nps = {};
 		$scope.pie_stars = echarts.init(document.getElementById('pie_stars'));
@@ -1004,15 +1070,23 @@
 		});
 		
 		$scope.less_30 = false;
+		$scope.empty_filter = false;
 		$scope.get = function() {
-			$http.post("/pub/stat_chart2/", {}).success(function(data, status, headers, config) {
+			$http.post("/pub/stat_chart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
 				$scope.data = logger.check(data);
 				$scope.color = $scope.user.color || '#0F75BC';
 				$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
+				
+				var is_filter = false;
+				for (var k in $scope.stat_filter_list)
+				{
+					is_filter = true;
+				}
 
-				if ($scope.data.for_user >= 30)
+				if ($scope.data.for_user >= 30 || (is_filter && $scope.data.for_user > 0))
 				{
 					$scope.less_30 = false;
+					$scope.empty_filter = false;
 
 					if ($scope.data && $scope.data.stars_count)
 					{
@@ -1189,7 +1263,14 @@
 				}
 				else
 				{
-					$scope.less_30 = true;
+					if ( ! is_filter)
+					{
+						$scope.less_30 = true;
+					}
+					else
+					{
+						$scope.empty_filter = true;
+					}
 				}
 			});
 		};
@@ -3511,6 +3592,8 @@
 		$scope.doc = {};
 		$scope.doc.id = 0;
 		$scope.location = {};
+		$scope.loc = {};
+		$scope.loc.id = 0;
 		$scope.short = false;
 		$scope.feedback_success = false;
 		$scope.feedback = {};
@@ -3553,6 +3636,8 @@
 					$scope.users_id = $scope.i.user ? $scope.i.user.id : 0;
 					$scope.doctors_id = ($scope.i.info && $scope.i.info.doctor) ? $scope.i.info.doctor : 0;
 					$scope.doc.id = $scope.doctors_id * 1;
+					$scope.locations_id = ($scope.i.info && $scope.i.info.location) ? $scope.i.info.location : 0;
+					$scope.loc.id = $scope.locations_id * 1;
 					$scope.ex = $scope.i.info ? $scope.i.info.ex : $scope.ex;
 					$scope.limit = $scope.i.info ? $scope.i.info.limit : $scope.limit;
 					$scope.errors = $scope.i.info ? $scope.i.info.errors : $scope.errors;
@@ -3674,6 +3759,11 @@
 						temp.url = $scope.i.doctor.zorgkaart;
 					}
 					
+					if (s == "zorgkaart" && $scope.i.location && $scope.i.location.zorgkaart != '')
+					{
+						temp.url = $scope.i.location.zorgkaart;
+					}
+					
 					if ($scope.voted < 0)
 					{
 						temp.url = 'http://zorgkaartnederland.nl/';
@@ -3704,6 +3794,18 @@
 				if (result.doctor)
 				{
 					$scope.i.doctor = result.doctor;
+				}
+				$scope.rebuild_onlines();
+			});
+		};
+		
+		$scope.set_location = function() {
+			$scope.locations_id = $scope.loc.id;
+			$http.post("/pub/vote_loc/", {id: $scope.id, users_id: $scope.users_id, locations_id: $scope.locations_id}).success(function(data, status, headers, config) {
+				var result = logger.check(data);
+				if (result.location)
+				{
+					$scope.i.location = result.location;
 				}
 				$scope.rebuild_onlines();
 			});
@@ -6384,7 +6486,7 @@
 
     angular.module('app.page')
         .controller('invoiceCtrl', ['$scope', '$window', invoiceCtrl])
-        .controller('authCtrl', ['$scope', '$window', '$location', '$http', '$route', '$modal', 'logger', authCtrl]);
+        .controller('authCtrl', ['$scope', '$window', '$location', '$http', '$route', '$modal', '$timeout', 'logger', authCtrl]);
 
     function invoiceCtrl($scope, $window) {
         var printContents, originalContents, popupWin;
@@ -6399,7 +6501,7 @@
         }
     }
 
-    function authCtrl($scope, $window, $location, $http, $route, $modal, logger) {
+    function authCtrl($scope, $window, $location, $http, $route, $modal, $timeout, logger) {
 			$scope.logged_in = false;
 			$scope.tfa = false;
 			$scope.last_slide = false;
@@ -6439,6 +6541,9 @@
 								}
 								else
 								{
+									$timeout(function() {
+										$window.document.getElementById('code_1').focus();
+									}, 500);
 									$scope.tfa = true;
 								}
 							}
