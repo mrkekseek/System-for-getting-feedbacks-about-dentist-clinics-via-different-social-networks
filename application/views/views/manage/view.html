@@ -216,13 +216,11 @@
 			<tab heading="Facturering">
 				<form class="form-horizontal" role="form" name="form">
 					<div class="form-group">
-						<label class="col-md-4">&nbsp;</label>
+						<label class="col-md-4">Getoonde prijs voor abonnement</label>
 						<div class="col-md-8">
-							<div class="checkbox">
-								<label>
-									<input type="checkbox" ng-model="user.organization" ng-checked="user.organization == '1'" ng-change="organization_change()" />
-									Dit account wordt handmatig gefactureerd
-								</label>
+							<div class="input-group">
+								<span class="input-group-addon">&euro;</span>
+								<input type="text" class="form-control" name="amount" ng-model="user.account_amount" ng-disabled="user.organization == '1'" required="required" />
 							</div>
 						</div>
 					</div>
@@ -230,25 +228,19 @@
 					<div class="divider divider-dashed divider-lg pull-in"></div>
 					
 					<div class="form-group">
-						<label class="col-md-4">Prijs voor abonnement</label>
+						<label class="col-md-4">Getoonde prijs per zorgverlener</label>
 						<div class="col-md-8">
-							<input type="text" class="form-control" name="amount" ng-model="user.account_amount" ng-disabled="user.organization == '1'" required="required" />
+							<div class="input-group">
+								<span class="input-group-addon">&euro;</span>
+								<input type="text" class="form-control" name="amount" ng-model="user.doctors_amount" ng-disabled="user.organization == '1'" required="required" />
+							</div>
 						</div>
 					</div>
 					
 					<div class="divider divider-dashed divider-lg pull-in"></div>
 					
 					<div class="form-group">
-						<label class="col-md-4">Prijs per zorgverlener</label>
-						<div class="col-md-8">
-							<input type="text" class="form-control" name="amount" ng-model="user.doctors_amount" ng-disabled="user.organization == '1'" required="required" />
-						</div>
-					</div>
-					
-					<div class="divider divider-dashed divider-lg pull-in"></div>
-					
-					<div class="form-group">
-						<label class="col-md-4">Aantal gratis zorgverleners</label>
+						<label class="col-md-4">Getoonde aantal gratis zorgverleners</label>
 						<div class="col-md-8">
 							<input type="text" class="form-control" name="number" ng-model="user.doctors_number" ng-disabled="user.organization == '1'" required="required" />
 						</div>
