@@ -1756,7 +1756,7 @@
 					{
 						if ( ! empty($row['sms_blocked']))
 						{
-							$this->errors[] = array("Account is blocked");
+							$this->errors[] = array("Uw account is geblokkeerd. Neem contact op met de Patiëntenreview klantenservice.");
 							return FALSE;
 						}
 						else
@@ -1783,7 +1783,7 @@
 				{
 					if ( ! empty($row['sms_blocked']))
 					{
-						$this->errors[] = array("Account is blocked");
+						$this->errors[] = array("Uw account is geblokkeerd. Neem contact op met de Patiëntenreview klantenservice.");
 						return FALSE;
 					}
 					else
@@ -1828,7 +1828,7 @@
 			{
 				if ( ! empty($row['sms_blocked']))
 				{
-					$this->errors[] = array("Account is blocked");
+					$this->errors[] = array("Uw account is geblokkeerd. Neem contact op met de Patiëntenreview klantenservice.");
 					return FALSE;
 				}
 				else

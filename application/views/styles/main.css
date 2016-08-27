@@ -668,7 +668,7 @@ section.logo {
 }
 
 .tfa .tfa-box {
-	height: 310px;
+	height: 325px;
 }
 
 .tfa-title {
@@ -706,7 +706,6 @@ section.logo {
 .tfa-input .form-control {
 	font-size: 30px;
 	border: solid #999 1px;
-	color: #999;
 	padding: 5px;
 	border-radius: 5px;
 	text-align: center;
@@ -715,6 +714,8 @@ section.logo {
 	border: solid transparent 2px;
 	box-shadow: inset 0 -1px 3px rgba(0, 0, 0, 0.2);
 	background: linear-gradient(to bottom, #fff, #f0f0f0);
+	color: transparent;
+	text-shadow: 0 0 0 #999;
 }
 
 .tfa-input .form-control:not(.valid):not(.invalid):focus {
@@ -723,7 +724,8 @@ section.logo {
 
 .tfa-small {
 	text-align: center;
-	padding-top: 5px;
+	padding-top: 15px;
+	font-size: 13px;
 }
 
 .tfa-small a {
