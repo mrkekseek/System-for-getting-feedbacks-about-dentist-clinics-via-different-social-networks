@@ -34,24 +34,6 @@
     </head>
 
     <body id="app" class="app" data-custom-page data-off-canvas-nav data-ng-controller="AppCtrl" data-ng-class=" { 'layout-boxed': admin.layout === 'boxed', 'nav-collapsed-min': admin.menu === 'collapsed' } ">
-		<script>
-			var FBID = (window.location.host == 'pr.da' ? '1038259406220492' : '642099332584306');
-			window.fbAsyncInit = function() {
-				FB.init({
-				  appId      : FBID,
-				  xfbml      : true,
-				  version    : 'v2.6'
-				});
-			  };
-
-			  (function(d, s, id){
-				 var js, fjs = d.getElementsByTagName(s)[0];
-				 if (d.getElementById(id)) {return;}
-				 js = d.createElement(s); js.id = id;
-				 js.src = "//connect.facebook.net/nl_NL/sdk.js";
-				 fjs.parentNode.insertBefore(js, fjs);
-			   }(document, 'script', 'facebook-jssdk'));
-		</script>
         <!--[if lt IE 9]>
             <div class="lt-ie9-bg">
                 <p class="browsehappy">Je gebruikt een <strong>verouderde</strong> internetbrowser.</p>
@@ -389,7 +371,7 @@
 							<div class="input-group" style="margin-bottom:30px; margin-top:30px;">
 								<input type="text" class="form-control" placeholder="http://" ng-model="user_intro[online[step.online - 1]]" ng-class="valid" />
 								<span class="input-group-btn">
-									<button class="btn btn-primary" type="button" ng-click="fb_login()">{{facebook_button}}</button>
+									<button class="btn btn-primary" type="button" ng-click="fb_login()">{{user_intro.fb_logged_in == '1' ? 'Logged In' : 'Log In'}}</button>
 								</span>
 							</div>
 							

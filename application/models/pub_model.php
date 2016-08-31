@@ -1400,6 +1400,17 @@
 				$row['first_upload'] = ! $this->db->count_all_results('sent');
 			}
 			
+			$row['fb_logged_in'] = FALSE;
+			if ( ! empty($row['facebook_checked']) && ! empty($row['facebook']))
+			{
+				$this->load->library('Facebook');
+				$row['fb_logged_in'] = $this->facebook->is_token();
+				if (empty($row['fb_logged_in']))
+				{
+					$row['fb_link'] = $this->facebook->get_link();
+				}
+			}
+			
 			return $row;
 		}
 		
@@ -4670,34 +4681,79 @@
 
 					if ($stat['all'] > 0)
 					{
-						//$stat['average'] = floor(round($stat['average'] / $stat['all'], 2) * 2) / 2;
 						$stat['average'] = round($stat['average'] / $stat['all'], 1);
 						if ($stat['all_before'] > 0)
 						{
-							//$stat['average_before'] = floor(round($stat['average_before'] / $stat['all_before'], 2) * 2) / 2;
 							$stat['average_before'] = round($stat['average_before'] / $stat['all_before'], 1);
 						}
 					}
 
 					foreach ($stat['diagram'] as $key => $val)
 					{
-						//$stat['diagram'][$key] = $stat['all'] > 0 ? floor(round($val * 100 / $stat['all']) * 2) / 2 : 0;
 						$stat['diagram'][$key] = $stat['all'] > 0 ? round($val * 100 / $stat['all'], 1) : 0;
 					}
 
 					$percent = $stat['average'] / 100;
 					if ($percent > 0)
 					{
-						//$stat['delta'] = floor(round(($stat['average'] - $stat['average_before']) / $percent, 2) * 2) / 2;
 						$stat['delta'] = round(($stat['average'] - $stat['average_before']) / $percent, 1);
+					}
+
+					$stat['fb_token'] = TRUE;
+					$this->db->where('id', $this->session->userdata("id"));
+					$this->db->where('facebook_checked', TRUE);
+					$this->db->limit(1);
+					if ($this->db->count_all_results('users'))
+					{
+						$this->load->library('Facebook');
+						$stat['fb_token'] = $this->facebook->is_token();
 					}
 
 					$empty = array("rating" => 0, "reviews" => array());
 					$ratings = $this->ratings($this->session->userdata("id"));
+					$stat['facebook'] = isset($ratings['facebook']) ? $ratings['facebook'] : $empty;
 					$stat['google'] = isset($ratings['google']) ? $ratings['google'] : $empty;
 					$stat['zorgkaart'] = isset($ratings['zorgkaart']) ? $ratings['zorgkaart'] : $empty;
 					$stat['independer'] = isset($ratings['independer']) ? $ratings['independer'] : $empty;
 					$stat['telefoonboek'] = isset($ratings['telefoonboek']) ? $ratings['telefoonboek'] : $empty;
+					
+					$stat['average_online'] = 0;
+					$count = 0;
+					if ( ! empty($stat['fb_token']))
+					{
+						if ( ! empty($stat['facebook']['rating']))
+						{
+							$stat['average_online'] += $stat['facebook']['rating'];
+							$count++;
+						}
+						
+						if ( ! empty($stat['google']['rating']))
+						{
+							$stat['average_online'] += $stat['google']['rating'];
+							$count++;
+						}
+						
+						if ( ! empty($stat['zorgkaart']['rating']))
+						{
+							$stat['average_online'] += $stat['zorgkaart']['rating'];
+							$count++;
+						}
+						
+						if ( ! empty($stat['independer']['rating']))
+						{
+							$stat['average_online'] += $stat['independer']['rating'];
+							$count++;
+						}
+
+						if ( ! empty($count))
+						{
+							$stat['average_online'] = round($stat['average_online'] / $count, 1);
+						}
+					}
+					else
+					{
+						$stat['fb_link'] = $this->facebook->get_link();
+					}
 
 					return $stat;
 				}
@@ -4711,7 +4767,6 @@
 			if ($this->logged_in())
 			{
 				$this->db->order_by("last", "asc");
-				//$this->db->where("users_id", $this->session->userdata("id"));
 				$this->db->where("status <>", 3);
 				$result = $this->db->get("sent")->result_array();
 
@@ -5846,6 +5901,88 @@
 
 			return FALSE;
 		}
+		
+		function stat_online()
+		{
+			if ($this->logged_in())
+			{
+				$users_id = $this->session->userdata("id");
+				$onlines = array('zorgkaart', 'facebook', 'independer', 'google');
+				$stat = array();
+				$this->db->order_by('date', 'asc');
+				$this->db->where('users_id', $users_id);
+				$result = $this->db->get('reviews_history')->result_array();
+				foreach ($result as $row)
+				{
+					$month = date('Y-m', $row['date']);
+					$stat['months'][] = date("M 'y", $row['date']);
+					foreach ($onlines as $o)
+					{
+						$stat['average'][$o] = $row[$o] * 1;
+						if ( ! isset($stat['history'][$month][$o]))
+						{
+							$stat['history'][$month][$o]['sum'] = 0;
+							$stat['history'][$month][$o]['num'] = 0;
+						}
+						$stat['history'][$month][$o]['sum'] += $row[$o];
+						$stat['history'][$month][$o]['num']++;
+					}
+				}
+				
+				if ( ! empty($stat['history']))
+				{
+					foreach ($stat['history'] as $month => $list)
+					{
+						foreach ($list as $o => $row)
+						{
+							$stat['history'][$month][$o] = $row['num'] > 0 ? round($row['sum'] / $row['num'], 1) : 0;
+						}
+					}
+				}
+				
+				if ( ! empty($stat['average']))
+				{
+					$sum = 0;
+					foreach ($onlines as $o)
+					{
+						$sum += isset($stat['average'][$o]) ? $stat['average'][$o] : 0;
+					}
+					
+					$left = 0;
+					foreach ($onlines as $k => $o)
+					{
+						if ($k < (count($onlines) - 1))
+						{
+							$stat['pie'][$o] = isset($stat['average'][$o]) ? round($stat['average'][$o] * 100 / $sum, 1) : 0;
+							$left += $stat['pie'][$o];
+						}
+						else
+						{
+							$stat['pie'][$o] = 100 - $left;
+						}
+					}
+				}
+				
+				$this->db->order_by('time', 'desc');
+				$this->db->where('users_id', $users_id);
+				$result = $this->db->get('reviews')->result_array();
+				foreach ($result as $row)
+				{
+					$stat['reviews'][$row['profile']][] = $row;
+					if ( ! isset($stat['stars'][$row['profile']][$row['score'] * 1]))
+					{
+						$stat['stars'][$row['profile']][$row['score'] * 1] = 0;
+					}
+					$stat['stars'][$row['profile']][$row['score'] * 1]++;
+				}
+
+				$this->db->where('users_id', $users_id);
+				$this->db->update('reviews', array('marked_as_read' => TRUE));
+
+				return $stat;
+			}
+			return FALSE;
+		}
 
 		function stat_achart($post)
 		{
@@ -6491,19 +6628,19 @@
 			return $items;
 		}
 
-		function save_facebook_token($post)
+		function save_facebook_token($token)
 		{
 			if ($this->logged_in())
 			{
 				$this->db->where("id", $this->session->userdata("id"));
-				$this->db->update("users", array("facebook_token" => $post['token']));
+				$this->db->update("users", array("facebook_token" => $token));
 			}
 		}
 		
 		function ratings($users_id = FALSE)
 		{
 			$items = array();
-			if ($users_id)
+			if ( ! empty($users_id))
 			{
 				$this->db->where("users_id", $users_id);
 			}
@@ -6523,7 +6660,7 @@
 		function onlines()
 		{
 			$today = mktime(0, 0, 0, date("n"), date("j"), date("Y"));
-			$profiles = array("google", "zorgkaart", "independer", "telefoonboek");
+			$profiles = array("facebook", "google", "zorgkaart", "independer", "telefoonboek");
 			
 			$result = $this->db->get("users")->result_array();
 			foreach ($result as $row)
@@ -6540,6 +6677,79 @@
 					}
 				}
 			}
+		}
+		
+		function facebook_info($users_id)
+		{
+			$this->db->where("id", $users_id);
+			$this->db->limit(1);
+			$info = $this->db->get("users")->row_array();
+
+			if (empty($info['sites']) && $info['facebook_checked'] && ! empty($info['facebook']))
+			{
+				$this->load->library('Facebook');
+				if ($this->facebook->is_token($info['facebook_token']))
+				{
+					$temp = explode('/', $info['facebook']);
+					$alias = $temp[3];
+					
+					$facebook_id = $this->facebook->get_facebook_id($alias);
+					if ( ! empty($facebook_id))
+					{
+						$page_token = $this->facebook->get_page_token($facebook_id);
+						if ( ! empty($page_token))
+						{
+							$ratings = $this->facebook->get_ratings($facebook_id, $page_token);
+							if ( ! empty($ratings))
+							{
+								$rating = 0;
+								$count = 0;
+								foreach ($ratings as $row)
+								{
+									$rating += $row['rating'];
+									$count++;
+								}
+								
+								if ( ! empty($count))
+								{
+									$rating = round($rating / $count, 1);
+								}
+								
+								$this->save_reviews_history($users_id, 'facebook', $rating);
+								
+								foreach ($ratings as $row)
+								{
+									if ( ! empty($row['review_text']))
+									{
+										$data_array = array("users_id" => $users_id,
+															"profile" => "facebook",
+															"rating" => $rating,
+															"score" => $row['rating'],
+															"text" => $row['review_text'],
+															"link" => $info['facebook'],
+															"date" => $row['created_time']->format('d-m-Y'),
+															"time" => $row['created_time']->getTimestamp(),
+															"hash" => md5($row['review_text']));
+
+										$this->db->where("hash", $data_array['hash']);
+										if ($this->db->count_all_results("reviews"))
+										{
+											$this->db->where("hash", $data_array['hash']);
+											$this->db->update("reviews", $data_array);
+										}
+										else
+										{
+											$this->db->insert("reviews", $data_array);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return TRUE;
 		}
 
 		function google_info($users_id)
@@ -6581,6 +6791,8 @@
 						}
 						$rating = round($av / count($place['result']['reviews']), 2);
 					}
+					
+					$this->save_reviews_history($users_id, 'google', $rating);
 
 					if ( ! empty($place['result']['reviews']))
 					{
@@ -6637,6 +6849,8 @@
 					$zorgkaart = substr($last, 0, 3);
 					$rating = round($zorgkaart / 2, 2);
 				}
+				
+				$this->save_reviews_history($users_id, 'zorgkaart', $rating);
 
 				$feed = file_get_contents(rtrim($url, '/')."/rss");
 				$feed = str_replace('<media:', '<', $feed);
@@ -6750,6 +6964,8 @@
 						$independer = substr($last[1], 0, 3);
 						$rating = round(str_replace(",", ".", $independer) / 2, 2);
 					}
+					
+					$this->save_reviews_history($users_id, 'independer', $rating);
 
 					if (strpos($content, '<div id="reviews" class="reviewList">') !== FALSE)
 					{
@@ -6834,6 +7050,28 @@
 			}
 
 			return TRUE;
+		}
+		
+		function save_reviews_history($users_id, $online, $rating)
+		{
+			$date = mktime(0, 0, 0, date('n'), date('j'), date('Y'));
+			$data_array = array('users_id' => $users_id,
+								$online => $rating,
+								'date' => $date);
+
+			$this->db->where('users_id', $users_id);
+			$this->db->where('date', $date);
+			$this->db->limit(1);
+			$row = $this->db->get('reviews_history')->row_array();
+			if ( ! empty($row))
+			{
+				$this->db->where('rows_id', $row['rows_id']);
+				$this->db->update('reviews_history', $data_array);
+			}
+			else
+			{
+				$this->db->insert('reviews_history', $data_array);
+			}
 		}
 		
 		function mailgun_send($types = array(), $id = FALSE)

@@ -306,6 +306,7 @@ textarea {
 	color: #626262;
 	display: block;
 	text-align: justify;
+	margin-top: 10px;
 }
 
 .in-google-stars {
@@ -379,6 +380,7 @@ textarea {
 	float: right;
 	font: 12px/1.6 arial, sans-serif;
 	color: #aaa;
+	margin-left: 5px;
 }
 
 .ui-radio {
@@ -3481,4 +3483,40 @@ body .btn-primary.compose-prev:disabled {
 	.show-filter .input-group {
 		margin-top: 10px;
 	}
+}
+
+.label-online {
+	margin-top: 5px;
+}
+
+.online-side-logo {
+	padding: 54px 15px;
+	line-height: 100px;
+	text-align: center;
+	background: #0F75BD;
+}
+
+.online-side-logo.zorgkaart {
+	background: #F29619;
+}
+
+.online-side-logo.facebook {
+	background: #3B589E;
+}
+
+.online-side-logo.independer {
+	background: #825F87;
+}
+
+.online-side-logo.google {
+	background: #C1C1C1;
+}
+
+.online-side-logo .rating-logo img {
+	max-width: 100%;
+}
+
+.reviews_container .fa-star-o {
+	color: #ffe166;
+    font-size: 16px;
 }
