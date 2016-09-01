@@ -38,15 +38,12 @@
 							
 							<div class="col-sm-7 col-xs-12">
 								<div class="box-info av-online info-dashboard">
-									<div ng-show="show_average_online == '1'">
+									<div ng-show="stat.fb_token == '1'">
 										<p class="size-h2">{{stat.average_online}}</p>
-										<p class="text-muted" ng-if="type == 'all'"><span data-i18n="De gemiddelde waardering van uw praktijk op alle online kanalen."></span></p>
-										<p class="text-muted" ng-if="type == 'facebook'"><span data-i18n="De gemiddelde waardering van uw praktijk op Facebook."></span></p>
-										<p class="text-muted" ng-if="type == 'google'"><span data-i18n="De gemiddelde waardering van uw praktijk op Google."></span></p>
-										<p class="text-muted" ng-if="type == 'zorgkaart'"><span data-i18n="De gemiddelde waardering van uw praktijk op Zorgkaart."></span></p>
+										<p class="text-muted"><span data-i18n="De gemiddelde waardering van uw praktijk op alle online kanalen."></span></p>
 									</div>
 									
-									<div class="show_fb_login" ng-class="{'shown': show_fb_login == '1'}">
+									<div class="show_fb_login" ng-class="{'shown': stat.fb_token == '0'}">
 										<p class="text-center">
 											Log in met het Facebook-account waarmee u de bedrijfspagina van uw praktijk beheert.<br /><br />
 											<a href="javascript:void(0);" class="btn btn-primary" ng-click="fb_login()"><i class="ti-facebook"></i> Log In</a>
