@@ -3066,13 +3066,14 @@
 			}
 			
 			$tags_required = $this->get_emails_tags();
-			$tags = array('title', 'name', 'sname', 'email', 'birth', 'doctor');
+			$tags = array('title', 'name', 'sname', 'email', 'birth', 'doctor', 'treatment');
 			$fields = array('title' => 'Aanhef Patiënt',
 							'name' => 'Voornaam Patiënt',
 							'sname' => 'Achternaam Patiënt',
 							'email' => 'E-mailadres',
 							'birth' => 'Geboortedatum',
-							'doctor' => 'Zorgverlenernummer');
+							'doctor' => 'Zorgverlenernummer',
+							'treatment' => 'Behandeling');
 			$users_fields = $this->get_users_fields();
 			
 			$this->db->where("id", $this->session->userdata('id'));
@@ -3081,9 +3082,6 @@
 			{
 				$tags[] = 'location';
 				$fields['location'] = 'Locatie';
-				
-				$tags[] = 'treatment';
-				$fields['treatment'] = 'Behandeling';
 			}
 			
 			$cols = array();
