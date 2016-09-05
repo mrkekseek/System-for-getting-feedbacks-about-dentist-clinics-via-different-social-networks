@@ -261,8 +261,8 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">Meervoudige vraagstelling<span class="label label-primary label-pro" ng-show="user.account_type == '0'">Pro</span></label>
-                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0'}" ng-click="upgrade_to_pro()">
+                    <label class="col-md-4">Meervoudige vraagstelling<span class="label label-primary label-pro" ng-show="user.account_type == '0' || (user.account_type == '1' && user.organization == '0')">Ultimate</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' || (user.account_type == '1' && user.organization == '0')}" ng-click="upgrade_to_ultimate()">
                         <label class="ui-switch ui-switch-lg">
 							<input type="checkbox" name="rating_questions" ng-model="user.rating_questions" ng-change="check_questions_for_user()" ng-checked="user.rating_questions == '1'" />
 							<i></i>
@@ -728,6 +728,24 @@
 	<div class="modal-body">
 		<p>
 			Deze functie is beschikbaar voor Patiëntenreview Pro. Door te upgraden ontvangt u toegang tot 
+			deze en een scala aan andere uitgebreide mogelijkheden.
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="ok()">Bekijk voordelen</button>
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="questions_ultimate.html">
+	<div class="modal-header">
+		<h3>
+			Upgrade om deze Ultimate functie te gebruiken
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			Deze functie is beschikbaar voor Patiëntenreview Ultimate. Door te upgraden ontvangt u toegang tot 
 			deze en een scala aan andere uitgebreide mogelijkheden.
 		</p>
 	</div>
