@@ -874,7 +874,10 @@
 				var is_filter = false;
 				for (var k in $scope.stat_filter_list)
 				{
-					is_filter = true;
+					if ($scope.stat_filter_list[k].value != '')
+					{
+						is_filter = true;
+					}
 				}
 
 				if ($scope.data.for_user >= 30 || (is_filter && $scope.data && $scope.data.for_user > 0))
