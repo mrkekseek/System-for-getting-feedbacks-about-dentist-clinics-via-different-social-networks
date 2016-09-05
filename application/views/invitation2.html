@@ -124,7 +124,7 @@
 							</div>
 							
 							<div class="doctors-box" ng-if="i.locations.length">
-								<h3 class="sub">Waar ga je helpen?</h3>
+								<h3 class="sub">Op welke locatie bent u geweest?</h3>
 								<select class="form-control doctors-list" ng-change="set_location()" ng-model="loc.id">
 									<option value="0">Kies een locatie...</option>
 									<option ng-repeat="l in i.locations" value="{{l.id}}" ng-selected="l.id == loc.id">{{l.title}}</option>
