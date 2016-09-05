@@ -3198,6 +3198,55 @@ body .btn-primary.compose-prev:disabled {
 	font-weight: 300;
 }
 
+.charts2-row .panel.panel-default {
+    position: relative;
+    z-index: 0;
+}
+
+.ultimate-lock {
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(255, 255, 255, 0.95);
+}
+
+.ultimate-lock .fa-lock {
+	bottom: 0;
+    color: #b1b1b1;
+    display: block;
+    font-size: 54px;
+    height: 54px;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+}
+
+.ultimate-lock.over .fa-lock {
+	display: none;
+}
+
+.ultimate-text {
+	position: absolute;
+	height: 54px;
+    left: 0;
+	bottom: 0;
+    right: 0;
+    top: 0;
+	text-align: center;
+	margin: auto;
+	display: none;
+}
+
+.ultimate-lock.over .ultimate-text {
+	display: block;
+}
+
 .charts2-dashed {
 	border-top: dashed #D0D0D0 3px;
 	margin: 0 -15px 15px;

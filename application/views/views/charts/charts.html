@@ -6,7 +6,7 @@
 					<div class="row stat-filter-row" ng-repeat="(i, f) in stat_filter_list">
 						<div class="col-xs-12" ng-show="user.organization == '0'">
 							Upgrade naar Ultimate om een diepgaande analyse uit te voeren op uw beoordelingen.
-							<a href="javascript:void(0);" class="btn btn-primary">Upgrade...</a>
+							<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
 						</div>
 						
 						<div class="col-sm-4 first-filter" ng-class="{'form-inline': i == 0}" ng-show="user.organization == '1'">
