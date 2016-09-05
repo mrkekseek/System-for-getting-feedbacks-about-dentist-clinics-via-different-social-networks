@@ -670,6 +670,17 @@
         .controller('Charts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', Charts2Ctrl]); // overall control
 
     function Charts2Ctrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.ultimate_class = {};
+        $scope.ultimate_over = function(name)
+        {
+            $scope.ultimate_class[name] = 'over';
+        };
+        
+        $scope.ultimate_out = function(name)
+        {
+            $scope.ultimate_class[name] = '';
+        }
+		
 		$scope.type = 'email';
 		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
