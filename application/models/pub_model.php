@@ -5301,7 +5301,7 @@
 										$query[] = '('.implode(' AND ', $time).')';
 									}
 								}
-								
+
 								if ( ! empty($query))
 								{
 									$this->db->where('('.implode(' OR ', $query).')');
