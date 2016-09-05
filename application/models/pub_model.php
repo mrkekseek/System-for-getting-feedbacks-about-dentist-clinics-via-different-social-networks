@@ -7,6 +7,7 @@
 	
 	class Pub_model extends CI_Model
 	{
+		//6aCX1c9CgDUA.
 		var $errors = array();
 		var $google_key = "AIzaSyCektmWg5NTvgzkwnRGq95_EPXYNOuhTGI";
 		var $per_hour = 350;

@@ -122,7 +122,7 @@
 							<span ng-if="user.account == '2'">Proefperiode</span>
 							<span ng-if="user.account != '2' && user.account_type == '0' && user.organization != '1'">Basis</span>
 							<span ng-if="user.account != '2' && user.account_type == '1' && user.organization != '1'">Pro</span>
-							<span ng-if="user.account != '2' && user.account_type == '1' && user.organization == '1'">Organisaties</span>
+							<span ng-if="user.account != '2' && user.account_type == '1' && user.organization == '1'">Ultimate</span>
 						</td>
 						<td class="text-center"><a href="javascript:void(0);" ng-click="open_modal(user)"><i class="glyphicon glyphicon-cog"></i></a></td>
 						<td><a class="label label-primary" ng-click="login_as_user(user.id)">Log In</a></td>
@@ -168,12 +168,12 @@
 			<tab heading="Abonnement">
 				<form class="form-horizontal" role="form" name="form">
 					<div class="form-group">
-						<label class="col-md-4">Geforceerd omzetten</label>
+						<label class="col-md-4">Wijzig abonnement</label>
 						<div class="col-md-8">
 							<select class="form-control" ng-model="user.fake_type" ng-change="fake_type_change()">
 								<option value="0">Patiëntenreview Basis</option>
 								<option value="1">Patiëntenreview Pro</option>
-								<option value="2">Patiëntenreview voor Organisaties</option>
+								<option value="2">Patiëntenreview Ultimate</option>
 							</select>
 						</div>
 					</div>
