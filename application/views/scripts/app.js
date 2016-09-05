@@ -1999,6 +1999,29 @@
 			}
 		};
 		
+		$scope.upgrade_to_ultimate = function()
+		{
+			if ($scope.user.account_type == 1 && $scope.user.organization == 0)
+			{
+				var modalInstance;
+				modalInstance = $modal.open({
+					templateUrl: "questions_ultimate.html",
+					controller: 'ModalQuestionsBasicCtrl',
+					resolve: {
+						items: function() {
+							return [];
+						}
+					}
+				});
+				
+				modalInstance.result.then((function(items) {
+					$location.url("pages/activate/1");
+				}), function() {
+					console.log("Modal dismissed at: " + new Date());
+				});
+			}
+		};
+		
 		$scope.check_questions_for_user = function()
 		{
 			if ($scope.user.rating_questions)
@@ -2501,7 +2524,7 @@
 					$scope.doctors.push($scope.info.doctors[k]);
 				}
 				
-				$scope.info.price = ($scope.type[0] == 0 ? $scope.info.base_amount : $scope.info.pro_amount);
+				$scope.info.price = ($scope.type[0] == 0 ? $scope.info.base_amount : ($scope.type[0] == 1 ? $scope.info.pro_amount : $scope.info.ultimate_amount));
 				$scope.info.amount = $scope.info.amount == 0 ? ($scope.info.price + $scope.info.doctors_amount) : $scope.info.amount;
 			});
 		};

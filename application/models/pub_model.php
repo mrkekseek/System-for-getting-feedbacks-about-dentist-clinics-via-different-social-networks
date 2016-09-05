@@ -13,6 +13,7 @@
 		var $per_hour = 350;
 		var $base_amount = 275;
 		var $pro_amount = 450;
+		var $ultimate_amount = 600;
 		var $account_amount = 0;
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
@@ -61,13 +62,13 @@
 				
 				if ( ! empty($row))
 				{
-					if ( ! empty($row['account_amount']) &&  $row['account_amount'] != '0.00')
+					if ( ! empty($row['account_amount']) && $row['account_amount'] != '0.00')
 					{
 						$this->account_amount = $row['account_amount'];
 					}
 					else
 					{
-						$this->account_amount = $row['account_type'] == '0' ? $this->base_amount : $this->pro_amount;
+						$this->account_amount = $row['account_type'] == '0' ? $this->base_amount : ($row['account_type'] == '1' && $row['organization'] == '1' ? $this->ultimate_amount : $this->pro_amount);
 					}
 					
 					if ( ! empty($row['doctors_amount']) &&  $row['doctors_amount'] != '0.00')
@@ -760,12 +761,13 @@
 			$result = array();
 			$result['base_amount'] = $this->base_amount;
 			$result['pro_amount'] = $this->pro_amount;
+			$result['ultimate_amount'] = $this->ultimate_amount;
 			$result['account_amount'] = $this->account_amount;
 			$result['doctors'] = $this->get_doctors($id);
 			$result['doctors_amount'] = 0;
 			foreach ($result['doctors'] as $doc)
 			{
-				if (($type == 1 && ! $doc['free']) || $type == 0)
+				if (($type > 0 && ! $doc['free']) || $type == 0)
 				{
 					$result['doctors_amount'] += $this->doctor_amount;
 				}
@@ -803,7 +805,7 @@
 				{
 					if ($type !== FALSE)
 					{
-						$result['amount'] = $result['doctors_amount'] + ($type == 0 ? $result['base_amount'] : $result['pro_amount']);
+						$result['amount'] = $result['doctors_amount'] + ($type == 0 ? $result['base_amount'] : $type == 1 ? $result['pro_amount'] : $result['ultimate_amount']);
 					}
 				}
 			}
@@ -1000,6 +1002,7 @@
 			$result = array();
 			$result['base_amount'] = $this->base_amount;
 			$result['pro_amount'] = $this->pro_amount;
+			$result['ultimate_amount'] = $this->ultimate_amount;
 			$result['account_amount'] = $this->account_amount;
 			$result['doctor_amount'] = $this->doctor_amount;
 			$result['doctor_number'] = $this->free_doctors_number;
@@ -1389,7 +1392,7 @@
 			$this->db->where("users_id", $id);
 			$row['login_count'] = $this->db->count_all_results("sessions");
 			
-			$row['account_amount'] = $row['account_amount'] != '0.00' ? $row['account_amount'] : ($row['account_type'] == 0 ? $this->base_amount : $this->pro_amount);
+			$row['account_amount'] = $row['account_amount'] != '0.00' ? $row['account_amount'] : ($row['account_type'] == 0 ? $this->base_amount : ($row['account_type'] == 1 && $row['organization'] == 1 ? $this->ultimate_amount : $this->pro_amount));
 			$row['doctors_amount'] = $row['doctors_amount'] != '0.00' ? $row['doctors_amount'] : $this->doctor_amount;
 			$row['doctors_number'] = ! empty($row['doctors_number']) ? $row['doctors_number'] : $this->free_doctors_number;
 
