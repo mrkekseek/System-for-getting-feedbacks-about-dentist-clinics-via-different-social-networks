@@ -571,7 +571,7 @@ textarea {
 }
 
 .socials-inbox-icons img{
-	max-height: 20px;
+	max-height: 25px;
 	vertical-align: top;
 }
 
@@ -670,7 +670,7 @@ section.logo {
 }
 
 .tfa .tfa-box {
-	height: 325px;
+	height: 340px;
 }
 
 .tfa-title {
@@ -3510,6 +3510,14 @@ body .btn-primary.compose-prev:disabled {
 	font-size: 80px;
 }
 
+.first-filter.form-inline .form-control {
+	width: calc(100% - 45px);
+}
+
+.charts-filter-panel .col-sm-1 {
+	width: 30px;
+}
+
 @media (max-width: 1200px) {
 	.first-filter.form-inline label {
 		display: none;
@@ -3533,6 +3541,10 @@ body .btn-primary.compose-prev:disabled {
 	
 	.show-filter .input-group {
 		margin-top: 10px;
+	}
+	
+	.charts-filter-panel .col-sm-1 {
+		width: auto;
 	}
 }
 

@@ -10,7 +10,7 @@
 					</tr>
 					<tr>
 						<td>Accountsoort</td>
-						<td>{{user.account_type == 0 && user.account != 2 ? 'Patiëntenreview Basis' : 'Patiëntenreview Pro'}}</td>
+						<td>{{user.account_type == 0 && user.account != 2 ? 'Patiëntenreview Basis' : (user.account_type == 1 && user.organization == 0 ? 'Patiëntenreview Pro' : 'Patiëntenreview Ultimate')}}</td>
 					</tr>
 					<tr>
 						<td>Accountstatus</td>

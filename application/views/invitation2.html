@@ -124,7 +124,7 @@
 							</div>
 							
 							<div class="doctors-box" ng-if="i.locations.length">
-								<h3 class="sub">Waar ga je helpen?</h3>
+								<h3 class="sub">Op welke locatie bent u geweest?</h3>
 								<select class="form-control doctors-list" ng-change="set_location()" ng-model="loc.id">
 									<option value="0">Kies een locatie...</option>
 									<option ng-repeat="l in i.locations" value="{{l.id}}" ng-selected="l.id == loc.id">{{l.title}}</option>
@@ -163,42 +163,8 @@
 					</div>
 					
 					<div class="row rating-row" ng-show=" ! limit && ! errors">
-						<div class="col-xs-12" ng-class="{'col-md-6 pull-right': voted < 0}">
-							<div class="cards-box" ng-if="onlines_col > 0" ng-class="{active: voted != 0}">
-								<div class="cards-box-content">
-									<div class="cards-number" ng-if="voted >= 0">
-										Stap <span ng-if="voted == 0">2</span><span ng-if="voted != 0">1</span>
-									</div>
-									
-									<h2>Deel uw mening met anderen</h2>
-									
-									<h3 class="sub">Zo helpt u mee met het verbeteren van de gezondheidszorg.</h3>
-									
-									<div class="row rating-row">
-										<div class="col-sm-{{onlines_col}} col-xs-12" ng-repeat="o in onlines">
-											<div class="rating-panel rating-{{o.system}}">
-												<div class="rating-heading" ng-click="click(o.system, o.url)">
-													<div class="rating-logo">
-														<img src="/application/views/images/online-{{o.system}}.png" alt="" ng-if="o.system != 'own'" />
-														<span ng-if="o.system == 'own' && i.user.own_name != ''">{{i.user.own_name}}</span>
-														<span ng-if="o.system == 'own' && i.user.own_name == ''">Aangepaste doorverwijzing</span>
-													</div>
-												</div>
-												
-												<a href="javascript:void(0);" class="rating-btn" ng-click="click(o.system, o.url)">Schrijf review</a>
-											</div>
-										</div>
-									</div>
-								</div>
-								
-								<div class="cards-lock">
-									<i class="fa fa-lock"></i>
-								</div>
-							</div>
-						</div>
-					
 						<div class="col-xs-12" ng-show="voted <= 0" ng-class="{'col-md-6': voted < 0}">
-							<div class="cards-box no-bottom-marging" ng-if="onlines_col > 0"  ng-class="{active: voted != 0}">
+							<div class="cards-box" ng-if="onlines_col > 0"  ng-class="{active: voted != 0}">
 								<div class="cards-box-content">
 									<div class="cards-number" ng-if="voted >= 0">
 										Stap <span ng-if=" ! is_vote">3</span><span ng-if="is_vote">2</span>
@@ -245,6 +211,40 @@
 											</div>
 										</div>
 									</form>
+								</div>
+								
+								<div class="cards-lock">
+									<i class="fa fa-lock"></i>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xs-12" ng-class="{'col-md-6': voted < 0}">
+							<div class="cards-box no-bottom-marging" ng-if="onlines_col > 0" ng-class="{active: voted != 0}">
+								<div class="cards-box-content">
+									<div class="cards-number" ng-if="voted >= 0">
+										Stap <span ng-if="voted == 0">2</span><span ng-if="voted != 0">1</span>
+									</div>
+									
+									<h2>Deel uw mening met anderen</h2>
+									
+									<h3 class="sub">Zo helpt u mee met het verbeteren van de gezondheidszorg.</h3>
+									
+									<div class="row rating-row">
+										<div class="col-sm-{{onlines_col}} col-xs-12" ng-repeat="o in onlines">
+											<div class="rating-panel rating-{{o.system}}">
+												<div class="rating-heading" ng-click="click(o.system, o.url)">
+													<div class="rating-logo">
+														<img src="/application/views/images/online-{{o.system}}.png" alt="" ng-if="o.system != 'own'" />
+														<span ng-if="o.system == 'own' && i.user.own_name != ''">{{i.user.own_name}}</span>
+														<span ng-if="o.system == 'own' && i.user.own_name == ''">Aangepaste doorverwijzing</span>
+													</div>
+												</div>
+												
+												<a href="javascript:void(0);" class="rating-btn" ng-click="click(o.system, o.url)">Schrijf review</a>
+											</div>
+										</div>
+									</div>
 								</div>
 								
 								<div class="cards-lock">
