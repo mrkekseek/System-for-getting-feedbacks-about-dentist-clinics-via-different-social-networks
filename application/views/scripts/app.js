@@ -2046,6 +2046,21 @@
 			}
 		};
 		
+		$scope.check_phone = 'none';
+		$scope.phone_check = function(phone) {
+			var reg = /(^\+[0-9]{2}|^\+[0-9]{2}\(0\)|^\(\+[0-9]{2}\)\(0\)|^00[0-9]{2}|^0)([0-9]{9}$|[0-9\-\s]{10}$)/;
+			if (phone.match(reg))
+			{
+				$scope.check_phone = 'valid';
+				return true;
+			}
+			else
+			{
+				$scope.check_phone = 'none';
+				return false;
+			}
+		};
+		
 		$scope.rating = 0;
 		$scope.questions_list = {};
 		$scope.add_new_question = 0;
@@ -2267,62 +2282,69 @@
 				
 				if (mobile_check)
 				{
-					if ($scope.user.color.toLowerCase() == "#fff" || $scope.user.color.toLowerCase() == "#ffffff")
+					if ($scope.user.phone != '' && $scope.phone_check($scope.user.phone) || $scope.user.phone == '')
 					{
-						logger.logError("Om de leesbaarheid van de gebruikersinterface te waarborgen kunt u niet de kleur wit gebruiken voor uw huisstijl. Kies alstublieft een andere kleur.");
+						if ($scope.user.color.toLowerCase() == "#fff" || $scope.user.color.toLowerCase() == "#ffffff")
+						{
+							logger.logError("Om de leesbaarheid van de gebruikersinterface te waarborgen kunt u niet de kleur wit gebruiken voor uw huisstijl. Kies alstublieft een andere kleur.");
+						}
+						else
+						{
+							var check = true;
+							if ($scope.short_checked && ! $scope.validate_url())
+							{
+								check = false;
+								logger.logError("Voer alstublieft een geldige URL in.");
+							}
+							
+							if (check)
+							{
+								$http.post("/pub/profile_save/", $scope.user).success(function(data, status, headers, config) {
+									var result = logger.check(data);
+									angular.copy($scope.user, $scope.old_user);
+									
+									var logo_box = document.getElementsByClassName("logo")[0];
+									var logo = logo_box.getElementsByTagName("img")[0];
+									logo.src = $scope.user.logo == '' ? './application/views/images/logo_full.png' : $scope.user.logo;
+									
+									if ($scope.user.color != "")
+									{
+										var css = "/colors/" + $scope.user.id + "/color.css";
+										var links = document.getElementsByTagName("link");
+										var to_remove = false;
+										for (var i = 0, count = links.length; i < count; i++)
+										{
+											if (links[i].href.indexOf(css) + 1)
+											{
+												to_remove = links[i];
+											}
+										}
+										
+										if (to_remove)
+										{
+											to_remove.parentNode.removeChild(to_remove)
+										}
+										
+										var date = new Date();
+										
+										var link = document.createElement("link");
+										link.rel = "stylesheet";
+										link.href = "." + css + "?v=" + date.getSeconds();
+										
+										document.getElementsByTagName("head")[0].appendChild(link);
+									}
+									
+									if (callback)
+									{
+										callback();
+									}
+								});
+							}
+						}
 					}
 					else
 					{
-						var check = true;
-						if ($scope.short_checked && ! $scope.validate_url())
-						{
-							check = false;
-							logger.logError("Voer alstublieft een geldige URL in.");
-						}
-						
-						if (check)
-						{
-							$http.post("/pub/profile_save/", $scope.user).success(function(data, status, headers, config) {
-								var result = logger.check(data);
-								angular.copy($scope.user, $scope.old_user);
-								
-								var logo_box = document.getElementsByClassName("logo")[0];
-								var logo = logo_box.getElementsByTagName("img")[0];
-								logo.src = $scope.user.logo == '' ? './application/views/images/logo_full.png' : $scope.user.logo;
-								
-								if ($scope.user.color != "")
-								{
-									var css = "/colors/" + $scope.user.id + "/color.css";
-									var links = document.getElementsByTagName("link");
-									var to_remove = false;
-									for (var i = 0, count = links.length; i < count; i++)
-									{
-										if (links[i].href.indexOf(css) + 1)
-										{
-											to_remove = links[i];
-										}
-									}
-									
-									if (to_remove)
-									{
-										to_remove.parentNode.removeChild(to_remove)
-									}
-									
-									var date = new Date();
-									
-									var link = document.createElement("link");
-									link.rel = "stylesheet";
-									link.href = "." + css + "?v=" + date.getSeconds();
-									
-									document.getElementsByTagName("head")[0].appendChild(link);
-								}
-								
-								if (callback)
-								{
-									callback();
-								}
-							});
-						}
+						logger.logError("Wrong Phone Format");
 					}
 				}
 			}
