@@ -32,6 +32,14 @@
 						</div>
 					</div>
 				</div>
+				
+				<div class="online-blocked" ng-show="blocked[o.name]">
+					<p>
+						Upgrade naar <b>Pro</b> om {{user.username}} te gebruiken.
+					</p>
+					
+					<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
+				</div>
 			</div>
 		</div>
 	</div>

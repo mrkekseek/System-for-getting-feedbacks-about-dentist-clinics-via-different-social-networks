@@ -2543,14 +2543,19 @@
     'use strict';
 
     angular.module('app')
-        .controller('OnlineCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', 'logger', OnlineCtrl]); // overall control
+        .controller('OnlineCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', '$modal', 'logger', OnlineCtrl]); // overall control
 
-    function OnlineCtrl($scope, $rootScope, $window, $http, $location, $modal, logger) {
-		$scope.online = ['google', 'facebook', 'zorgkaart', 'independer'];
-		if ($scope.user.account == '2' || $scope.user.account_type == '1')
-		{
-			$scope.online = ['google', 'facebook', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own'];
-		}
+    function OnlineCtrl($scope, $rootScope, $window, $http, $location, $timeout, $modal, logger) {
+		$scope.online = ['google', 'facebook', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own'];
+		$scope.blocked = {};
+		
+		$timeout(function() {
+			if ($scope.user.account_type == '0')
+			{
+				$scope.blocked = {'telefoonboek': true, 'vergelijkmondzorg': true, 'kliniekoverzicht': true, 'own': true};
+			}
+		}, 500);
+		
 		$scope.order = [];
 		for (var key in $scope.online)
 		{
