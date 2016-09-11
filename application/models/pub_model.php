@@ -3237,10 +3237,27 @@
 										{
 											if ( ! empty($line[$tag]))
 											{
-												$temp = explode((strpos($line[$tag], '/') ? '/' : '-'), $line[$tag]);
+												$sep = (strpos($line[$tag], '/') ? '/' : '-');
+												$temp = explode($sep, $line[$tag]);
+												if (isset($temp[2]))
+												{
+													if ($temp[2] < 16)
+													{
+														$temp[2] += 2000;
+													}
+													elseif ($temp[2] > 16 && $temp[2] < 100)
+													{
+														$temp[2] += 1900;
+													}
+												}
+												
 												if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
 												{
 													$line[$tag] = '<b>!</b>';
+												}
+												else
+												{
+													$line[$tag] = implode($sep, $temp);
 												}
 											}
 											else
