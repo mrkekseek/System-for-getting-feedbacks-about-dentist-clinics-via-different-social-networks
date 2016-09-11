@@ -6212,6 +6212,18 @@
 			
 			$scope.prev = '';
 			$scope.code_change = function($event, num) {
+				var current_value = '';
+				if ($scope.code_valid != '')
+				{
+					current_value = $event.key;
+					for (var i = 1; i <= 5; i++)
+					{
+						$scope['code_' + i] = '';
+					}
+					num = 1;
+					$scope['code_' + num] = current_value;
+				}
+				
 				$scope.code_valid = '';
 				$scope.count_valid = '';
 				var next = 0;
