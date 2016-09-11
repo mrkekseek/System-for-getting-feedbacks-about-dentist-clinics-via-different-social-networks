@@ -1878,7 +1878,6 @@
 												'sms_error_count' => $count);
 							$this->db->where('id', $this->session->userdata('tfa_id'));
 							$this->db->update('users', $data_array);
-							$this->errors[] = array("Wrong SMS Code");
 							return array('count' => $count);
 						}
 						else
@@ -1896,7 +1895,6 @@
 								$data_array = array('sms_error_count' => $count);
 								$this->db->where('id', $this->session->userdata('tfa_id'));
 								$this->db->update('users', $data_array);
-								$this->errors[] = array("Wrong SMS Code");
 								return array('count' => $count);
 							}
 						}
