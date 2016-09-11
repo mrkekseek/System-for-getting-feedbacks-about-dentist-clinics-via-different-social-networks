@@ -801,6 +801,12 @@
 			$this->response($result);
 		}
 		
+		function blocked_support()
+		{
+			$result = $this->pub->blocked_support();
+			$this->response($result);
+		}
+		
 		function get_test_email()
 		{
 			$result = $this->pub->user_emails();

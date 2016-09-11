@@ -6300,6 +6300,7 @@
 					{
 						$scope.code_valid = '0';
 						$scope.blocked = true;
+						$scope.blocked_support();
 					}
 				});
 			};
@@ -6308,6 +6309,12 @@
 				$scope.code_wait = true;
 				$http.post("/pub/code_resend/", {}).success(function(data, status, headers, config) {
 					$scope.code_wait = false;
+				});
+			};
+			
+			$scope.blocked_support = function() {
+				$http.post("/pub/blocked_support/", {}).success(function(data, status, headers, config) {
+					logger.check(data);
 				});
 			};
 

@@ -1811,6 +1811,27 @@
 			return FALSE;
 		}
 		
+		function blocked_support()
+		{
+			if ($this->session->userdata('tfa_id'))
+			{
+				$this->db->where('id', $this->session->userdata('tfa_id'));
+				$this->db->limit(1);
+				$row = $this->db->get('users')->row_array();
+				if ( ! empty($row['mobile']))
+				{
+					$row['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+					$message = $this->load->view('views/mail/tpl_blocked.html', $row, TRUE);
+
+					$to = 'support@patientenreview.nl';
+					$this->send("blocked", $to, 'Account van '.$row['username'].' is geblokkeerd', $message, 'Patiëntenreview', 'info@patientenreview.nl');
+					return $this->real_send(array('blocked'), $this->db->insert_id());
+				}
+			}
+			
+			return FALSE;
+		}
+		
 		function send_code($id = FALSE, $mobile = '')
 		{
 			if ( ! empty($mobile))
@@ -1818,7 +1839,7 @@
 				$mobile = str_replace(' ', '', $mobile);
 				if (strpos($mobile, '06') === 0)
 				{
-					$mobile = str_replace('06', '+316', $mobile, 1);
+					$mobile = substr_replace($mobile, '+316', 0, 2);
 				}
 			}
 			
