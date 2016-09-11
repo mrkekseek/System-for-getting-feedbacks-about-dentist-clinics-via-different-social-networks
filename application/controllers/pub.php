@@ -580,6 +580,12 @@
 			$this->response($result);
 		}
 		
+		function stat_achart2()
+		{
+			$result = $this->pub->stat_achart2($this->post);
+			$this->response($result);
+		}
+		
 		function stat()
 		{
 			$result = $this->pub->stat();

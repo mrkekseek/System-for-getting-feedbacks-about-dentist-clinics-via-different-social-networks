@@ -782,7 +782,7 @@
 				calculable: true,
 				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
 						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
-									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "30", fontWeight: "bold"}}}},
+									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "15", fontWeight: "bold"}}}},
 						data:[{name: '5 sterren', value: 0, itemStyle: {normal: {color: '#2F91D5'}}},
 							  {name: '4 sterren', value: 0, itemStyle: {normal: {color: '#0F75BC'}}},
 							  {name: '3 sterren', value: 0, itemStyle: {normal: {color: '#3E769D'}}},
@@ -1749,6 +1749,481 @@
 					$scope.last = logger.check(data);
 				});
 			}
+		};
+    }
+
+})();
+;
+(function () {
+    'use strict';
+
+    angular.module('app')
+        .controller('ACharts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$timeout', 'logger', ACharts2Ctrl]); // overall control
+
+    function ACharts2Ctrl($scope, $rootScope, $window, $http, $timeout, logger) {
+		$scope.login_as_user = function(users_id) {
+			$http.post("/pub/login_as_user/", {id: users_id}).success(function(data, status, headers, config) {
+				if (logger.check(data))
+				{
+					$window.location.reload();
+				}
+			});
+		};
+
+		$scope.type = 'email';
+		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
+		$scope.hex_to_rgba = function(hex, opacity)
+		{
+			hex = hex.replace('#', '');
+			var r = parseInt(hex.substring(0, 2), 16);
+			var g = parseInt(hex.substring(2, 4), 16);
+			var b = parseInt(hex.substring(4, 6), 16);
+
+			var result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
+			return result;
+		};
+		$scope.color = '#0F75BC';
+		$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
+		
+		$scope.stat_filter_list = [{'filter': '', 'value': ''}];
+		$scope.stat_filter_data = {};
+		
+		$http.post("/pub/stat_filter/", {'admin': 1}).success(function(data, status, headers, config) {
+			$scope.stat_filter_data = logger.check(data);
+		});
+		
+		$scope.change_filter = function(filter) {
+			if (filter.filter == 'date')
+			{
+				filter.value = {'from': '', 'to': ''};
+			}
+			else
+			{
+				filter.value = '';
+			}
+		};
+		
+		$scope.add_filter = function() {
+			$scope.stat_filter_list.push({'filter': '', 'value': ''});
+		};
+		
+		$scope.remove_filter = function(i) {
+			var filter_list = [];
+			for (var k in $scope.stat_filter_list)
+			{
+				if (k != i)
+				{
+					filter_list.push($scope.stat_filter_list[k]);
+				}
+			}
+			$scope.stat_filter_list = filter_list;
+		};
+		
+		$scope.stat_filter_dates = {'from': '', 'to': ''};
+		$scope.today = function(type) {
+			return $scope.stat_filter_dates[type] = new Date();
+		};
+
+		$scope.showWeeks = true;
+		$scope.clear = function(type) {
+			$scope.stat_filter_dates[type] = null;
+		};
+
+		$scope.disabled = function(date, mode) {
+			mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+		};
+
+		$scope.open_date = function($event, type, i) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope['opened_' + type + '_' + i] = true;
+		};
+
+		$scope.dateOptions = {
+			'year-format': "'yy'",
+			'starting-day': 1
+		};
+
+		$scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd/MM/yy', 'shortDate'];
+		$scope.format = $scope.formats[2];
+
+		$scope.run_filter = function() {
+			$scope.get();
+		};
+		
+		$scope.change_type = function(type)
+		{
+			if (type != $scope.type)
+			{
+				$scope.type = type;
+				$scope.get();
+			}
+		};
+		
+		$scope.data = {};
+		$scope.nps = {};
+		$scope.pie_stars = echarts.init(document.getElementById('pie_stars'));
+		$window.onresize = function() { $scope.pie_stars.resize(); };
+		$scope.pie_stars.setOption({
+				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
+				legend: {orient: "vertical", x: "left", data: ["5 sterren", "4 sterren", "3 sterren", "2 sterren", "1 sterren"]},
+				calculable: true,
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
+						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
+									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "15", fontWeight: "bold"}}}},
+						data:[{name: '5 sterren', value: 0, itemStyle: {normal: {color: '#2F91D5'}}},
+							  {name: '4 sterren', value: 0, itemStyle: {normal: {color: '#0F75BC'}}},
+							  {name: '3 sterren', value: 0, itemStyle: {normal: {color: '#3E769D'}}},
+							  {name: '2 sterren', value: 0, itemStyle: {normal: {color: '#2D5775'}}},
+							  {name: '1 sterren', value: 0, itemStyle: {normal: {color: '#04090C'}}}]
+						}]
+		});
+		
+		$scope.area_averages = echarts.init(document.getElementById('area_averages'));
+		$window.onresize = function() { $scope.area_averages.resize(); };
+		$scope.area_averages.setOption({
+				tooltip: {trigger: "axis"},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['Landelijk gemiddelde']},
+				calculable: true,
+				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
+				yAxis: [{type: 'value', boundaryGap: false}],
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Landelijk gemiddelde', data: [0], itemStyle: {normal: {color: '#D3D3D3', borderColor: '#D3D3D3', lineStyle: {color: '#D3D3D3'}, areaStyle: {color: 'rgba(211, 211, 211, 0.5)'}}}}]
+		});
+		
+		$scope.area_stars = echarts.init(document.getElementById('area_stars'));
+		$window.onresize = function() { $scope.area_stars.resize(); };
+		$scope.area_stars.setOption({
+				tooltip: {trigger: "axis"},
+				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['5 sterren', '4 sterren', '3 sterren', '2 sterren', '1 sterren']},
+				calculable: true,
+				xAxis: [{type: 'category', data: ['Wait']}],
+				yAxis: [{type: 'value', boundaryGap: false}],
+				series:[{type: 'bar', name: '5 sterren', data: [0], itemStyle: {normal: {color: '#2F91D5', barBorderRadius: 5}}},
+						{type: 'bar', name: '4 sterren', data: [0], itemStyle: {normal: {color: '#0F75BC', barBorderRadius: 5}}},
+						{type: 'bar', name: '3 sterren', data: [0], itemStyle: {normal: {color: '#3E769D', barBorderRadius: 5}}},
+						{type: 'bar', name: '2 sterren', data: [0], itemStyle: {normal: {color: '#2D5775', barBorderRadius: 5}}},
+						{type: 'bar', name: '1 sterren', data: [0], itemStyle: {normal: {color: '#04090C', barBorderRadius: 5}}}]
+		});
+		
+		$scope.pie_nps = echarts.init(document.getElementById('pie_nps'));
+		$window.onresize = function() { $scope.pie_nps.resize(); };
+		$scope.pie_nps.setOption({
+				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
+				legend: {orient: "vertical", x: "left", data: ["Promotors", "Passives", "Detractors"]},
+				calculable: true,
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
+						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
+									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "13", fontWeight: "normal"}}}},
+						data:[{name: 'Promotors', value: 0, itemStyle: {normal: {color: '#98EA3D'}}},
+							  {name: 'Passives', value: 0, itemStyle: {normal: {color: '#FFE165'}}},
+							  {name: 'Detractors', value: 0, itemStyle: {normal: {color: '#EE4C61'}}}]
+						}]
+		});
+		
+		$scope.area_nps_average = echarts.init(document.getElementById('area_nps_average'));
+		$window.onresize = function() { $scope.area_nps_average.resize(); };
+		$scope.area_nps_average.setOption({
+				tooltip: {trigger: "axis"},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['Landelijk gemiddelde']},
+				calculable: true,
+				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
+				yAxis: [{type: 'value', boundaryGap: false}],
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Landelijk gemiddelde', data: [0], itemStyle: {normal: {color: '#D3D3D3', borderColor: '#D3D3D3', lineStyle: {color: '#D3D3D3'}, areaStyle: {color: 'rgba(211, 211, 211, 0.5)'}}}}]
+		});
+		
+		$scope.area_nps = echarts.init(document.getElementById('area_nps'));
+		$window.onresize = function() { $scope.area_nps.resize(); };
+		$scope.area_nps.setOption({
+				tooltip: {trigger: "axis"},
+				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['Promotors', 'Passives', 'Detractors']},
+				calculable: true,
+				xAxis: [{type: 'category', data: ['Wait']}],
+				yAxis: [{type: 'value', boundaryGap: false}],
+				series:[{type: 'bar', name: 'Promotors', data: [0], itemStyle: {normal: {color: '#98EA3D', barBorderRadius: 5}}},
+						{type: 'bar', name: 'Passives', data: [0], itemStyle: {normal: {color: '#FFE165', barBorderRadius: 5}}},
+						{type: 'bar', name: 'Detractors', data: [0], itemStyle: {normal: {color: '#EE4C61', barBorderRadius: 5}}}]
+		});
+		
+		$scope.pie_reply = echarts.init(document.getElementById('pie_reply'));
+		$window.onresize = function() { $scope.pie_reply.resize(); };
+		$scope.pie_reply.setOption({
+				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},
+				legend: {orient: "vertical", x: "left", data: ["Beoordeeld", "Doorgeklikt", "Niet gereageerd"]},
+				calculable: true,
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
+						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
+									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "13", fontWeight: "normal"}}}},
+						data:[{name: 'Beoordeeld', value: 0, itemStyle: {normal: {color: '#2E91D5'}}}, {name: 'Doorgeklikt', value: 0, itemStyle: {normal: {color: '#0F75BD'}}}, {name: 'Niet gereageerd', value: 0, itemStyle: {normal: {color: '#2F5874'}}}] }]
+		});
+		
+		$scope.empty_filter = false;
+		$scope.get_email = function() {
+			$http.post("/pub/stat_achart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
+				$scope.data = logger.check(data);
+
+				var is_filter = false;
+				for (var k in $scope.stat_filter_list)
+				{
+					if ($scope.stat_filter_list[k].value != '')
+					{
+						is_filter = true;
+					}
+				}
+
+				if ($scope.data && $scope.data.for_user > 0)
+				{
+					$scope.empty_filter = false;
+					if ($scope.data && $scope.data.stars_count)
+					{
+						for (var i = 5; i > 0; i--)
+						{
+							$scope.pie_stars.addData([[0, {name: i + ' sterren', value: ($scope.data.stars_count[i] ? $scope.data.stars_count[i] : 0) * 1}, false, false]]);
+						}
+					}
+
+					if ($scope.data && $scope.data.average_all_month)
+					{
+						var series = [];
+						var max = 5;
+						var data = [];
+						for (var m in $scope.data.average_all_month)
+						{
+							data.push($scope.data.average_all_month[m]);
+						}
+						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
+
+						$scope.area_averages.setOption({xAxis: [{data: $scope.data.average_month_x}],
+														yAxis: [{min: 0, max: max}],
+														series: series});
+					}
+					
+					if ($scope.data && $scope.data.average_month)
+					{
+						var series = [];
+						var max = 0;
+						var max_num = {};
+						for (var i = 5; i > 0; i--)
+						{
+							var data = [];
+							for (var m in $scope.data.average_month[i])
+							{
+								data.push($scope.data.average_month[i][m]);
+								if ( ! max_num[m])
+								{
+									max_num[m] = 0;
+								}
+								max_num[m] += $scope.data.average_month[i][m] * 1;
+							}
+							series.push({type: 'bar', stack: m, name: (i + ' sterren'), data: data});
+						}
+						
+						for (var m in max_num)
+						{
+							max = Math.max(max, max_num[m]);
+						}
+
+						$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}],
+													 yAxis: [{min: 0, max: max}],
+													 series: series});
+					}
+					
+					if ($scope.data && $scope.data.average_nps.all)
+					{
+						$scope.nps['12'] = Math.round($scope.data.average_nps['12p'] / 10);
+						$scope.nps['45'] = Math.round($scope.data.average_nps['45p'] / 10);
+						$scope.nps['3'] = 10 - ($scope.nps['12'] + $scope.nps['45']);
+						
+						$scope.pie_nps.addData([[0, {name: 'Promotors', value: $scope.data.average_nps['45']}, false, false]]);
+						$scope.pie_nps.addData([[0, {name: 'Passives', value: $scope.data.average_nps['3']}, false, false]]);
+						$scope.pie_nps.addData([[0, {name: 'Detractors', value: $scope.data.average_nps['12']}, false, false]]);
+					}
+					
+					if ($scope.data && $scope.data.nps_all_month)
+					{
+						var series = [];
+						var data = [];
+						var max = 0;
+						var min = false;
+
+						for (var m in $scope.data.nps_all_month)
+						{
+							data.push($scope.data.nps_all_month[m]);
+							max = Math.max(max, $scope.data.nps_all_month[m] * 1);
+							if (min === false)
+							{
+								min = $scope.data.nps_all_month[m] * 1
+							}
+							else
+							{
+								min = Math.max(min, $scope.data.nps_all_month[m] * 1);
+							}
+						}
+						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
+
+						$scope.area_nps_average.setOption({xAxis: [{data: $scope.data.average_month_x}],
+														   yAxis: [{min: (min > 0 ? 0 : Math.round(min * 1.2)), max: Math.round(max * 1.2)}],
+														   series: series});
+					}
+					
+					if ($scope.data && $scope.data.history_nps)
+					{
+						var series = [];
+						var data = [];
+						var max = 0;
+						var max_num = {};
+						for (var m in $scope.data.history_nps['45'])
+						{
+							data.push($scope.data.history_nps['45'][m]);
+							if ( ! max_num[m])
+							{
+								max_num[m] = 0;
+							}
+							max_num[m] += $scope.data.history_nps['45'][m] * 1;
+						}
+						series.push({type: 'bar', stack: m, name: 'Promotors', data: data});
+						
+						data = [];
+						for (var m in $scope.data.history_nps['3'])
+						{
+							data.push($scope.data.history_nps['3'][m]);
+							if ( ! max_num[m])
+							{
+								max_num[m] = 0;
+							}
+							max_num[m] += $scope.data.history_nps['3'][m] * 1;
+						}
+						series.push({type: 'bar', stack: m, name: 'Passives', data: data});
+						
+						data = [];
+						for (var m in $scope.data.history_nps['12'])
+						{
+							data.push($scope.data.history_nps['12'][m]);
+							if ( ! max_num[m])
+							{
+								max_num[m] = 0;
+							}
+							max_num[m] += $scope.data.history_nps['12'][m] * 1;
+						}
+						series.push({type: 'bar', stack: m, name: 'Detractors', data: data});
+						
+						for (var m in max_num)
+						{
+							max = Math.max(max, max_num[m]);
+						}
+
+						$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}],
+												   yAxis: [{min: 0, max: max}],
+												   series: series});
+					}
+					
+					if ($scope.data && $scope.data.reply_chart)
+					{
+						$scope.pie_reply.addData([[0, {name: 'Beoordeeld', value: $scope.data.reply_chart['reply']}, false, false]]);
+						$scope.pie_reply.addData([[0, {name: 'Doorgeklikt', value: $scope.data.reply_chart['click']}, false, false]]);
+						$scope.pie_reply.addData([[0, {name: 'Niet gereageerd', value: $scope.data.reply_chart['none']}, false, false]]);
+					}
+				}
+				else
+				{
+					$scope.empty_filter = true;
+				}
+			});
+		};
+
+		$scope.pie_online = echarts.init(document.getElementById('pie_online'));
+		$window.onresize = function() { $scope.pie_online.resize(); };
+		$scope.pie_online.setOption({
+				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
+				/*toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},*/
+				legend: {orient: "vertical", x: "left", data: ["Zorgkaart", "Facebook", "Independer", "Google"]},
+				calculable: true,
+				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
+						itemStyle: {normal: {label: {show: false}, labelLine: {show: false}},
+									emphasis: {label: {show: true, position: "center", textStyle: {fontSize: "14", fontWeight: "bold"}}}},
+						data:[{name: 'Zorgkaart', value: 0, itemStyle: {normal: {color: '#F29619'}}},
+							  {name: 'Facebook', value: 0, itemStyle: {normal: {color: '#3B589E'}}},
+							  {name: 'Independer', value: 0, itemStyle: {normal: {color: '#825F87'}}},
+							  {name: 'Google', value: 0, itemStyle: {normal: {color: '#C1C1C1'}}}]
+						}]
+		});
+		
+		$scope.area_online = echarts.init(document.getElementById('area_online'));
+		$window.onresize = function() { $scope.area_online.resize(); };
+		$scope.area_online.setOption({
+				tooltip: {trigger: "axis"},
+				legend: {orient: "horizontal", x: "center", y: "30", data: ['Zorgkaart', 'Facebook', 'Independer', 'Google']},
+				calculable: true,
+				xAxis: [{type: 'category', boundaryGap: false, data: ['Wait']}],
+				yAxis: [{type: 'value', boundaryGap: false}],
+				series:[{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Zorgkaart', data: [0], itemStyle: {normal: {color: '#F29619', borderColor: '#F29619', lineStyle: {color: '#F29619'}, areaStyle: {color: 'rgba(242, 150, 25, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Facebook', data: [0], itemStyle: {normal: {color: '#3B589E', borderColor: '#3B589E', lineStyle: {color: '#3B589E'}, areaStyle: {color: 'rgba(59, 88, 158, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Independer', data: [0], itemStyle: {normal: {color: '#825F87', borderColor: '#825F87', lineStyle: {color: '#825F87'}, areaStyle: {color: 'rgba(130, 95, 135, 0.5)'}}}},
+						{type: 'line', symbol: 'emptyCircle', smooth: true, name: 'Google', data: [0], itemStyle: {normal: {color: '#C1C1C1', borderColor: '#C1C1C1', lineStyle: {color: '#C1C1C1'}, areaStyle: {color: 'rgba(193, 193, 193, 0.5)'}}}}]
+		});
+		
+		$scope.onl = {};
+		$scope.get_online = function()
+		{
+			$http.post('/pub/stat_online/', {'admin': 1}).success(function(data, status, headers, config) {
+				$scope.onl = logger.check(data);
+				if ($scope.onl && $scope.onl.pie)
+				{
+					for (var k in $scope.onlines)
+					{
+						$scope.pie_online.addData([[0, {name: $scope.onlines[k], value: ($scope.onl.pie[$scope.onlines[k].toLowerCase()] ? $scope.onl.pie[$scope.onlines[k].toLowerCase()] : 0) * 1}, false, false]]);
+					}
+				}
+					
+				if ($scope.onl && $scope.onl.history)
+				{
+					var series = [];
+					var max = 5;
+					var data = [];
+					for (var k in $scope.onlines)
+					{
+						data = [];
+						for (var m in $scope.onl.history)
+						{
+							data.push($scope.onl.history[m][$scope.onlines[k].toLowerCase()]);
+						}
+						series.push({type: 'line', name: $scope.onlines[k], data: data});
+					}
+					
+					$scope.area_online.setOption({xAxis: [{data: $scope.onl.months}],
+												  yAxis: [{min: 0, max: max}],
+												  series: series});
+					$scope.area_online.resize();
+				}
+			});
+		};
+		
+		$scope.get = function()
+		{
+			if ($scope.type == 'email')
+			{
+				$scope.get_email();
+			}
+			else
+			{
+				$scope.get_online();
+			}
+		};
+
+		$scope.get();
+		
+		$scope.range = function(num)
+		{
+			var array = [];
+			for (var i = 0; i < num; i++)
+			{
+				array.push(i);
+			}
+			return array;
 		};
     }
 

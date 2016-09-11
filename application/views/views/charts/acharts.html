@@ -1,393 +1,725 @@
-<div class="page page-charts" ng-controller="AChartsCtrl">
-    <section>
-		<div>
-			<div class="row">
-				<div class="col-sm-6 col-xs-12">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">
-								De meest actieve gebruikers
-							</h3>
-						</div>
-						
-						<div class="panel-body text-center">
-							<div class="table-responsive">
-								<table class="table" ng-if="stat.max.length">
-									<thead>
-										<tr>
-											<th>Gebruikersnaam</th>
-											<th>Laatst ingelogd</th>
-											<th>Aantal keer ingelogd</th>
-											<th>Aantal uitnodigingen verstuurd</th>
-											<th>Account</th>
-										</tr>
-									</thead>
-									
-									<tbody>
-										<tr ng-repeat="item in stat.max">
-											<td class="text-left">{{item.username}}</td>
-											<td class="text-left">{{item.login_date}}</td>
-											<td class="text-left">{{item.login_number}}</td>
-											<td class="text-left">{{item.sent_number}}</td>
-											<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
+<div ng-controller="ACharts2Ctrl">
+	<div class="charts-filter-panel">
+		<div class="row">
+			<div class="col-md-8 col-xs-12" ng-show="type == 'email'">
+				<div class="row stat-filter-row" ng-repeat="(i, f) in stat_filter_list">
+					<div class="col-sm-4 first-filter" ng-class="{'form-inline': i == 0}">
+						<label ng-if="i == 0">Filter</label>
+						<select class="form-control pull-right" ng-model="f.filter" ng-change="change_filter(f)">
+							<option value="">KIES FILTER</option>
+							<option value="date">Datum uitgenodigd</option>
+							<option value="treatment">Behandeling</option>
+							<option value="doctor">Zorgverlener</option>
+							<option value="question">Vraagstelling</option>
+							<option value="location">Locatie</option>
+							<option value="online">Doorgeklikt naar</option>
+						</select>
 					</div>
-				</div>
-				
-				<div class="col-sm-6 col-xs-12">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">
-								De minst actieve gebruikers
-							</h3>
-						</div>
-						
-						<div class="panel-body text-center">
-							<div class="table-responsive">
-								<table class="table" ng-if="stat.min.length">
-									<thead>
-										<tr>
-											<th>Gebruikersnaam</th>
-											<th>Laatst ingelogd</th>
-											<th>Aantal keer ingelogd</th>
-											<th>Aantal uitnodigingen verstuurd</th>
-											<th>Account</th>
-										</tr>
-									</thead>
-									
-									<tbody>
-										<tr ng-repeat="item in stat.min">
-											<td class="text-left">{{item.username}}</td>
-											<td class="text-left">{{item.login_date}}</td>
-											<td class="text-left">{{item.login_number}}</td>
-											<td class="text-left">{{item.sent_number}}</td>
-											<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
+					
+					<div class="col-sm-1 text-center">
+						<label ng-show="f.filter != '' && f.filter != 'date'">is</label>
 					</div>
-				</div>
-			</div>
-			
-			<div class="panel panel-custom panel-default panel-only-header">
-				<div class="panel-heading">
-					<h3 class="panel-title">
-						<i class="glyphicon glyphicon-user"></i> Patiënttevredenheid van de praktijken
-					</h3>
-				</div>
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<div class="row">
-						<div class="col-md-4">
-							<select class="form-control" ng-model="filter.user" ng-change="get()">
-								<option value="0">Alle praktijken</option>
-								<option ng-repeat="u in users" value="{{u.id}}">{{u.username}} - {{u.email}}</option>
-							</select>
-						</div>
-						
-						<div class="col-md-4">
-							<select class="form-control" ng-model="filter.doctor" ng-change="get()">
-								<option value="0">Alle zorgverleners</option>
-								<option ng-repeat="d in doctors" value="{{d.id}}">{{d.firstname}} {{d.lastname}}</option>
-							</select>
-						</div>
-						
-						<div class="col-md-4">
-							<select class="form-control" ng-model="filter.compare" ng-change="get()">
-								<option value="0">...</option>
-								<option value="1">Landelijk gemiddelde</option>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			<div class="row">
-				<div class="col-sm-4 col-xs-12">
-					<div class="panel panel-custom panel-default">
-						<div class="panel-heading nps red">
-							<i class="ti-face-sad"></i>
-						</div>
-						
-						<div class="panel-body nps">
-							<p class="size-h2" ng-if="filter.doctor == 0">{{stat.nps.bad}}%</p>
-							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 0">{{stat.nps.bad_doc}}%</p>
-							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare != 0">{{stat.nps.bad_doc}}% <span class="vs">vs</span> {{stat.nps.bad}}%</p>
-							<p class="text-muted"><span data-i18n="Criticasters"></span> <span tooltip="De criticasters is het percentage van patiënten dat u met minder dan 3 sterren heeft beoordeeld. Van deze groep patiënten is het waarschijnlijk dat zij u en/of uw praktijk niet zullen aanbevelen bij familie of vrienden." tooltip-placement="bottom" tooltip-append-to-body="true">[?]</span></p>
-						</div>
-					</div>
-				</div>
-				
-				<div class="col-sm-4 col-xs-12">
-					<div class="panel panel-custom panel-default">
-						<div class="panel-heading nps blue">
-							<i class="ti-heart"></i>
-						</div>
-						
-						<div class="panel-body nps">
-							<p class="size-h2" ng-if="filter.doctor == 0">{{stat.nps.delta > 0 ? '+' : ''}}{{stat.nps.delta}}</p>
-							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 0">{{stat.nps.delta_doc > 0 ? '+' : ''}}{{stat.nps.delta_doc}}</p>
-							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare != 0">{{stat.nps.delta_doc > 0 ? '+' : ''}}{{stat.nps.delta_doc}} <span class="vs">vs</span> {{stat.nps.delta > 0 ? '+' : ''}}{{stat.nps.delta}}</p>
-							<p class="text-muted"><span data-i18n="Net Promotor Score"></span> <span tooltip="De Net Promotor Score geeft op een schaal van 0 tot 100 weer hoe u scoort als het gaat om de loyaliteit van patiënten. De score wordt berekend door het percentage Criticasters af te trekken van het percentage Promotors. Een score hoger dan 0 kan als positief gezien worden. Een score van +50 kan als uitstekend gezien worden." tooltip-placement="bottom" tooltip-append-to-body="true">[?]</span></p>
-						</div>
-					</div>
-				</div>
-				
-				<div class="col-sm-4 col-xs-12">
-					<div class="panel panel-custom panel-default">
-						<div class="panel-heading nps green">
-							<i class="ti-face-smile"></i>
-						</div>
-						
-						<div class="panel-body nps">
-							<p class="size-h2" ng-if="filter.doctor == 0">{{stat.nps.good}}%</p>
-							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 0">{{stat.nps.good_doc}}%</p>
-							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare != 0">{{stat.nps.good_doc}}% <span class="vs">vs</span> {{stat.nps.good}}%</p>
-							<p class="text-muted"><span data-i18n="Promotors"></span> <span tooltip="De promotors is het percentage van patiënten dat u met meer dan 3 sterren heeft beoordeeld. Van deze groep patiënten is het waarschijnlijk dat zij u en/of uw praktijk zullen aanbevelen bij familie of vrienden." tooltip-placement="bottom" tooltip-append-to-body="true">[?]</span></p>
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			<div class="panel panel-custom panel-default panel-only-header">
-				<div class="panel-heading">
-					<h3 class="panel-title">
-						<i class="glyphicon glyphicon-comment"></i> Recensies van de praktijken
-					</h3>
-				</div>
-			</div>
-			
-			<div class="row">
-				<div class="col-sm-4 col-xs-12">
-					<div class="panel panel-custom panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">
-								Google
-								<span class="span-icon"><i class="ti-google"></i></span>
-							</h3>
-						</div>
-						
-						<div class="panel-body panel-same-scroll">
-							<div class="reviews_container" ng-repeat="review in stat.google.reviews">
-								<div class="divider divider-dashed divider-lg pull-in"></div>
-								<h5>{{review.username}}</h5>
-								<span class="reviews-date">{{review.date}}</span>
-								<i class="ti-star rating-color" ng-if="review.rating == 0" style="opacity: 0;"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 1"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 2"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 3"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 4"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 5"></i>
-								<p class="in-google-text" ng-if="review.text != ''">{{review.text}}</p>
+					
+					<div class="col-sm-5">
+						<div class="row" ng-class="{'show-filter': f.filter == 'date', 'hide-filter': f.filter != 'date'}">
+							<div class="col-xs-6">
+								<div class="input-group ui-datepicker">
+									<input type="text" class="form-control" placeholder="tussen" ng-change="run_filter()" datepicker-popup="{{format}}" ng-model="f.value.from" is-open="$parent['opened_from_' + i]" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="false" close-text="Close" />
+									<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'from', i)"><i class="ti-calendar"></i></a>
+								</div>
 							</div>
 							
-							<p class="text-small empty-feedback" ng-if=" ! stat.google.reviews.length > 0">Uw praktijk heeft nog geen recensies op dit kanaal.</p>
-						</div>
-					</div>
-				</div>
-				
-				<div class="col-sm-4 col-xs-12">
-					<div class="panel panel-custom panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">
-								Zorgkaart
-								<span class="span-icon"><img src="/application/views/images/zorgkaart-icon.png" alt="" /></span>
-							</h3>
+							<div class="col-xs-6">
+								<div class="input-group ui-datepicker">
+									<input type="text" class="form-control" placeholder="en" ng-change="run_filter()" datepicker-popup="{{format}}" ng-model="f.value.to" is-open="$parent['opened_to_' + i]" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="false" close-text="Close" />
+									<a href="javascript:void(0);" class="input-group-addon" ng-click="open_date($event, 'to', i)"><i class="ti-calendar"></i></a>
+								</div>
+							</div>
 						</div>
 						
-						<div class="panel-body panel-same-scroll">
-							<div class="reviews_container" ng-repeat="review in stat.zorgkaart.reviews">
-								<div class="divider divider-dashed divider-lg pull-in"></div>
-								<h5>{{review.username}}</h5>
-								<span class="reviews-date">{{review.date}}</span>
-								<i class="ti-star rating-color" ng-if="review.rating == 0" style="opacity: 0;"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 1"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 2"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 3"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 4"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 5"></i>
-								<p class="in-google-text" ng-if="review.text != ''">{{review.text}}</p>
-							</div>
-							
-							<p class="text-small empty-feedback" ng-if=" ! stat.zorgkaart.reviews.length">Uw praktijk heeft nog geen recensies op dit kanaal.</p>
-						</div>
+						<select class="form-control" ng-change="run_filter()" ng-class="{'show-filter': f.filter == 'treatment', 'hide-filter': f.filter != 'treatment'}" ng-model="f.value">
+							<option value="">KIES SUBFILTER</option>
+							<option ng-repeat="d in stat_filter_data['treatment']" value="{{d}}">{{d}}</option>
+						</select>
+						
+						<select class="form-control" ng-change="run_filter()" ng-class="{'show-filter': f.filter == 'doctor', 'hide-filter': f.filter != 'doctor'}" ng-model="f.value">
+							<option value="">KIES SUBFILTER</option>
+							<option ng-repeat="d in stat_filter_data['doctor']" value="{{d.id}}">{{d.name}}</option>
+						</select>
+						
+						<select class="form-control" ng-change="run_filter()" ng-class="{'show-filter': f.filter == 'question', 'hide-filter': f.filter != 'question'}" ng-model="f.value">
+							<option value="">KIES SUBFILTER</option>
+							<option ng-repeat="d in stat_filter_data['question']" value="{{d.id}}">{{d.name}}</option>
+						</select>
+						
+						<select class="form-control" ng-change="run_filter()" ng-class="{'show-filter': f.filter == 'location', 'hide-filter': f.filter != 'location'}" ng-model="f.value">
+							<option value="">KIES SUBFILTER</option>
+							<option ng-repeat="d in stat_filter_data['location']" value="{{d.id}}">{{d.name}}</option>
+						</select>
+						
+						<select class="form-control" ng-change="run_filter()" ng-class="{'show-filter': f.filter == 'online', 'hide-filter': f.filter != 'online'}" ng-model="f.value">
+							<option value="">KIES SUBFILTER</option>
+							<option ng-repeat="d in stat_filter_data['online']" value="{{d.id}}">{{d.name}}</option>
+						</select>
+					</div>
+					
+					<div class="col-sm-2 stat-filter-buttons">
+						<button ng-show="f.filter != '' && (stat_filter_list.length > 1)" ng-click="remove_filter(i)" class="btn btn-default btn-filter">-</button>
+						<button ng-show="f.filter != '' && i == (stat_filter_list.length - 1)" ng-click="add_filter()" class="btn btn-default btn-filter">+</button>
 					</div>
 				</div>
+			</div>
+			
+			<div class="col-md-8 col-xs-12" ng-show="type == 'online'">
+				<label class="label-online">Filters zijn alleen beschikbaar in e-mailweergave.</label>
+			</div>
+			
+			<div class="col-md-4 col-xs-12 form-inline text-right">
+				<label>Toon</label>&nbsp;&nbsp;
+				<div class="btn-group" role="group" aria-label="...">
+					<button type="button" class="btn btn-default" ng-class="{'active': type == 'email'}" ng-click="change_type('email')">E-MAIL <i class="fa fa-envelope"></i></button>
+					<button type="button" class="btn btn-default" ng-class="{'active': type == 'online'}" ng-click="change_type('online')">ONLINE <i class="fa fa-share-alt"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="charts-result-panel" ng-class="{'hide': empty_filter}">
+		<div class="page page-charts" ng-show="type == 'email'">
+			<section>
+				<div>
+					<div class="row charts2-row">
+						<div class="col-sm-6 col-xs-12">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										De meest actieve gebruikers
+									</h3>
+								</div>
 								
-				<div class="col-sm-4 col-xs-12">
-					<div class="panel panel-custom panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">
-								Independer
-								<span class="span-icon"><img src="/application/views/images/independer-icon.png" alt="" /></span>
-							</h3>
+								<div class="panel-body text-center">
+									<div class="table-responsive">
+										<table class="table" ng-if="data.max.length">
+											<thead>
+												<tr>
+													<th>Gebruikersnaam</th>
+													<th>Laatst ingelogd</th>
+													<th>Aantal keer ingelogd</th>
+													<th>Aantal uitnodigingen verstuurd</th>
+													<th>Account</th>
+												</tr>
+											</thead>
+											
+											<tbody>
+												<tr ng-repeat="item in data.max">
+													<td class="text-left">{{item.username}}</td>
+													<td class="text-left">{{item.login_date}}</td>
+													<td class="text-left">{{item.login_number}}</td>
+													<td class="text-left">{{item.sent_number}}</td>
+													<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
 						</div>
 						
-						<div class="panel-body panel-same-scroll">
-							<div class="reviews_container" ng-repeat="review in stat.independer.reviews">
-								<div class="divider divider-dashed divider-lg pull-in"></div>
-								<h5>{{review.username}}</h5>
-								<span class="reviews-date">{{review.date}}</span>
-								<i class="ti-star rating-color" ng-if="review.rating == 0" style="opacity: 0;"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 1"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 2"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 3"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 4"></i>
-								<i class="ti-star rating-color" ng-if="review.rating >= 5"></i>
-								<a href="{{review.link}}" class="in-google-text" ng-if="review.text != ''" target="_blank" ng-bind-html="review.text">{{review.text}}</a>
+						<div class="col-sm-6 col-xs-12">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										De minst actieve gebruikers
+									</h3>
+								</div>
+								
+								<div class="panel-body text-center">
+									<div class="table-responsive">
+										<table class="table" ng-if="data.min.length">
+											<thead>
+												<tr>
+													<th>Gebruikersnaam</th>
+													<th>Laatst ingelogd</th>
+													<th>Aantal keer ingelogd</th>
+													<th>Aantal uitnodigingen verstuurd</th>
+													<th>Account</th>
+												</tr>
+											</thead>
+											
+											<tbody>
+												<tr ng-repeat="item in data.min">
+													<td class="text-left">{{item.username}}</td>
+													<td class="text-left">{{item.login_date}}</td>
+													<td class="text-left">{{item.login_number}}</td>
+													<td class="text-left">{{item.sent_number}}</td>
+													<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
 							</div>
-							
-							<p class="text-small empty-feedback" ng-if=" ! stat.independer.reviews.length">Uw praktijk heeft nog geen recensies op dit kanaal.</p>
 						</div>
 					</div>
 				</div>
-			</div>
-			
-			<div class="panel panel-custom panel-default panel-only-header">
-				<div class="panel-heading">
-					<h3 class="panel-title">
-						<i class="glyphicon glyphicon-signal"></i> Overige statistieken
-					</h3>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-6">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">
-								Niet gereageerd op uitnodiging
-							</h3>
-							
-							<div class="panel-select">
-								<span class="ui-select">
-									<select ng-model="filter.vs" ng-change="get()">
-										<option value="0">Alles</option>
-										<option value="1">Afgelopen jaar</option>
-										<option value="2">Afgelopen maand</option>
-										<option value="3">Afgelopen week</option>
-									</select>
-								</span>
+	
+				<div class="row charts2-row">
+					<div class="col-lg-6 col-slg-12 col-xs-12">
+						<div class="panel panel-default">
+							<div class="row" ng-class="{'red-row': data.average < 3}">
+								<div class="col-sm-6 col-xs-12">
+									<div class="charts2-side-icons">
+										<i class="fa fa-star-o" ng-show="data.average == 0"></i>
+										<i class="fa fa-star-half-o" ng-show="data.average > 0 && data.average < 1"></i>
+										<i class="fa fa-star" ng-show="data.average >= 1"></i>
+										
+										<i class="fa fa-star-o" ng-show="data.average <= 1"></i>
+										<i class="fa fa-star-half-o" ng-show="data.average > 1 && data.average < 2"></i>
+										<i class="fa fa-star" ng-show="data.average >= 2"></i>
+										
+										<i class="fa fa-star-o" ng-show="data.average <= 2"></i>
+										<i class="fa fa-star-half-o" ng-show="data.average > 2 && data.average < 3"></i>
+										<i class="fa fa-star" ng-show="data.average >= 3"></i>
+										
+										<i class="fa fa-star-o" ng-show="data.average <= 3"></i>
+										<i class="fa fa-star-half-o" ng-show="data.average > 3 && data.average < 4"></i>
+										<i class="fa fa-star" ng-show="data.average >= 4"></i>
+										
+										<i class="fa fa-star-o" ng-show="data.average <= 4"></i>
+										<i class="fa fa-star-half-o" ng-show="data.average > 4 && data.average < 5"></i>
+										<i class="fa fa-star" ng-show="data.average >= 5"></i>
+									</div>
+								</div>
+								
+								<div class="col-sm-6 col-xs-12">
+									<div class="charts2-side-value">
+										<div class="charts2-side-amount">
+											{{data.average}}
+										</div>
+										
+										<div class="charts2-side-text">
+											De gemiddelde beoordeling van uw praktijk
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
-						<div class="panel-body text-center">
-							<div easypiechart options="easypiechart.options" percent="easypiechart.percent" class="easypiechart">
-								<span class="pie-percent" ng-bind="easypiechart.percent"></span>
+					</div>
+					
+					<div class="col-lg-3 col-slg-6 col-md-6 col-xs-12">
+						<div class="panel panel-default">
+							<div class="row charts2-stars-count">
+								<div class="col-xs-5">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-7">
+									<div class="charts2-stars-count-value">
+										{{data.stars_count[5]}} beoordelingen
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-5">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-7">
+									<div class="charts2-stars-count-value">
+										{{data.stars_count[4]}} beoordelingen
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-5">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-7">
+									<div class="charts2-stars-count-value">
+										{{data.stars_count[3]}} beoordelingen
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-5">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-7">
+									<div class="charts2-stars-count-value">
+										{{data.stars_count[2]}} beoordelingen
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-5">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-star-o"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-7">
+									<div class="charts2-stars-count-value">
+										{{data.stars_count[1]}} beoordelingen
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-lg-3 col-slg-6 col-md-6 col-xs-12">
+						<div class="panel panel-default">
+							<div class="panel-body small-padding-x">
+								<div id="pie_stars" style="height: 178px;"></div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-md-6 col-xs-12">
+						<div class="panel panel-default">
+							<div id="area_averages" style="height: 300px;"></div>
+						</div>
+					</div>
+					
+					<div class="col-md-6 col-xs-12">
+						<div class="panel panel-default">
+							<div id="area_stars" style="height: 300px;"></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row charts2-row" ng-if="data.questions.length">
+					<div ng-repeat="q in data.questions" class="col-sm-{{12 / data.questions.length}} col-xs-12">
+						<div class="panel panel-default">
+							<div class="charts2-questions-icon">
+								<i class="{{q.stats_icon}}" ng-if="q.is_icon == '1'"></i>
+								<img src="{{q.stats_icon}}" ng-if="q.is_icon == '0'" alt="{{q.question_name}}" />
+							</div>
+							
+							<div class="charts2-questions-info">
+								<div class="charts2-questions-average">
+									{{q.average}}
+								</div>
+								
+								<div class="charts2-questions-name">
+									{{q.question_name}}
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 				
-				<div class="col-lg-6">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-                        <h3 class="panel-title">
-							Verdeling waarderingen
-						</h3>
-						
-						<div class="panel-select">
-							<span class="ui-select">
-								<select ng-model="filter.diagram" ng-change="get()">
-									<option value="0">Alles</option>
-									<option value="1">Afgelopen jaar</option>
-									<option value="2">Afgelopen maand</option>
-									<option value="3">Afgelopen week</option>
-								</select>
-							</span>
+				<div class="charts2-dashed">
+				</div>
+				
+				<div class="row charts2-row">
+					<div class="col-lg-6 col-slg-12 col-xs-12">
+						<div class="panel panel-default">
+							<div class="row">
+								<div class="col-sm-6 col-xs-12">
+									<div class="charts2-side-icons">
+										<div class="charts2-side-nps">
+											<i class="fa fa-male o3" ng-repeat="n in range(nps['12'])"></i><i class="fa fa-male o5" ng-repeat="n in range(nps['3'])"></i><i class="fa fa-male" ng-repeat="n in range(nps['45'])"></i>
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-sm-6 col-xs-12">
+									<div class="charts2-side-value">
+										<div class="charts2-side-amount">
+											{{data.average_nps.delta > 0 ? '+' : ''}}{{data.average_nps.delta}}
+										</div>
+										
+										<div class="charts2-side-text">
+											De NPS van uw praktijk
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
-                    </div>
-					
-					<div class="panel-body">
-						<div class="donutChart2" data-flot-chart data-data="donutChart2.data" data-options="donutChart2.options" style="width: 100%; height: 190px;"></div>
 					</div>
-				</div>             
-			</div>
+					
+					<div class="col-lg-3 col-slg-6 col-md-6 col-xs-12">
+						<div class="panel panel-default charts2-min-box">
+							<div class="row charts2-stars-count">
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-male green" ng-repeat="n in range(nps['45'])"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-value">
+										{{data.average_nps['45']}} promotors
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-male yellow" ng-repeat="n in range(nps['3'])"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-value">
+										{{data.average_nps['3']}} passives
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-male red" ng-repeat="n in range(nps['12'])"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-value">
+										{{data.average_nps['12']}} detractors
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-icons">
+									</div>
+								</div>
+								
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-value">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-lg-3 col-slg-6 col-md-6 col-xs-12">
+						<div class="panel panel-default">
+							<div class="panel-body small-padding-x">
+								<div id="pie_nps" style="height: 178px;"></div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-md-6 col-xs-12">
+						<div class="panel panel-default">
+							<div id="area_nps_average" style="height: 300px;"></div>
+						</div>
+					</div>
+					
+					<div class="col-md-6 col-xs-12">
+						<div class="panel panel-default">
+							<div id="area_nps" style="height: 300px;"></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="charts2-dashed">
+				</div>
+				
+				<div class="row charts2-row">
+					<div class="col-lg-6 col-slg-12 col-xs-12">
+						<div class="panel panel-default">
+							<div class="row">
+								<div class="col-sm-6 col-xs-12">
+									<div class="charts2-side-icons">
+										<i class="fa fa-paper-plane"></i>
+									</div>
+								</div>
+								
+								<div class="col-sm-6 col-xs-12">
+									<div class="charts2-side-value">
+										<div class="charts2-side-amount">
+											{{data.reply_percent}}%
+										</div>
+										
+										<div class="charts2-side-text">
+											Het percentage dat heeft geantwoord op uw uitnodigingen
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-lg-3 col-slg-6 col-md-6 col-xs-12">
+						<div class="panel panel-default charts2-min-box">
+							<div class="row charts2-stars-count">
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-text">
+										Hoogst
+									</div>
+								</div>
+								
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-value">
+										{{data.reply_highest}}%
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-text">
+										Laagst
+									</div>
+								</div>
+								
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-value">
+										{{data.reply_lowest}}%
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-icons">
+									</div>
+								</div>
+								
+								<div class="col-xs-6">
+									<div class="charts2-stars-count-value">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-lg-3 col-slg-6 col-md-6 col-xs-12">
+						<div class="panel panel-default">
+							<div class="panel-body small-padding-x">
+								<div id="pie_reply" style="height: 178px;"></div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-xs-12">
+						<div class="panel panel-default">
+							<div class="table-responsive">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Verzenddatum</th>
+											<th>Aantal uitnodigingen</th>
+											<th>Gereageerd</th>
+											<th>Doorgeklikt</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										<tr ng-repeat="b in data.batches">
+											<td>{{b.date}}</td>
+											<td>{{b.amount}}</td>
+											<td>{{b.reply}}%</td>
+											<td>{{b.click}}%</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
 			
-			<div class="col-lg-6">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-                        <h3 class="panel-title">
-							Verdeling Doorverwijzingen
-						</h3>
-						
-						<div class="panel-select">
-							<span class="ui-select">
-								<select ng-model="filter.online" ng-change="get()">
-									<option value="0">Alles</option>
-									<option value="1">Afgelopen jaar</option>
-									<option value="2">Afgelopen maand</option>
-									<option value="3">Afgelopen week</option>
-								</select>
-							</span>
-						</div>
-                    </div>
-					
-					<div class="panel-body">
-						<div class="donutChartOnline" data-flot-chart data-data="donutChartOnline.data" data-options="donutChartOnline.options" style="width: 100%; height: 190px;"></div>
-					</div>
-				</div>             
-			</div>
-			
-			<div class="col-lg-6">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-                        <h3 class="panel-title">
-							Verdeling zorgverleners
-						</h3>
-						
-						<div class="panel-select">
-							<span class="ui-select">
-								<select ng-model="filter.doctors" ng-change="get()">
-									<option value="0">Alles</option>
-									<option value="1">Afgelopen jaar</option>
-									<option value="2">Afgelopen maand</option>
-									<option value="3">Afgelopen week</option>
-								</select>
-							</span>
-						</div>
-                    </div>
-					
-					<div class="panel-body">
-						<div class="donutChartDoctors" data-flot-chart data-data="donutChartDoctors.data" data-options="donutChartDoctors.options" style="width: 100%; height: 190px;"></div>
-					</div>
-				</div>             
+			<div class="empty_reviews" ng-class="{'show': empty_filter}">
+				<div class="empty_reviews_inner text-center">
+					<i class="fa fa-filter" aria-hidden="true"></i>
+					<p>
+						Er zijn onvoldoende resultaten om weer te geven met de gekozen filters.
+					</p>
+				</div>
 			</div>
 		</div>
 		
-		<div class="row">
-			<div class="col-xs-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-							Ontwikkeling gemiddelde waardering
-						</h3>
-						
-						<div class="panel-select">
-							<span class="ui-select">
-								<select ng-model="filter.days" ng-change="get()">
-									<option value="0">Alles</option>
-									<option value="1">Afgelopen jaar</option>
-									<option value="2">Afgelopen maand</option>
-									<option value="3">Afgelopen week</option>
-								</select>
-							</span>
+		<div class="page page-charts" ng-show="type == 'online'">
+			<section>
+				<div class="row charts2-row">
+					<div class="col-md-3 col-xs-12" ng-repeat="o in onlines">
+						<div class="panel panel-default">
+							<div class="row">
+								<div class="col-sm-6 col-xs-12">
+									<div class="online-side-logo" ng-class="o.toLowerCase()">
+										<div class="rating-logo">
+											<img src="/application/views/images/online-{{o.toLowerCase()}}.png" alt="{{o}}" />
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-sm-6 col-xs-12">
+									<div class="charts2-side-value">
+										<div class="charts2-side-amount">
+											{{(onl.average[o.toLowerCase()] || 0).toFixed(1)}}
+										</div>
+										
+										<div class="charts2-side-text">
+											{{o}}
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
-                    </div>
-                    <div class="panel-body">
-						<div class="table-responsive">
-							<div id="days_chart"></div>
+					</div>
+				</div>
+				
+				<div class="row charts2-row">
+					<div class="col-md-3 col-xs-12" ng-repeat="o in onlines">
+						<div class="panel panel-default">
+							<div class="row charts2-stars-count">
+								<div class="col-xs-5">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-7">
+									<div class="charts2-stars-count-value">
+										{{onl.stars[o.toLowerCase()][5] || 0}} beoordelingen
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-5">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-7">
+									<div class="charts2-stars-count-value">
+										{{onl.stars[o.toLowerCase()][4] || 0}} beoordelingen
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-5">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-7">
+									<div class="charts2-stars-count-value">
+										{{onl.stars[o.toLowerCase()][3] || 0}} beoordelingen
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-5">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-7">
+									<div class="charts2-stars-count-value">
+										{{onl.stars[o.toLowerCase()][2] || 0}} beoordelingen
+									</div>
+								</div>
+							</div>
+							
+							<div class="row charts2-stars-count">
+								<div class="col-xs-5">
+									<div class="charts2-stars-count-icons">
+										<i class="fa fa-star-o"></i>
+									</div>
+								</div>
+								
+								<div class="col-xs-7">
+									<div class="charts2-stars-count-value">
+										{{onl.stars[o.toLowerCase()][1] || 0}} beoordelingen
+									</div>
+								</div>
+							</div>
 						</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+					</div>
+				</div>
+				
+				<div class="row charts2-row">
+					<div class="col-xs-12">
+						<div class="panel panel-default">
+							<div id="area_online" style="height: 300px;"></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row charts2-row">
+					<div class="col-md-3 col-xs-12" ng-repeat="o in onlines">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+									Feedback op {{o}}
+								</h3>
+							</div>
+							
+							<div class="panel-body panel-same-scroll">
+								<div class="reviews_container" ng-repeat="review in onl.reviews[o.toLowerCase()]">
+									<div class="divider divider-dashed divider-lg pull-in"></div>
+									<div class="row">
+										<div class="col-xs-12">
+											<span class="reviews-date">{{review.date}}</span>
+											<span class="badge badge-primary pull-right" ng-show="review.marked_as_read == '0'">Nieuw</span>
+											<i class="fa fa-star-o" ng-if="review.score >= 1">
+											</i><i class="fa fa-star-o" ng-if="review.score >= 2">
+											</i><i class="fa fa-star-o" ng-if="review.score >= 3">
+											</i><i class="fa fa-star-o" ng-if="review.score >= 4">
+											</i><i class="fa fa-star-o" ng-if="review.score >= 5">
+											</i>
+										</div>
+									</div>
+									
+									<a href="{{review.link}}" class="in-google-text" ng-if="review.text != ''" target="_blank" ng-bind-html="review.text">{{review.text}}</a>
+								</div>
+								
+								<p ng-if=" ! onl.reviews[o.toLowerCase()] || onl.reviews[o.toLowerCase()].length == 0" class="text-small empty-feedback">
+									Er zijn nog geen online recensies om te laten zien.
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row charts2-row">
+					<div class="col-md-offset-6 col-md-6 col-xs-12">
+						<div class="panel panel-default">
+							<div class="panel-body small-padding-x">
+								<div id="pie_online" style="height: 178px;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+		
+	<div class="empty_reviews" ng-class="{'show': empty_filter}">
+		<div class="empty_reviews_inner text-center">
+			<i class="fa fa-filter" aria-hidden="true"></i>
+			<p>
+				Er zijn onvoldoende resultaten om weer te geven met de gekozen filters.
+			</p>
+		</div>
+	</div>
 </div>
+
+<script src="application/views/scripts/echarts.js"></script>
