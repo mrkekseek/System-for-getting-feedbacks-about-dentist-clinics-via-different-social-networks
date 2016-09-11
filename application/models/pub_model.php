@@ -3192,7 +3192,7 @@
 									
 									if ($cols[$tag] !== FALSE)
 									{
-										$line[$tag] = $rows[$i][$cols[$tag]];
+										$line[$tag] = empty($rows[$i][$cols[$tag]]) ? '' : $rows[$i][$cols[$tag]];
 										if ($tag == 'doctor')
 										{
 											$line['doctor_id'] = $this->get_doctors_id(strtolower($line[$tag]));
