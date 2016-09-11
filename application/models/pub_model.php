@@ -2541,25 +2541,17 @@
 			{
 				$now = time();
 				$data_array = array();
-				if ($now < $user['trial_end'])
+				if ($now >= $user['suspension'])
 				{
-					$data_array = array("account" => 2,
-										"account_stop" => 0);
+					$data_array = array("account" => 0,
+										"account_stop" => 1);
 				}
 				else
 				{
-					if ($now >= $user['suspension'])
+					if ($now <= $user['suspension'])
 					{
-						$data_array = array("account" => 0,
-											"account_stop" => 1);
-					}
-					else
-					{
-						if ($now <= $user['suspension'])
-						{
-							$data_array = array("account" => 1,
-												"account_stop" => 0);
-						}
+						$data_array = array("account" => 1,
+											"account_stop" => 0);
 					}
 				}
 				
