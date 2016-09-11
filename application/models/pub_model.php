@@ -3580,7 +3580,7 @@
 														"doctor" => ( ! empty($list['doctor_id']) && ! empty($post['column']['doctor'])) ? $list['doctor_id'] : 0,
 														"location" => ( ! empty($list['location_id']) && ! empty($post['column']['location'])) ? $list['location_id'] : 0,
 														"treatment" => ( ! empty($list['treatment']) && ! empty($post['column']['treatment'])) ? $list['treatment'] : "",
-														"birth" => ( ! empty($list['birth']) && ! empty($post['column']['birth'])) ? $list['birth'] : "",
+														"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
 														"email" => strtolower($list['text']),
 														"date" => time(),
 														"status" => 1,
@@ -5186,9 +5186,9 @@
 					}
 				}
 				
-				$data['treatment'] = array_values(array_unique($data['treatment']));
-				$data['doctor'] = array_values(array_unique($data['doctor']));
-				$data['location'] = array_values(array_unique($data['location']));
+				$data['treatment'] = ! empty($data['treatment']) ? array_values(array_unique($data['treatment'])) : array();
+				$data['doctor'] = ! empty($data['doctor']) ? array_values(array_unique($data['doctor'])) : array();
+				$data['location'] = ! empty($data['location']) ? array_values(array_unique($data['location'])) : array();
 			}
 			
 			sort($data['treatment']);
