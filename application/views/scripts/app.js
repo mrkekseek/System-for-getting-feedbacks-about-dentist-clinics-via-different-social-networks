@@ -2266,6 +2266,19 @@
 			$scope.user.remove_logo = 1;
 			$scope.user.logo = '';
 		};
+		
+		$scope.check_mobile = function(mobile)
+		{
+			var new_mobile = '';
+			for (var k in mobile)
+			{
+				if ((mobile[k] >= 0 && mobile[k] <= 9) || mobile[k] == ' ')
+				{
+					new_mobile += mobile[k];
+				}
+			}
+			$scope.user.mobile = new_mobile;
+		};
 
 		$scope.save = function(callback)
 		{
@@ -2281,15 +2294,12 @@
 					var numeric = true;
 					for (var k in $scope.user.mobile)
 					{
-						if (k == 0 && $scope.user.mobile[k] != '+')
+						if ($scope.user.mobile[k] != ' ' && typeof($scope.user.mobile[k]) != 'function')
 						{
-							logger.logError("Het telefoonnummer moet beginnen met een landcode");
-							mobile_check = false;
-						}
-						
-						if (k > 0 && ! ( ! isNaN(parseFloat($scope.user.mobile[k])) && isFinite($scope.user.mobile[k])))
-						{
-							numeric = false;
+							if ( ! ( ! isNaN(parseFloat($scope.user.mobile[k])) && isFinite($scope.user.mobile[k])))
+							{
+								numeric = false;
+							}
 						}
 					}
 					
@@ -2299,9 +2309,16 @@
 						mobile_check = false;
 					}
 					
-					if ($scope.user.mobile.length < 12 || $scope.user.mobile.length > 13)
+					if (($scope.user.mobile.indexOf('06') + 1) != 1)
 					{
-						logger.logError("Het telefoonnummer moet tussen de 11 en 12 tekens bevatten");
+						logger.logError("Het telefoonnummer dient met 06 te beginnen");
+						mobile_check = false;
+					}
+					
+					var length_mobile = $scope.user.mobile.replace(/ /gi, '');
+					if (length_mobile.length != 10)
+					{
+						logger.logError("Het telefoonnummer dient 10 cijfers te bevatten");
 						mobile_check = false;
 					}
 				}

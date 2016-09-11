@@ -372,9 +372,12 @@
 				<div class="form-group">
                     <label class="col-md-4">Mobiele telefoonnummer</label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="mobile" ng-model="user.mobile" value="" />
+						<div class="input-group">
+							<span class="input-group-addon">+31</span>
+							<input type="text" class="form-control" name="mobile" ng-change="check_mobile(user.mobile)" ng-model="user.mobile" value="" />
+						</div>
 						<span class="help-block">
-							Op dit mobiele telefoonnummer ontvangt u uw authenticatiecodes voor het veilig inloggen op uw account.
+							Op dit mobiele telefoonnummer ontvangt u uw authenticatiecodes voor het veilig inloggen op uw account. Uw mobiele telefoonnummer dient met 06 te beginnen. Bijvoorbeeld: 06 1234 5678
 						</span>
                     </div>
                 </div>

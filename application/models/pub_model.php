@@ -1813,6 +1813,15 @@
 		
 		function send_code($id = FALSE, $mobile = '')
 		{
+			if ( ! empty($mobile))
+			{
+				$mobile = str_replace(' ', '', $mobile);
+				if (strpos($mobile, '06') === 0)
+				{
+					$mobile = str_replace('06', '+316', $mobile, 1);
+				}
+			}
+			
 			mt_srand();
 			$code = mt_rand(10000, 99999);
 			$expire = time() + (15 * 60);
