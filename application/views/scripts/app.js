@@ -4079,7 +4079,7 @@
 					file.result = response.data;
 					file.progress = 100;
 					clearInterval($scope.timer);
-					
+
 					$scope.result = logger.check(file.result);
 					if ($scope.result.error)
 					{
@@ -4147,10 +4147,13 @@
 			$scope.check = result.check;
 			$scope.file = result.file;
 
-			$scope.keys = Object.keys($scope.headers);
-			if ($scope.all_data && $scope.all_data.length)
+			if ($scope.headers)
 			{
-				$scope.reprint_rows();
+				$scope.keys = Object.keys($scope.headers);
+				if ($scope.all_data && $scope.all_data.length)
+				{
+					$scope.reprint_rows();
+				}
 			}
 		};
 		
