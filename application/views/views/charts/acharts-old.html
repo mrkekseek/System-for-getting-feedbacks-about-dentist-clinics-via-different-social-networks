@@ -1,0 +1,393 @@
+<div class="page page-charts" ng-controller="AChartsCtrl">
+    <section>
+		<div>
+			<div class="row">
+				<div class="col-sm-6 col-xs-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								De meest actieve gebruikers
+							</h3>
+						</div>
+						
+						<div class="panel-body text-center">
+							<div class="table-responsive">
+								<table class="table" ng-if="stat.max.length">
+									<thead>
+										<tr>
+											<th>Gebruikersnaam</th>
+											<th>Laatst ingelogd</th>
+											<th>Aantal keer ingelogd</th>
+											<th>Aantal uitnodigingen verstuurd</th>
+											<th>Account</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										<tr ng-repeat="item in stat.max">
+											<td class="text-left">{{item.username}}</td>
+											<td class="text-left">{{item.login_date}}</td>
+											<td class="text-left">{{item.login_number}}</td>
+											<td class="text-left">{{item.sent_number}}</td>
+											<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-6 col-xs-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								De minst actieve gebruikers
+							</h3>
+						</div>
+						
+						<div class="panel-body text-center">
+							<div class="table-responsive">
+								<table class="table" ng-if="stat.min.length">
+									<thead>
+										<tr>
+											<th>Gebruikersnaam</th>
+											<th>Laatst ingelogd</th>
+											<th>Aantal keer ingelogd</th>
+											<th>Aantal uitnodigingen verstuurd</th>
+											<th>Account</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										<tr ng-repeat="item in stat.min">
+											<td class="text-left">{{item.username}}</td>
+											<td class="text-left">{{item.login_date}}</td>
+											<td class="text-left">{{item.login_number}}</td>
+											<td class="text-left">{{item.sent_number}}</td>
+											<td><a class="label label-primary" ng-click="login_as_user(item.id)">Log In</a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="panel panel-custom panel-default panel-only-header">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<i class="glyphicon glyphicon-user"></i> Patiënttevredenheid van de praktijken
+					</h3>
+				</div>
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-4">
+							<select class="form-control" ng-model="filter.user" ng-change="get()">
+								<option value="0">Alle praktijken</option>
+								<option ng-repeat="u in users" value="{{u.id}}">{{u.username}} - {{u.email}}</option>
+							</select>
+						</div>
+						
+						<div class="col-md-4">
+							<select class="form-control" ng-model="filter.doctor" ng-change="get()">
+								<option value="0">Alle zorgverleners</option>
+								<option ng-repeat="d in doctors" value="{{d.id}}">{{d.firstname}} {{d.lastname}}</option>
+							</select>
+						</div>
+						
+						<div class="col-md-4">
+							<select class="form-control" ng-model="filter.compare" ng-change="get()">
+								<option value="0">...</option>
+								<option value="1">Landelijk gemiddelde</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-4 col-xs-12">
+					<div class="panel panel-custom panel-default">
+						<div class="panel-heading nps red">
+							<i class="ti-face-sad"></i>
+						</div>
+						
+						<div class="panel-body nps">
+							<p class="size-h2" ng-if="filter.doctor == 0">{{stat.nps.bad}}%</p>
+							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 0">{{stat.nps.bad_doc}}%</p>
+							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare != 0">{{stat.nps.bad_doc}}% <span class="vs">vs</span> {{stat.nps.bad}}%</p>
+							<p class="text-muted"><span data-i18n="Criticasters"></span> <span tooltip="De criticasters is het percentage van patiënten dat u met minder dan 3 sterren heeft beoordeeld. Van deze groep patiënten is het waarschijnlijk dat zij u en/of uw praktijk niet zullen aanbevelen bij familie of vrienden." tooltip-placement="bottom" tooltip-append-to-body="true">[?]</span></p>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-4 col-xs-12">
+					<div class="panel panel-custom panel-default">
+						<div class="panel-heading nps blue">
+							<i class="ti-heart"></i>
+						</div>
+						
+						<div class="panel-body nps">
+							<p class="size-h2" ng-if="filter.doctor == 0">{{stat.nps.delta > 0 ? '+' : ''}}{{stat.nps.delta}}</p>
+							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 0">{{stat.nps.delta_doc > 0 ? '+' : ''}}{{stat.nps.delta_doc}}</p>
+							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare != 0">{{stat.nps.delta_doc > 0 ? '+' : ''}}{{stat.nps.delta_doc}} <span class="vs">vs</span> {{stat.nps.delta > 0 ? '+' : ''}}{{stat.nps.delta}}</p>
+							<p class="text-muted"><span data-i18n="Net Promotor Score"></span> <span tooltip="De Net Promotor Score geeft op een schaal van 0 tot 100 weer hoe u scoort als het gaat om de loyaliteit van patiënten. De score wordt berekend door het percentage Criticasters af te trekken van het percentage Promotors. Een score hoger dan 0 kan als positief gezien worden. Een score van +50 kan als uitstekend gezien worden." tooltip-placement="bottom" tooltip-append-to-body="true">[?]</span></p>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-4 col-xs-12">
+					<div class="panel panel-custom panel-default">
+						<div class="panel-heading nps green">
+							<i class="ti-face-smile"></i>
+						</div>
+						
+						<div class="panel-body nps">
+							<p class="size-h2" ng-if="filter.doctor == 0">{{stat.nps.good}}%</p>
+							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare == 0">{{stat.nps.good_doc}}%</p>
+							<p class="size-h2" ng-if="filter.doctor != 0 && filter.compare != 0">{{stat.nps.good_doc}}% <span class="vs">vs</span> {{stat.nps.good}}%</p>
+							<p class="text-muted"><span data-i18n="Promotors"></span> <span tooltip="De promotors is het percentage van patiënten dat u met meer dan 3 sterren heeft beoordeeld. Van deze groep patiënten is het waarschijnlijk dat zij u en/of uw praktijk zullen aanbevelen bij familie of vrienden." tooltip-placement="bottom" tooltip-append-to-body="true">[?]</span></p>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="panel panel-custom panel-default panel-only-header">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<i class="glyphicon glyphicon-comment"></i> Recensies van de praktijken
+					</h3>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-4 col-xs-12">
+					<div class="panel panel-custom panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								Google
+								<span class="span-icon"><i class="ti-google"></i></span>
+							</h3>
+						</div>
+						
+						<div class="panel-body panel-same-scroll">
+							<div class="reviews_container" ng-repeat="review in stat.google.reviews">
+								<div class="divider divider-dashed divider-lg pull-in"></div>
+								<h5>{{review.username}}</h5>
+								<span class="reviews-date">{{review.date}}</span>
+								<i class="ti-star rating-color" ng-if="review.rating == 0" style="opacity: 0;"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 1"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 2"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 3"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 4"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 5"></i>
+								<p class="in-google-text" ng-if="review.text != ''">{{review.text}}</p>
+							</div>
+							
+							<p class="text-small empty-feedback" ng-if=" ! stat.google.reviews.length > 0">Uw praktijk heeft nog geen recensies op dit kanaal.</p>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-4 col-xs-12">
+					<div class="panel panel-custom panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								Zorgkaart
+								<span class="span-icon"><img src="/application/views/images/zorgkaart-icon.png" alt="" /></span>
+							</h3>
+						</div>
+						
+						<div class="panel-body panel-same-scroll">
+							<div class="reviews_container" ng-repeat="review in stat.zorgkaart.reviews">
+								<div class="divider divider-dashed divider-lg pull-in"></div>
+								<h5>{{review.username}}</h5>
+								<span class="reviews-date">{{review.date}}</span>
+								<i class="ti-star rating-color" ng-if="review.rating == 0" style="opacity: 0;"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 1"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 2"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 3"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 4"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 5"></i>
+								<p class="in-google-text" ng-if="review.text != ''">{{review.text}}</p>
+							</div>
+							
+							<p class="text-small empty-feedback" ng-if=" ! stat.zorgkaart.reviews.length">Uw praktijk heeft nog geen recensies op dit kanaal.</p>
+						</div>
+					</div>
+				</div>
+								
+				<div class="col-sm-4 col-xs-12">
+					<div class="panel panel-custom panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								Independer
+								<span class="span-icon"><img src="/application/views/images/independer-icon.png" alt="" /></span>
+							</h3>
+						</div>
+						
+						<div class="panel-body panel-same-scroll">
+							<div class="reviews_container" ng-repeat="review in stat.independer.reviews">
+								<div class="divider divider-dashed divider-lg pull-in"></div>
+								<h5>{{review.username}}</h5>
+								<span class="reviews-date">{{review.date}}</span>
+								<i class="ti-star rating-color" ng-if="review.rating == 0" style="opacity: 0;"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 1"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 2"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 3"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 4"></i>
+								<i class="ti-star rating-color" ng-if="review.rating >= 5"></i>
+								<a href="{{review.link}}" class="in-google-text" ng-if="review.text != ''" target="_blank" ng-bind-html="review.text">{{review.text}}</a>
+							</div>
+							
+							<p class="text-small empty-feedback" ng-if=" ! stat.independer.reviews.length">Uw praktijk heeft nog geen recensies op dit kanaal.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="panel panel-custom panel-default panel-only-header">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<i class="glyphicon glyphicon-signal"></i> Overige statistieken
+					</h3>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								Niet gereageerd op uitnodiging
+							</h3>
+							
+							<div class="panel-select">
+								<span class="ui-select">
+									<select ng-model="filter.vs" ng-change="get()">
+										<option value="0">Alles</option>
+										<option value="1">Afgelopen jaar</option>
+										<option value="2">Afgelopen maand</option>
+										<option value="3">Afgelopen week</option>
+									</select>
+								</span>
+							</div>
+						</div>
+						<div class="panel-body text-center">
+							<div easypiechart options="easypiechart.options" percent="easypiechart.percent" class="easypiechart">
+								<span class="pie-percent" ng-bind="easypiechart.percent"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+                        <h3 class="panel-title">
+							Verdeling waarderingen
+						</h3>
+						
+						<div class="panel-select">
+							<span class="ui-select">
+								<select ng-model="filter.diagram" ng-change="get()">
+									<option value="0">Alles</option>
+									<option value="1">Afgelopen jaar</option>
+									<option value="2">Afgelopen maand</option>
+									<option value="3">Afgelopen week</option>
+								</select>
+							</span>
+						</div>
+                    </div>
+					
+					<div class="panel-body">
+						<div class="donutChart2" data-flot-chart data-data="donutChart2.data" data-options="donutChart2.options" style="width: 100%; height: 190px;"></div>
+					</div>
+				</div>             
+			</div>
+			
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+                        <h3 class="panel-title">
+							Verdeling Doorverwijzingen
+						</h3>
+						
+						<div class="panel-select">
+							<span class="ui-select">
+								<select ng-model="filter.online" ng-change="get()">
+									<option value="0">Alles</option>
+									<option value="1">Afgelopen jaar</option>
+									<option value="2">Afgelopen maand</option>
+									<option value="3">Afgelopen week</option>
+								</select>
+							</span>
+						</div>
+                    </div>
+					
+					<div class="panel-body">
+						<div class="donutChartOnline" data-flot-chart data-data="donutChartOnline.data" data-options="donutChartOnline.options" style="width: 100%; height: 190px;"></div>
+					</div>
+				</div>             
+			</div>
+			
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+                        <h3 class="panel-title">
+							Verdeling zorgverleners
+						</h3>
+						
+						<div class="panel-select">
+							<span class="ui-select">
+								<select ng-model="filter.doctors" ng-change="get()">
+									<option value="0">Alles</option>
+									<option value="1">Afgelopen jaar</option>
+									<option value="2">Afgelopen maand</option>
+									<option value="3">Afgelopen week</option>
+								</select>
+							</span>
+						</div>
+                    </div>
+					
+					<div class="panel-body">
+						<div class="donutChartDoctors" data-flot-chart data-data="donutChartDoctors.data" data-options="donutChartDoctors.options" style="width: 100%; height: 190px;"></div>
+					</div>
+				</div>             
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+							Ontwikkeling gemiddelde waardering
+						</h3>
+						
+						<div class="panel-select">
+							<span class="ui-select">
+								<select ng-model="filter.days" ng-change="get()">
+									<option value="0">Alles</option>
+									<option value="1">Afgelopen jaar</option>
+									<option value="2">Afgelopen maand</option>
+									<option value="3">Afgelopen week</option>
+								</select>
+							</span>
+						</div>
+                    </div>
+                    <div class="panel-body">
+						<div class="table-responsive">
+							<div id="days_chart"></div>
+						</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

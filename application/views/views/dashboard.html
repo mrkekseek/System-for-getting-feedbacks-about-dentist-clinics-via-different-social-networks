@@ -130,7 +130,7 @@
 										<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 4"></i>
 									</td>
 									<td>{{l.date_time}}</td>
-									<td><i class="ti-marker-alt" ng-if="l.feedback != ''"></i></td>
+									<td><i class="ti-comment" ng-if="(l.feedback != '' && l.reply == '') || (l.feedback == '' && l.reply != '')"></i><i class="ti-comments" ng-if="l.feedback != '' && l.reply != ''"></i></td>
 								</tr>
 							</table>
 						</div>

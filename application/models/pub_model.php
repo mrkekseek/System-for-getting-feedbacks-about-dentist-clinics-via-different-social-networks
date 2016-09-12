@@ -1811,8 +1811,38 @@
 			return FALSE;
 		}
 		
+		function blocked_support()
+		{
+			if ($this->session->userdata('tfa_id'))
+			{
+				$this->db->where('id', $this->session->userdata('tfa_id'));
+				$this->db->limit(1);
+				$row = $this->db->get('users')->row_array();
+				if ( ! empty($row['mobile']))
+				{
+					$row['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+					$message = $this->load->view('views/mail/tpl_blocked.html', $row, TRUE);
+
+					$to = 'support@patientenreview.nl';
+					$this->send("blocked", $to, 'Account van '.$row['username'].' is geblokkeerd', $message, 'Patiëntenreview', 'info@patientenreview.nl');
+					return $this->real_send(array('blocked'), $this->db->insert_id());
+				}
+			}
+			
+			return FALSE;
+		}
+		
 		function send_code($id = FALSE, $mobile = '')
 		{
+			if ( ! empty($mobile))
+			{
+				$mobile = str_replace(' ', '', $mobile);
+				if (strpos($mobile, '06') === 0)
+				{
+					$mobile = substr_replace($mobile, '+316', 0, 2);
+				}
+			}
+			
 			mt_srand();
 			$code = mt_rand(10000, 99999);
 			$expire = time() + (15 * 60);
@@ -1869,7 +1899,6 @@
 												'sms_error_count' => $count);
 							$this->db->where('id', $this->session->userdata('tfa_id'));
 							$this->db->update('users', $data_array);
-							$this->errors[] = array("Wrong SMS Code");
 							return array('count' => $count);
 						}
 						else
@@ -1887,7 +1916,6 @@
 								$data_array = array('sms_error_count' => $count);
 								$this->db->where('id', $this->session->userdata('tfa_id'));
 								$this->db->update('users', $data_array);
-								$this->errors[] = array("Wrong SMS Code");
 								return array('count' => $count);
 							}
 						}
@@ -2541,25 +2569,17 @@
 			{
 				$now = time();
 				$data_array = array();
-				if ($now < $user['trial_end'])
+				if ($now >= $user['suspension'])
 				{
-					$data_array = array("account" => 2,
-										"account_stop" => 0);
+					$data_array = array("account" => 0,
+										"account_stop" => 1);
 				}
 				else
 				{
-					if ($now >= $user['suspension'])
+					if ($now <= $user['suspension'])
 					{
-						$data_array = array("account" => 0,
-											"account_stop" => 1);
-					}
-					else
-					{
-						if ($now <= $user['suspension'])
-						{
-							$data_array = array("account" => 1,
-												"account_stop" => 0);
-						}
+						$data_array = array("account" => 1,
+											"account_stop" => 0);
 					}
 				}
 				
@@ -3192,7 +3212,7 @@
 									
 									if ($cols[$tag] !== FALSE)
 									{
-										$line[$tag] = $rows[$i][$cols[$tag]];
+										$line[$tag] = empty($rows[$i][$cols[$tag]]) ? '' : $rows[$i][$cols[$tag]];
 										if ($tag == 'doctor')
 										{
 											$line['doctor_id'] = $this->get_doctors_id(strtolower($line[$tag]));
@@ -3237,10 +3257,27 @@
 										{
 											if ( ! empty($line[$tag]))
 											{
-												$temp = explode((strpos($line[$tag], '/') ? '/' : '-'), $line[$tag]);
+												$sep = (strpos($line[$tag], '/') ? '/' : '-');
+												$temp = explode($sep, $line[$tag]);
+												if (isset($temp[2]))
+												{
+													if ($temp[2] < 16)
+													{
+														$temp[2] += 2000;
+													}
+													elseif ($temp[2] > 16 && $temp[2] < 100)
+													{
+														$temp[2] += 1900;
+													}
+												}
+												
 												if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
 												{
 													$line[$tag] = '<b>!</b>';
+												}
+												else
+												{
+													$line[$tag] = implode($sep, $temp);
 												}
 											}
 											else
@@ -3523,7 +3560,7 @@
 								$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
 
 								$subject = (empty($subject) ? $email_data['texts']['subject'] : $subject);
-								if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], $row['email']))
+								if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], 'no-reply@patientenreview.nl'))
 								{
 									$error = FALSE;
 									$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
@@ -3563,7 +3600,7 @@
 														"doctor" => ( ! empty($list['doctor_id']) && ! empty($post['column']['doctor'])) ? $list['doctor_id'] : 0,
 														"location" => ( ! empty($list['location_id']) && ! empty($post['column']['location'])) ? $list['location_id'] : 0,
 														"treatment" => ( ! empty($list['treatment']) && ! empty($post['column']['treatment'])) ? $list['treatment'] : "",
-														"birth" => ( ! empty($list['birth']) && ! empty($post['column']['birth'])) ? $list['birth'] : "",
+														"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
 														"email" => strtolower($list['text']),
 														"date" => time(),
 														"status" => 1,
@@ -3582,7 +3619,7 @@
 										
 										$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
 
-										if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], $row['email']))
+										if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], 'no-reply@patientenreview.nl'))
 										{
 											$error = FALSE;
 											$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
@@ -5089,19 +5126,26 @@
 			return FALSE;
 		}
 		
-		function stat_filter()
+		function stat_filter($post = array())
 		{
 			$data = array();
 			if ($this->logged_in())
 			{
-				$users_id = $this->session->userdata("id");
-				$this->db->where('id', $users_id);
-				$this->db->limit(1);
-				$user = $this->db->get("users")->row_array();
+				$user = array();
+				if (empty($post['admin']))
+				{
+					$users_id = $this->session->userdata("id");
+					$this->db->where('id', $users_id);
+					$this->db->limit(1);
+					$user = $this->db->get("users")->row_array();
+				}
 				
 				$is_onlines = array();
 				$this->db->where("status <>", 3);
-				$this->db->where("users_id", $users_id);
+				if (empty($post['admin']))
+				{
+					$this->db->where("users_id", $users_id);
+				}
 				$result = $this->db->get("sent")->result_array();
 				foreach ($result as $row)
 				{
@@ -5169,9 +5213,9 @@
 					}
 				}
 				
-				$data['treatment'] = array_values(array_unique($data['treatment']));
-				$data['doctor'] = array_values(array_unique($data['doctor']));
-				$data['location'] = array_values(array_unique($data['location']));
+				$data['treatment'] = ! empty($data['treatment']) ? array_values(array_unique($data['treatment'])) : array();
+				$data['doctor'] = ! empty($data['doctor']) ? array_values(array_unique($data['doctor'])) : array();
+				$data['location'] = ! empty($data['location']) ? array_values(array_unique($data['location'])) : array();
 			}
 			
 			sort($data['treatment']);
@@ -5205,7 +5249,10 @@
 			
 			$questions_ids = array();
 			$this->db->group_by('questions_id');
-			$this->db->where('users_id', $users_id);
+			if (empty($post['admin']))
+			{
+				$this->db->where('users_id', $users_id);
+			}
 			$result = $this->db->get('sent_questions')->result_array();
 			foreach ($result as $row)
 			{
@@ -5904,7 +5951,7 @@
 			return FALSE;
 		}
 		
-		function stat_online()
+		function stat_online($post = array())
 		{
 			if ($this->logged_in())
 			{
@@ -5912,7 +5959,10 @@
 				$onlines = array('zorgkaart', 'facebook', 'independer', 'google');
 				$stat = array();
 				$this->db->order_by('date', 'asc');
-				$this->db->where('users_id', $users_id);
+				if (empty($post['admin']))
+				{
+					$this->db->where('users_id', $users_id);
+				}
 				$result = $this->db->get('reviews_history')->result_array();
 				foreach ($result as $row)
 				{
@@ -5966,7 +6016,10 @@
 				}
 				
 				$this->db->order_by('time', 'desc');
-				$this->db->where('users_id', $users_id);
+				if (empty($post['admin']))
+				{
+					$this->db->where('users_id', $users_id);
+				}
 				$result = $this->db->get('reviews')->result_array();
 				foreach ($result as $row)
 				{
@@ -5978,8 +6031,11 @@
 					$stat['stars'][$row['profile']][$row['score'] * 1]++;
 				}
 
-				$this->db->where('users_id', $users_id);
-				$this->db->update('reviews', array('marked_as_read' => TRUE));
+				if (empty($post['admin']))
+				{
+					$this->db->where('users_id', $users_id);
+					$this->db->update('reviews', array('marked_as_read' => TRUE));
+				}
 
 				return $stat;
 			}
@@ -6393,6 +6449,479 @@
 				}
 
 				return $stat;
+			}
+
+			return FALSE;
+		}
+		
+		function stat_achart2($post)
+		{
+			if ($this->logged_in())
+			{
+				$actives = array();
+				$this->db->where("status <>", 3);
+				$result = $this->db->get("sent")->result_array();
+				foreach ($result as $row)
+				{
+					if ( ! isset($actives[$row['users_id']]))
+					{
+						$actives[$row['users_id']] = 0;
+					}
+					$actives[$row['users_id']] += 1;
+				}
+				
+				if ( ! empty($post['filter']))
+				{
+					$filter = array();
+					foreach ($post['filter'] as $row)
+					{
+						if ( ! empty($row['value']))
+						{
+							$filter[$row['filter']][] = $row['value'];
+						}
+					}
+					
+					$sent_ids = array();
+					if ( ! empty($filter['question']))
+					{
+						$this->db->where_in('questions_id', $filter['question']);
+						$result = $this->db->get('sent_questions')->result_array();
+						foreach ($result as $row)
+						{
+							$sent_ids[] = $row['sent_id'];
+						}
+					}
+					
+					if ( ! empty($sent_id))
+					{
+						$this->db->where_in('id', $sent_ids);
+					}
+					
+					foreach ($filter as $key => $val)
+					{
+						if ( ! empty($val))
+						{
+							if (in_array($key, array('doctor', 'location', 'treatment')))
+							{
+								$this->db->where_in($key, $val);
+							}
+							
+							if ($key == 'online')
+							{
+								foreach ($val as $online)
+								{
+									$this->db->where($online.' >', 0);
+								}
+							}
+							
+							if ($key == 'date')
+							{
+								$query = array();
+								foreach ($val as $date)
+								{
+									$time = array();
+									if ( ! empty($date['from']))
+									{
+										$time[] = "`last` >= ".strtotime($date['from']);
+									}
+									
+									if ( ! empty($date['to']))
+									{
+										$time[] = "`last` < ".strtotime($date['to']);
+									}
+									
+									if ( ! empty($time))
+									{
+										$query[] = '('.implode(' AND ', $time).')';
+									}
+								}
+
+								if ( ! empty($query))
+								{
+									$this->db->where('('.implode(' OR ', $query).')');
+								}
+							}
+						}
+					}
+				}
+				
+				$this->db->order_by("last", "asc");
+				$this->db->where("status <>", 3);
+				$result = $this->db->get("sent")->result_array();
+
+				if ( ! empty($result))
+				{
+					$stat = array();
+					$stat['max'] = array();
+					$stat['min'] = array();
+					$stat['average'] = 0;
+					$stat['for_user'] = 0;
+					$stat['stars_count'] = array(0, 0, 0, 0, 0, 0);
+					$stat['average_month_x'] = array();
+					$stat['average_month_key'] = array();
+					$stat['average_month'] = array();
+					$stat['average_all_month'] = array();
+					$stat['average_nps'] = array('12' => 0, '3' => 0, '45' => 0, '12p' => 0, '3p' => 0, '45p' => 0, 'all' => 0, 'delta' => 0);
+					$stat['history_nps'] = array();
+					$stat['nps_all_month'] = array();
+					$stat['reply'] = array();
+					$stat['reply_percent'] = 0;
+					$stat['reply_click'] = 0;
+					$stat['reply_percents'] = array();
+					$stat['reply_clicks'] = array();
+					$stat['reply_highest'] = 0;
+					$stat['reply_lowest'] = 0;
+					$stat['reply_chart'] = array('reply' => 0, 'click' => 0, 'none' => 0);
+
+					$count = array();
+					$count['all'] = 0;
+					$count['for_user'] = 0;
+					$count['average_sum'] = 0;
+					$count['reply_all'] = 0;
+					$count['reply_only'] = 0;
+					$count['reply_click'] = 0;
+					$count['reply_count'] = array();
+					$count['all_month_sum'] = array();
+					$count['all_month_num'] = array();
+					$count['all_nps'] = array();
+
+					$start_date = (time() - 365 * 24 * 3600);
+					$month_start = date('n', $start_date);
+					$year_start = date('Y', $start_date);
+					$month_finish = date('n');
+					$year_finish = date('Y');
+					while ( ! ($month_start >= $month_finish && $year_start >= $year_finish))
+					{
+						$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
+						$stat['average_month_key'][] = $year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT);
+						
+						$month_start++;
+						if ($month_start > 12)
+						{
+							$month_start = 1;
+							$year_start++;
+						}
+					}
+
+					for ($i = 1; $i <= 5; $i++)
+					{
+						foreach ($stat['average_month_key'] as $key)
+						{
+							$stat['average_month'][$i][$key] = 0;
+						}
+					}
+
+					foreach ($stat['average_month_key'] as $key)
+					{
+						$stat['history_nps']['12'][$key] = 0;
+						$stat['history_nps']['3'][$key] = 0;
+						$stat['history_nps']['45'][$key] = 0;
+
+						$count['all_month_sum'][$key] = 0;
+						$count['all_month_num'][$key] = 0;
+						$count['all_nps']['12'][$key] = 0;
+						$count['all_nps']['45'][$key] = 0;
+					}
+					
+					$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
+					
+					foreach ($result as $row)
+					{
+						$month = FALSE;
+						if ( ! empty($row['last']))
+						{
+							$month = date('Y-m', $row['last']);
+						}
+
+						if ($row['stars'] > 0)
+						{
+							$count['for_user']++;
+							$count['average_sum'] += $row['stars'];
+
+							if (isset($stat['average_month'][$row['stars']][$month]))
+							{
+								$stat['average_month'][$row['stars']][$month]++;
+							}
+							
+							if ($row['stars'] <= 2)
+							{
+								$stat['average_nps']['12']++;
+								if (isset($stat['history_nps']['12'][$month]))
+								{
+									$stat['history_nps']['12'][$month]++;
+								}
+							}
+							elseif ($row['stars'] == 3)
+							{
+								$stat['average_nps']['3']++;
+								if (isset($stat['history_nps']['3'][$month]))
+								{
+									$stat['history_nps']['3'][$month]++;
+								}
+							}
+							else
+							{
+								$stat['average_nps']['45']++;
+								if (isset($stat['history_nps']['45'][$month]))
+								{
+									$stat['history_nps']['45'][$month]++;
+								}
+							}
+							$stat['average_nps']['all']++;
+						}
+						
+						$count['reply_all']++;
+						if ($row['status'] == 2)
+						{
+							$count['reply_only']++;
+							$check = 0;
+							foreach ($onlines as $key)
+							{
+								$check += $row[$key];
+							}
+
+							if ( ! empty($check))
+							{
+								$count['reply_click']++;
+							}
+						}
+						
+						if ( ! empty($row['batches_id']))
+						{
+							if ( ! isset($count['reply_count'][$row['batches_id']]))
+							{
+								$count['reply_count'][$row['batches_id']]['all'] = 0;
+								$count['reply_count'][$row['batches_id']]['only'] = 0;
+								$count['reply_count'][$row['batches_id']]['click'] = 0;
+							}
+							
+							$count['reply_count'][$row['batches_id']]['all']++;
+							if ($row['status'] == 2)
+							{
+								$count['reply_count'][$row['batches_id']]['only']++;
+								$check = 0;
+								foreach ($onlines as $key)
+								{
+									$check += $row[$key];
+								}
+
+								if ( ! empty($check))
+								{
+									$count['reply_count'][$row['batches_id']]['click']++;
+								}
+							}
+						}
+						
+						$stat['stars_count'][$row['stars']]++;
+
+						if ( ! empty($month) && isset($count['all_nps']['12'][$month]))
+						{
+							if ($row['stars'] <= 2 && isset($count['all_nps']['12'][$month]))
+							{
+								$count['all_nps']['12'][$month]++;
+							}
+							elseif ($row['stars'] >= 4 && isset($count['all_nps']['45'][$month]))
+							{
+								$count['all_nps']['45'][$month]++;
+							}
+						}
+
+						if ( ! empty($month) && isset($count['all_month_sum'][$month]))
+						{
+							$count['all_month_sum'][$month] += $row['stars'];
+							$count['all_month_num'][$month]++;
+						}
+						
+						$count['all']++;
+					}
+					
+					if ( ! empty($count['for_user']))
+					{
+						$stat['average'] = number_format(round($count['average_sum'] / $count['for_user'], 1), 1);
+						$stat['for_user'] = $count['for_user'];
+					}
+					
+					if ( ! empty($stat['average_nps']['all']))
+					{
+						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
+						$stat['average_nps']['delta'] = $stat['average_nps']['45'] - $stat['average_nps']['12'];
+					}
+
+					$sum_all_month = 0;
+					$num_all_month = 0;
+					$nps_all_45 = 0;
+					$nps_all_12 = 0;
+					
+					foreach ($count['all_month_num'] as $month => $val)
+					{
+						$all_sum = empty($count['all_month_sum'][$month]) ? 0 : $count['all_month_sum'][$month];
+						$sum_all_month += $all_sum;
+						$all_num = empty($count['all_month_num'][$month]) ? 0 : $count['all_month_num'][$month];
+						$num_all_month += $all_num;
+						$stat['average_all_month'][$month] = empty($num_all_month) ? 0 : round($sum_all_month / $num_all_month, 1);
+
+						$nps_all_45 += $count['all_nps']['45'][$month];
+						$nps_all_12 += $count['all_nps']['12'][$month];
+						$stat['nps_all_month'][$month] = $nps_all_45 - $nps_all_12;
+					}
+
+					$stat['questions'] = $this->pub->get_questions();
+					if ( ! empty($stat['questions']))
+					{
+						$q_sum = array();
+						$q_num = array();
+						$result = $this->db->get('sent_questions')->result_array();
+						foreach ($result as $row)
+						{
+							if ( ! isset($q_sum[$row['questions_id']]))
+							{
+								$q_sum[$row['questions_id']] = 0;
+							}
+							$q_sum[$row['questions_id']] += $row['stars'];
+							
+							if ( ! isset($q_num[$row['questions_id']]))
+							{
+								$q_num[$row['questions_id']] = 0;
+							}
+							$q_num[$row['questions_id']]++;
+						}
+						
+						foreach ($stat['questions'] as $key => $row)
+						{
+							$stat['questions'][$key]['average'] = 0;
+							if ( ! empty($q_num[$row['id']]))
+							{
+								$stat['questions'][$key]['average'] = number_format(round($q_sum[$row['id']] / $q_num[$row['id']], 1), 1);
+							}
+						}
+					}
+					
+					if ( ! empty($count['reply_all']))
+					{
+						$stat['reply_percent'] = round($count['reply_only'] / $count['reply_all'] * 100, 1);
+						$stat['reply_click'] = round($count['reply_click'] / $count['reply_all'] * 100, 1);
+						
+						$stat['reply_chart']['click'] = $stat['reply_click'];
+						$stat['reply_chart']['none'] = 100 - $stat['reply_percent'];
+						$stat['reply_chart']['reply'] = $stat['reply_percent'] - $stat['reply_click'];
+					}
+					
+					if ( ! empty($count['reply_count']))
+					{
+						foreach ($count['reply_count'] as $id => $row)
+						{
+							$value = round($row['only'] / $row['all'] * 100, 1);
+							$stat['reply_percents'][$id] = $value;
+							$stat['reply_highest'] = max($stat['reply_highest'], $value);
+							if (empty($stat['reply_lowest']))
+							{
+								$stat['reply_lowest'] = $value;
+							}
+							else
+							{
+								$stat['reply_lowest'] = min($stat['reply_lowest'], $value);
+							}
+							
+							$value = round($row['click'] / $row['all'] * 100, 1);
+							$stat['reply_clicks'][$id] = $value;
+						}
+					}
+					
+					$this->db->order_by('sent_date', 'desc');
+					$this->db->limit(10);
+					$result = $this->db->get('sent_dates')->result_array();
+					foreach ($result as $row)
+					{
+						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
+												   'amount' => $row['emails_amount'],
+												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
+					}
+
+					$users = array();
+					$sents = array();
+					arsort($actives);
+					$max = array();
+					$count = 0;
+					
+					foreach ($actives as $key => $val)
+					{
+						if ($count < 3)
+						{
+							$max[] = $key;
+							$users[] = $key;
+							$sents[$key] = $val;
+						}
+						$count++;
+					}
+					
+					asort($actives);
+					$min = array();
+					$count = 0;
+					foreach ($actives as $key => $val)
+					{
+						if ($count < 3)
+						{
+							$min[] = $key;
+							$users[] = $key;
+							$sents[$key] = $val;
+						}
+						$count++;
+					}
+					
+					if ( ! empty($users))
+					{
+						$sessions = array();
+						$this->db->where_in("users_id", $users);
+						$res = $this->db->get("sessions")->result_array();
+
+						foreach ($res as $row)
+						{
+							$sessions[$row['users_id']][] = $row['users_login'];
+						}
+
+						$this->db->where_in("id", $users);
+						$res = $this->db->get("users")->result_array();
+
+						foreach ($max as $id)
+						{
+							foreach ($res as $row)
+							{
+								$login_date = empty($sessions[$row['id']]) ? '---' : date("d-m-Y", max($sessions[$row['id']]));
+								$login_date = $login_date == date("d-m-Y") ? "Vandaag" : ($login_date == date("d-m-Y", time() - 24 * 3600) ? "Gisteren" : $login_date);
+								if ($id == $row['id'])
+								{
+									$stat['max'][] = array("id" => $row['id'],
+														   "username" => $row['username'],
+														   "login_date" => $login_date,
+														   "login_number" => empty($sessions[$row['id']]) ? 0 : count($sessions[$row['id']]),
+														   "sent_number" => $sents[$row['id']]);
+								}
+							}
+						}
+
+						foreach ($min as $id)
+						{
+							foreach ($res as $row)
+							{
+								$login_date = empty($sessions[$row['id']]) ? '---' : date("d-m-Y", max($sessions[$row['id']]));
+								$login_date = $login_date == date("d-m-Y") ? "Vandaag" : ($login_date == date("d-m-Y", time() - 24 * 3600) ? "Gisteren" : $login_date);
+								if ($id == $row['id'])
+								{
+									$stat['min'][] = array("id" => $row['id'],
+														   "username" => $row['username'],
+														   "login_date" => $login_date,
+														   "login_number" => empty($sessions[$row['id']]) ? 0 : count($sessions[$row['id']]),
+														   "sent_number" => $sents[$row['id']]);
+								}
+							}
+						}
+					}
+					
+					return $stat;
+				}
 			}
 
 			return FALSE;
@@ -7102,7 +7631,7 @@
 			{
 				foreach ($result as $row)
 				{
-					$data = array('from' => $row['letters_from'].' <info@patientenreview.nl>', 
+					$data = array('from' => $row['letters_from'].' <'.$row['letters_from_email'].'>', 
 								  'to' => $row['letters_to'], 
 								  'subject' => $row['letters_subject'],
 								  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',							  
