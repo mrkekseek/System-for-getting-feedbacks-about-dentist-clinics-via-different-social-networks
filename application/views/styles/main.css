@@ -3595,3 +3595,8 @@ body .btn-primary.compose-prev:disabled {
 	bottom: 0;
 	padding-top: 75px;
 }
+
+.empty_data {
+	text-align: center;
+	line-height: 300px;
+}
