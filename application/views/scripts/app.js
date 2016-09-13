@@ -3436,6 +3436,7 @@
 							var result = logger.check(data);
 							$scope.amount.doctor_amount = result.price.price;
 							$scope.amount.doctor_days = result.price.days;
+							$scope.amount.doctor_end = result.price.end;
 							$scope.step = 2;
 						});
 					}

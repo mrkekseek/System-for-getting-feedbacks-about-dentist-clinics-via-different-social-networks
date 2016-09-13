@@ -1049,7 +1049,7 @@
 				}
 			}
 			
-			return array("price" => $price, "days" => $days);
+			return array("price" => $price, "days" => $days, "end" => date('d-m-Y', $row['suspension']));
 		}
 		
 		function save_doctor($post)
