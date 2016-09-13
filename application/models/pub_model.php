@@ -5951,18 +5951,16 @@
 			return FALSE;
 		}
 		
-		function stat_online($post = array())
+		function stat_online()
 		{
 			if ($this->logged_in())
 			{
 				$users_id = $this->session->userdata("id");
 				$onlines = array('zorgkaart', 'facebook', 'independer', 'google');
 				$stat = array();
+				
 				$this->db->order_by('date', 'asc');
-				if (empty($post['admin']))
-				{
-					$this->db->where('users_id', $users_id);
-				}
+				$this->db->where('users_id', $users_id);
 				$result = $this->db->get('reviews_history')->result_array();
 				foreach ($result as $row)
 				{
@@ -5971,6 +5969,7 @@
 					foreach ($onlines as $o)
 					{
 						$stat['average'][$o] = $row[$o] * 1;
+
 						if ( ! isset($stat['history'][$month][$o]))
 						{
 							$stat['history'][$month][$o]['sum'] = 0;
@@ -6016,10 +6015,7 @@
 				}
 				
 				$this->db->order_by('time', 'desc');
-				if (empty($post['admin']))
-				{
-					$this->db->where('users_id', $users_id);
-				}
+				$this->db->where('users_id', $users_id);
 				$result = $this->db->get('reviews')->result_array();
 				foreach ($result as $row)
 				{
@@ -6031,10 +6027,103 @@
 					$stat['stars'][$row['profile']][$row['score'] * 1]++;
 				}
 
-				if (empty($post['admin']))
+				$this->db->where('users_id', $users_id);
+				$this->db->update('reviews', array('marked_as_read' => TRUE));
+
+				return $stat;
+			}
+			return FALSE;
+		}
+		
+		function astat_online()
+		{
+			if ($this->logged_in())
+			{
+				$onlines = array('zorgkaart', 'facebook', 'independer', 'google');
+				$stat = array();
+				$this->db->order_by('date', 'asc');
+				$result = $this->db->get('reviews_history')->result_array();
+				foreach ($result as $row)
 				{
-					$this->db->where('users_id', $users_id);
-					$this->db->update('reviews', array('marked_as_read' => TRUE));
+					$month = date('Y-m', $row['date']);
+					$stat['months'][] = date("M 'y", $row['date']);
+					foreach ($onlines as $o)
+					{
+						$stat['average'][$o][$row['users_id']] = $row[$o] * 1;
+
+						if ( ! isset($stat['history'][$month][$o]))
+						{
+							$stat['history'][$month][$o]['sum'] = 0;
+							$stat['history'][$month][$o]['num'] = 0;
+						}
+						$stat['history'][$month][$o]['sum'] += $row[$o];
+						$stat['history'][$month][$o]['num']++;
+					}
+				}
+				$stat['months'] = array_values(array_unique($stat['months']));
+				
+				if ( ! empty($stat['history']))
+				{
+					foreach ($stat['history'] as $month => $list)
+					{
+						foreach ($list as $o => $row)
+						{
+							$stat['history'][$month][$o] = $row['num'] > 0 ? round($row['sum'] / $row['num'], 1) : 0;
+						}
+					}
+				}
+				
+				if ( ! empty($stat['average']))
+				{
+					$average_sum = 0;
+					$averages = array();
+					foreach ($onlines as $o)
+					{
+						$num = 0;
+						$sum = 0;
+						foreach ($stat['average'][$o] as $val)
+						{
+							$sum += $val;
+							$num++;
+						}
+						
+						if ($num > 0)
+						{
+							$averages[$o] = round($sum / $num, 1);
+							$average_sum += $averages[$o];
+						}
+						else
+						{
+							$averages[$o] = 0;
+						}
+					}
+					$stat['average'] = $averages;
+					
+					$left = 0;
+					foreach ($onlines as $k => $o)
+					{
+						if ($k < (count($onlines) - 1))
+						{
+							$stat['pie'][$o] = isset($stat['average'][$o]) ? round($stat['average'][$o] * 100 / $average_sum, 1) : 0;
+							$left += $stat['pie'][$o];
+						}
+						else
+						{
+							$stat['pie'][$o] = 100 - $left;
+						}
+					}
+				}
+				
+				$this->db->order_by('time', 'desc');
+				$result = $this->db->get('reviews')->result_array();
+				foreach ($result as $row)
+				{
+					$stat['reviews'][$row['profile']][] = $row;
+					if ( ! isset($stat['stars'][$row['profile']][$row['score'] * 1]))
+					{
+						$stat['stars'][$row['profile']][$row['score'] * 1] = 0;
+					}
+					$stat['stars'][$row['profile']][$row['score'] * 1]++;
 				}
 
 				return $stat;

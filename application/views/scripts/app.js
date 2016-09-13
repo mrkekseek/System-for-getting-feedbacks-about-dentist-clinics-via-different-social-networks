@@ -2169,7 +2169,7 @@
 		$scope.onl = {};
 		$scope.get_online = function()
 		{
-			$http.post('/pub/stat_online/', {'admin': 1}).success(function(data, status, headers, config) {
+			$http.post('/pub/astat_online/', {}).success(function(data, status, headers, config) {
 				$scope.onl = logger.check(data);
 				if ($scope.onl && $scope.onl.pie)
 				{
@@ -2193,7 +2193,7 @@
 						}
 						series.push({type: 'line', name: $scope.onlines[k], data: data});
 					}
-					
+					console.log(series);
 					$scope.area_online.setOption({xAxis: [{data: $scope.onl.months}],
 												  yAxis: [{min: 0, max: max}],
 												  series: series});
