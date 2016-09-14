@@ -4639,6 +4639,12 @@
 				{
 					$row['doctors_info'] = $this->doctor_info($row['doctor']);
 				}
+				
+				$row['locations_info'] = array();
+				if ( ! empty($row['location']))
+				{
+					$row['locations_info'] = $this->location_info($row['location']);
+				}
 			}
 			
 			return $row;

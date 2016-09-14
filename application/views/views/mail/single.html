@@ -1,6 +1,5 @@
-<div class="page page-mail">
+<div class="page page-mail page-single">
     <div class="row">
-
         <div class="col-sm-3 mail-categories">
             <div class="category-heading">
                 <a href="#/mail/compose" class="btn btn-block btn-lg btn-primary">Stuur nieuwe uitnodiging</a>
@@ -40,17 +39,84 @@
                     <div class="mail-content">
 						<div class="row">
 							<div class="col-md-4 col-xs-12 pull-right">
-								<div class="form-group single-details muted">
+								<div class="single-details muted">
 									Details van deze beoordeling
 								</div>
 								
-								<div class="form-group row" ng-show="info.doctors_info.firstname">
+								<div class="form-group" ng-show="info.name != '' || info.sname != '' || info.birth != ''">
+									<div class="row" ng-show="info.name != ''">
+										<div class="col-sm-5 col-xs-12">
+											Voornaam:
+										</div>
+										
+										<div class="col-sm-7 col-xs-12 text-right">
+											{{info.name}}
+										</div>
+									</div>
+									
+									<div class="row" ng-show="info.sname != ''">
+										<div class="col-sm-5 col-xs-12">
+											Achternaam:
+										</div>
+										
+										<div class="col-sm-7 col-xs-12 text-right">
+											{{info.sname}}
+										</div>
+									</div>
+									
+									<div class="row" ng-show="info.birth != ''">
+										<div class="col-sm-5 col-xs-12">
+											Geboortedatum:
+										</div>
+										
+										<div class="col-sm-7 col-xs-12 text-right">
+											{{info.birth}}
+										</div>
+									</div>
+								</div>
+								
+								<div class="form-group row" ng-show="info.facebook == '1' || info.google == '1' || info.zorgkaart == '1' || info.independer == '1'">
 									<div class="col-sm-5 col-xs-12">
-										Zorgverlener:
+										Doorgeklikt naar:
 									</div>
 									
 									<div class="col-sm-7 col-xs-12 text-right">
-										{{info.doctors_info.title + ' ' + info.doctors_info.firstname + ' ' + info.doctors_info.lastname}}
+										<span class='socials-inbox-icons' ng-if="info.google == '1'"><img src="/application/views/images/google-icon.png" alt="" /></span>
+										<span class='socials-inbox-icons' ng-if="info.zorgkaart == '1'"><img src="/application/views/images/zorgkaart-icon.png" alt="" /></span>
+										<span class='socials-inbox-icons' ng-if="info.facebook == '1'"><img src="/application/views/images/facebook-icon.png" alt="" /></span>
+										<span class='socials-inbox-icons' ng-if="info.independer == '1'"><img src="/application/views/images/independer-icon.png" alt="" /></span>
+									</div>
+								</div>
+								
+								<div class="form-group" ng-show="info.doctors_info.firstname || info.treatment != '' || info.location == '1'">
+									<div class="row" ng-show="info.doctors_info.firstname">
+										<div class="col-sm-5 col-xs-12">
+											Behandeld bij:
+										</div>
+										
+										<div class="col-sm-7 col-xs-12 text-right">
+											{{info.doctors_info.title + ' ' + info.doctors_info.firstname + ' ' + info.doctors_info.lastname}}
+										</div>
+									</div>
+									
+									<div class="row" ng-show="info.treatment != ''">
+										<div class="col-sm-5 col-xs-12">
+											Behandeling:
+										</div>
+										
+										<div class="col-sm-7 col-xs-12 text-right">
+											{{info.treatment}}
+										</div>
+									</div>
+									
+									<div class="row" ng-show="info.location == '1'">
+										<div class="col-sm-5 col-xs-12">
+											Locatie:
+										</div>
+										
+										<div class="col-sm-7 col-xs-12 text-right">
+											{{info.locations_info.name}}
+										</div>
 									</div>
 								</div>
 								

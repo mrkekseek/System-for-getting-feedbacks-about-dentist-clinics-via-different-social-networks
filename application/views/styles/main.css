@@ -3600,3 +3600,7 @@ body .btn-primary.compose-prev:disabled {
 	text-align: center;
 	line-height: 300px;
 }
+
+.page.page-single > .row {
+	width: 100%;
+}
