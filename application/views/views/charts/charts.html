@@ -220,13 +220,15 @@
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
-								<div id="area_averages" style="height: 300px;"></div>
+								<div id="area_averages" style="height: 300px;" ng-show=" ! area_averages_empty"></div>
+								<div class="empty_data" ng-show="area_averages_empty">Er is geen data om weer te geven</div>
 							</div>
 						</div>
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
-								<div id="area_stars" style="height: 300px;"></div>
+								<div id="area_stars" style="height: 300px;" ng-show=" ! area_stars_empty"></div>
+								<div class="empty_data" ng-show="area_stars_empty">Er is geen data om weer te geven</div>
 							</div>
 						</div>
 					</div>
@@ -241,7 +243,7 @@
 								
 								<div class="charts2-questions-info">
 									<div class="charts2-questions-average">
-										{{q.average}}
+										{{q.average == 0 ? '-' : q.average}}
 									</div>
 									
 									<div class="charts2-questions-name">
@@ -358,13 +360,15 @@
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
-								<div id="area_nps_average" style="height: 300px;"></div>
+								<div id="area_nps_average" style="height: 300px;" ng-show=" ! area_nps_average_empty"></div>
+								<div class="empty_data" ng-show="area_nps_average_empty">Er is geen data om weer te geven</div>
 							</div>
 						</div>
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
-								<div id="area_nps" style="height: 300px;"></div>
+								<div id="area_nps" style="height: 300px;" ng-show=" ! area_nps_empty"></div>
+								<div class="empty_data" ng-show="area_nps_empty">Er is geen data om weer te geven</div>
 							</div>
 						</div>
 					</div>
@@ -596,7 +600,8 @@
 					<div class="row charts2-row">
 						<div class="col-xs-12">
 							<div class="panel panel-default">
-								<div id="area_online" style="height: 300px;"></div>
+								<div id="area_online" style="height: 300px;" ng-show=" ! area_online_empty"></div>
+								<div class="empty_data" ng-show="area_online_empty">Er is geen data om weer te geven</div>
 							</div>
 						</div>
 					</div>

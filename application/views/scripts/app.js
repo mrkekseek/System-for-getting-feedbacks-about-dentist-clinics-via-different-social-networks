@@ -32,7 +32,8 @@
 		'lr.upload',
 		'ngFileUpload',
 		'as.sortable',
-		'colorpicker.module'
+		'colorpicker.module',
+		'froala'
     ]);
 
 })();
@@ -679,7 +680,7 @@
         $scope.ultimate_out = function(name)
         {
             $scope.ultimate_class[name] = '';
-        }
+        };
 		
 		$scope.type = 'email';
 		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
@@ -876,6 +877,10 @@
 		
 		$scope.less_30 = false;
 		$scope.empty_filter = false;
+		$scope.area_averages_empty = false;
+		$scope.area_stars_empty = false;
+		$scope.area_nps_average_empty = false;
+		$scope.area_nps_empty = false;
 		$scope.get_email = function() {
 			$http.post("/pub/stat_chart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
 				$scope.data = logger.check(data);
@@ -891,7 +896,7 @@
 					}
 				}
 
-				if ($scope.data.for_user >= 30 || (is_filter && $scope.data && $scope.data.for_user > 0))
+				if ($scope.data.for_user >= 0 || (is_filter && $scope.data && $scope.data.for_user > 0))
 				{
 					$scope.less_30 = false;
 					$scope.empty_filter = false;
@@ -909,22 +914,34 @@
 						var series = [];
 						var max = 5;
 						var data = [];
+						var empty_check = true;
 						for (var m in $scope.data.average_all_month)
 						{
-							data.push($scope.data.average_all_month[m]);
+							var value = $scope.data.average_all_month[m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
 						}
 						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
 						
 						data = [];
 						for (var m in $scope.data.average_my_month)
 						{
-							data.push($scope.data.average_my_month[m]);
+							var value = $scope.data.average_my_month[m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
 						}
 						series.push({type: 'line', name: 'Beoordeling van uw praktijk', data: data, itemStyle: {normal: {color: $scope.color, borderColor: $scope.color, lineStyle: {color: $scope.color}, areaStyle: {color: $scope.color_a}}}});
 						
 						$scope.area_averages.setOption({xAxis: [{data: $scope.data.average_month_x}],
 														yAxis: [{min: 0, max: max}],
 														series: series});
+						$scope.area_averages_empty = empty_check;
 					}
 					
 					if ($scope.data && $scope.data.average_month)
@@ -932,12 +949,19 @@
 						var series = [];
 						var max = 0;
 						var max_num = {};
+						var empty_check = true;
 						for (var i = 5; i > 0; i--)
 						{
 							var data = [];
 							for (var m in $scope.data.average_month[i])
 							{
-								data.push($scope.data.average_month[i][m]);
+								var value = $scope.data.average_month[i][m];
+								data.push(value);
+								if (value > 0)
+								{
+									empty_check = false;
+								}
+								
 								if ( ! max_num[m])
 								{
 									max_num[m] = 0;
@@ -955,6 +979,7 @@
 						$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}],
 													 yAxis: [{min: 0, max: max}],
 													 series: series});
+						$scope.area_stars_empty = empty_check;
 					}
 					
 					if ($scope.data && $scope.data.average_nps.all)
@@ -974,10 +999,17 @@
 						var data = [];
 						var max = 0;
 						var min = false;
+						var empty_check = true;
 
 						for (var m in $scope.data.nps_all_month)
 						{
-							data.push($scope.data.nps_all_month[m]);
+							var value = $scope.data.nps_all_month[m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
+								
 							max = Math.max(max, $scope.data.nps_all_month[m] * 1);
 							if (min === false)
 							{
@@ -993,7 +1025,13 @@
 						data = [];
 						for (var m in $scope.data.nps_my_month)
 						{
-							data.push($scope.data.nps_my_month[m]);
+							var value = $scope.data.nps_my_month[m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
+							
 							max = Math.max(max, $scope.data.nps_my_month[m] * 1);
 							if (min === false)
 							{
@@ -1009,6 +1047,7 @@
 						$scope.area_nps_average.setOption({xAxis: [{data: $scope.data.average_month_x}],
 														   yAxis: [{min: (min > 0 ? 0 : Math.round(min * 1.2)), max: Math.round(max * 1.2)}],
 														   series: series});
+						$scope.area_nps_average_empty = empty_check;
 					}
 					
 					if ($scope.data && $scope.data.history_nps)
@@ -1017,9 +1056,16 @@
 						var data = [];
 						var max = 0;
 						var max_num = {};
+						var empty_check = true;
 						for (var m in $scope.data.history_nps['45'])
 						{
-							data.push($scope.data.history_nps['45'][m]);
+							var value = $scope.data.history_nps['45'][m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
+							
 							if ( ! max_num[m])
 							{
 								max_num[m] = 0;
@@ -1031,7 +1077,13 @@
 						data = [];
 						for (var m in $scope.data.history_nps['3'])
 						{
-							data.push($scope.data.history_nps['3'][m]);
+							var value = $scope.data.history_nps['3'][m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
+							
 							if ( ! max_num[m])
 							{
 								max_num[m] = 0;
@@ -1043,7 +1095,13 @@
 						data = [];
 						for (var m in $scope.data.history_nps['12'])
 						{
-							data.push($scope.data.history_nps['12'][m]);
+							var value = $scope.data.history_nps['12'][m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
+							
 							if ( ! max_num[m])
 							{
 								max_num[m] = 0;
@@ -1060,6 +1118,7 @@
 						$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}],
 												   yAxis: [{min: 0, max: max}],
 												   series: series});
+						$scope.area_nps_empty = empty_check;
 					}
 					
 					if ($scope.data && $scope.data.reply_chart)
@@ -1115,6 +1174,7 @@
 		});
 		
 		$scope.onl = {};
+		$scope.area_online_empty = false;
 		$scope.get_online = function()
 		{
 			$http.post('/pub/stat_online/', {}).success(function(data, status, headers, config) {
@@ -1132,12 +1192,18 @@
 					var series = [];
 					var max = 5;
 					var data = [];
+					var empty_check = true;
 					for (var k in $scope.onlines)
 					{
 						data = [];
 						for (var m in $scope.onl.history)
 						{
-							data.push($scope.onl.history[m][$scope.onlines[k].toLowerCase()]);
+							var value = $scope.onl.history[m][$scope.onlines[k].toLowerCase()];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
 						}
 						series.push({type: 'line', name: $scope.onlines[k], data: data});
 					}
@@ -1146,6 +1212,7 @@
 												  yAxis: [{min: 0, max: max}],
 												  series: series});
 					$scope.area_online.resize();
+					$scope.area_online_empty = empty_check;
 				}
 			});
 		};
@@ -1962,6 +2029,10 @@
 		});
 		
 		$scope.empty_filter = false;
+		$scope.area_averages_empty = false;
+		$scope.area_stars_empty = false;
+		$scope.area_nps_average_empty = false;
+		$scope.area_nps_empty = false;
 		$scope.get_email = function() {
 			$http.post("/pub/stat_achart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
 				$scope.data = logger.check(data);
@@ -1991,15 +2062,22 @@
 						var series = [];
 						var max = 5;
 						var data = [];
+						var empty_check = true;
 						for (var m in $scope.data.average_all_month)
 						{
-							data.push($scope.data.average_all_month[m]);
+							var value = $scope.data.average_all_month[m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
 						}
 						series.push({type: 'line', name: 'Landelijk gemiddelde', data: data});
 
 						$scope.area_averages.setOption({xAxis: [{data: $scope.data.average_month_x}],
 														yAxis: [{min: 0, max: max}],
 														series: series});
+						$scope.area_averages_empty = empty_check;
 					}
 					
 					if ($scope.data && $scope.data.average_month)
@@ -2007,12 +2085,19 @@
 						var series = [];
 						var max = 0;
 						var max_num = {};
+						var empty_check = true;
 						for (var i = 5; i > 0; i--)
 						{
 							var data = [];
 							for (var m in $scope.data.average_month[i])
 							{
-								data.push($scope.data.average_month[i][m]);
+								var value = $scope.data.average_month[i][m];
+								data.push(value);
+								if (value > 0)
+								{
+									empty_check = false;
+								}
+							
 								if ( ! max_num[m])
 								{
 									max_num[m] = 0;
@@ -2030,6 +2115,7 @@
 						$scope.area_stars.setOption({xAxis: [{data: $scope.data.average_month_x}],
 													 yAxis: [{min: 0, max: max}],
 													 series: series});
+						$scope.area_stars_empty = empty_check;
 					}
 					
 					if ($scope.data && $scope.data.average_nps.all)
@@ -2049,10 +2135,17 @@
 						var data = [];
 						var max = 0;
 						var min = false;
+						var empty_check = true;
 
 						for (var m in $scope.data.nps_all_month)
 						{
-							data.push($scope.data.nps_all_month[m]);
+							var value = $scope.data.nps_all_month[m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
+							
 							max = Math.max(max, $scope.data.nps_all_month[m] * 1);
 							if (min === false)
 							{
@@ -2068,6 +2161,7 @@
 						$scope.area_nps_average.setOption({xAxis: [{data: $scope.data.average_month_x}],
 														   yAxis: [{min: (min > 0 ? 0 : Math.round(min * 1.2)), max: Math.round(max * 1.2)}],
 														   series: series});
+						$scope.area_nps_average_empty = empty_check;
 					}
 					
 					if ($scope.data && $scope.data.history_nps)
@@ -2076,9 +2170,16 @@
 						var data = [];
 						var max = 0;
 						var max_num = {};
+						var empty_check = true;
 						for (var m in $scope.data.history_nps['45'])
 						{
-							data.push($scope.data.history_nps['45'][m]);
+							var value = $scope.data.history_nps['45'][m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
+							
 							if ( ! max_num[m])
 							{
 								max_num[m] = 0;
@@ -2090,7 +2191,13 @@
 						data = [];
 						for (var m in $scope.data.history_nps['3'])
 						{
-							data.push($scope.data.history_nps['3'][m]);
+							var value = $scope.data.history_nps['3'][m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
+							
 							if ( ! max_num[m])
 							{
 								max_num[m] = 0;
@@ -2102,7 +2209,13 @@
 						data = [];
 						for (var m in $scope.data.history_nps['12'])
 						{
-							data.push($scope.data.history_nps['12'][m]);
+							var value = $scope.data.history_nps['12'][m];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
+							
 							if ( ! max_num[m])
 							{
 								max_num[m] = 0;
@@ -2119,6 +2232,7 @@
 						$scope.area_nps.setOption({xAxis: [{data: $scope.data.average_month_x}],
 												   yAxis: [{min: 0, max: max}],
 												   series: series});
+						$scope.area_nps_empty = empty_check;
 					}
 					
 					if ($scope.data && $scope.data.reply_chart)
@@ -2167,9 +2281,10 @@
 		});
 		
 		$scope.onl = {};
+		$scope.area_online_empty = false;
 		$scope.get_online = function()
 		{
-			$http.post('/pub/stat_online/', {'admin': 1}).success(function(data, status, headers, config) {
+			$http.post('/pub/astat_online/', {}).success(function(data, status, headers, config) {
 				$scope.onl = logger.check(data);
 				if ($scope.onl && $scope.onl.pie)
 				{
@@ -2184,20 +2299,27 @@
 					var series = [];
 					var max = 5;
 					var data = [];
+					var empty_check = true;
 					for (var k in $scope.onlines)
 					{
 						data = [];
 						for (var m in $scope.onl.history)
 						{
-							data.push($scope.onl.history[m][$scope.onlines[k].toLowerCase()]);
+							var value = $scope.onl.history[m][$scope.onlines[k].toLowerCase()];
+							data.push(value);
+							if (value > 0)
+							{
+								empty_check = false;
+							}
 						}
 						series.push({type: 'line', name: $scope.onlines[k], data: data});
 					}
-					
+
 					$scope.area_online.setOption({xAxis: [{data: $scope.onl.months}],
 												  yAxis: [{min: 0, max: max}],
 												  series: series});
 					$scope.area_online.resize();
+					$scope.area_online_empty = empty_check;
 				}
 			});
 		};
@@ -2267,14 +2389,14 @@
 		$scope.user = {};
 		$scope.old_user = {};
 		$scope.email_text_class = "close";
-		$scope.tags = ['[VRAAGSTELLING]', '[Formulering van de vraagstelling]', '[AANHEF PATIËNT]', '[VOORNAAM PATIËNT]', '[ACHTERNAAM PATIËNT]', '[AANHEF ZORGVERLENER]', '[VOORNAAM ZORGVERLENER]', '[ACHTERNAAM ZORGVERLENER]', '[ONDERWERP VAN E-MAIL]', '[NAAM PRAKTIJK]'];
+		$scope.tags = ['{{Vraagstelling}}', '{{Formulering van de vraagstelling}}', '{{Aanhef Patiënt}}', '{{Voornaam Patiënt}}', '{{Achternaam Patiënt}}', '{{Aanhef Zorgverlener}}', '{{Voornaam Zorgverlener}}', '{{Achternaam Zorgverlener}}', '{{Onderwerp van E-mail}}', '{{Naam Praktijk}}'];
 		
 		$scope.find_tags = function(text, key) {
 			if (text)
 			{
 				for (var k in $scope.tags)
 				{
-					text = text.replace($scope.tags[k], "<span class='tag-box'>" + $scope.tags[k].replace("[", "").replace("]", "") + "<a href='javascript:void(0);' class='tag-remove' rel='" + key + "|" + $scope.tags[k] + "'>×</a></span>");
+					text = text.replace($scope.tags[k], "<span class='tag-box'>" + $scope.tags[k].replace("{{", "").replace("}}", "") + "<a href='javascript:void(0);' class='tag-remove' rel='" + key + "|" + $scope.tags[k] + "'>×</a></span>");
 				}
 			}
 			
@@ -2286,7 +2408,7 @@
 			{
 				var rel = $event.target.getAttribute("rel");
 				var part = rel.split("|");
-				if (part[1].toLowerCase() == '[vraagstelling]' || part[1].toLowerCase() == '[formulering van de vraagstelling]')
+				if (part[1].toLowerCase() == '{{vraagstelling}}' || part[1].toLowerCase() == '{{formulering van de vraagstelling}}')
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
@@ -2317,6 +2439,7 @@
 				modalInstance = $modal.open({
 					templateUrl: "emails_edit.html",
 					controller: 'ModalInstanceEmailsEditCtrl',
+					size: 'lg',
 					resolve: {
 						items: function() {
 							return {value: $scope.user.emails[type], type: type};
@@ -2325,7 +2448,7 @@
 				});
 				
 				modalInstance.result.then((function(items) {
-					if (items.type == 'header_mq' && ! (items.value.toLowerCase().indexOf('[vraagstelling]') + 1) || items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('[formulering van de vraagstelling]') + 1))
+					if (items.type == 'header_mq' && ! (items.value.toLowerCase().indexOf('{{vraagstelling}}') + 1) || items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('{{formulering van de vraagstelling}}') + 1))
 					{
 						var modalInstance;
 						modalInstance = $modal.open({
@@ -2423,12 +2546,12 @@
 		
 		$scope.test_email_modal = function() {
 			var existing_tags = {};
-			var tags = {title: '[AANHEF PATIËNT]',
-						name: '[VOORNAAM PATIËNT]',
-						sname: '[ACHTERNAAM PATIËNT]',
-						doctors_title: '[AANHEF ZORGVERLENER]',
-						doctors_name: '[VOORNAAM ZORGVERLENER]',
-						doctors_sname: '[ACHTERNAAM ZORGVERLENER]'};
+			var tags = {title: '{{Aanhef Patiënt}}',
+						name: '{{Voornaam Patiënt}}',
+						sname: '{{Achternaam Patiënt}}',
+						doctors_title: '{{Aanhef Zorgverlener}}',
+						doctors_name: '{{Voornaam Zorgverlener}}',
+						doctors_sname: '{{Achternaam Zorgverlener}}'};
 						
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
 			for (var i in fields)
@@ -3315,6 +3438,7 @@
 							var result = logger.check(data);
 							$scope.amount.doctor_amount = result.price.price;
 							$scope.amount.doctor_days = result.price.days;
+							$scope.amount.doctor_end = result.price.end;
 							$scope.step = 2;
 						});
 					}
@@ -8174,15 +8298,23 @@
     };
 	
 	function ModalInstanceEmailsEditCtrl($scope, $modalInstance, $http, $location, logger, items) {
-        $scope.value = items.value.replace(/<br \/>/g, "\n");
+        $scope.value = items.value;
 		$scope.type = items.type;
+		$scope.froalaOptions = {
+			height: 250,
+			toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
+		};
+		
+		$scope.set_var = function(variable) {
+			$scope.froalaOptions.froalaEditor('html.insert', '{{' + variable + '}}');
+		};
 		
 		$scope.cancel = function() {
 			$modalInstance.dismiss("cancel");
         };
 		
 		$scope.save = function() {
-			$modalInstance.close({value: $scope.value.replace(/\n/g, "<br />"), type: $scope.type});
+			$modalInstance.close({value: $scope.value, type: $scope.type});
 		};
     };
 	

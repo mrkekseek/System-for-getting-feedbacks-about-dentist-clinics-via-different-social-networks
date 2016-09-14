@@ -18,25 +18,25 @@
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
 		var $period = 365;
-		var $tags = array('subject' => '[ONDERWERP VAN E-MAIL]',
-						  'title' => '[AANHEF PATIËNT]',
-						  'name' => '[VOORNAAM PATIËNT]',
-						  'sname' => '[ACHTERNAAM PATIËNT]',
-						  'doctors_title' => '[AANHEF ZORGVERLENER]',
-						  'doctors_name' => '[VOORNAAM ZORGVERLENER]',
-						  'doctors_sname' => '[ACHTERNAAM ZORGVERLENER]',
-						  'username' => '[NAAM PRAKTIJK]',
-						  'q_name' => '[VRAAGSTELLING]',
-						  'q_desc' => '[Formulering van de vraagstelling]');
+		var $tags = array('subject' => '{{Onderwerp van E-mail}}',
+						  'title' => '{{Aanhef Patiënt}}',
+						  'name' => '{{Voornaam Patiënt}}',
+						  'sname' => '{{Achternaam Patiënt}}',
+						  'doctors_title' => '{{Aanhef Zorgverlener}}',
+						  'doctors_name' => '{{Voornaam Zorgverlener}}',
+						  'doctors_sname' => '{{Achternaam Zorgverlener}}',
+						  'username' => '{{Naam Praktijk}}',
+						  'q_name' => '{{Vraagstelling}}',
+						  'q_desc' => '{{Formulering van de vraagstelling}}');
 						  
-		var $defaults = array('subject' => "Hoe was uw behandeling bij [NAAM PRAKTIJK]?",
+		var $defaults = array('subject' => "Hoe was uw behandeling bij {{Naam Praktijk}}?",
 							  'header' => "Hoe was uw behandeling?",
-							  'header_mq' => "Hoe heeft u de [VRAAGSTELLING] ervaren?",
+							  'header_mq' => "Hoe heeft u de {{Vraagstelling}} ervaren?",
 							  'text1' => "Geachte heer/mevrouw,\n\nU bent onlangs behandeld in onze praktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw beoordeling te plaatsen op online kanalen.\n\nOp een schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of vrienden?",
-							  'text1_mq' => '[Formulering van de vraagstelling]',
-							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n[NAAM PRAKTIJK]",
+							  'text1_mq' => '{{Formulering van de vraagstelling}}',
+							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n{{Naam Praktijk}}",
 							  'promo' => "Beoordeel ons en win een ... t.w.v. €..,..!",
-							  'footer' => "U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het patiëntenbestand van [NAAM PRAKTIJK]. Deze e-mail is een eenmalige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend gebruikt voor het verzoek tot deelname aan dit patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar gemaakt.");
+							  'footer' => "U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het patiëntenbestand van {{Naam Praktijk}}. Deze e-mail is een eenmalige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend gebruikt voor het verzoek tot deelname aan dit patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar gemaakt.");
 						  
 		var $reserved = array('pub', 'welcome', 'send_new', 'cron', 'invitation', 'excel-tpl', 'excel-basis-tpl');
 		function __construct()
@@ -1049,7 +1049,7 @@
 				}
 			}
 			
-			return array("price" => $price, "days" => $days);
+			return array("price" => $price, "days" => $days, "end" => date('d-m-Y', $row['suspension']));
 		}
 		
 		function save_doctor($post)
@@ -3666,15 +3666,15 @@
 			$tags[] = '\n';
 
 			$values = array('',
-							empty($list['title']) ? '[EMPTY]' : $list['title'],
-							empty($list['name']) ? '[EMPTY]' : $list['name'],
-							empty($list['sname']) ? '[EMPTY]' : $list['sname'],
-							empty($doc['title']) ? '[EMPTY]' : $doc['title'],
-							empty($doc['firstname']) ? '[EMPTY]' : $doc['firstname'],
-							empty($doc['lastname']) ? '[EMPTY]' : $doc['lastname'],
-							empty($user['username']) ? '[EMPTY]' : $user['username'],
-							empty($user['q_name']) ? '[EMPTY]' : $user['q_name'],
-							empty($user['q_desc']) ? '[EMPTY]' : $user['q_desc'],
+							empty($list['title']) ? '{{EMPTY}}' : $list['title'],
+							empty($list['name']) ? '{{EMPTY}}' : $list['name'],
+							empty($list['sname']) ? '{{EMPTY}}' : $list['sname'],
+							empty($doc['title']) ? '{{EMPTY}}' : $doc['title'],
+							empty($doc['firstname']) ? '{{EMPTY}}' : $doc['firstname'],
+							empty($doc['lastname']) ? '{{EMPTY}}' : $doc['lastname'],
+							empty($user['username']) ? '{{EMPTY}}' : $user['username'],
+							empty($user['q_name']) ? '{{EMPTY}}' : $user['q_name'],
+							empty($user['q_desc']) ? '{{EMPTY}}' : $user['q_desc'],
 							'<br />');
 			
 			$texts = $this->user_emails($user['id']);
@@ -3682,8 +3682,8 @@
 			{
 				if ($user['account'] == 1 && $user['account_type'] == 0)
 				{
-					$tags = array('[ONDERWERP VAN E-MAIL]', '[NAAM PRAKTIJK]', '\n');
-					$values = array('', empty($user['username']) ? '[EMPTY]' : $user['username'], '<br />');
+					$tags = array('{{Onderwerp van E-mail}}', '{{Naam Praktijk}}', '\n');
+					$values = array('', empty($user['username']) ? '{{EMPTY}}' : $user['username'], '<br />');
 				}
 				
 				$texts['subject'] = str_replace($tags, $values, $texts['subject']);
@@ -3696,7 +3696,7 @@
 				
 				foreach ($texts as $key => $text)
 				{
-					if (strpos($texts[$key], "[EMPTY]") !== FALSE)
+					if (strpos($texts[$key], "{{EMPTY}}") !== FALSE)
 					{
 						$texts[$key] = str_replace($tags, $values, $this->defaults[$key]);
 					}
@@ -3705,7 +3705,7 @@
 			else
 			{
 				$texts = str_replace($tags, $values, $text);
-				$texts = str_replace("[EMPTY]", "", $texts);
+				$texts = str_replace("{{EMPTY}}", "", $texts);
 			}
 
 			return $texts;
@@ -4638,6 +4638,12 @@
 				if ( ! empty($row['doctor']))
 				{
 					$row['doctors_info'] = $this->doctor_info($row['doctor']);
+				}
+				
+				$row['locations_info'] = array();
+				if ( ! empty($row['location']))
+				{
+					$row['locations_info'] = $this->location_info($row['location']);
 				}
 			}
 			
@@ -5660,8 +5666,12 @@
 						{
 							$value = round($row['only'] / $row['all'] * 100, 1);
 							$stat['reply_percents'][$id] = $value;
+
+							$value = round($row['click'] / $row['all'] * 100, 1);
+							$stat['reply_clicks'][$id] = $value;
+							
 							$stat['reply_highest'] = max($stat['reply_highest'], $value);
-							if (empty($stat['reply_lowest']))
+							if ( ! isset($stat['reply_lowest']))
 							{
 								$stat['reply_lowest'] = $value;
 							}
@@ -5669,9 +5679,6 @@
 							{
 								$stat['reply_lowest'] = min($stat['reply_lowest'], $value);
 							}
-							
-							$value = round($row['click'] / $row['all'] * 100, 1);
-							$stat['reply_clicks'][$id] = $value;
 						}
 					}
 					
@@ -5951,18 +5958,16 @@
 			return FALSE;
 		}
 		
-		function stat_online($post = array())
+		function stat_online()
 		{
 			if ($this->logged_in())
 			{
 				$users_id = $this->session->userdata("id");
 				$onlines = array('zorgkaart', 'facebook', 'independer', 'google');
 				$stat = array();
+				
 				$this->db->order_by('date', 'asc');
-				if (empty($post['admin']))
-				{
-					$this->db->where('users_id', $users_id);
-				}
+				$this->db->where('users_id', $users_id);
 				$result = $this->db->get('reviews_history')->result_array();
 				foreach ($result as $row)
 				{
@@ -5971,6 +5976,7 @@
 					foreach ($onlines as $o)
 					{
 						$stat['average'][$o] = $row[$o] * 1;
+
 						if ( ! isset($stat['history'][$month][$o]))
 						{
 							$stat['history'][$month][$o]['sum'] = 0;
@@ -6016,10 +6022,7 @@
 				}
 				
 				$this->db->order_by('time', 'desc');
-				if (empty($post['admin']))
-				{
-					$this->db->where('users_id', $users_id);
-				}
+				$this->db->where('users_id', $users_id);
 				$result = $this->db->get('reviews')->result_array();
 				foreach ($result as $row)
 				{
@@ -6031,10 +6034,103 @@
 					$stat['stars'][$row['profile']][$row['score'] * 1]++;
 				}
 
-				if (empty($post['admin']))
+				$this->db->where('users_id', $users_id);
+				$this->db->update('reviews', array('marked_as_read' => TRUE));
+
+				return $stat;
+			}
+			return FALSE;
+		}
+		
+		function astat_online()
+		{
+			if ($this->logged_in())
+			{
+				$onlines = array('zorgkaart', 'facebook', 'independer', 'google');
+				$stat = array();
+				$this->db->order_by('date', 'asc');
+				$result = $this->db->get('reviews_history')->result_array();
+				foreach ($result as $row)
 				{
-					$this->db->where('users_id', $users_id);
-					$this->db->update('reviews', array('marked_as_read' => TRUE));
+					$month = date('Y-m', $row['date']);
+					$stat['months'][] = date("M 'y", $row['date']);
+					foreach ($onlines as $o)
+					{
+						$stat['average'][$o][$row['users_id']] = $row[$o] * 1;
+
+						if ( ! isset($stat['history'][$month][$o]))
+						{
+							$stat['history'][$month][$o]['sum'] = 0;
+							$stat['history'][$month][$o]['num'] = 0;
+						}
+						$stat['history'][$month][$o]['sum'] += $row[$o];
+						$stat['history'][$month][$o]['num']++;
+					}
+				}
+				$stat['months'] = array_values(array_unique($stat['months']));
+				
+				if ( ! empty($stat['history']))
+				{
+					foreach ($stat['history'] as $month => $list)
+					{
+						foreach ($list as $o => $row)
+						{
+							$stat['history'][$month][$o] = $row['num'] > 0 ? round($row['sum'] / $row['num'], 1) : 0;
+						}
+					}
+				}
+				
+				if ( ! empty($stat['average']))
+				{
+					$average_sum = 0;
+					$averages = array();
+					foreach ($onlines as $o)
+					{
+						$num = 0;
+						$sum = 0;
+						foreach ($stat['average'][$o] as $val)
+						{
+							$sum += $val;
+							$num++;
+						}
+						
+						if ($num > 0)
+						{
+							$averages[$o] = round($sum / $num, 1);
+							$average_sum += $averages[$o];
+						}
+						else
+						{
+							$averages[$o] = 0;
+						}
+					}
+					$stat['average'] = $averages;
+					
+					$left = 0;
+					foreach ($onlines as $k => $o)
+					{
+						if ($k < (count($onlines) - 1))
+						{
+							$stat['pie'][$o] = isset($stat['average'][$o]) ? round($stat['average'][$o] * 100 / $average_sum, 1) : 0;
+							$left += $stat['pie'][$o];
+						}
+						else
+						{
+							$stat['pie'][$o] = 100 - $left;
+						}
+					}
+				}
+				
+				$this->db->order_by('time', 'desc');
+				$result = $this->db->get('reviews')->result_array();
+				foreach ($result as $row)
+				{
+					$stat['reviews'][$row['profile']][] = $row;
+					if ( ! isset($stat['stars'][$row['profile']][$row['score'] * 1]))
+					{
+						$stat['stars'][$row['profile']][$row['score'] * 1] = 0;
+					}
+					$stat['stars'][$row['profile']][$row['score'] * 1]++;
 				}
 
 				return $stat;
@@ -6814,8 +6910,11 @@
 						{
 							$value = round($row['only'] / $row['all'] * 100, 1);
 							$stat['reply_percents'][$id] = $value;
+							
+							$value = round($row['click'] / $row['all'] * 100, 1);
+							$stat['reply_clicks'][$id] = $value;
 							$stat['reply_highest'] = max($stat['reply_highest'], $value);
-							if (empty($stat['reply_lowest']))
+							if ( ! isset($stat['reply_lowest']))
 							{
 								$stat['reply_lowest'] = $value;
 							}
@@ -6823,9 +6922,6 @@
 							{
 								$stat['reply_lowest'] = min($stat['reply_lowest'], $value);
 							}
-							
-							$value = round($row['click'] / $row['all'] * 100, 1);
-							$stat['reply_clicks'][$id] = $value;
 						}
 					}
 					
