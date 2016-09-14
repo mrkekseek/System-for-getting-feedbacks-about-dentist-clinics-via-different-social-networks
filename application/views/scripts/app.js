@@ -679,7 +679,7 @@
         $scope.ultimate_out = function(name)
         {
             $scope.ultimate_class[name] = '';
-        }
+        };
 		
 		$scope.type = 'email';
 		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
@@ -895,7 +895,7 @@
 					}
 				}
 
-				if ($scope.data.for_user >= 30 || (is_filter && $scope.data && $scope.data.for_user > 0))
+				if ($scope.data.for_user >= 0 || (is_filter && $scope.data && $scope.data.for_user > 0))
 				{
 					$scope.less_30 = false;
 					$scope.empty_filter = false;

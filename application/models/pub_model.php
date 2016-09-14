@@ -5666,8 +5666,12 @@
 						{
 							$value = round($row['only'] / $row['all'] * 100, 1);
 							$stat['reply_percents'][$id] = $value;
+
+							$value = round($row['click'] / $row['all'] * 100, 1);
+							$stat['reply_clicks'][$id] = $value;
+							
 							$stat['reply_highest'] = max($stat['reply_highest'], $value);
-							if (empty($stat['reply_lowest']))
+							if ( ! isset($stat['reply_lowest']))
 							{
 								$stat['reply_lowest'] = $value;
 							}
@@ -5675,9 +5679,6 @@
 							{
 								$stat['reply_lowest'] = min($stat['reply_lowest'], $value);
 							}
-							
-							$value = round($row['click'] / $row['all'] * 100, 1);
-							$stat['reply_clicks'][$id] = $value;
 						}
 					}
 					
@@ -6909,8 +6910,11 @@
 						{
 							$value = round($row['only'] / $row['all'] * 100, 1);
 							$stat['reply_percents'][$id] = $value;
+							
+							$value = round($row['click'] / $row['all'] * 100, 1);
+							$stat['reply_clicks'][$id] = $value;
 							$stat['reply_highest'] = max($stat['reply_highest'], $value);
-							if (empty($stat['reply_lowest']))
+							if ( ! isset($stat['reply_lowest']))
 							{
 								$stat['reply_lowest'] = $value;
 							}
@@ -6918,9 +6922,6 @@
 							{
 								$stat['reply_lowest'] = min($stat['reply_lowest'], $value);
 							}
-							
-							$value = round($row['click'] / $row['all'] * 100, 1);
-							$stat['reply_clicks'][$id] = $value;
 						}
 					}
 					
