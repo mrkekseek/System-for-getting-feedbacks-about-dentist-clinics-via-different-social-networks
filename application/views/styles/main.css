@@ -3604,3 +3604,11 @@ body .btn-primary.compose-prev:disabled {
 .page.page-single > .row {
 	width: 100%;
 }
+
+.fr-wrapper + div {
+	display: none;
+}
+
+.with-margin .btn {
+	margin-bottom: 5px;
+}

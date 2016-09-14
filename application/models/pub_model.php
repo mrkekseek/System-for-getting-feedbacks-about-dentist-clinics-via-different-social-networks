@@ -18,25 +18,25 @@
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
 		var $period = 365;
-		var $tags = array('subject' => '[ONDERWERP VAN E-MAIL]',
-						  'title' => '[AANHEF PATIËNT]',
-						  'name' => '[VOORNAAM PATIËNT]',
-						  'sname' => '[ACHTERNAAM PATIËNT]',
-						  'doctors_title' => '[AANHEF ZORGVERLENER]',
-						  'doctors_name' => '[VOORNAAM ZORGVERLENER]',
-						  'doctors_sname' => '[ACHTERNAAM ZORGVERLENER]',
-						  'username' => '[NAAM PRAKTIJK]',
-						  'q_name' => '[VRAAGSTELLING]',
-						  'q_desc' => '[Formulering van de vraagstelling]');
+		var $tags = array('subject' => '{{Onderwerp van E-mail}}',
+						  'title' => '{{Aanhef Patiënt}}',
+						  'name' => '{{Voornaam Patiënt}}',
+						  'sname' => '{{Achternaam Patiënt}}',
+						  'doctors_title' => '{{Aanhef Zorgverlener}}',
+						  'doctors_name' => '{{Voornaam Zorgverlener}}',
+						  'doctors_sname' => '{{Achternaam Zorgverlener}}',
+						  'username' => '{{Naam Praktijk}}',
+						  'q_name' => '{{Vraagstelling}}',
+						  'q_desc' => '{{Formulering van de vraagstelling}}');
 						  
-		var $defaults = array('subject' => "Hoe was uw behandeling bij [NAAM PRAKTIJK]?",
+		var $defaults = array('subject' => "Hoe was uw behandeling bij {{Naam Praktijk}}?",
 							  'header' => "Hoe was uw behandeling?",
-							  'header_mq' => "Hoe heeft u de [VRAAGSTELLING] ervaren?",
+							  'header_mq' => "Hoe heeft u de {{Vraagstelling}} ervaren?",
 							  'text1' => "Geachte heer/mevrouw,\n\nU bent onlangs behandeld in onze praktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw beoordeling te plaatsen op online kanalen.\n\nOp een schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of vrienden?",
-							  'text1_mq' => '[Formulering van de vraagstelling]',
-							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n[NAAM PRAKTIJK]",
+							  'text1_mq' => '{{Formulering van de vraagstelling}}',
+							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n{{Naam Praktijk}}",
 							  'promo' => "Beoordeel ons en win een ... t.w.v. €..,..!",
-							  'footer' => "U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het patiëntenbestand van [NAAM PRAKTIJK]. Deze e-mail is een eenmalige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend gebruikt voor het verzoek tot deelname aan dit patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar gemaakt.");
+							  'footer' => "U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het patiëntenbestand van {{Naam Praktijk}}. Deze e-mail is een eenmalige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend gebruikt voor het verzoek tot deelname aan dit patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar gemaakt.");
 						  
 		var $reserved = array('pub', 'welcome', 'send_new', 'cron', 'invitation', 'excel-tpl', 'excel-basis-tpl');
 		function __construct()
@@ -3666,15 +3666,15 @@
 			$tags[] = '\n';
 
 			$values = array('',
-							empty($list['title']) ? '[EMPTY]' : $list['title'],
-							empty($list['name']) ? '[EMPTY]' : $list['name'],
-							empty($list['sname']) ? '[EMPTY]' : $list['sname'],
-							empty($doc['title']) ? '[EMPTY]' : $doc['title'],
-							empty($doc['firstname']) ? '[EMPTY]' : $doc['firstname'],
-							empty($doc['lastname']) ? '[EMPTY]' : $doc['lastname'],
-							empty($user['username']) ? '[EMPTY]' : $user['username'],
-							empty($user['q_name']) ? '[EMPTY]' : $user['q_name'],
-							empty($user['q_desc']) ? '[EMPTY]' : $user['q_desc'],
+							empty($list['title']) ? '{{EMPTY}}' : $list['title'],
+							empty($list['name']) ? '{{EMPTY}}' : $list['name'],
+							empty($list['sname']) ? '{{EMPTY}}' : $list['sname'],
+							empty($doc['title']) ? '{{EMPTY}}' : $doc['title'],
+							empty($doc['firstname']) ? '{{EMPTY}}' : $doc['firstname'],
+							empty($doc['lastname']) ? '{{EMPTY}}' : $doc['lastname'],
+							empty($user['username']) ? '{{EMPTY}}' : $user['username'],
+							empty($user['q_name']) ? '{{EMPTY}}' : $user['q_name'],
+							empty($user['q_desc']) ? '{{EMPTY}}' : $user['q_desc'],
 							'<br />');
 			
 			$texts = $this->user_emails($user['id']);
@@ -3682,8 +3682,8 @@
 			{
 				if ($user['account'] == 1 && $user['account_type'] == 0)
 				{
-					$tags = array('[ONDERWERP VAN E-MAIL]', '[NAAM PRAKTIJK]', '\n');
-					$values = array('', empty($user['username']) ? '[EMPTY]' : $user['username'], '<br />');
+					$tags = array('{{Onderwerp van E-mail}}', '{{Naam Praktijk}}', '\n');
+					$values = array('', empty($user['username']) ? '{{EMPTY}}' : $user['username'], '<br />');
 				}
 				
 				$texts['subject'] = str_replace($tags, $values, $texts['subject']);
@@ -3696,7 +3696,7 @@
 				
 				foreach ($texts as $key => $text)
 				{
-					if (strpos($texts[$key], "[EMPTY]") !== FALSE)
+					if (strpos($texts[$key], "{{EMPTY}}") !== FALSE)
 					{
 						$texts[$key] = str_replace($tags, $values, $this->defaults[$key]);
 					}
@@ -3705,7 +3705,7 @@
 			else
 			{
 				$texts = str_replace($tags, $values, $text);
-				$texts = str_replace("[EMPTY]", "", $texts);
+				$texts = str_replace("{{EMPTY}}", "", $texts);
 			}
 
 			return $texts;

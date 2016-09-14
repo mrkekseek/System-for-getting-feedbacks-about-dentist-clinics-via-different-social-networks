@@ -32,7 +32,8 @@
 		'lr.upload',
 		'ngFileUpload',
 		'as.sortable',
-		'colorpicker.module'
+		'colorpicker.module',
+		'froala'
     ]);
 
 })();
@@ -2388,14 +2389,14 @@
 		$scope.user = {};
 		$scope.old_user = {};
 		$scope.email_text_class = "close";
-		$scope.tags = ['[VRAAGSTELLING]', '[Formulering van de vraagstelling]', '[AANHEF PATIËNT]', '[VOORNAAM PATIËNT]', '[ACHTERNAAM PATIËNT]', '[AANHEF ZORGVERLENER]', '[VOORNAAM ZORGVERLENER]', '[ACHTERNAAM ZORGVERLENER]', '[ONDERWERP VAN E-MAIL]', '[NAAM PRAKTIJK]'];
+		$scope.tags = ['{{Vraagstelling}}', '{{Formulering van de vraagstelling}}', '{{Aanhef Patiënt}}', '{{Voornaam Patiënt}}', '{{Achternaam Patiënt}}', '{{Aanhef Zorgverlener}}', '{{Voornaam Zorgverlener}}', '{{Achternaam Zorgverlener}}', '{{Onderwerp van E-mail}}', '{{Naam Praktijk}}'];
 		
 		$scope.find_tags = function(text, key) {
 			if (text)
 			{
 				for (var k in $scope.tags)
 				{
-					text = text.replace($scope.tags[k], "<span class='tag-box'>" + $scope.tags[k].replace("[", "").replace("]", "") + "<a href='javascript:void(0);' class='tag-remove' rel='" + key + "|" + $scope.tags[k] + "'>×</a></span>");
+					text = text.replace($scope.tags[k], "<span class='tag-box'>" + $scope.tags[k].replace("{{", "").replace("}}", "") + "<a href='javascript:void(0);' class='tag-remove' rel='" + key + "|" + $scope.tags[k] + "'>×</a></span>");
 				}
 			}
 			
@@ -2407,7 +2408,7 @@
 			{
 				var rel = $event.target.getAttribute("rel");
 				var part = rel.split("|");
-				if (part[1].toLowerCase() == '[vraagstelling]' || part[1].toLowerCase() == '[formulering van de vraagstelling]')
+				if (part[1].toLowerCase() == '{{vraagstelling}}' || part[1].toLowerCase() == '{{formulering van de vraagstelling}}')
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
@@ -2438,6 +2439,7 @@
 				modalInstance = $modal.open({
 					templateUrl: "emails_edit.html",
 					controller: 'ModalInstanceEmailsEditCtrl',
+					size: 'lg',
 					resolve: {
 						items: function() {
 							return {value: $scope.user.emails[type], type: type};
@@ -2446,7 +2448,7 @@
 				});
 				
 				modalInstance.result.then((function(items) {
-					if (items.type == 'header_mq' && ! (items.value.toLowerCase().indexOf('[vraagstelling]') + 1) || items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('[formulering van de vraagstelling]') + 1))
+					if (items.type == 'header_mq' && ! (items.value.toLowerCase().indexOf('{{vraagstelling}}') + 1) || items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('{{formulering van de vraagstelling}}') + 1))
 					{
 						var modalInstance;
 						modalInstance = $modal.open({
@@ -2544,12 +2546,12 @@
 		
 		$scope.test_email_modal = function() {
 			var existing_tags = {};
-			var tags = {title: '[AANHEF PATIËNT]',
-						name: '[VOORNAAM PATIËNT]',
-						sname: '[ACHTERNAAM PATIËNT]',
-						doctors_title: '[AANHEF ZORGVERLENER]',
-						doctors_name: '[VOORNAAM ZORGVERLENER]',
-						doctors_sname: '[ACHTERNAAM ZORGVERLENER]'};
+			var tags = {title: '{{Aanhef Patiënt}}',
+						name: '{{Voornaam Patiënt}}',
+						sname: '{{Achternaam Patiënt}}',
+						doctors_title: '{{Aanhef Zorgverlener}}',
+						doctors_name: '{{Voornaam Zorgverlener}}',
+						doctors_sname: '{{Achternaam Zorgverlener}}'};
 						
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
 			for (var i in fields)
@@ -8296,15 +8298,23 @@
     };
 	
 	function ModalInstanceEmailsEditCtrl($scope, $modalInstance, $http, $location, logger, items) {
-        $scope.value = items.value.replace(/<br \/>/g, "\n");
+        $scope.value = items.value;
 		$scope.type = items.type;
+		$scope.froalaOptions = {
+			height: 250,
+			toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
+		};
+		
+		$scope.set_var = function(variable) {
+			$scope.froalaOptions.froalaEditor('html.insert', '{{' + variable + '}}');
+		};
 		
 		$scope.cancel = function() {
 			$modalInstance.dismiss("cancel");
         };
 		
 		$scope.save = function() {
-			$modalInstance.close({value: $scope.value.replace(/\n/g, "<br />"), type: $scope.type});
+			$modalInstance.close({value: $scope.value, type: $scope.type});
 		};
     };
 	

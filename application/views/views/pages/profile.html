@@ -10,7 +10,7 @@
 						</div>
                         <input type="text" class="form-control" ng-if="user.account != '2' && user.account_type != '1'" name="subject" ng-model="user.emails.subject" value="" placeholder="Hoe was uw behandeling?" />
 						<span class="help-block" ng-if="user.account == '2' || user.account_type == '1'">
-							U kunt de volgende variabelen gebruiken: [AANHEF PATIËNT], [VOORNAAM PATIËNT], [ACHTERNAAM PATIËNT], [AANHEF ZORGVERLENER], [VOORNAAM ZORGVERLENER], [ACHTERNAAM ZORGVERLENER], [NAAM PRAKTIJK].
+							U kunt de volgende variabelen gebruiken: &#123;<i></i>&#123;Aanhef Patiënt&#125;<i></i>&#125;, &#123;<i></i>&#123;Voornaam Patiënt&#125;<i></i>&#125;, &#123;<i></i>&#123;Achternaam Patiënt&#125;<i></i>&#125;, &#123;<i></i>&#123;Aanhef Zorgverlener&#125;<i></i>&#125;, &#123;<i></i>&#123;Voornaam Zorgverlener&#125;<i></i>&#125;, &#123;<i></i>&#123;Achternaam Zorgverlener&#125;<i></i>&#125;, &#123;<i></i>&#123;Naam Praktijk&#125;<i></i>&#125;.
 						</span>
                     </div>
                 </div>
@@ -541,9 +541,16 @@
 		</h3>
 	</div>
 	<div class="modal-body">
-		<textarea ng-model="value" class="form-control edit-emails-area"></textarea>
-		<span class="help-block">
-			U kunt de volgende variabelen gebruiken: [AANHEF PATIËNT], [VOORNAAM PATIËNT], [ACHTERNAAM PATIËNT], [AANHEF ZORGVERLENER], [VOORNAAM ZORGVERLENER], [ACHTERNAAM ZORGVERLENER], [NAAM PRAKTIJK].
+		<textarea ng-model="value" class="form-control edit-emails-area" froala="froalaOptions"></textarea>
+		<span class="help-block with-margin">
+			Klik om een variabele in te voegen:
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Patiënt')">Aanhef Patiënt</a>
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Patiënt')">Voornaam Patiënt</a>
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Patiënt')">Achternaam Patiënt</a>
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Zorgverlener')">Aanhef Zorgverlener</a>
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
 		</span>
 	</div>
 	<div class="modal-footer">
@@ -789,8 +796,8 @@
 		</p>
 		
 		<ul>
-			<li>[Vraagstelling]</li>
-			<li>[Formulering van de vraagstelling]</li>
+			<li>&#123;<i></i>&#123;Vraagstelling&#125;<i></i>&#125;</li>
+			<li>&#123;<i></i>&#123;Formulering van de vraagstelling&#125;<i></i>&#125;</li>
 		</ul>
 		
 		<p>
