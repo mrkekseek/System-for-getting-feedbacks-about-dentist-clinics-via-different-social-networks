@@ -2767,6 +2767,35 @@ span.pro {
 	font-size: 12px;
 }
 
+.compose-textarea {
+	margin-bottom: 15px;
+	position: relative;
+	z-index: 0;
+}
+
+.compose-textarea textarea {
+	margin-bottom: 15px;
+	height: 206px;
+	position: relative;
+	z-index: 1;
+	background: transparent;
+}
+
+.compose-textarea .fake-textarea {
+	margin-bottom: 15px;
+	height: 206px;
+	position: absolute;
+	z-index: 0;
+	left: 0;
+	top: 0;
+	border-color: transparent;
+	overflow: hidden;
+}
+
+.nw {
+	white-space: nowrap;
+}
+
 body .btn-primary.compose-prev:disabled {
 	background-color: #eee !important;
     border-color: #ddd !important;

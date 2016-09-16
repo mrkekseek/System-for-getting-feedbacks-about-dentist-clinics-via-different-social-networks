@@ -26,7 +26,7 @@
 			<div class="well well-white">
 				<div class="compose-steps-item" ng-show="step == 0">
 					<form class="form-horizontal" enctype="multipart/form-data">
-						<div class="drag-area btn-upload text-center">
+						<div class="drag-area btn-upload text-center" ng-show="compose_type == 'upload'">
 							<div class="inner-upload-box" ng-show="status == 0">
 								<i class="fa fa-cloud-upload"></i><br />
 								Sleep een patiëntenbestand hiernaartoe.
@@ -62,9 +62,19 @@
 							
 							<input type="file" ng-show="status == 0" ngf-select ng-model="xlsFile" ng-change="uploadFile(xlsFile)" name="file" required ngf-model-invalid="errorFile" />
 						</div>
+						
+						<div class="compose-textarea" ng-show="compose_type == 'paste'">
+							<textarea class="form-control" ng-model="paste_rows" ng-change="parse_paste()"></textarea>
+							<div class="fake-textarea form-control muted" ng-class="{'hide': paste_rows != ''}">
+								<span class="nw">Aanhef patiënt...&nbsp;&nbsp;&nbsp;&nbsp;Voornaam patiënt...&nbsp;&nbsp;&nbsp;&nbsp;Achternaam patiënt...&nbsp;&nbsp;&nbsp;&nbsp;Geboortedatum...&nbsp;&nbsp;&nbsp;&nbsp;E-mailadres...&nbsp;&nbsp;&nbsp;&nbsp;Zorgverlenernummer...</span><br />
+								<span class="nw">Aanhef patiënt...&nbsp;&nbsp;&nbsp;&nbsp;Voornaam patiënt...&nbsp;&nbsp;&nbsp;&nbsp;Achternaam patiënt...&nbsp;&nbsp;&nbsp;&nbsp;Geboortedatum...&nbsp;&nbsp;&nbsp;&nbsp;E-mailadres...&nbsp;&nbsp;&nbsp;&nbsp;Zorgverlenernummer...</span><br />
+								<span class="nw">Aanhef patiënt...&nbsp;&nbsp;&nbsp;&nbsp;Voornaam patiënt...&nbsp;&nbsp;&nbsp;&nbsp;Achternaam patiënt...&nbsp;&nbsp;&nbsp;&nbsp;Geboortedatum...&nbsp;&nbsp;&nbsp;&nbsp;E-mailadres...&nbsp;&nbsp;&nbsp;&nbsp;Zorgverlenernummer...</span><br />
+							</div>
+						</div>
 
 						<div class="mail-actions">
-							<span type="button" class="btn btn-primary btn-upload" ng-disabled="status == 1">
+							<a href="javascript:void(0);" class="btn btn-default pull-right" ng-click="compose_type = 'paste'" ng-disabled="status == 1">Plak rijen...</a>
+							<span type="button" class="btn btn-primary btn-upload" ng-disabled="status == 1" ng-click="compose_type = 'upload'" >
 								<span>Kies bestand...</span>
 								<input type="file" ngf-select ng-model="xlsFile" ng-change="uploadFile(xlsFile)" name="file" required ngf-model-invalid="errorFile" />
 							</span>

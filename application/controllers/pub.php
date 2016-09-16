@@ -321,6 +321,16 @@
 			$this->response($result);
 		}
 		
+		function parse_paste()
+		{
+			$result = array();
+			if ($this->pub->logged_in())
+			{
+				$result = $this->pub->parse_paste($this->post);
+			}
+			$this->response($result);
+		}
+		
 		function save_field()
 		{
 			$this->pub->save_field($this->post);

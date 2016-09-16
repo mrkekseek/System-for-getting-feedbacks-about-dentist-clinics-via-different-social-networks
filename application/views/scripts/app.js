@@ -4629,6 +4629,8 @@
     function ComposeCtrl($scope, $rootScope, $window, $http, $location, $modal, logger, Upload, $timeout) {
 		$scope.step = 0;
 		$scope.status = 0;
+		$scope.compose_type = 'upload';
+		$scope.paste_rows = '';
 		$scope.first_upload = true;
 		$scope.all_finished = false;
 		$scope.too_long_time = false;
@@ -4719,6 +4721,24 @@
 					}, 300);
 				}
 			});
+		};
+		
+		$scope.parse_paste = function() {
+			if ($scope.paste_rows != '')
+			{
+				$http.post("/pub/parse_paste/", {'text': $scope.paste_rows}).success(function(data, status, headers, config) {
+					$scope.result = logger.check(data)
+					if ($scope.result.error)
+					{
+						$scope.status = 3;
+					}
+					else
+					{
+						$scope.status = 2;
+						$scope.print($scope.result);
+					}
+				});
+			}
 		};
 		
 		$scope.page = 1;
