@@ -3089,34 +3089,12 @@
 				delete_files($path);
 			}
 			
-			$tags_required = $this->get_emails_tags();
-			$tags = array('title', 'name', 'sname', 'email', 'birth', 'doctor', 'treatment');
-			$fields = array('title' => 'Aanhef Patiënt',
-							'name' => 'Voornaam Patiënt',
-							'sname' => 'Achternaam Patiënt',
-							'email' => 'E-mailadres',
-							'birth' => 'Geboortedatum',
-							'doctor' => 'Zorgverlenernummer',
-							'treatment' => 'Behandeling');
-			$users_fields = $this->get_users_fields();
-			
-			$this->db->where("id", $this->session->userdata('id'));
-			$this->db->where("organization", TRUE);
-			if ($this->db->count_all_results('users'))
-			{
-				$tags[] = 'location';
-				$fields['location'] = 'Locatie';
-			}
-			
-			$cols = array();
-			$result = array('dont_use' => array(), 'file' => '', 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
-
+			$result = array();
 			mt_srand();
 			$ext = pathinfo($name, PATHINFO_EXTENSION);
 			$dest = $path.time().mt_rand(100, 999).".".$ext;
 			if (copy($file, $dest))
 			{
-				$result['file'] = $dest;
 				$rows = array();
 				if ($ext == 'tab')
 				{
@@ -3144,179 +3122,7 @@
 				
 				if ( ! empty($rows))
 				{
-					$first = 0;
-					$result['cols'] = $rows[0];
-					foreach ($tags as $tag)
-					{
-						$col = FALSE;
-						foreach ($rows[0] as $key => $row)
-						{
-							if ((isset($users_fields[$tag]) && strtolower(trim($row)) == $users_fields[$tag]) || (strtolower(trim($row)) == strtolower($fields[$tag]) && ! isset($users_fields[$tag])))
-							{
-								$col = $key;
-							}
-							
-							if (strpos($row, '@') === FALSE)
-							{
-								$first = 1;
-							}
-						}
-
-						$cols[$tag] = ($col !== FALSE) ? $col : FALSE;
-						if ($cols[$tag] === FALSE)
-						{
-							$result['empty'] = TRUE;
-							$result['cols_check'][$tag] = 0;
-						}
-						else
-						{
-							$result['cols_check'][$tag] = $result['cols'][$col];
-						}
-						$result['headers'][$tag] = $fields[$tag];
-					}
-					
-					$result['cols'] = array_values($result['cols']);
-					$unique = array();
-					foreach ($result['cols'] as $val)
-					{
-						if ( ! empty($val))
-						{
-							if (in_array($val, $unique))
-							{
-								$val = $val.'[2]';
-							}
-
-							$unique[] = $val;
-						}
-					}
-					$result['cols'] = $unique;
-					
-					if ( ! empty($cols))
-					{
-						setLocale(LC_CTYPE, 'nl_NL.UTF-8');
-						$emails = array();
-						$init_count = count($rows[0]);
-						
-						for ($i = $first, $count = count($rows); $i < $count; $i++)
-						{
-							if ($init_count == count($rows[$i]))
-							{
-								$line = array('error' => 0);
-								
-								foreach ($tags as $tag)
-								{
-									if ($tag != 'email' && ! in_array($tag, $tags_required))
-									{
-										$result['dont_use'][$tag] = TRUE;
-									}
-									
-									if ($cols[$tag] !== FALSE)
-									{
-										$line[$tag] = empty($rows[$i][$cols[$tag]]) ? '' : $rows[$i][$cols[$tag]];
-										if ($tag == 'doctor')
-										{
-											$line['doctor_id'] = $this->get_doctors_id(strtolower($line[$tag]));
-										}
-										
-										if ($tag == 'location')
-										{
-											$line['location_id'] = $this->get_locations_id(strtolower($line[$tag]));
-										}
-										
-										if ($tag == 'email')
-										{
-											$email = strtolower($line[$tag]);
-											if (filter_var($email, FILTER_VALIDATE_EMAIL))
-											{
-												if (in_array($email, $emails) && $line['error'] < 2)
-												{
-													$line['error'] = 1;
-													$result['check'] = FALSE;
-												}
-												$emails[] = $email;
-											}
-											else
-											{
-												$line[$tag] = '<b>!</b>';
-												$line['error'] = 2;
-												$result['check'] = FALSE;
-											}
-										}
-										
-										if ($tag == 'name' || $tag == 'sname')
-										{
-											if ( ! empty($line[$tag]) && ! ctype_alpha(str_replace(array(' ', '.', '-'), '', $line[$tag])))
-											{
-												$line[$tag] = '<b>!</b>';
-												$line['error'] = 2;
-												$result['check'] = FALSE;
-											}
-										}
-										
-										if ($tag == 'birth')
-										{
-											if ( ! empty($line[$tag]))
-											{
-												$sep = (strpos($line[$tag], '/') ? '/' : '-');
-												$temp = explode($sep, $line[$tag]);
-												if (isset($temp[2]))
-												{
-													if ($temp[2] < 16)
-													{
-														$temp[2] += 2000;
-													}
-													elseif ($temp[2] > 16 && $temp[2] < 100)
-													{
-														$temp[2] += 1900;
-													}
-												}
-												
-												if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
-												{
-													$line[$tag] = '<b>!</b>';
-												}
-												else
-												{
-													$line[$tag] = implode($sep, $temp);
-												}
-											}
-											else
-											{
-												$line[$tag] = '<b>!</b>';
-											}
-										}
-										
-										if (empty($line[$tag]))
-										{
-											if (in_array($tag, $tags_required) || $tag == 'email')
-											{
-												$line['error'] = 2;
-												$result['check'] = FALSE;
-											}
-											else
-											{
-												if ($tag == 'name' || $tag == 'sname')
-												{
-													$line[$tag] = '<b>!</b>';
-												}
-											}
-										}
-									}
-									else
-									{
-										$line[$tag] = "";
-										if (in_array($tag, $tags_required))
-										{
-											$line['error'] = 2;
-										}
-										$result['check'] = FALSE;
-									}							
-								}
-
-								$result['data'][] = $line;
-							}
-						}
-					}
+					$result = $this->parse($rows, $dest);
 				}
 				else
 				{
@@ -3324,6 +3130,229 @@
 				}
 			}
 
+			return $result;
+		}
+		
+		function parse_paste($post)
+		{
+			$result = array();
+			$rows = array(array('Aanhef Patiënt', 'Voornaam Patiënt', 'Achternaam Patiënt', 'Geboortedatum', 'E-mailadres', 'Zorgverlenernummer'));
+			$list = explode("\n", $post['text']);
+			foreach ($list as $row)
+			{
+				$rows[] = explode("\t", $row);
+			}
+			
+			if ( ! empty($rows))
+			{
+				$result = $this->parse($rows);
+			}
+			else
+			{
+				$result['error'] = TRUE;
+			}
+			
+			return $result;
+		}
+		
+		function parse($rows, $file = '')
+		{
+			$tags_required = $this->get_emails_tags();
+			$tags = array('title', 'name', 'sname', 'email', 'birth', 'doctor', 'treatment');
+			$fields = array('title' => 'Aanhef Patiënt',
+							'name' => 'Voornaam Patiënt',
+							'sname' => 'Achternaam Patiënt',
+							'email' => 'E-mailadres',
+							'birth' => 'Geboortedatum',
+							'doctor' => 'Zorgverlenernummer',
+							'treatment' => 'Behandeling');
+			$users_fields = $this->get_users_fields();
+			
+			$this->db->where("id", $this->session->userdata('id'));
+			$this->db->where("organization", TRUE);
+			if ($this->db->count_all_results('users'))
+			{
+				$tags[] = 'location';
+				$fields['location'] = 'Locatie';
+			}
+			
+			$cols = array();
+			$result = array('dont_use' => array(), 'file' => $file, 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
+			
+			$first = 0;
+			$result['cols'] = $rows[0];
+			foreach ($tags as $tag)
+			{
+				$col = FALSE;
+				foreach ($rows[0] as $key => $row)
+				{
+					if ((isset($users_fields[$tag]) && strtolower(trim($row)) == $users_fields[$tag]) || (strtolower(trim($row)) == strtolower($fields[$tag]) && ! isset($users_fields[$tag])))
+					{
+						$col = $key;
+					}
+					
+					if (strpos($row, '@') === FALSE)
+					{
+						$first = 1;
+					}
+				}
+
+				$cols[$tag] = ($col !== FALSE) ? $col : FALSE;
+				if ($cols[$tag] === FALSE)
+				{
+					$result['empty'] = TRUE;
+					$result['cols_check'][$tag] = 0;
+				}
+				else
+				{
+					$result['cols_check'][$tag] = $result['cols'][$col];
+				}
+				$result['headers'][$tag] = $fields[$tag];
+			}
+			
+			$result['cols'] = array_values($result['cols']);
+			$unique = array();
+			foreach ($result['cols'] as $val)
+			{
+				if ( ! empty($val))
+				{
+					if (in_array($val, $unique))
+					{
+						$val = $val.'[2]';
+					}
+
+					$unique[] = $val;
+				}
+			}
+			$result['cols'] = $unique;
+			
+			if ( ! empty($cols))
+			{
+				setLocale(LC_CTYPE, 'nl_NL.UTF-8');
+				$emails = array();
+				$init_count = count($rows[0]);
+				
+				for ($i = $first, $count = count($rows); $i < $count; $i++)
+				{
+					if ($init_count == count($rows[$i]))
+					{
+						$line = array('error' => 0);
+						
+						foreach ($tags as $tag)
+						{
+							if ($tag != 'email' && ! in_array($tag, $tags_required))
+							{
+								$result['dont_use'][$tag] = TRUE;
+							}
+							
+							if ($cols[$tag] !== FALSE)
+							{
+								$line[$tag] = empty($rows[$i][$cols[$tag]]) ? '' : $rows[$i][$cols[$tag]];
+								if ($tag == 'doctor')
+								{
+									$line['doctor_id'] = $this->get_doctors_id(strtolower($line[$tag]));
+								}
+								
+								if ($tag == 'location')
+								{
+									$line['location_id'] = $this->get_locations_id(strtolower($line[$tag]));
+								}
+								
+								if ($tag == 'email')
+								{
+									$email = strtolower($line[$tag]);
+									if (filter_var($email, FILTER_VALIDATE_EMAIL))
+									{
+										if (in_array($email, $emails) && $line['error'] < 2)
+										{
+											$line['error'] = 1;
+											$result['check'] = FALSE;
+										}
+										$emails[] = $email;
+									}
+									else
+									{
+										$line[$tag] = '<b>!</b>';
+										$line['error'] = 2;
+										$result['check'] = FALSE;
+									}
+								}
+								
+								if ($tag == 'name' || $tag == 'sname')
+								{
+									if ( ! empty($line[$tag]) && ! ctype_alpha(str_replace(array(' ', '.', '-'), '', $line[$tag])))
+									{
+										$line[$tag] = '<b>!</b>';
+										$line['error'] = 2;
+										$result['check'] = FALSE;
+									}
+								}
+								
+								if ($tag == 'birth')
+								{
+									if ( ! empty($line[$tag]))
+									{
+										$sep = (strpos($line[$tag], '/') ? '/' : '-');
+										$temp = explode($sep, $line[$tag]);
+										if (isset($temp[2]))
+										{
+											if ($temp[2] < 16)
+											{
+												$temp[2] += 2000;
+											}
+											elseif ($temp[2] > 16 && $temp[2] < 100)
+											{
+												$temp[2] += 1900;
+											}
+										}
+										
+										if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
+										{
+											$line[$tag] = '<b>!</b>';
+										}
+										else
+										{
+											$line[$tag] = implode($sep, $temp);
+										}
+									}
+									else
+									{
+										$line[$tag] = '<b>!</b>';
+									}
+								}
+								
+								if (empty($line[$tag]))
+								{
+									if (in_array($tag, $tags_required) || $tag == 'email')
+									{
+										$line['error'] = 2;
+										$result['check'] = FALSE;
+									}
+									else
+									{
+										if ($tag == 'name' || $tag == 'sname')
+										{
+											$line[$tag] = '<b>!</b>';
+										}
+									}
+								}
+							}
+							else
+							{
+								$line[$tag] = "";
+								if (in_array($tag, $tags_required))
+								{
+									$line['error'] = 2;
+								}
+								$result['check'] = FALSE;
+							}							
+						}
+
+						$result['data'][] = $line;
+					}
+				}
+			}
+			
 			return $result;
 		}
 		
