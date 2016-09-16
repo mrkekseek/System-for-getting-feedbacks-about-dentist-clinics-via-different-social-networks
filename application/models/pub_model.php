@@ -7598,7 +7598,7 @@
 												'!PSK'
 											));
 				$context = stream_context_create(array(
-					'ssl' => array(
+					/*'ssl' => array(
 						'ciphers' => $ciphers,
 						'verify_peer' => true,
 						'cafile' => '/etc/ssl/certs/ca-certificates.crt', // <-- EDIT FOR NON-DEBIAN/UBUNTU SYSTEMS
@@ -7607,7 +7607,9 @@
 						'disable_compression' => true,
 						'SNI_enabled' => true,
 						'SNI_server_name' => "www.independer.nl"
-					)
+					)*/
+					'ssl' => array("verify_peer"=>false,
+									"verify_peer_name"=>false)
 				));
 				$content = file_get_contents($info['independer_scrap'], null, $context);
 
@@ -7647,7 +7649,7 @@
 													"date" => "",
 													"time" => 0,
 													"hash" => md5($desc));
-								
+
 								$this->db->where("hash", $data_array['hash']);
 								if ($this->db->count_all_results("reviews"))
 								{
