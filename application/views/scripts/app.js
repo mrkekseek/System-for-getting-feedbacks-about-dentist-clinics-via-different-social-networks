@@ -3250,7 +3250,7 @@
 		$scope.blocked = {};
 		
 		$timeout(function() {
-			if ($scope.user.account_type == '0')
+			if ($scope.user.account_type < 1)
 			{
 				$scope.blocked = {'telefoonboek': true, 'vergelijkmondzorg': true, 'kliniekoverzicht': true, 'own': true};
 			}
