@@ -80,9 +80,9 @@
 							U kunt de tekst van de e-mail hieronder naar wens aanpassen.
 						</span>
 						
-						<a href="javascript:void(0);" class="btn btn-primary" ng-click="email_text_class = 'open'" ng-show="email_text_class == 'close'">Wijzig e-mail...</a>
+						<!--a href="javascript:void(0);" class="btn btn-primary" ng-click="email_text_class = 'open'" ng-show="email_text_class == 'close'">Wijzig e-mail...</a-->
 
-						<div class="email-text-container" ng-class="{'open': email_text_class == 'open', 'open_with_intro': intro_open == 'open'}">
+						<div class="email-text-container open">
 							<div style="margin: 0 auto; min-width: 320px; background: #EAEAEA;">
 								<div style="height: 30px; background: #fff; padding: 10px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);">
 									<table cellpadding="0" cellspacing="0" width="100%">
@@ -254,7 +254,7 @@
 						</div>
 						
 						<br />
-						<a href="javascript:void(0);" class="btn btn-primary" ng-click="test_email_modal()" ng-show="email_text_class == 'open' || intro_open == 'open'">Stuur een voorbeeld...</a>
+						<a href="javascript:void(0);" class="btn btn-primary" ng-click="test_email_modal()">Stuur een voorbeeld...</a>
                     </div>
                 </div>
 				
