@@ -5383,7 +5383,7 @@
 						}
 					}
 					
-					if ( ! empty($sent_id))
+					if ( ! empty($sent_ids))
 					{
 						$this->db->where_in('id', $sent_ids);
 					}
@@ -5729,6 +5729,10 @@
 						$q_sum = array();
 						$q_num = array();
 						$this->db->where('users_id', $users_id);
+						if ( ! empty($sent_ids))
+						{
+							$this->db->where_in('sent_id', $sent_ids);
+						}
 						$result = $this->db->get('sent_questions')->result_array();
 						foreach ($result as $row)
 						{
@@ -6696,7 +6700,7 @@
 						}
 					}
 					
-					if ( ! empty($sent_id))
+					if ( ! empty($sent_ids))
 					{
 						$this->db->where_in('id', $sent_ids);
 					}
@@ -7012,6 +7016,10 @@
 					{
 						$q_sum = array();
 						$q_num = array();
+						if ( ! empty($sent_ids))
+						{
+							$this->db->where_in('sent_id', $sent_ids);
+						}
 						$result = $this->db->get('sent_questions')->result_array();
 						foreach ($result as $row)
 						{

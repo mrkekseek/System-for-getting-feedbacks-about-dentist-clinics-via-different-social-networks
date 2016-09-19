@@ -759,16 +759,7 @@
 		$scope.format = $scope.formats[2];
 
 		$scope.run_filter = function() {
-			$scope.get();
-		};
-		
-		$scope.change_type = function(type)
-		{
-			if (type != $scope.type)
-			{
-				$scope.type = type;
-				$scope.get();
-			}
+			$scope.get_email();
 		};
 		
 		$scope.data = {};
