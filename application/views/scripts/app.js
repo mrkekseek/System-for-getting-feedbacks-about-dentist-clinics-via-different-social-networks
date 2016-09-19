@@ -56,7 +56,7 @@
 
             routes = [
                 'dashboard', 'invitation/:hash?',
-                'charts/charts',
+                'charts/charts', 'charts/onlines',
                 'pages/404', 'pages/500', 'pages/forgot-password', 'pages/new-password/:hash', 'pages/lock-screen', 'pages/signin', 'pages/signup',
 				'pages/profile', 'pages/subscription', 'pages/advanced', 'pages/doctors_add', 'pages/doctors_edit/:id', 'pages/locations_add', 'pages/locations_add/:id', 'pages/online', 'pages/activate/:id', 'pages/invoice/:id', 
                 'mail/compose', 'mail/inbox', 'mail/single/:id', 'mail/reply/:id',
@@ -89,6 +89,7 @@
 					  'manage/add': 'Nieuw abonnement',
 					  'manage/view': 'Beheer abonnementen',
 					  'charts/acharts': 'Statistieken',
+					  'charts/onlines': 'Statistieken',
 					  'charts/stat': 'Statistieken'
             };
 
@@ -682,8 +683,6 @@
             $scope.ultimate_class[name] = '';
         };
 		
-		$scope.type = 'email';
-		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
 		{
 			hex = hex.replace('#', '');
@@ -1161,6 +1160,42 @@
 			});
 		};
 
+		$scope.get_email();
+		
+		$scope.range = function(num)
+		{
+			var array = [];
+			for (var i = 0; i < num; i++)
+			{
+				array.push(i);
+			}
+			return array;
+		};
+    }
+
+})();
+;
+(function () {
+    'use strict';
+
+    angular.module('app')
+        .controller('OnlinesCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', OnlinesCtrl]); // overall control
+
+    function OnlinesCtrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
+		$scope.hex_to_rgba = function(hex, opacity)
+		{
+			hex = hex.replace('#', '');
+			var r = parseInt(hex.substring(0, 2), 16);
+			var g = parseInt(hex.substring(2, 4), 16);
+			var b = parseInt(hex.substring(4, 6), 16);
+
+			var result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
+			return result;
+		};
+		$scope.color = $scope.user.color || '#0F75BC';
+		$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
+		
 		$scope.pie_online = echarts.init(document.getElementById('pie_online'));
 		$window.onresize = function() { $scope.pie_online.resize(); };
 		$scope.pie_online.setOption({
@@ -1235,20 +1270,8 @@
 				}
 			});
 		};
-		
-		$scope.get = function()
-		{
-			if ($scope.type == 'email')
-			{
-				$scope.get_email();
-			}
-			else
-			{
-				$scope.get_online();
-			}
-		};
 
-		$scope.get();
+		$scope.get_online();
 		
 		$scope.range = function(num)
 		{
