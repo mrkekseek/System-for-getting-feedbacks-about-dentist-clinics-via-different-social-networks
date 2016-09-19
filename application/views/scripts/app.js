@@ -2501,7 +2501,7 @@
 					size: 'lg',
 					resolve: {
 						items: function() {
-							return {value: $scope.user.emails[type], type: type};
+							return {value: $scope.user.emails[type], type: type, user: $scope.user};
 						}
 					}
 				});
@@ -8379,6 +8379,7 @@
 	function ModalInstanceEmailsEditCtrl($scope, $modalInstance, $http, $location, logger, items) {
         $scope.value = items.value;
 		$scope.type = items.type;
+		$scope.user = items.user;
 		$scope.froalaOptions = {
 			height: 250,
 			toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']

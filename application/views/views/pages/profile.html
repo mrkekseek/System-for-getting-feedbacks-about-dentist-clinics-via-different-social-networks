@@ -547,7 +547,7 @@
 	</div>
 	<div class="modal-body">
 		<textarea ng-model="value" class="form-control edit-emails-area" froala="froalaOptions"></textarea>
-		<span class="help-block with-margin">
+		<span class="help-block with-margin" ng-show="user.account_type > 0">
 			Klik om een variabele in te voegen:
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Patiënt')">Aanhef Patiënt</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Patiënt')">Voornaam Patiënt</a>
@@ -556,6 +556,11 @@
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
+		</span>
+		
+		<span class="help-block" ng-show="user.account_type == '0'" ng-click="cancel()">
+			Upgrade naar Pro om variabelen in uw e-mailuitnodigingen te gebruiken.
+			<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
 		</span>
 	</div>
 	<div class="modal-footer">
