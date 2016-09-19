@@ -2429,6 +2429,13 @@
 		$scope.email_text_class = "close";
 		$scope.tags = ['{{Vraagstelling}}', '{{Formulering van de vraagstelling}}', '{{Aanhef Patiënt}}', '{{Voornaam Patiënt}}', '{{Achternaam Patiënt}}', '{{Aanhef Zorgverlener}}', '{{Voornaam Zorgverlener}}', '{{Achternaam Zorgverlener}}', '{{Onderwerp van E-mail}}', '{{Naam Praktijk}}'];
 		
+		$scope.set_var = function(variable) {
+			var pos = jQuery('[name=subject]').prop("selectionStart");
+			var start = $scope.user.emails.subject.slice(0, pos);
+			var finish = $scope.user.emails.subject.slice(pos);
+			$scope.user.emails.subject = start + '{{' + variable + '}}' + finish;
+		};
+		
 		$scope.find_tags = function(text, key) {
 			if (text)
 			{

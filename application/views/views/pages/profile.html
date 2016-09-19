@@ -6,11 +6,16 @@
 				<div class="form-group" id="intro2">
                     <label class="col-md-4">Onderwerp van e-mail aan patiënten</label>
                     <div class="col-md-8 hidden-container">
-						<div ng-bind-html="find_tags((user.emails.subject || 'Klik om tekst in te voegen...'), 'subject')" ng-click="emails_edit('subject', $event)" class="subject-edit" ng-if="user.account == '2' || user.account_type == '1'">
-						</div>
-                        <input type="text" class="form-control" ng-if="user.account != '2' && user.account_type != '1'" name="subject" ng-model="user.emails.subject" value="" placeholder="Hoe was uw behandeling?" />
-						<span class="help-block" ng-if="user.account == '2' || user.account_type == '1'">
-							U kunt de volgende variabelen gebruiken: &#123;<i></i>&#123;Aanhef Patiënt&#125;<i></i>&#125;, &#123;<i></i>&#123;Voornaam Patiënt&#125;<i></i>&#125;, &#123;<i></i>&#123;Achternaam Patiënt&#125;<i></i>&#125;, &#123;<i></i>&#123;Aanhef Zorgverlener&#125;<i></i>&#125;, &#123;<i></i>&#123;Voornaam Zorgverlener&#125;<i></i>&#125;, &#123;<i></i>&#123;Achternaam Zorgverlener&#125;<i></i>&#125;, &#123;<i></i>&#123;Naam Praktijk&#125;<i></i>&#125;.
+                        <input type="text" class="form-control" name="subject" ng-model="user.emails.subject" />
+						<span class="help-block with-margin" ng-if="user.account == '2' || user.account_type == '1'">
+							Klik om een variabele in te voegen:
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Patiënt')">Aanhef Patiënt</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Patiënt')">Voornaam Patiënt</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Patiënt')">Achternaam Patiënt</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Zorgverlener')">Aanhef Zorgverlener</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
 						</span>
                     </div>
                 </div>
