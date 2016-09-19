@@ -403,30 +403,30 @@
 						
 						<div class="col-lg-3 col-slg-6 col-md-6 col-xs-12">
 							<div class="panel panel-default charts2-min-box">
-								<div class="row charts2-stars-count">
+								<div class="row charts2-stars-count" ng-show="data.hours != ''">
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-text">
-											Hoogst
+											Tijdstip meest beoordeeld
 										</div>
 									</div>
 									
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-value">
-											{{data.reply_highest}}%
+											Tussen {{data.hours_from}} en {{data.hours_to}}
 										</div>
 									</div>
 								</div>
 								
-								<div class="row charts2-stars-count">
+								<div class="row charts2-stars-count" ng-show="data.days != ''">
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-text">
-											Laagst
+											Weekdag meest beoordeeld
 										</div>
 									</div>
 									
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-value">
-											{{data.reply_lowest}}%
+											{{data.days_text}}
 										</div>
 									</div>
 								</div>
