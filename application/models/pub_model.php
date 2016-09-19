@@ -3644,7 +3644,18 @@
 														'account_type' => $row['account_type'],
 														'account' => $row['account'],
 														'questions_info' => $questions_info);
-														
+									
+									$age = 0;
+									if ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth']))
+									{
+										$birth = strtotime($list['birth']);
+										$age = date('Y') - date('Y', $birth);
+										if (mktime(0, 0, 0, date('n'), date('j'), 2000) < mktime(0, 0, 0, date('n', $birth), date('j', $birth), 2000))
+										{
+											$age -= 1;
+										}
+									}
+									
 									$data_array = array("users_id" => $this->session->userdata("id"),
 														"questions_id" => empty($questions_info) ? 0 : $questions_info['id'],
 														"batches_id" => $batches_id,
@@ -3654,7 +3665,8 @@
 														"doctor" => ( ! empty($list['doctor_id']) && ! empty($post['column']['doctor'])) ? $list['doctor_id'] : 0,
 														"location" => ( ! empty($list['location_id']) && ! empty($post['column']['location'])) ? $list['location_id'] : 0,
 														"treatment" => ( ! empty($list['treatment']) && ! empty($post['column']['treatment'])) ? $list['treatment'] : "",
-														"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
+														//"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
+														"age" => $age,
 														"email" => strtolower($list['text']),
 														"date" => time(),
 														"status" => 1,
