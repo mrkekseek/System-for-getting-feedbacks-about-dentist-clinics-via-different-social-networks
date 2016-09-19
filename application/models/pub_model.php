@@ -3122,6 +3122,31 @@
 				
 				if ( ! empty($rows))
 				{
+					$this->db->where('id', $this->session->userdata('id'));
+					$this->db->limit(1);
+					$user = $this->db->get('users')->row_array();
+					if ( ! empty($user) && $user['account'] == 2)
+					{
+						if (count($rows) > 101)
+						{
+							$this->errors[] = array("Met een trial account kunt u maximaal 100 uitnodigingen per dag versturen.");
+							$result['error'] = TRUE;
+							return $result;
+						}
+						else
+						{
+							$today = mktime(0, 0, 0, date('n'), date('j'), date('Y'));
+							$this->db->where('date >=', $today);
+							$this->db->where('status <>', 3);
+							if (($this->db->count_all_results('sent') + count($rows)) > 101)
+							{
+								$this->errors[] = array("Met een trial account kunt u maximaal 100 uitnodigingen per dag versturen.");
+								$result['error'] = TRUE;
+								return $result;
+							}
+						}
+					}
+
 					$result = $this->parse($rows, $dest);
 				}
 				else
