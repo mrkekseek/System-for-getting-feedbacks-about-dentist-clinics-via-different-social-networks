@@ -252,10 +252,10 @@
 								</div>
 							</div>
 
-							<div class="ultimate-lock" ng-if="user.organization == '0'" ng-class="ultimate_class[q.question_name]" ng-mouseover="ultimate_over(q.question_name)" ng-mouseout="ultimate_out(q.question_name)">
+							<div class="ultimate-lock" ng-if="user.account_type == '0'" ng-class="ultimate_class[q.question_name]" ng-mouseover="ultimate_over(q.question_name)" ng-mouseout="ultimate_out(q.question_name)">
 								<i class="fa fa-lock"></i>
 								<div class="ultimate-text">
-									<p>Upgrade naar Ultimate om dit onderdeel te bekijken.</p>
+									<p>Upgrade naar Pro om dit onderdeel te bekijken.</p>
 									<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
 								</div>
 							</div>

@@ -2068,6 +2068,25 @@
 				if ($scope.data && $scope.data.for_user > 0)
 				{
 					$scope.empty_filter = false;
+					if ($scope.data && $scope.data.hours != '')
+					{
+						$scope.data.hours_from = ($scope.data.hours < 10 ? '0' : '') + $scope.data.hours + ":00";
+						$scope.data.hours_to = ($scope.data.hours + 1) > 23 ? '0' : ($scope.data.hours + 1);
+						$scope.data.hours_to = ($scope.data.hours_to < 10 ? '0' : '') + $scope.data.hours_to + ":00";
+					}
+					
+					if ($scope.data && $scope.data.days != '')
+					{
+						$scope.days = {'1': 'maandag',
+									   '2': 'dinsdag',
+									   '3': 'woensdag',
+									   '4': 'donderdag',
+									   '5': 'vrijdag',
+									   '6': 'zaterdag',
+									   '7': 'zondag'};
+						$scope.data.days_text = $scope.days[$scope.data.days];
+					}
+					
 					if ($scope.data && $scope.data.stars_count)
 					{
 						for (var i = 5; i > 0; i--)

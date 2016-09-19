@@ -6758,6 +6758,8 @@
 					$stat['reply_highest'] = 0;
 					$stat['reply_lowest'] = 0;
 					$stat['reply_chart'] = array('reply' => 0, 'click' => 0, 'none' => 0);
+					$stat['hours'] = '';
+					$stat['days'] = '';
 
 					$count = array();
 					$count['all'] = 0;
@@ -6770,6 +6772,8 @@
 					$count['all_month_sum'] = array();
 					$count['all_month_num'] = array();
 					$count['all_nps'] = array();
+					$count['hours'] = array();
+					$count['days'] = array();
 
 					$start_date = (time() - 365 * 24 * 3600);
 					$month_start = date('n', $start_date);
@@ -6817,6 +6821,24 @@
 						if ( ! empty($row['last']))
 						{
 							$month = date('Y-m', $row['last']);
+						}
+						
+						if ( ! empty($row['last']))
+						{
+							$hours = date('G', $row['last']);
+							if ( ! isset($count['hours'][$hours]))
+							{
+								$count['hours'][$hours] = 0;
+							}
+							$count['hours'][$hours]++;
+							
+							$day = date('w', $row['last']);
+							$day = $day == 0 ? 7 : $day;
+							if ( ! isset($count['days'][$day]))
+							{
+								$count['days'][$day] = 0;
+							}
+							$count['days'][$day]++;
 						}
 
 						if ($row['stars'] > 0)
@@ -6919,6 +6941,20 @@
 						}
 						
 						$count['all']++;
+					}
+					
+					if ( ! empty($count['hours']))
+					{
+						arsort($count['hours']);
+						reset($count['hours']);
+						$stat['hours'] = key($count['hours']);
+					}
+					
+					if ( ! empty($count['days']))
+					{
+						arsort($count['days']);
+						reset($count['days']);
+						$stat['days'] = key($count['days']);
 					}
 					
 					if ( ! empty($count['for_user']))
