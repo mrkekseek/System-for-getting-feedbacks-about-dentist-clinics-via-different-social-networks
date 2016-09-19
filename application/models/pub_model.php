@@ -6092,6 +6092,8 @@
 					}
 				}
 				
+				$stat['months'] = array_values(array_unique($stat['months']));
+				
 				if ( ! empty($stat['history']))
 				{
 					foreach ($stat['history'] as $month => $list)
@@ -6172,6 +6174,7 @@
 						$stat['history'][$month][$o]['num']++;
 					}
 				}
+				
 				$stat['months'] = array_values(array_unique($stat['months']));
 				
 				if ( ! empty($stat['history']))
