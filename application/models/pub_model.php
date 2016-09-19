@@ -3250,7 +3250,6 @@
 				}
 			}
 			$result['cols'] = $unique;
-			
 			if ( ! empty($cols))
 			{
 				setLocale(LC_CTYPE, 'nl_NL.UTF-8');
@@ -3369,7 +3368,11 @@
 								{
 									$line['error'] = 2;
 								}
-								$result['check'] = FALSE;
+								
+								if ($tag != 'treatment')
+								{
+									$result['check'] = FALSE;
+								}
 							}							
 						}
 
