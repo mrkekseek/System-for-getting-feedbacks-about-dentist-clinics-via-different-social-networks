@@ -5722,8 +5722,17 @@
 						$stat['nps_all_month'][$month] = $nps_all_45 - $nps_all_12;
 					}
 
-					$list = $this->pub->get_questions();
-					$stat['questions'] = $this->pub->user_questions($list);
+					$stat['questions'] = array();
+					if (empty($user['account_type']))
+					{
+						$stat['questions'] = $this->pub->get_questions();
+					}
+					else
+					{
+						$list = $this->pub->get_questions();
+						$stat['questions'] = $this->pub->user_questions($list);
+					}
+					
 					if ( ! empty($stat['questions']))
 					{
 						$q_sum = array();
