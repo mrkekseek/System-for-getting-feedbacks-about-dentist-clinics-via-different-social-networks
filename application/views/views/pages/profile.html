@@ -6,11 +6,16 @@
 				<div class="form-group" id="intro2">
                     <label class="col-md-4">Onderwerp van e-mail aan patiënten</label>
                     <div class="col-md-8 hidden-container">
-						<div ng-bind-html="find_tags((user.emails.subject || 'Klik om tekst in te voegen...'), 'subject')" ng-click="emails_edit('subject', $event)" class="subject-edit" ng-if="user.account == '2' || user.account_type == '1'">
-						</div>
-                        <input type="text" class="form-control" ng-if="user.account != '2' && user.account_type != '1'" name="subject" ng-model="user.emails.subject" value="" placeholder="Hoe was uw behandeling?" />
-						<span class="help-block" ng-if="user.account == '2' || user.account_type == '1'">
-							U kunt de volgende variabelen gebruiken: &#123;<i></i>&#123;Aanhef Patiënt&#125;<i></i>&#125;, &#123;<i></i>&#123;Voornaam Patiënt&#125;<i></i>&#125;, &#123;<i></i>&#123;Achternaam Patiënt&#125;<i></i>&#125;, &#123;<i></i>&#123;Aanhef Zorgverlener&#125;<i></i>&#125;, &#123;<i></i>&#123;Voornaam Zorgverlener&#125;<i></i>&#125;, &#123;<i></i>&#123;Achternaam Zorgverlener&#125;<i></i>&#125;, &#123;<i></i>&#123;Naam Praktijk&#125;<i></i>&#125;.
+                        <input type="text" class="form-control" name="subject" ng-model="user.emails.subject" />
+						<span class="help-block with-margin" ng-if="user.account == '2' || user.account_type == '1'">
+							Klik om een variabele in te voegen:
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Patiënt')">Aanhef Patiënt</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Patiënt')">Voornaam Patiënt</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Patiënt')">Achternaam Patiënt</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Zorgverlener')">Aanhef Zorgverlener</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
 						</span>
                     </div>
                 </div>
@@ -59,7 +64,7 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">Promotiecampagne<span class="label label-primary label-pro" ng-show="user.account_type == '0'">Pro</span></label>
+                    <label class="col-md-4">Promotiecampagne<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
                     <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0'}" ng-click="upgrade_to_pro()">
                         <label class="ui-switch ui-switch-lg">
 							<input type="checkbox" name="promo_checked" ng-model="user.promo_checked" ng-checked="user.promo_checked == '1'" ng-change="user.promo_checked == '1' ? email_text_class = 'open' : ''" />
@@ -80,9 +85,9 @@
 							U kunt de tekst van de e-mail hieronder naar wens aanpassen.
 						</span>
 						
-						<a href="javascript:void(0);" class="btn btn-primary" ng-click="email_text_class = 'open'" ng-show="email_text_class == 'close'">Wijzig e-mail...</a>
+						<!--a href="javascript:void(0);" class="btn btn-primary" ng-click="email_text_class = 'open'" ng-show="email_text_class == 'close'">Wijzig e-mail...</a-->
 
-						<div class="email-text-container" ng-class="{'open': email_text_class == 'open', 'open_with_intro': intro_open == 'open'}">
+						<div class="email-text-container open">
 							<div style="margin: 0 auto; min-width: 320px; background: #EAEAEA;">
 								<div style="height: 30px; background: #fff; padding: 10px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);">
 									<table cellpadding="0" cellspacing="0" width="100%">
@@ -254,15 +259,15 @@
 						</div>
 						
 						<br />
-						<a href="javascript:void(0);" class="btn btn-primary" ng-click="test_email_modal()" ng-show="email_text_class == 'open' || intro_open == 'open'">Stuur een voorbeeld...</a>
+						<a href="javascript:void(0);" class="btn btn-primary" ng-click="test_email_modal()">Stuur een voorbeeld...</a>
                     </div>
                 </div>
 				
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">Meervoudige vraagstelling<span class="label label-primary label-pro" ng-show="user.organization == '0'">Ultimate</span></label>
-                    <div class="col-md-8" ng-class="{'basis-box': user.organization == '0'}" ng-click="upgrade_to_ultimate()">
+                    <label class="col-md-4">Meervoudige vraagstelling<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0'}" ng-click="upgrade_to_pro()">
                         <label class="ui-switch ui-switch-lg">
 							<input type="checkbox" name="rating_questions" ng-model="user.rating_questions" ng-change="check_questions_for_user()" ng-checked="user.rating_questions == '1'" />
 							<i></i>
@@ -400,7 +405,7 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">Beoordelingspagina en Widgets<span class="label label-primary label-pro" ng-show="user.account_type == '0'">Pro</span></label>
+                    <label class="col-md-4">Beoordelingspagina en Widgets<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
 					<div class="col-md-1 col-xs-3 margin-bottom" ng-class="{'basis-box': user.account_type == '0'}" ng-click="upgrade_to_pro()">
 						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="short_checked" ng-model="user.short_checked" ng-checked="user.short_checked == '1'" /><i></i></label>
                     </div>
@@ -514,7 +519,7 @@
 				<div class="divider divider-dashed divider-lg pull-in" id="intro4"></div>
 
 				<div class="form-group">
-                    <label class="col-md-4">Logo en huisstijl<span class="label label-primary label-pro" ng-show="user.account_type == '0'">Pro</span></label>
+                    <label class="col-md-4">Logo en huisstijl<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
                     <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0'}" ng-click="upgrade_to_pro()">
 						<span class="logo_here"><img src="{{user.logo}}" alt="" ng-if="user.logo != ''" /><a href="javascript:void(0);" class="remove_logo" ng-if="user.logo != ''" ng-click="remove_logo()" ng-class="{show: user.logo != ''}"><i class="glyphicon glyphicon-remove"></i></a></span>
                         <upload-button class="btn btn-primary btn-upload" url="/pub/upload_logo/" on-success="onLogo(response)">Upload logo</upload-button>
@@ -542,7 +547,7 @@
 	</div>
 	<div class="modal-body">
 		<textarea ng-model="value" class="form-control edit-emails-area" froala="froalaOptions"></textarea>
-		<span class="help-block with-margin">
+		<span class="help-block with-margin" ng-show="user.account_type > 0">
 			Klik om een variabele in te voegen:
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Patiënt')">Aanhef Patiënt</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Patiënt')">Voornaam Patiënt</a>
@@ -551,6 +556,11 @@
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
+		</span>
+		
+		<span class="help-block" ng-show="user.account_type == '0'" ng-click="cancel()">
+			Upgrade naar Pro om variabelen in uw e-mailuitnodigingen te gebruiken.
+			<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
 		</span>
 	</div>
 	<div class="modal-footer">

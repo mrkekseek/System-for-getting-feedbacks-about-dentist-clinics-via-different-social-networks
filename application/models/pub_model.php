@@ -792,13 +792,14 @@
 				$result['suspension'] = date("d-m-Y", empty($row['suspension']) ? ($row['trial_end'] + $this->period * 24 * 3600) : $row['suspension']);
 				$end = $row['suspension'];
 				$result['days'] = ceil((mktime(0, 0, 0, date("n", $end), date("j", $end), date("Y", $end)) - $time) / (24 * 3600));
-				$result['half_pro'] = round(($this->account_amount / $this->period) * $result['days'], 2);
-				$result['half_basic'] = round(($this->account_amount / $this->period) * $result['days'], 2);
+				$result['half_ultimate'] = round(($this->ultimate_amount / $this->period) * $result['days'], 2);
+				$result['half_pro'] = round(($this->pro_amount / $this->period) * $result['days'], 2);
+				$result['half_basic'] = round(($this->base_amount / $this->period) * $result['days'], 2);
 
 				$result['amount'] = 0;
 				if ($row['account'] == 1 && $row['account_type'] == 0)
 				{
-					$result['amount'] = $result['half_pro'] - $result['half_basic'];
+					$result['amount'] = ($type == 1 ? $result['half_pro'] : $result['half_ultimate']) - $result['half_basic'];
 					$result['half'] = TRUE;
 				}
 				else
@@ -3122,6 +3123,31 @@
 				
 				if ( ! empty($rows))
 				{
+					$this->db->where('id', $this->session->userdata('id'));
+					$this->db->limit(1);
+					$user = $this->db->get('users')->row_array();
+					if ( ! empty($user) && $user['account'] == 2)
+					{
+						if (count($rows) > 101)
+						{
+							$this->errors[] = array("Met een trial account kunt u maximaal 100 uitnodigingen per dag versturen.");
+							$result['error'] = TRUE;
+							return $result;
+						}
+						else
+						{
+							$today = mktime(0, 0, 0, date('n'), date('j'), date('Y'));
+							$this->db->where('date >=', $today);
+							$this->db->where('status <>', 3);
+							if (($this->db->count_all_results('sent') + count($rows)) > 101)
+							{
+								$this->errors[] = array("Met een trial account kunt u maximaal 100 uitnodigingen per dag versturen.");
+								$result['error'] = TRUE;
+								return $result;
+							}
+						}
+					}
+
 					$result = $this->parse($rows, $dest);
 				}
 				else
@@ -3225,7 +3251,6 @@
 				}
 			}
 			$result['cols'] = $unique;
-			
 			if ( ! empty($cols))
 			{
 				setLocale(LC_CTYPE, 'nl_NL.UTF-8');
@@ -3344,7 +3369,11 @@
 								{
 									$line['error'] = 2;
 								}
-								$result['check'] = FALSE;
+								
+								if ($tag != 'treatment')
+								{
+									$result['check'] = FALSE;
+								}
 							}							
 						}
 
@@ -3619,7 +3648,18 @@
 														'account_type' => $row['account_type'],
 														'account' => $row['account'],
 														'questions_info' => $questions_info);
-														
+									
+									$age = 0;
+									if ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth']))
+									{
+										$birth = strtotime($list['birth']);
+										$age = date('Y') - date('Y', $birth);
+										if (mktime(0, 0, 0, date('n'), date('j'), 2000) < mktime(0, 0, 0, date('n', $birth), date('j', $birth), 2000))
+										{
+											$age -= 1;
+										}
+									}
+									
 									$data_array = array("users_id" => $this->session->userdata("id"),
 														"questions_id" => empty($questions_info) ? 0 : $questions_info['id'],
 														"batches_id" => $batches_id,
@@ -3629,7 +3669,8 @@
 														"doctor" => ( ! empty($list['doctor_id']) && ! empty($post['column']['doctor'])) ? $list['doctor_id'] : 0,
 														"location" => ( ! empty($list['location_id']) && ! empty($post['column']['location'])) ? $list['location_id'] : 0,
 														"treatment" => ( ! empty($list['treatment']) && ! empty($post['column']['treatment'])) ? $list['treatment'] : "",
-														"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
+														//"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
+														"age" => $age,
 														"email" => strtolower($list['text']),
 														"date" => time(),
 														"status" => 1,
@@ -4064,9 +4105,9 @@
 		
 		function send_payment($post)
 		{
-			$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+			/*$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 			$message = $this->load->view('views/mail/tpl_payment.html', $post, TRUE);
-			return $this->send("renew", $post['email'], 'Uw factuur van Patiëntenreview', $message, 'Patiëntenreview', 'info@patientenreview.nl', $post['attach']);
+			return $this->send("renew", $post['email'], 'Uw factuur van Patiëntenreview', $message, 'Patiëntenreview', 'info@patientenreview.nl', $post['attach']);*/
 		}
 
 		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'info@patientenreview.nl', $attach = FALSE)
@@ -5343,7 +5384,7 @@
 						}
 					}
 					
-					if ( ! empty($sent_id))
+					if ( ! empty($sent_ids))
 					{
 						$this->db->where_in('id', $sent_ids);
 					}
@@ -5423,6 +5464,8 @@
 					$stat['reply_highest'] = 0;
 					$stat['reply_lowest'] = 0;
 					$stat['reply_chart'] = array('reply' => 0, 'click' => 0, 'none' => 0);
+					$stat['hours'] = '';
+					$stat['days'] = '';
 
 					$count = array();
 					$count['all'] = 0;
@@ -5438,6 +5481,8 @@
 					$count['my_month_num'] = array();
 					$count['all_month_num'] = array();
 					$count['all_nps'] = array();
+					$count['hours'] = array();
+					$count['days'] = array();
 
 					$start_date = (time() - 365 * 24 * 3600) > $user['signup'] ? (time() - 365 * 24 * 3600) : $user['signup'];
 					$month_start = date('n', $start_date);
@@ -5491,6 +5536,24 @@
 
 						if ($row['users_id'] == $users_id)
 						{
+							if ( ! empty($row['last']))
+							{
+								$hours = date('G', $row['last']);
+								if ( ! isset($count['hours'][$hours]))
+								{
+									$count['hours'][$hours] = 0;
+								}
+								$count['hours'][$hours]++;
+								
+								$day = date('w', $row['last']);
+								$day = $day == 0 ? 7 : $day;
+								if ( ! isset($count['days'][$day]))
+								{
+									$count['days'][$day] = 0;
+								}
+								$count['days'][$day]++;
+							}
+							
 							if ($row['stars'] > 0)
 							{
 								$count['for_user']++;
@@ -5600,6 +5663,20 @@
 						$count['all']++;
 					}
 					
+					if ( ! empty($count['hours']))
+					{
+						arsort($count['hours']);
+						reset($count['hours']);
+						$stat['hours'] = key($count['hours']);
+					}
+					
+					if ( ! empty($count['days']))
+					{
+						arsort($count['days']);
+						reset($count['days']);
+						$stat['days'] = key($count['days']);
+					}
+					
 					if ( ! empty($count['for_user']))
 					{
 						$stat['average'] = number_format(round($count['average_sum'] / $count['for_user'], 1), 1);
@@ -5646,13 +5723,26 @@
 						$stat['nps_all_month'][$month] = $nps_all_45 - $nps_all_12;
 					}
 
-					$list = $this->pub->get_questions();
-					$stat['questions'] = $this->pub->user_questions($list);
+					$stat['questions'] = array();
+					if (empty($user['account_type']))
+					{
+						$stat['questions'] = $this->pub->get_questions();
+					}
+					else
+					{
+						$list = $this->pub->get_questions();
+						$stat['questions'] = $this->pub->user_questions($list);
+					}
+					
 					if ( ! empty($stat['questions']))
 					{
 						$q_sum = array();
 						$q_num = array();
 						$this->db->where('users_id', $users_id);
+						if ( ! empty($sent_ids))
+						{
+							$this->db->where_in('sent_id', $sent_ids);
+						}
 						$result = $this->db->get('sent_questions')->result_array();
 						foreach ($result as $row)
 						{
@@ -6016,6 +6106,8 @@
 					}
 				}
 				
+				$stat['months'] = array_values(array_unique($stat['months']));
+				
 				if ( ! empty($stat['history']))
 				{
 					foreach ($stat['history'] as $month => $list)
@@ -6096,6 +6188,7 @@
 						$stat['history'][$month][$o]['num']++;
 					}
 				}
+				
 				$stat['months'] = array_values(array_unique($stat['months']));
 				
 				if ( ! empty($stat['history']))
@@ -6617,7 +6710,7 @@
 						}
 					}
 					
-					if ( ! empty($sent_id))
+					if ( ! empty($sent_ids))
 					{
 						$this->db->where_in('id', $sent_ids);
 					}
@@ -6697,6 +6790,8 @@
 					$stat['reply_highest'] = 0;
 					$stat['reply_lowest'] = 0;
 					$stat['reply_chart'] = array('reply' => 0, 'click' => 0, 'none' => 0);
+					$stat['hours'] = '';
+					$stat['days'] = '';
 
 					$count = array();
 					$count['all'] = 0;
@@ -6709,6 +6804,8 @@
 					$count['all_month_sum'] = array();
 					$count['all_month_num'] = array();
 					$count['all_nps'] = array();
+					$count['hours'] = array();
+					$count['days'] = array();
 
 					$start_date = (time() - 365 * 24 * 3600);
 					$month_start = date('n', $start_date);
@@ -6756,6 +6853,24 @@
 						if ( ! empty($row['last']))
 						{
 							$month = date('Y-m', $row['last']);
+						}
+						
+						if ( ! empty($row['last']))
+						{
+							$hours = date('G', $row['last']);
+							if ( ! isset($count['hours'][$hours]))
+							{
+								$count['hours'][$hours] = 0;
+							}
+							$count['hours'][$hours]++;
+							
+							$day = date('w', $row['last']);
+							$day = $day == 0 ? 7 : $day;
+							if ( ! isset($count['days'][$day]))
+							{
+								$count['days'][$day] = 0;
+							}
+							$count['days'][$day]++;
 						}
 
 						if ($row['stars'] > 0)
@@ -6860,6 +6975,20 @@
 						$count['all']++;
 					}
 					
+					if ( ! empty($count['hours']))
+					{
+						arsort($count['hours']);
+						reset($count['hours']);
+						$stat['hours'] = key($count['hours']);
+					}
+					
+					if ( ! empty($count['days']))
+					{
+						arsort($count['days']);
+						reset($count['days']);
+						$stat['days'] = key($count['days']);
+					}
+					
 					if ( ! empty($count['for_user']))
 					{
 						$stat['average'] = number_format(round($count['average_sum'] / $count['for_user'], 1), 1);
@@ -6897,6 +7026,10 @@
 					{
 						$q_sum = array();
 						$q_num = array();
+						if ( ! empty($sent_ids))
+						{
+							$this->db->where_in('sent_id', $sent_ids);
+						}
 						$result = $this->db->get('sent_questions')->result_array();
 						foreach ($result as $row)
 						{

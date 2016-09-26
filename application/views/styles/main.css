@@ -3239,8 +3239,8 @@ body .btn-primary.compose-prev:disabled {
 	z-index: 1;
 	top: 0;
 	bottom: 0;
-	left: 0;
-	right: 0;
+	left: 8px;
+	right: 8px;
 	background: rgba(255, 255, 255, 0.95);
 }
 
@@ -3622,7 +3622,8 @@ body .btn-primary.compose-prev:disabled {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	padding-top: 75px;
+	padding: 75px 10px 0;
+	border: solid #0F75BC 1px;
 }
 
 .empty_data {

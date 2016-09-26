@@ -62,7 +62,8 @@ body .pagination > .active > span,
 body .pagination > .active > span:focus,
 body .pagination > .active > span:hover,
 body .ui-checkbox input[type="checkbox"]:checked + span::before,
-body .ui-checkbox input[type="checkbox"] + span:hover::before {
+body .ui-checkbox input[type="checkbox"] + span:hover::before,
+body .online-blocked {
 	border-color: <?php echo $color; ?> !important;
 }
 
