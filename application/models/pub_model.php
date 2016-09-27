@@ -70,7 +70,7 @@
 					{
 						$this->account_amount = $row['account_type'] == '0' ? $this->base_amount : ($row['account_type'] == '1' && $row['organization'] == '1' ? $this->ultimate_amount : $this->pro_amount);
 					}
-					
+
 					if ( ! empty($row['doctors_amount']) &&  $row['doctors_amount'] != '0.00')
 					{
 						$this->doctor_amount = $row['doctors_amount'];
