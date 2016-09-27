@@ -7189,6 +7189,7 @@
 						  "trial_date" => "",
 						  "basic" => 0,
 						  "pro" => 0,
+						  "ultimate" => 0,
 						  "added14" => array(),
 						  "expire14" => array(),
 						  "spent" => 0,
@@ -7204,13 +7205,17 @@
 				}
 				elseif ($row['account'] == 1)
 				{
-					if ($row['account_type'] == 0)
+					if ($row['account_type'] == 0 && $row['organization'] == 0)
 					{
 						$stat['basic']++;
 					}
-					elseif ($row['account_type'] == 1)
+					elseif ($row['account_type'] == 1 && $row['organization'] == 0)
 					{
 						$stat['pro']++;
+					}
+					elseif ($row['organization'] == 1)
+					{
+						$stat['ultimate']++;
 					}
 				}
 				
