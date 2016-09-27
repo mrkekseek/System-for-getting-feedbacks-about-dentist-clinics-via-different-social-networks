@@ -92,29 +92,24 @@
 								<div style="height: 30px; background: #fff; padding: 10px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);">
 									<table cellpadding="0" cellspacing="0" width="100%">
 										<tr>
-											<td style="text-align: left; padding: 0; margin: 0; font-size: 0; line-height: 0; vertical-align: top;">
+											<td style="text-align: center; padding: 0; margin: 0; font-size: 0; line-height: 0; vertical-align: top;">
 												<a href="javascript:void(0);">
 													<img src="{{ (user.logo != '' && (user.account == '2' || user.account_type == '1')) ? user.logo : '/application/views/images/logo_full.png' }}" height="30" alt="" />
 												</a>
 											</td>
-												<td style="text-align: right; padding: 0; margin: 0; font-size: 0; line-height: 0;">
-													<p style="color: #626262; margin: 0; font: 14px/30px arial, sans-serif; text-align: right;">
-														<span class="tag"><?php echo @$user['username']; ?></span>
-													</p>
-												</td>
 										</tr>
 									</table>
 								</div>
 								
 								<table cellpadding="0" cellspacing="0" width="100%" ng-if="user.emails.header != ''">
 									<tr ng-show="user.rating_questions == '0'">
-										<td ng-bind-html="find_tags((user.emails.header || 'Klik om tekst in te voegen...'), 'header')" ng-click="emails_edit('header', $event)" class="emails-edit" style="height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
+										<td ng-bind-html="find_tags((user.emails.header || 'Klik om tekst in te voegen...'), 'header')" ng-click="emails_edit('header', $event)" class="emails-edit" style="padding: 0 15px; height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
 											{{ find_tags((user.emails.header || 'Klik om tekst in te voegen...'), 'header') }}
 										</td>
 									</tr>
 									
 									<tr ng-show="user.rating_questions == '1'">
-										<td ng-bind-html="find_tags((user.emails.header_mq || 'Klik om tekst in te voegen...'), 'header_mq')" ng-click="emails_edit('header_mq', $event)" class="emails-edit"  style="height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
+										<td ng-bind-html="find_tags((user.emails.header_mq || 'Klik om tekst in te voegen...'), 'header_mq')" ng-click="emails_edit('header_mq', $event)" class="emails-edit"  style="padding: 0 15px; height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
 											{{ find_tags((user.emails.header_mq || 'Klik om tekst in te voegen...'), 'header_mq') }}
 										</td>
 									</tr>

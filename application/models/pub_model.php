@@ -18,6 +18,7 @@
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
 		var $period = 365;
+		var $last_time = 0;
 		var $tags = array('subject' => '{{Onderwerp van E-mail}}',
 						  'title' => '{{Aanhef Patiënt}}',
 						  'name' => '{{Voornaam Patiënt}}',
@@ -46,9 +47,8 @@
 			{
 				$this->period = 366;
 			}
-			
+			$this->last_time = time();
 			$this->set_defaults();
-			
 			$this->renew_logout();
 		}
 		
@@ -70,7 +70,7 @@
 					{
 						$this->account_amount = $row['account_type'] == '0' ? $this->base_amount : ($row['account_type'] == '1' && $row['organization'] == '1' ? $this->ultimate_amount : $this->pro_amount);
 					}
-					
+
 					if ( ! empty($row['doctors_amount']) &&  $row['doctors_amount'] != '0.00')
 					{
 						$this->doctor_amount = $row['doctors_amount'];
@@ -318,6 +318,7 @@
 			{
 				$this->db->where("id", $this->session->userdata("id"));
 				$this->db->update("users", array("last" => time()));
+				$this->last_time = time();
 			}
  		}
 		
@@ -3162,7 +3163,7 @@
 		function parse_paste($post)
 		{
 			$result = array();
-			$rows = array(array('Aanhef Patiënt', 'Voornaam Patiënt', 'Achternaam Patiënt', 'Geboortedatum', 'E-mailadres', 'Zorgverlenernummer'));
+			$rows = array(array('Aanhef Patiënt', 'Voornaam Patiënt', 'Achternaam Patiënt', 'Leeftijd', 'E-mailadres', 'Zorgverlenernummer'));
 			$list = explode("\n", $post['text']);
 			foreach ($list as $row)
 			{
@@ -3189,7 +3190,7 @@
 							'name' => 'Voornaam Patiënt',
 							'sname' => 'Achternaam Patiënt',
 							'email' => 'E-mailadres',
-							'birth' => 'Geboortedatum',
+							'birth' => 'Leeftijd',
 							'doctor' => 'Zorgverlenernummer',
 							'treatment' => 'Behandeling');
 			$users_fields = $this->get_users_fields();
@@ -3337,7 +3338,14 @@
 										}
 										else
 										{
-											$line[$tag] = implode($sep, $temp);
+											$birth = mktime(0, 0, 0, $temp[1], $temp[0], $temp[2]);
+											$age = date('Y') - date('Y', $birth);
+											if (mktime(0, 0, 0, date('n'), date('j'), 2000) < mktime(0, 0, 0, date('n', $birth), date('j', $birth), 2000))
+											{
+												$age -= 1;
+											}
+
+											$line[$tag] = $age;
 										}
 									}
 									else
@@ -3648,18 +3656,7 @@
 														'account_type' => $row['account_type'],
 														'account' => $row['account'],
 														'questions_info' => $questions_info);
-									
-									$age = 0;
-									if ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth']))
-									{
-										$birth = strtotime($list['birth']);
-										$age = date('Y') - date('Y', $birth);
-										if (mktime(0, 0, 0, date('n'), date('j'), 2000) < mktime(0, 0, 0, date('n', $birth), date('j', $birth), 2000))
-										{
-											$age -= 1;
-										}
-									}
-									
+
 									$data_array = array("users_id" => $this->session->userdata("id"),
 														"questions_id" => empty($questions_info) ? 0 : $questions_info['id'],
 														"batches_id" => $batches_id,
@@ -3670,7 +3667,7 @@
 														"location" => ( ! empty($list['location_id']) && ! empty($post['column']['location'])) ? $list['location_id'] : 0,
 														"treatment" => ( ! empty($list['treatment']) && ! empty($post['column']['treatment'])) ? $list['treatment'] : "",
 														//"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
-														"age" => $age,
+														"age" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
 														"email" => strtolower($list['text']),
 														"date" => time(),
 														"status" => 1,
@@ -4772,7 +4769,7 @@
 						}
 
 						$stat['diagram'][$row['stars']]++;
-						if ($row['last'] >= $this->session->userdata("login"))
+						if ($row['last'] >= $this->last_time)
 						{
 							if ($row['stars'] > 0)
 							{
@@ -7192,6 +7189,7 @@
 						  "trial_date" => "",
 						  "basic" => 0,
 						  "pro" => 0,
+						  "ultimate" => 0,
 						  "added14" => array(),
 						  "expire14" => array(),
 						  "spent" => 0,
@@ -7207,13 +7205,17 @@
 				}
 				elseif ($row['account'] == 1)
 				{
-					if ($row['account_type'] == 0)
+					if ($row['account_type'] == 0 && $row['organization'] == 0)
 					{
 						$stat['basic']++;
 					}
-					elseif ($row['account_type'] == 1)
+					elseif ($row['account_type'] == 1 && $row['organization'] == 0)
 					{
 						$stat['pro']++;
+					}
+					elseif ($row['organization'] == 1)
+					{
+						$stat['ultimate']++;
 					}
 				}
 				

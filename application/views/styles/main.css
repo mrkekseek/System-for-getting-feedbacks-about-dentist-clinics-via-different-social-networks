@@ -570,7 +570,13 @@ textarea {
 	margin-left: -85px;
 }
 
-.socials-inbox-icons img{
+.socials-inbox-icons {
+	display: inline-block;
+	vertical-align: top;
+	margin-bottom: 4px;
+}
+
+.socials-inbox-icons img {
 	max-height: 25px;
 	vertical-align: top;
 }
@@ -1550,6 +1556,14 @@ section.logo {
 	padding: 10px 18px;
 }
 
+.online-telefoonboek .online-blocked .btn.btn-primary {
+	background: #8CC746 !important;
+	border: 0 !important;
+	position: relative;
+	z-index: -1;
+	box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px 0 0 rgba(0, 0, 0, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
 .online-vergelijkmondzorg .panel-heading {
 	background: #006599;
 }
@@ -1558,6 +1572,14 @@ section.logo {
 	background: #006599;
 	border-color: #006599;
 	padding: 10px 18px;
+}
+
+.online-vergelijkmondzorg .online-blocked .btn.btn-primary {
+	background: #006599 !important;
+	border: 0 !important;
+	position: relative;
+	z-index: -1;
+	box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px 0 0 rgba(0, 0, 0, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .online-kliniekoverzicht .panel-heading {
@@ -1570,6 +1592,14 @@ section.logo {
 	padding: 10px 18px;
 }
 
+.online-kliniekoverzicht .online-blocked .btn.btn-primary {
+	background: #6BCEB4 !important;
+	border: 0 !important;
+	position: relative;
+	z-index: -1;
+	box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px 0 0 rgba(0, 0, 0, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
 .online-own .panel-heading {
 	background: #757575;
 }
@@ -1578,6 +1608,26 @@ section.logo {
 	background: #757575;
 	border-color: #757575;
 	padding: 10px 18px;
+}
+
+.online-own .online-blocked .btn.btn-primary {
+	background: #757575 !important;
+	border: 0 !important;
+	position: relative;
+	z-index: -1;
+	box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px 0 0 rgba(0, 0, 0, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.online-blocked .btn.btn-primary:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	z-index: -1;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.3);
 }
 
 .panel-online .row > div {
@@ -1971,6 +2021,7 @@ span.pro {
 	color: #fff;
 	text-transform: uppercase;
 	font-weight: bold;
+	font-size: 13px;
 }
 
 .admin-circle.blue {
@@ -3623,7 +3674,6 @@ body .btn-primary.compose-prev:disabled {
 	right: 0;
 	bottom: 0;
 	padding: 75px 10px 0;
-	border: solid #0F75BC 1px;
 }
 
 .empty_data {

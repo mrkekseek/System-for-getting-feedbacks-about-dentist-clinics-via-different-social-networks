@@ -886,7 +886,7 @@
 					}
 				}
 
-				if ($scope.data.for_user >= 0 || (is_filter && $scope.data && $scope.data.for_user > 0))
+				if ($scope.data.for_user >= 30 || (is_filter && $scope.data && $scope.data.for_user > 0))
 				{
 					$scope.less_30 = false;
 					$scope.empty_filter = false;
@@ -2630,7 +2630,7 @@
 				controller: 'ModalInstanceTestEmailCtrl',
 				resolve: {
 					items: function() {
-						return existing_tags;
+						return [existing_tags, $scope.user];
 					}
 				}
 			});
@@ -3825,19 +3825,70 @@
 		{
 			if ( ! $scope.form.$error.required && ! $scope.form.$error.email)
 			{
-				var date = new Date($scope.user.activation);
-				$scope.user.activation = date.getTime() / 1000;
-
-				var date = new Date($scope.user.suspension);
-				$scope.user.suspension = date.getTime() / 1000;
-
-				$http.post("/pub/signup/", $scope.user).success(function(data, status, headers, config) {
-					if (logger.check(data))
+				var mobile_check = true;
+				if ($scope.user.mobile != '')
+				{
+					var numeric = true;
+					for (var k in $scope.user.mobile)
 					{
-						$scope.user = {};
+						if ($scope.user.mobile[k] != ' ' && typeof($scope.user.mobile[k]) != 'function')
+						{
+							if ( ! ( ! isNaN(parseFloat($scope.user.mobile[k])) && isFinite($scope.user.mobile[k])))
+							{
+								numeric = false;
+							}
+						}
 					}
-				});
+					
+					if ( ! numeric)
+					{
+						logger.logError("Het telefoonnummer kan enkel nummers bevatten");
+						mobile_check = false;
+					}
+					
+					if (($scope.user.mobile.indexOf('06') + 1) != 1)
+					{
+						logger.logError("Het telefoonnummer dient met 06 te beginnen");
+						mobile_check = false;
+					}
+					
+					var length_mobile = $scope.user.mobile.replace(/ /gi, '');
+					if (length_mobile.length != 10)
+					{
+						logger.logError("Het telefoonnummer dient 10 cijfers te bevatten");
+						mobile_check = false;
+					}
+				}
+				
+				if (mobile_check)
+				{
+					var date = new Date($scope.user.activation);
+					$scope.user.activation = date.getTime() / 1000;
+
+					var date = new Date($scope.user.suspension);
+					$scope.user.suspension = date.getTime() / 1000;
+
+					$http.post("/pub/signup/", $scope.user).success(function(data, status, headers, config) {
+						if (logger.check(data))
+						{
+							$scope.user = {};
+						}
+					});
+				}
 			}
+		};
+		
+		$scope.check_mobile = function(mobile)
+		{
+			var new_mobile = '';
+			for (var k in mobile)
+			{
+				if ((mobile[k] >= 0 && mobile[k] <= 9) || mobile[k] == ' ')
+				{
+					new_mobile += mobile[k];
+				}
+			}
+			$scope.user.mobile = new_mobile;
 		};
 
 		$scope.today = function(type) {
@@ -7044,7 +7095,7 @@
 					}
 					else
 					{
-						logger.logError("Passwords don't match");
+						logger.logError("Wachtwoorden komen niet overeen");
 					}
 				}
             };
@@ -8382,6 +8433,7 @@
 		$scope.user = items.user;
 		$scope.froalaOptions = {
 			height: 250,
+			language: 'nl',
 			toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
 		};
 		
@@ -8506,8 +8558,10 @@
     };
 	
 	function ModalInstanceTestEmailCtrl($scope, $modalInstance, $http, $location, logger, items) {
-		$scope.items = items;
+		$scope.items = items[0];
+		$scope.user = items[1];
 		$scope.test = {};
+		$scope.test.email = $scope.user.email;
 		
 		$scope.cancel = function() {
 			$modalInstance.dismiss("cancel");
