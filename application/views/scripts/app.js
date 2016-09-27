@@ -7044,7 +7044,7 @@
 					}
 					else
 					{
-						logger.logError("Passwords don't match");
+						logger.logError("Wachtwoorden komen niet overeen");
 					}
 				}
             };
