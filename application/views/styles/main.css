@@ -570,7 +570,13 @@ textarea {
 	margin-left: -85px;
 }
 
-.socials-inbox-icons img{
+.socials-inbox-icons {
+	display: inline-block;
+	vertical-align: top;
+	margin-bottom: 4px;
+}
+
+.socials-inbox-icons img {
 	max-height: 25px;
 	vertical-align: top;
 }
