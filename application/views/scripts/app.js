@@ -2630,7 +2630,7 @@
 				controller: 'ModalInstanceTestEmailCtrl',
 				resolve: {
 					items: function() {
-						return existing_tags;
+						return [existing_tags, $scope.user];
 					}
 				}
 			});
@@ -8507,8 +8507,10 @@
     };
 	
 	function ModalInstanceTestEmailCtrl($scope, $modalInstance, $http, $location, logger, items) {
-		$scope.items = items;
+		$scope.items = items[0];
+		$scope.user = items[1];
 		$scope.test = {};
+		$scope.test.email = $scope.user.email;
 		
 		$scope.cancel = function() {
 			$modalInstance.dismiss("cancel");
