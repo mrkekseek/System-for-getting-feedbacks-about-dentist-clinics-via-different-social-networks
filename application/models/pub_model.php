@@ -3163,7 +3163,7 @@
 		function parse_paste($post)
 		{
 			$result = array();
-			$rows = array(array('Aanhef Patiënt', 'Voornaam Patiënt', 'Achternaam Patiënt', 'Geboortedatum', 'E-mailadres', 'Zorgverlenernummer'));
+			$rows = array(array('Aanhef Patiënt', 'Voornaam Patiënt', 'Achternaam Patiënt', 'Leeftijd', 'E-mailadres', 'Zorgverlenernummer'));
 			$list = explode("\n", $post['text']);
 			foreach ($list as $row)
 			{
@@ -3190,7 +3190,7 @@
 							'name' => 'Voornaam Patiënt',
 							'sname' => 'Achternaam Patiënt',
 							'email' => 'E-mailadres',
-							'birth' => 'Geboortedatum',
+							'birth' => 'Leeftijd',
 							'doctor' => 'Zorgverlenernummer',
 							'treatment' => 'Behandeling');
 			$users_fields = $this->get_users_fields();
@@ -3338,7 +3338,14 @@
 										}
 										else
 										{
-											$line[$tag] = implode($sep, $temp);
+											$birth = mktime(0, 0, 0, $temp[1], $temp[0], $temp[2]);
+											$age = date('Y') - date('Y', $birth);
+											if (mktime(0, 0, 0, date('n'), date('j'), 2000) < mktime(0, 0, 0, date('n', $birth), date('j', $birth), 2000))
+											{
+												$age -= 1;
+											}
+
+											$line[$tag] = $age;
 										}
 									}
 									else
@@ -3649,18 +3656,7 @@
 														'account_type' => $row['account_type'],
 														'account' => $row['account'],
 														'questions_info' => $questions_info);
-									
-									$age = 0;
-									if ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth']))
-									{
-										$birth = strtotime($list['birth']);
-										$age = date('Y') - date('Y', $birth);
-										if (mktime(0, 0, 0, date('n'), date('j'), 2000) < mktime(0, 0, 0, date('n', $birth), date('j', $birth), 2000))
-										{
-											$age -= 1;
-										}
-									}
-									
+
 									$data_array = array("users_id" => $this->session->userdata("id"),
 														"questions_id" => empty($questions_info) ? 0 : $questions_info['id'],
 														"batches_id" => $batches_id,
@@ -3671,7 +3667,7 @@
 														"location" => ( ! empty($list['location_id']) && ! empty($post['column']['location'])) ? $list['location_id'] : 0,
 														"treatment" => ( ! empty($list['treatment']) && ! empty($post['column']['treatment'])) ? $list['treatment'] : "",
 														//"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
-														"age" => $age,
+														"age" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
 														"email" => strtolower($list['text']),
 														"date" => time(),
 														"status" => 1,
