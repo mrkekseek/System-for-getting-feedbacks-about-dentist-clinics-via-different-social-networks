@@ -18,6 +18,7 @@
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
 		var $period = 365;
+		var $last_time = 0;
 		var $tags = array('subject' => '{{Onderwerp van E-mail}}',
 						  'title' => '{{Aanhef Patiënt}}',
 						  'name' => '{{Voornaam Patiënt}}',
@@ -46,9 +47,8 @@
 			{
 				$this->period = 366;
 			}
-			
+			$this->last_time = time();
 			$this->set_defaults();
-			
 			$this->renew_logout();
 		}
 		
@@ -318,6 +318,7 @@
 			{
 				$this->db->where("id", $this->session->userdata("id"));
 				$this->db->update("users", array("last" => time()));
+				$this->last_time = time();
 			}
  		}
 		
@@ -4772,7 +4773,7 @@
 						}
 
 						$stat['diagram'][$row['stars']]++;
-						if ($row['last'] >= $this->session->userdata("login"))
+						if ($row['last'] >= $this->last_time)
 						{
 							if ($row['stars'] > 0)
 							{
