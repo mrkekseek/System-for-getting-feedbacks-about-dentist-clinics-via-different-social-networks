@@ -52,6 +52,156 @@
 			$this->renew_logout();
 		}
 		
+		function set_test_data()
+		{
+			$users_id = 1;
+
+			$questions_ids = array(0, 1, 2, 3, 4);
+			$title = array('Mr.', 'Dr.', '');
+			$name = array('John', 'Sam', 'Jack', 'Tom', 'Bill', 'George', 'William', 'Roger', 'Andrew', 'Jim');
+			$sname = array('Peterson', 'Smith', 'Doe', 'Gordon', 'Jackson', 'Clinton', 'Burns', 'Dent', 'Walker', 'Eastwood');
+			$age = array(0, 25, 35, 60, 87, 54, 21, 16, 5, 18);
+			
+			$treatment = array('', '', 'Treatment A', 'Treatment B', 'Treatment C', 'Treatment D', 'Treatment E', 'Treatment F');
+			$feedback = array('I want my money back', 'I want more service', 'I want better service');
+			$reply = array('', '', 'You do not get it', 'We will give you all what you want', 'Thanks for your feedback');
+			$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
+			
+			$zorgkaart_doctor = 'https://www.zorgkaartnederland.nl/zorgverlener/basisarts-basisarts-nickolson-v-m-hoorn-120456/waardeer';
+			$zorgkaart_location = 'https://www.zorgkaartnederland.nl/zorgverlener/basisarts-basisarts-nickolson-v-m-hoorn-120456';
+			$address = array('First Avenue, 56', 'Green Street, 56', 'Apple Street, 153');
+			$postcode = array('256874', '231145', '899635', '785469', '789965', '123569');
+			$city = array('New York', 'Los Angeles', 'Chicago', 'Detroit', 'Washington');
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('doctors');
+			
+			$doctors_num = 10;
+			$doctors_ids = array('', '');
+			for ($i = 0; $i < $doctors_num; $i++)
+			{
+				$data_array = array('users_id' => $users_id,
+									'title' => $title[array_rand($title)],
+									'firstname' => $name[array_rand($name)],
+									'lastname' => $sname[array_rand($sname)],
+									'zorgkaart' => $zorgkaart_doctor,
+									'date' => time());
+				$this->db->insert('doctors', $data_array);
+				$doctors_ids[] = $this->db->insert_id();
+			}
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('locations');
+			
+			$locations_num = 10;
+			$locations_ids = array('', '');
+			for ($i = 0; $i < $locations_num; $i++)
+			{
+				$t = $city[array_rand($city)];
+				$data_array = array('users_id' => $users_id,
+									'title' => $t,
+									'address' => $address[array_rand($address)],
+									'postcode' => $postcode[array_rand($postcode)],
+									'city' => $t,
+									'zorgkaart' => $zorgkaart_location,
+									'date' => time());
+				$this->db->insert('locations', $data_array);
+				$locations_ids[] = $this->db->insert_id();
+			}
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('sent');
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('sent_dates');
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('sent_questions');
+			
+			$limit = 5000;
+			$count = 0;
+			while ($count < $limit)
+			{
+				mt_srand();
+				$batches_num = mt_rand(1, 10);
+				$date = mt_rand(time() - 200 * 24 * 3600, time());
+				$count += $batches_num;
+				
+				$data_array = array('users_id' => $users_id,
+									'emails_amount' => $batches_num,
+									'sent_date' => $date);
+				$this->db->insert('sent_dates', $data_array);
+				$batches_id = $this->db->insert_id();
+				
+				for ($i = 0; $i < $batches_num; $i++)
+				{
+					$q = $questions_ids[array_rand($questions_ids)];
+					$n = $name[array_rand($name)];
+					$s = $sname[array_rand($sname)];
+					$star = mt_rand(0, 5);
+					$f = ($star > 0 && $star <= 2) ? $feedback[array_rand($feedback)] : '';
+					$r = '';
+					$rt = 0;
+					if ( ! empty($f))
+					{
+						$r = $reply[array_rand($reply)];
+						$rt = $date + mt_rand(13, 24) * 3600;
+					}
+					
+					$data_array = array('users_id' => $users_id,
+										'questions_id' => $q,
+										'batches_id' => $batches_id,
+										'title' => $title[array_rand($title)],
+										'name' => $n,
+										'sname' => $s,
+										'doctor' => $doctors_ids[array_rand($doctors_ids)],
+										'location' => $locations_ids[array_rand($locations_ids)],
+										'treatment' => $treatment[array_rand($treatment)],
+										'age' => $age[array_rand($age)],
+										'email' => $n.'_'.$s.'@gmail.com',
+										'date' => $date,
+										'last' => $star > 0 ? ($date + mt_rand(1, 12) * 3600) : 0,
+										'stars' => $star,
+										'status' => $star > 0 ? 2 : 1,
+										'feedback' => $f,
+										'reply' => $r,
+										'reply_time' => $rt);
+					$onlines_num = mt_rand(0, 8);
+					$onlines_array = array();
+					for ($k = 0; $k < $onlines_num; $k++)
+					{
+						$onlines_array[] = $onlines[array_rand($onlines)];
+					}
+					$onlines_array = array_unique($onlines_array);
+					
+					foreach ($onlines_array as $o)
+					{
+						$data_array[$o] = TRUE;
+					}
+					
+					$this->db->insert('sent', $data_array);
+					$sent_id = $this->db->insert_id();
+					
+					$questions_num = mt_rand(0, 3);
+					if ( ! empty($questions_num))
+					{
+						for ($k = 1; $k <= $questions_num; $k++)
+						{
+							if ($questions_ids[$k] != $q)
+							{
+								$data_array = array('sent_id' => $sent_id,
+													'users_id' => $users_id,
+													'questions_id' => $questions_ids[$k],
+													'stars' => mt_rand(1, 5),
+													'date' => $date);
+								$this->db->insert('sent_questions', $data_array);
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		function set_defaults()
 		{
 			if ($this->logged_in())

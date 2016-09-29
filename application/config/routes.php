@@ -44,6 +44,7 @@ $route['404_override'] = '';
 $route['welcome'] = 'pub/welcome';
 $route['send_new'] = 'pub/send_new';
 $route['cron'] = 'pub/cron';
+$route['test_data'] = 'pub/test_data';
 //$route['invitation/(:any)'] = 'pub/invitation/$1';
 //$route['unsubscribe/(:any)'] = 'pub/unsubscribe/$1';
 $route['invitation/(:any)'] = 'pub/rating_page';

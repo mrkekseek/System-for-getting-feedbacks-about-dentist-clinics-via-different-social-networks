@@ -32,6 +32,11 @@
 			}
 		}
 		
+		function test_data()
+		{
+			//$this->pub->set_test_data();
+		}
+		
 		function index()
 		{
 			$this->pub->send_code(1, '+380981745687');
