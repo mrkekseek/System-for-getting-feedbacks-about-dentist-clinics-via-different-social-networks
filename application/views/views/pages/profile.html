@@ -64,8 +64,8 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">Promotiecampagne<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
-                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0'}" ng-click="upgrade_to_pro()">
+                    <label class="col-md-4">Promotiecampagne<span class="label label-primary label-pro" ng-show="user.account_type == '0' && user.account != 2" ng-click="upgrade_to_pro()">Pro</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0' && user.account != 2}" ng-click="upgrade_to_pro()">
                         <label class="ui-switch ui-switch-lg">
 							<input type="checkbox" name="promo_checked" ng-model="user.promo_checked" ng-checked="user.promo_checked == '1'" ng-change="user.promo_checked == '1' ? email_text_class = 'open' : ''" />
 							<i></i>
@@ -261,8 +261,8 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">Meervoudige vraagstelling<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
-                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0'}" ng-click="upgrade_to_pro()">
+                    <label class="col-md-4">Meervoudige vraagstelling<span class="label label-primary label-pro" ng-show="user.account_type == '0' && user.account != '2'" ng-click="upgrade_to_pro()">Pro</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.account != '2'}" ng-click="upgrade_to_pro()">
                         <label class="ui-switch ui-switch-lg">
 							<input type="checkbox" name="rating_questions" ng-model="user.rating_questions" ng-change="check_questions_for_user()" ng-checked="user.rating_questions == '1'" />
 							<i></i>
@@ -400,11 +400,11 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">Beoordelingspagina en Widgets<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
-					<div class="col-md-1 col-xs-3 margin-bottom" ng-class="{'basis-box': user.account_type == '0'}" ng-click="upgrade_to_pro()">
+                    <label class="col-md-4">Beoordelingspagina en Widgets<span class="label label-primary label-pro" ng-show="user.account_type == '0' && user.account != '2'" ng-click="upgrade_to_pro()">Pro</span></label>
+					<div class="col-md-1 col-xs-3 margin-bottom" ng-class="{'basis-box': user.account_type == '0' && user.account != '2'}" ng-click="upgrade_to_pro()">
 						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="short_checked" ng-model="user.short_checked" ng-checked="user.short_checked == '1'" /><i></i></label>
                     </div>
-                    <div class="col-md-offset-4 col-md-8 col-xs-12" ng-show="user.short_checked == '1'" ng-class="{'basis-box': user.account_type == '0'}" ng-click="upgrade_to_pro()">
+                    <div class="col-md-offset-4 col-md-8 col-xs-12" ng-show="user.short_checked == '1'" ng-class="{'basis-box': user.account_type == '0' && user.account != '2'}" ng-click="upgrade_to_pro()">
 						<div class="input-group">
 							<span class="input-group-addon">app.patientenreview.nl/</span>
 							<input type="text" class="form-control" name="name" ng-model="user.short" value="" ng-change="validate_url()" ng-class="short_class" />
@@ -514,8 +514,8 @@
 				<div class="divider divider-dashed divider-lg pull-in" id="intro4"></div>
 
 				<div class="form-group">
-                    <label class="col-md-4">Logo en huisstijl<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
-                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0'}" ng-click="upgrade_to_pro()">
+                    <label class="col-md-4">Logo en huisstijl<span class="label label-primary label-pro" ng-show="user.account_type == '0' && user.account != '2'" ng-click="upgrade_to_pro()">Pro</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.account != '2'}" ng-click="upgrade_to_pro()">
 						<span class="logo_here"><img src="{{user.logo}}" alt="" ng-if="user.logo != ''" /><a href="javascript:void(0);" class="remove_logo" ng-if="user.logo != ''" ng-click="remove_logo()" ng-class="{show: user.logo != ''}"><i class="glyphicon glyphicon-remove"></i></a></span>
                         <upload-button class="btn btn-primary btn-upload" url="/pub/upload_logo/" on-success="onLogo(response)">Upload logo</upload-button>
 						<button class="btn btn-primary" colorpicker ng-model="user.color">Wijzig kleur</button>
@@ -542,7 +542,7 @@
 	</div>
 	<div class="modal-body">
 		<textarea ng-model="value" class="form-control edit-emails-area" froala="froalaOptions"></textarea>
-		<span class="help-block with-margin" ng-show="user.account_type > 0">
+		<span class="help-block with-margin" ng-show="user.account_type > 0 || user.account == '2'">
 			Klik om een variabele in te voegen:
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Patiënt')">Aanhef Patiënt</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Patiënt')">Voornaam Patiënt</a>
@@ -553,7 +553,7 @@
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
 		</span>
 		
-		<span class="help-block" ng-show="user.account_type == '0'" ng-click="cancel()">
+		<span class="help-block" ng-show="user.account_type == '0' && user.account != '2'" ng-click="cancel()">
 			Upgrade naar Pro om variabelen in uw e-mailuitnodigingen te gebruiken.
 			<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
 		</span>

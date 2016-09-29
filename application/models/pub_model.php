@@ -3197,6 +3197,8 @@
 			
 			$this->db->where("id", $this->session->userdata('id'));
 			$this->db->where("organization", TRUE);
+			$this->db->or_where("id", $this->session->userdata('id'));
+			$this->db->where("account", 2);
 			if ($this->db->count_all_results('users'))
 			{
 				$tags[] = 'location';

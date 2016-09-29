@@ -2646,7 +2646,7 @@
 		
 		$scope.upgrade_to_pro = function()
 		{
-			if ($scope.user.account_type == 0 && $scope.user.organization == 0)
+			if ($scope.user.account_type == 0 && $scope.user.organization == 0 && $scope.user.account != 2)
 			{
 				var modalInstance;
 				modalInstance = $modal.open({
@@ -2669,7 +2669,7 @@
 		
 		$scope.upgrade_to_ultimate = function()
 		{
-			if ($scope.user.account_type == 1 && $scope.user.organization == 0)
+			if ($scope.user.account_type == 1 && $scope.user.organization == 0 && $scope.user.account != 2)
 			{
 				var modalInstance;
 				modalInstance = $modal.open({
@@ -3250,7 +3250,7 @@
 		$scope.blocked = {};
 		
 		$timeout(function() {
-			if ($scope.user.account_type < 1)
+			if ($scope.user.account_type < 1 && $scope.user.account != 2)
 			{
 				$scope.blocked = {'telefoonboek': true, 'vergelijkmondzorg': true, 'kliniekoverzicht': true, 'own': true};
 			}
