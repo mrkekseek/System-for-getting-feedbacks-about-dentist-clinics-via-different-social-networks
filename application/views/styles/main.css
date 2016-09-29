@@ -1082,6 +1082,15 @@ section.logo {
 	max-width: 300px;
 }
 
+.charts2-min-box .tooltip-inner {
+	text-align: left;
+	min-width: 300px;
+}
+
+.charts2-row .panel.panel-default.charts2-min-box {
+	z-index: 1;
+}
+
 .form-control.simple-input {
 	background: #fff;
 	border: 1px solid #ccc;
