@@ -2530,6 +2530,7 @@
 												"address" => $post['address'],
 												"postcode" => $post['postcode'],
 												"city" => $post['city'],
+												"emails_skip" => $post['emails_skip'],
 												"patients_reminder" => $post['patients_reminder'],
 												"reminder_checked" => $post['reminder_checked'],
 												"reminder_period" => $post['reminder_period'],
@@ -3346,13 +3347,15 @@
 			$users_fields = $this->get_users_fields();
 			
 			$this->db->where("id", $this->session->userdata('id'));
-			$this->db->where("organization", TRUE);
-			$this->db->or_where("id", $this->session->userdata('id'));
-			$this->db->where("account", 2);
-			if ($this->db->count_all_results('users'))
+			$this->db->limit(1);
+			$users = $this->db->get("users")->row_array();
+			if ( ! empty($users))
 			{
-				$tags[] = 'location';
-				$fields['location'] = 'Locatie';
+				if ( ! empty($users['organization']) || $users['account'] == 2)
+				{
+					$tags[] = 'location';
+					$fields['location'] = 'Locatie';
+				}
 			}
 			
 			$cols = array();
@@ -3446,6 +3449,20 @@
 											$line['error'] = 1;
 											$result['check'] = FALSE;
 										}
+										
+										if ( ! empty($users['emails_skip']))
+										{
+											$from = time() - ($users['emails_skip'] == 1 ? 7 : ($users['emails_skip'] == 2 ? 30 : 90)) * 24 * 3600;
+											$this->db->where('email', $email);
+											$this->db->where('date >=', $from);
+											$this->db->limit(1);
+											if ($this->db->count_all_results('sent') > 0)
+											{
+												$line['error'] = 3;
+												$result['check'] = FALSE;
+											}
+										}
+										
 										$emails[] = $email;
 									}
 									else
