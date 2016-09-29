@@ -15,6 +15,7 @@
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Zorgverlener')">Aanhef Zorgverlener</a>
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Profielfoto Zorgverlener')">Profielfoto Zorgverlener</a>
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
 						</span>
                     </div>
@@ -564,6 +565,7 @@
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Zorgverlener')">Aanhef Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Profielfoto Zorgverlener')">Profielfoto Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
 		</span>
 		
@@ -696,6 +698,13 @@
 			<div class="col-sm-6 col-xs-12" ng-show="items.subject">
 				<div class="form-group">
 					<input type="text" class="form-control" ng-model="test.subject" placeholder="Onderwerp van e-mail" />
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12" ng-show="items.doctors_avatar">
+				<div class="form-group">
+					<span class="avatar_here"><img src="{{test.doctors_avatar}}" alt="" ng-if="test.doctors_avatar != ''" /><a href="javascript:void(0);" class="remove_logo" ng-if="test.doctors_avatar != ''" ng-click="remove_avatar()" ng-class="{show: test.doctors_avatar != ''}"><i class="glyphicon glyphicon-remove"></i></a></span>
+					<upload-button class="btn btn-primary btn-upload" url="/pub/upload_avatar/" on-success="onAvatar(response)">Upload avatar</upload-button>
 				</div>
 			</div>
 		</div>

@@ -2451,7 +2451,7 @@
 		$scope.user = {};
 		$scope.old_user = {};
 		$scope.email_text_class = "close";
-		$scope.tags = ['{{Vraagstelling}}', '{{Formulering van de vraagstelling}}', '{{Aanhef Patiënt}}', '{{Voornaam Patiënt}}', '{{Achternaam Patiënt}}', '{{Aanhef Zorgverlener}}', '{{Voornaam Zorgverlener}}', '{{Achternaam Zorgverlener}}', '{{Onderwerp van E-mail}}', '{{Naam Praktijk}}'];
+		$scope.tags = ['{{Vraagstelling}}', '{{Formulering van de vraagstelling}}', '{{Aanhef Patiënt}}', '{{Voornaam Patiënt}}', '{{Achternaam Patiënt}}', '{{Aanhef Zorgverlener}}', '{{Voornaam Zorgverlener}}', '{{Achternaam Zorgverlener}}', '{{Profielfoto Zorgverlener}}', '{{Onderwerp van E-mail}}', '{{Naam Praktijk}}'];
 		
 		$scope.set_var = function(variable) {
 			var pos = jQuery('[name=subject]').prop("selectionStart");
@@ -2620,7 +2620,8 @@
 						sname: '{{Achternaam Patiënt}}',
 						doctors_title: '{{Aanhef Zorgverlener}}',
 						doctors_name: '{{Voornaam Zorgverlener}}',
-						doctors_sname: '{{Achternaam Zorgverlener}}'};
+						doctors_sname: '{{Achternaam Zorgverlener}}',
+						doctors_avatar: '{{Profielfoto Zorgverlener}}'};
 						
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
 			for (var i in fields)
@@ -3457,6 +3458,7 @@
 		
 		if ($location.path() == "/pages/doctors_add")
 		{
+			$scope.doctor.avatar = '';
 			$scope.amount = {};
 			$http.get("/pub/get_amount/").success(function(data, status, headers, config) {
 				var result;
@@ -3521,6 +3523,23 @@
 				$scope.step = index;
 			};
 		}
+		
+		$scope.onAvatar = function(response)
+		{
+			var data = response.data;
+			$scope.doctor.avatar = logger.check(data);
+			if ($scope.doctor.avatar)
+			{
+				$scope.doctor.new_avatar = $scope.doctor.avatar;
+				$scope.doctor.avatar = './avatars/tmp/' + $scope.doctor.avatar;
+			}
+		};
+		
+		$scope.remove_avatar = function()
+		{
+			$scope.doctor.remove_avatar = 1;
+			$scope.doctor.avatar = '';
+		};
 		
 		if ($location.path().indexOf("/pages/doctors_edit") + 1)
 		{
@@ -8574,6 +8593,7 @@
 		$scope.user = items[1];
 		$scope.test = {};
 		$scope.test.email = $scope.user.email;
+		$scope.test.doctors_avatar = '';
 		
 		$scope.cancel = function() {
 			$modalInstance.dismiss("cancel");
@@ -8603,6 +8623,24 @@
 				$modalInstance.close($scope.test);
 			}
         };
+		
+		$scope.onAvatar = function(response)
+		{
+			var temp = window.location.href.split('/');
+			var base_url = temp[0] + "//" + temp[2];
+			
+			var data = response.data;
+			$scope.test.doctors_avatar = logger.check(data);
+			if ($scope.test.doctors_avatar)
+			{
+				$scope.test.doctors_avatar = base_url + '/avatars/tmp/' + $scope.test.doctors_avatar;
+			}
+		};
+		
+		$scope.remove_avatar = function()
+		{
+			$scope.test.doctors_avatar = '';
+		};
     };
 	
 	function ModalInstanceStarsEditCtrl($scope, $modalInstance, $http, $location, logger, items) {

@@ -47,6 +47,16 @@
 									<div class="divider divider-dashed divider-lg pull-in"></div>
 									
 									<div class="form-group">
+										<label class="col-md-4">Profielfoto</label>
+										<div class="col-md-8">
+											<span class="avatar_here"><img src="{{doctor.avatar}}" alt="" ng-if="doctor.avatar != ''" /><a href="javascript:void(0);" class="remove_logo" ng-if="doctor.avatar != ''" ng-click="remove_avatar()" ng-class="{show: doctor.avatar != ''}"><i class="glyphicon glyphicon-remove"></i></a></span>
+											<upload-button class="btn btn-primary btn-upload" url="/pub/upload_avatar/" on-success="onAvatar(response)">Upload avatar</upload-button>
+										</div>
+									</div>
+									
+									<div class="divider divider-dashed divider-lg pull-in"></div>
+									
+									<div class="form-group">
 										<label class="col-md-4">Waarde in Excel-bestand</label>
 										<div class="col-md-8">
 											<input type="text" class="form-control" name="name" ng-model="doctor.name" value="" required="required" />

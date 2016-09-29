@@ -376,6 +376,19 @@
 			$this->response($result);
 		}
 		
+		function upload_avatar()
+		{
+			$result = array();
+			if ($this->pub->logged_in())
+			{
+				if ( ! empty($_FILES['file']['tmp_name']))
+				{
+					$result = $this->pub->save_avatar($_FILES['file']);
+				}
+			}
+			$this->response($result);
+		}
+		
 		function feedback_info()
 		{
 			$result = $this->pub->feedback_info($this->post['id']);

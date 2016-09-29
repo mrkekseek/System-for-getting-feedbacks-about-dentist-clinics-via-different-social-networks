@@ -10,6 +10,7 @@
 					<thead>
 						<tr>
 							<th>Zorgverlenernummer</th>
+							<th>Profielfoto</th>
 							<th>Aanhef</th>
 							<th>Voornaam</th>
 							<th>Achternaam</th>
@@ -20,6 +21,7 @@
 					<tbody>
 						<tr ng-repeat="d in doctors">
 							<td>{{d.id}}</td>
+							<td><img src="{{d.avatar}}" class="doctors_avatar" alt="" ng-if="d.avatar != ''" /></td>
 							<td>{{d.title}}</td>
 							<td>{{d.firstname}}</td>
 							<td>{{d.lastname}}</td>

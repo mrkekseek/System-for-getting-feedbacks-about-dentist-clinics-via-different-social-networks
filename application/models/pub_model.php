@@ -26,6 +26,7 @@
 						  'doctors_title' => '{{Aanhef Zorgverlener}}',
 						  'doctors_name' => '{{Voornaam Zorgverlener}}',
 						  'doctors_sname' => '{{Achternaam Zorgverlener}}',
+						  'doctors_avatar' => '{{Profielfoto Zorgverlener}}',
 						  'username' => '{{Naam Praktijk}}',
 						  'q_name' => '{{Vraagstelling}}',
 						  'q_desc' => '{{Formulering van de vraagstelling}}');
@@ -1271,6 +1272,33 @@
 										"zorgkaart" => ! empty($post['zorgkaart']) ? strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer' : '',
 										"short" => ! empty($post['short']) ? $post['short'] : "",
 										"short_checked" => ! empty($post['short_checked']) ? $post['short_checked'] : 0);
+										
+					if ( ! empty($post['new_avatar']) || ! empty($post['remove_avatar']))
+					{
+						if ( ! empty($post['id']))
+						{
+							$this->db->where("id", $post['id']);
+							$this->db->limit(1);
+							$row = $this->db->get("doctors")->row_array();
+
+							if ( ! empty($row['avatar']))
+							{
+								unlink($row['avatar']);
+								$data_array['avatar'] = '';
+							}
+						}
+
+						if ( ! empty($post['new_avatar']))
+						{
+							$source = './avatars/tmp/'.$post['new_avatar'];
+							$dest = './avatars/'.$post['new_avatar'];
+							if (rename($source, $dest))
+							{
+								$data_array['avatar'] = $dest;
+								delete_files('./avatars/tmp/');
+							}
+						}
+					}
 
 					$doctors_id = 0;
 					if ( ! empty($post['id']))
@@ -3908,6 +3936,7 @@
 							empty($doc['title']) ? '{{EMPTY}}' : $doc['title'],
 							empty($doc['firstname']) ? '{{EMPTY}}' : $doc['firstname'],
 							empty($doc['lastname']) ? '{{EMPTY}}' : $doc['lastname'],
+							empty($doc['avatar']) ? '{{EMPTY}}' : '<img src="'.str_replace('./avatars/', base_url().'avatars/', $doc['avatar']).'" style="vertical-align: baseline;" alt="" />',
 							empty($user['username']) ? '{{EMPTY}}' : $user['username'],
 							empty($user['q_name']) ? '{{EMPTY}}' : $user['q_name'],
 							empty($user['q_desc']) ? '{{EMPTY}}' : $user['q_desc'],
@@ -3964,6 +3993,7 @@
 							empty($post['values']['doctors_title']) ? '' : $post['values']['doctors_title'],
 							empty($post['values']['doctors_name']) ? '' : $post['values']['doctors_name'],
 							empty($post['values']['doctors_sname']) ? '' : $post['values']['doctors_sname'],
+							empty($post['values']['doctors_avatar']) ? '' : '<img src="'.$post['values']['doctors_avatar'].'" style="vertical-align: baseline;" alt="" />',
 							empty($post['user']['username']) ? '' : $post['user']['username'],
 							'<br />');
 			
@@ -7488,6 +7518,39 @@
 				$config['new_image'] = './logos/tmp/'.$file;
 				$config['width'] = '300';
 				$config['height'] = '80';
+
+				$this->load->library('image_lib', $config);
+				if ( ! $this->image_lib->resize())
+				{
+					$this->errors[] = array($this->image_lib->display_errors());
+				}
+				else
+				{
+					return $file;
+				}
+			}
+			else
+			{
+				$this->errors[] = array("U kunt alleen .png en .jpg bestanden gebruiken.");
+			}
+		}
+		
+		function save_avatar($tmp_file)
+		{
+			if ($tmp_file['type'] == "image/jpeg" || $tmp_file['type'] == "image/png")
+			{
+				if ( ! file_exists('./avatars/tmp/'))
+				{
+					mkdir('./avatars/tmp/', 0755, TRUE);
+				}
+				
+				$part = explode('.', $tmp_file['name']);
+				$ext = strtolower(array_pop($part));
+				$file = time().mt_rand(1000, 9999).'.'.$ext;
+				$config['source_image'] = $tmp_file['tmp_name'];
+				$config['new_image'] = './avatars/tmp/'.$file;
+				$config['width'] = '60';
+				$config['height'] = '60';
 
 				$this->load->library('image_lib', $config);
 				if ( ! $this->image_lib->resize())
