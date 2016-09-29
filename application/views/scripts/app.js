@@ -3134,9 +3134,9 @@
     'use strict';
 
     angular.module('app')
-        .controller('SubscriptionCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', 'logger', SubscriptionCtrl]); // overall control
+        .controller('SubscriptionCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', '$timeout', 'logger', SubscriptionCtrl]); // overall control
 
-    function SubscriptionCtrl($scope, $rootScope, $window, $http, $location, $modal, logger) {
+    function SubscriptionCtrl($scope, $rootScope, $window, $http, $location, $modal, $timeout, logger) {
 		$scope.info = {};
 		$http.get("/pub/subscription_info/").success(function(data, status, headers, config) {
 			var result;
@@ -3150,10 +3150,12 @@
 			$scope.info.account_link = $scope.info.account != 1 ? ("#/pages/activate/" + $scope.info.id) : "#/pages/subscription";
 			$scope.info.account_text = $scope.info.account == 0 ? ($scope.info.account_stop == 1 ? "Actief tot einde betaaltermijn" : "Gestopt") : ($scope.info.account == 1 ? ($scope.info.account_stop == 1 ? "Actief tot einde betaaltermijn" : "Actief") : "Proefperiode");
 			
-			if ($scope.info.account != $scope.user.account || $scope.info.account_type != $scope.user.account_type)
-			{
-				$window.location.reload();
-			}
+			$timeout(function() {
+				if ($scope.info.account != $scope.user.account || $scope.info.account_type != $scope.user.account_type)
+				{
+					$window.location.reload();
+				}
+			}, 500);
 		});
 		
 		$scope.account_change = function()
