@@ -205,7 +205,7 @@
 								<td ng-show="filter == 'positive' || filter == 'with_feedback'">
 									<label class="ui-checkbox"><input type="checkbox" ng-model="check_letter[l.id]" ng-change="check_one_letter(l.id)"/><span></span></label>
 								</td>
-								<td>{{l.date_time}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.date_time}}</td>
 								<td>
 									<span ng-if="l.stars == 0">Niet beoordeeld</span>
 									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 0"></i>
