@@ -6233,7 +6233,7 @@
 				$users_id = $this->session->userdata("id");
 				$onlines = array('zorgkaart', 'facebook', 'independer', 'google');
 				$stat = array();
-				
+
 				$this->db->order_by('date', 'asc');
 				$this->db->where('users_id', $users_id);
 				$result = $this->db->get('reviews_history')->result_array();

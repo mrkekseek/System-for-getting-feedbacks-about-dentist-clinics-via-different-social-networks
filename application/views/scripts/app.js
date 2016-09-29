@@ -1219,45 +1219,55 @@
 		});
 		
 		$scope.onl = {};
+		$scope.empty_filter = false;
 		$scope.area_online_empty = false;
 		$scope.get_online = function()
 		{
 			$http.post('/pub/stat_online/', {}).success(function(data, status, headers, config) {
 				$scope.onl = logger.check(data);
-				if ($scope.onl && $scope.onl.pie)
+
+				if ($scope.onl && $scope.onl.months)
 				{
-					for (var k in $scope.onlines)
+					$scope.empty_filter = false;
+					if ($scope.onl && $scope.onl.pie)
 					{
-						$scope.pie_online.addData([[0, {name: $scope.onlines[k], value: ($scope.onl.pie[$scope.onlines[k].toLowerCase()] ? $scope.onl.pie[$scope.onlines[k].toLowerCase()] : 0) * 1}, false, false]]);
+						for (var k in $scope.onlines)
+						{
+							$scope.pie_online.addData([[0, {name: $scope.onlines[k], value: ($scope.onl.pie[$scope.onlines[k].toLowerCase()] ? $scope.onl.pie[$scope.onlines[k].toLowerCase()] : 0) * 1}, false, false]]);
+						}
+					}
+						
+					if ($scope.onl && $scope.onl.history)
+					{
+						var series = [];
+						var max = 5;
+						var data = [];
+						var empty_check = true;
+						for (var k in $scope.onlines)
+						{
+							data = [];
+							for (var m in $scope.onl.history)
+							{
+								var value = $scope.onl.history[m][$scope.onlines[k].toLowerCase()];
+								data.push(value);
+								if (value > 0)
+								{
+									empty_check = false;
+								}
+							}
+							series.push({type: 'line', name: $scope.onlines[k], data: data});
+						}
+						
+						$scope.area_online.setOption({xAxis: [{data: $scope.onl.months}],
+													  yAxis: [{min: 0, max: max}],
+													  series: series});
+						$scope.area_online.resize();
+						$scope.area_online_empty = empty_check;
 					}
 				}
-					
-				if ($scope.onl && $scope.onl.history)
+				else
 				{
-					var series = [];
-					var max = 5;
-					var data = [];
-					var empty_check = true;
-					for (var k in $scope.onlines)
-					{
-						data = [];
-						for (var m in $scope.onl.history)
-						{
-							var value = $scope.onl.history[m][$scope.onlines[k].toLowerCase()];
-							data.push(value);
-							if (value > 0)
-							{
-								empty_check = false;
-							}
-						}
-						series.push({type: 'line', name: $scope.onlines[k], data: data});
-					}
-					
-					$scope.area_online.setOption({xAxis: [{data: $scope.onl.months}],
-												  yAxis: [{min: 0, max: max}],
-												  series: series});
-					$scope.area_online.resize();
-					$scope.area_online_empty = empty_check;
+					$scope.empty_filter = true;
 				}
 			});
 		};
