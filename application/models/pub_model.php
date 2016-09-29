@@ -1743,6 +1743,19 @@
 					$items[] = $row;
 				}
 			}
+			
+			foreach ($items as $key => $row)
+			{
+				$row['count'] = 0;
+				
+				$this->db->where('questions_id', $row['id']);
+				$row['count'] += $this->db->count_all_results('sent');
+				
+				$this->db->where('questions_id', $row['id']);
+				$row['count'] += $this->db->count_all_results('sent_questions');
+				
+				$items[$key] = $row;
+			}
 
 			return $items;
 		}
@@ -1752,10 +1765,27 @@
 			return $this->db->get('rating_questions')->result_array();
 		}
 		
-		function questions_save($questions_id)
+		function questions_save($question)
 		{
 			if ($this->logged_in())
 			{
+				$questions_id = 0;
+				$this->db->where('LOWER(question_name)', strtolower($question['name']));
+				$this->db->where('LOWER(question_description)', strtolower($question['desc']));
+				$this->db->limit(1);
+				$row = $this->db->get('rating_questions')->row_array();
+				if ( ! empty($row))
+				{
+					$questions_id = $row['id'];
+				}
+				else
+				{
+					$data_array = array('question_name' => $question['name'],
+										'question_description' => $question['desc']);
+					$this->db->insert('rating_questions', $data_array);
+					$questions_id = $this->db->insert_id();
+				}
+				
 				$this->db->where('questions_id', $questions_id);
 				$this->db->where('users_id', $this->session->userdata("id"));
 				if ( ! $this->db->count_all_results('users_questions'))
@@ -1795,12 +1825,12 @@
 			}
 		}
 		
-		function questions_edit($questions_id, $new_id)
+		function questions_edit($questions_id, $question)
 		{
 			if ($this->logged_in())
 			{
 				$this->questions_remove($questions_id);
-				$this->questions_save($new_id);
+				$this->questions_save($question);
 			}
 		}
 

@@ -2758,7 +2758,7 @@
 		$scope.rating = 0;
 		$scope.questions_list = {};
 		$scope.add_new_question = 0;
-		$scope.new_question = '';
+		$scope.new_question = {};
 		$http.get("/pub/user/profile/").success(function(data, status, headers, config) {
 			var result;
 			if (result = logger.check(data))
@@ -2801,7 +2801,7 @@
 				$scope.edit_question[item.id] = 0;
 				
 				$scope.edit_questions[item.id] = {};
-				$scope.edit_questions[item.id].name = item;
+				$scope.edit_questions[item.id].name = item.question_name;
 				$scope.edit_questions[item.id].desc = item.question_description;
 				
 				$scope.edit_questions_list[item.id] = angular.copy($scope.questions_list);
@@ -2821,9 +2821,9 @@
 		
 		$scope.add_new_question_save = function()
 		{
-			if ($scope.new_question && $scope.new_question.id)
+			if ($scope.new_question && $scope.new_question.name != '' && $scope.new_question.desc != '')
 			{
-				$http.post("/pub/questions_save/", {questions_id: $scope.new_question.id}).success(function(data, status, headers, config) {
+				$http.post("/pub/questions_save/", $scope.new_question).success(function(data, status, headers, config) {
 					var result = logger.check(data);
 					$scope.user.questions = result.questions;
 					$scope.questions_list = result.questions_list;
@@ -2882,19 +2882,125 @@
 			}
 		};
 		
+		$scope.autos = {};
+		$scope.index = {};
+		$scope.auto_question = function(questions_id)
+		{
+			questions_id = questions_id || 0;
+			$scope.autos = {};
+			$scope.index = {};
+			$scope.index[questions_id] = 'z-top';
+			
+			var field = false;
+			if (questions_id)
+			{
+				field = $scope.edit_questions[questions_id];
+			}
+			else
+			{
+				field = $scope.new_question;
+			}
+			
+			var text = field.name || '';
+			var list = [];
+			if (text != '')
+			{
+				for (var k in $scope.questions_list)
+				{
+					if ($scope.questions_list[k].question_name.toLowerCase().indexOf(text.toLowerCase()) == 0 && $scope.questions_list[k].question_name.toLowerCase() != text.toLowerCase())
+					{
+						list.push($scope.questions_list[k]);
+					}
+				}
+			}
+			else
+			{
+				list = $scope.questions_list;
+			}
+			list = list.slice(0, (text != '' ? 30 : 7));
+			list.sort(function(a, b) { return (a.count - b.count); });
+
+			$scope.autos[questions_id] = list;
+		};
+		
+		$scope.auto_over = function(questions_id, auto_id)
+		{
+			questions_id = questions_id || false;
+			for (var k in $scope.questions_list)
+			{
+				if ($scope.questions_list[k].id == auto_id)
+				{
+					if (questions_id)
+					{
+						$scope.edit_questions[questions_id].desc = $scope.questions_list[k].question_description;
+					}
+					else
+					{
+						$scope.new_question.desc = $scope.questions_list[k].question_description;
+					}
+				}
+			}
+		};
+		
+		$scope.auto_out = function(questions_id)
+		{
+			questions_id = questions_id || false;
+			if (questions_id)
+			{
+				$scope.edit_questions[questions_id].desc = $scope.last_edit_desc;
+			}
+			else
+			{
+				$scope.new_question.desc = '';
+			}
+		};
+		
+		$scope.auto_click = function(questions_id, auto_id)
+		{
+			questions_id = questions_id || false;
+			for (var k in $scope.questions_list)
+			{
+				if ($scope.questions_list[k].id == auto_id)
+				{
+					if (questions_id)
+					{
+						$scope.edit_questions[questions_id].id = $scope.questions_list[k].id;
+						$scope.edit_questions[questions_id].name = $scope.questions_list[k].question_name;
+						$scope.edit_questions[questions_id].desc = $scope.questions_list[k].question_description;
+					}
+					else
+					{
+						$scope.new_question.id = $scope.questions_list[k].id;
+						$scope.new_question.name = $scope.questions_list[k].question_name;
+						$scope.new_question.desc = $scope.questions_list[k].question_description;
+					}
+				}
+			}
+			
+			$scope.autos = {};
+		};
+		
+		$scope.auto_keyup = function($event, questions_id)
+		{
+			if ($event.keyCode == 13)
+			{
+				questions_id = questions_id || 0;
+				$window.document.getElementById('desc_' + questions_id).focus();
+
+				$scope.autos = {};
+			}
+		};
+		
+		$scope.last_edit_desc = '';
 		$scope.edit_questions = function(questions_id)
 		{
+			$scope.last_edit_desc = $scope.edit_questions[questions_id].desc;
 			$scope.edit_question[questions_id] = 1;
 		};
-		
-		$scope.change_edit_question = function(questions_id)
-		{
-			$scope.edit_questions[questions_id].desc = $scope.edit_questions[questions_id].name['question_description'];
-		};
-		
+
 		$scope.save_questions = function(questions_id)
 		{
-			$http.post("/pub/questions_edit/", {questions_id: questions_id, new_id: $scope.edit_questions[questions_id].name.id}).success(function(data, status, headers, config) {
+			$http.post("/pub/questions_edit/", {questions_id: questions_id, question: $scope.edit_questions[questions_id]}).success(function(data, status, headers, config) {
 				var result = logger.check(data);
 				$scope.user.questions = result.questions;
 				$scope.questions_list = result.questions_list;
