@@ -1219,45 +1219,55 @@
 		});
 		
 		$scope.onl = {};
+		$scope.empty_filter = false;
 		$scope.area_online_empty = false;
 		$scope.get_online = function()
 		{
 			$http.post('/pub/stat_online/', {}).success(function(data, status, headers, config) {
 				$scope.onl = logger.check(data);
-				if ($scope.onl && $scope.onl.pie)
+
+				if ($scope.onl && $scope.onl.months)
 				{
-					for (var k in $scope.onlines)
+					$scope.empty_filter = false;
+					if ($scope.onl && $scope.onl.pie)
 					{
-						$scope.pie_online.addData([[0, {name: $scope.onlines[k], value: ($scope.onl.pie[$scope.onlines[k].toLowerCase()] ? $scope.onl.pie[$scope.onlines[k].toLowerCase()] : 0) * 1}, false, false]]);
+						for (var k in $scope.onlines)
+						{
+							$scope.pie_online.addData([[0, {name: $scope.onlines[k], value: ($scope.onl.pie[$scope.onlines[k].toLowerCase()] ? $scope.onl.pie[$scope.onlines[k].toLowerCase()] : 0) * 1}, false, false]]);
+						}
+					}
+						
+					if ($scope.onl && $scope.onl.history)
+					{
+						var series = [];
+						var max = 5;
+						var data = [];
+						var empty_check = true;
+						for (var k in $scope.onlines)
+						{
+							data = [];
+							for (var m in $scope.onl.history)
+							{
+								var value = $scope.onl.history[m][$scope.onlines[k].toLowerCase()];
+								data.push(value);
+								if (value > 0)
+								{
+									empty_check = false;
+								}
+							}
+							series.push({type: 'line', name: $scope.onlines[k], data: data});
+						}
+						
+						$scope.area_online.setOption({xAxis: [{data: $scope.onl.months}],
+													  yAxis: [{min: 0, max: max}],
+													  series: series});
+						$scope.area_online.resize();
+						$scope.area_online_empty = empty_check;
 					}
 				}
-					
-				if ($scope.onl && $scope.onl.history)
+				else
 				{
-					var series = [];
-					var max = 5;
-					var data = [];
-					var empty_check = true;
-					for (var k in $scope.onlines)
-					{
-						data = [];
-						for (var m in $scope.onl.history)
-						{
-							var value = $scope.onl.history[m][$scope.onlines[k].toLowerCase()];
-							data.push(value);
-							if (value > 0)
-							{
-								empty_check = false;
-							}
-						}
-						series.push({type: 'line', name: $scope.onlines[k], data: data});
-					}
-					
-					$scope.area_online.setOption({xAxis: [{data: $scope.onl.months}],
-												  yAxis: [{min: 0, max: max}],
-												  series: series});
-					$scope.area_online.resize();
-					$scope.area_online_empty = empty_check;
+					$scope.empty_filter = true;
 				}
 			});
 		};
@@ -2441,7 +2451,7 @@
 		$scope.user = {};
 		$scope.old_user = {};
 		$scope.email_text_class = "close";
-		$scope.tags = ['{{Vraagstelling}}', '{{Formulering van de vraagstelling}}', '{{Aanhef Patiënt}}', '{{Voornaam Patiënt}}', '{{Achternaam Patiënt}}', '{{Aanhef Zorgverlener}}', '{{Voornaam Zorgverlener}}', '{{Achternaam Zorgverlener}}', '{{Onderwerp van E-mail}}', '{{Naam Praktijk}}'];
+		$scope.tags = ['{{Vraagstelling}}', '{{Formulering van de vraagstelling}}', '{{Aanhef Patiënt}}', '{{Voornaam Patiënt}}', '{{Achternaam Patiënt}}', '{{Aanhef Zorgverlener}}', '{{Voornaam Zorgverlener}}', '{{Achternaam Zorgverlener}}', '{{Profielfoto Zorgverlener}}', '{{Onderwerp van E-mail}}', '{{Naam Praktijk}}'];
 		
 		$scope.set_var = function(variable) {
 			var pos = jQuery('[name=subject]').prop("selectionStart");
@@ -2610,7 +2620,8 @@
 						sname: '{{Achternaam Patiënt}}',
 						doctors_title: '{{Aanhef Zorgverlener}}',
 						doctors_name: '{{Voornaam Zorgverlener}}',
-						doctors_sname: '{{Achternaam Zorgverlener}}'};
+						doctors_sname: '{{Achternaam Zorgverlener}}',
+						doctors_avatar: '{{Profielfoto Zorgverlener}}'};
 						
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
 			for (var i in fields)
@@ -2646,7 +2657,7 @@
 		
 		$scope.upgrade_to_pro = function()
 		{
-			if ($scope.user.account_type == 0 && $scope.user.organization == 0)
+			if ($scope.user.account_type == 0 && $scope.user.organization == 0 && $scope.user.account != 2)
 			{
 				var modalInstance;
 				modalInstance = $modal.open({
@@ -2669,7 +2680,7 @@
 		
 		$scope.upgrade_to_ultimate = function()
 		{
-			if ($scope.user.account_type == 1 && $scope.user.organization == 0)
+			if ($scope.user.account_type == 1 && $scope.user.organization == 0 && $scope.user.account != 2)
 			{
 				var modalInstance;
 				modalInstance = $modal.open({
@@ -2747,7 +2758,7 @@
 		$scope.rating = 0;
 		$scope.questions_list = {};
 		$scope.add_new_question = 0;
-		$scope.new_question = '';
+		$scope.new_question = {};
 		$http.get("/pub/user/profile/").success(function(data, status, headers, config) {
 			var result;
 			if (result = logger.check(data))
@@ -2790,7 +2801,7 @@
 				$scope.edit_question[item.id] = 0;
 				
 				$scope.edit_questions[item.id] = {};
-				$scope.edit_questions[item.id].name = item;
+				$scope.edit_questions[item.id].name = item.question_name;
 				$scope.edit_questions[item.id].desc = item.question_description;
 				
 				$scope.edit_questions_list[item.id] = angular.copy($scope.questions_list);
@@ -2810,9 +2821,9 @@
 		
 		$scope.add_new_question_save = function()
 		{
-			if ($scope.new_question && $scope.new_question.id)
+			if ($scope.new_question && $scope.new_question.name != '' && $scope.new_question.desc != '')
 			{
-				$http.post("/pub/questions_save/", {questions_id: $scope.new_question.id}).success(function(data, status, headers, config) {
+				$http.post("/pub/questions_save/", $scope.new_question).success(function(data, status, headers, config) {
 					var result = logger.check(data);
 					$scope.user.questions = result.questions;
 					$scope.questions_list = result.questions_list;
@@ -2871,19 +2882,125 @@
 			}
 		};
 		
+		$scope.autos = {};
+		$scope.index = {};
+		$scope.auto_question = function(questions_id)
+		{
+			questions_id = questions_id || 0;
+			$scope.autos = {};
+			$scope.index = {};
+			$scope.index[questions_id] = 'z-top';
+			
+			var field = false;
+			if (questions_id)
+			{
+				field = $scope.edit_questions[questions_id];
+			}
+			else
+			{
+				field = $scope.new_question;
+			}
+			
+			var text = field.name || '';
+			var list = [];
+			if (text != '')
+			{
+				for (var k in $scope.questions_list)
+				{
+					if ($scope.questions_list[k].question_name.toLowerCase().indexOf(text.toLowerCase()) == 0 && $scope.questions_list[k].question_name.toLowerCase() != text.toLowerCase())
+					{
+						list.push($scope.questions_list[k]);
+					}
+				}
+			}
+			else
+			{
+				list = $scope.questions_list;
+			}
+			list = list.slice(0, (text != '' ? 30 : 7));
+			list.sort(function(a, b) { return (a.count - b.count); });
+
+			$scope.autos[questions_id] = list;
+		};
+		
+		$scope.auto_over = function(questions_id, auto_id)
+		{
+			questions_id = questions_id || false;
+			for (var k in $scope.questions_list)
+			{
+				if ($scope.questions_list[k].id == auto_id)
+				{
+					if (questions_id)
+					{
+						$scope.edit_questions[questions_id].desc = $scope.questions_list[k].question_description;
+					}
+					else
+					{
+						$scope.new_question.desc = $scope.questions_list[k].question_description;
+					}
+				}
+			}
+		};
+		
+		$scope.auto_out = function(questions_id)
+		{
+			questions_id = questions_id || false;
+			if (questions_id)
+			{
+				$scope.edit_questions[questions_id].desc = $scope.last_edit_desc;
+			}
+			else
+			{
+				$scope.new_question.desc = '';
+			}
+		};
+		
+		$scope.auto_click = function(questions_id, auto_id)
+		{
+			questions_id = questions_id || false;
+			for (var k in $scope.questions_list)
+			{
+				if ($scope.questions_list[k].id == auto_id)
+				{
+					if (questions_id)
+					{
+						$scope.edit_questions[questions_id].id = $scope.questions_list[k].id;
+						$scope.edit_questions[questions_id].name = $scope.questions_list[k].question_name;
+						$scope.edit_questions[questions_id].desc = $scope.questions_list[k].question_description;
+					}
+					else
+					{
+						$scope.new_question.id = $scope.questions_list[k].id;
+						$scope.new_question.name = $scope.questions_list[k].question_name;
+						$scope.new_question.desc = $scope.questions_list[k].question_description;
+					}
+				}
+			}
+			
+			$scope.autos = {};
+		};
+		
+		$scope.auto_keyup = function($event, questions_id)
+		{
+			if ($event.keyCode == 13)
+			{
+				questions_id = questions_id || 0;
+				$window.document.getElementById('desc_' + questions_id).focus();
+
+				$scope.autos = {};
+			}
+		};
+		
+		$scope.last_edit_desc = '';
 		$scope.edit_questions = function(questions_id)
 		{
+			$scope.last_edit_desc = $scope.edit_questions[questions_id].desc;
 			$scope.edit_question[questions_id] = 1;
 		};
-		
-		$scope.change_edit_question = function(questions_id)
-		{
-			$scope.edit_questions[questions_id].desc = $scope.edit_questions[questions_id].name['question_description'];
-		};
-		
+
 		$scope.save_questions = function(questions_id)
 		{
-			$http.post("/pub/questions_edit/", {questions_id: questions_id, new_id: $scope.edit_questions[questions_id].name.id}).success(function(data, status, headers, config) {
+			$http.post("/pub/questions_edit/", {questions_id: questions_id, question: $scope.edit_questions[questions_id]}).success(function(data, status, headers, config) {
 				var result = logger.check(data);
 				$scope.user.questions = result.questions;
 				$scope.questions_list = result.questions_list;
@@ -3124,9 +3241,9 @@
     'use strict';
 
     angular.module('app')
-        .controller('SubscriptionCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', 'logger', SubscriptionCtrl]); // overall control
+        .controller('SubscriptionCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', '$timeout', 'logger', SubscriptionCtrl]); // overall control
 
-    function SubscriptionCtrl($scope, $rootScope, $window, $http, $location, $modal, logger) {
+    function SubscriptionCtrl($scope, $rootScope, $window, $http, $location, $modal, $timeout, logger) {
 		$scope.info = {};
 		$http.get("/pub/subscription_info/").success(function(data, status, headers, config) {
 			var result;
@@ -3140,10 +3257,12 @@
 			$scope.info.account_link = $scope.info.account != 1 ? ("#/pages/activate/" + $scope.info.id) : "#/pages/subscription";
 			$scope.info.account_text = $scope.info.account == 0 ? ($scope.info.account_stop == 1 ? "Actief tot einde betaaltermijn" : "Gestopt") : ($scope.info.account == 1 ? ($scope.info.account_stop == 1 ? "Actief tot einde betaaltermijn" : "Actief") : "Proefperiode");
 			
-			if ($scope.info.account != $scope.user.account || $scope.info.account_type != $scope.user.account_type)
-			{
-				$window.location.reload();
-			}
+			$timeout(function() {
+				if ($scope.info.account != $scope.user.account || $scope.info.account_type != $scope.user.account_type)
+				{
+					$window.location.reload();
+				}
+			}, 500);
 		});
 		
 		$scope.account_change = function()
@@ -3250,7 +3369,7 @@
 		$scope.blocked = {};
 		
 		$timeout(function() {
-			if ($scope.user.account_type < 1)
+			if ($scope.user.account_type < 1 && $scope.user.account != 2)
 			{
 				$scope.blocked = {'telefoonboek': true, 'vergelijkmondzorg': true, 'kliniekoverzicht': true, 'own': true};
 			}
@@ -3445,6 +3564,7 @@
 		
 		if ($location.path() == "/pages/doctors_add")
 		{
+			$scope.doctor.avatar = '';
 			$scope.amount = {};
 			$http.get("/pub/get_amount/").success(function(data, status, headers, config) {
 				var result;
@@ -3509,6 +3629,23 @@
 				$scope.step = index;
 			};
 		}
+		
+		$scope.onAvatar = function(response)
+		{
+			var data = response.data;
+			$scope.doctor.avatar = logger.check(data);
+			if ($scope.doctor.avatar)
+			{
+				$scope.doctor.new_avatar = $scope.doctor.avatar;
+				$scope.doctor.avatar = './avatars/tmp/' + $scope.doctor.avatar;
+			}
+		};
+		
+		$scope.remove_avatar = function()
+		{
+			$scope.doctor.remove_avatar = 1;
+			$scope.doctor.avatar = '';
+		};
 		
 		if ($location.path().indexOf("/pages/doctors_edit") + 1)
 		{
@@ -8434,7 +8571,7 @@
 		$scope.froalaOptions = {
 			height: 250,
 			language: 'nl',
-			toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
+			toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'insertLink', 'insertImage', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
 		};
 		
 		$scope.set_var = function(variable) {
@@ -8562,6 +8699,7 @@
 		$scope.user = items[1];
 		$scope.test = {};
 		$scope.test.email = $scope.user.email;
+		$scope.test.doctors_avatar = '';
 		
 		$scope.cancel = function() {
 			$modalInstance.dismiss("cancel");
@@ -8591,6 +8729,24 @@
 				$modalInstance.close($scope.test);
 			}
         };
+		
+		$scope.onAvatar = function(response)
+		{
+			var temp = window.location.href.split('/');
+			var base_url = temp[0] + "//" + temp[2];
+			
+			var data = response.data;
+			$scope.test.doctors_avatar = logger.check(data);
+			if ($scope.test.doctors_avatar)
+			{
+				$scope.test.doctors_avatar = base_url + '/avatars/tmp/' + $scope.test.doctors_avatar;
+			}
+		};
+		
+		$scope.remove_avatar = function()
+		{
+			$scope.test.doctors_avatar = '';
+		};
     };
 	
 	function ModalInstanceStarsEditCtrl($scope, $modalInstance, $http, $location, logger, items) {

@@ -26,6 +26,7 @@
 						  'doctors_title' => '{{Aanhef Zorgverlener}}',
 						  'doctors_name' => '{{Voornaam Zorgverlener}}',
 						  'doctors_sname' => '{{Achternaam Zorgverlener}}',
+						  'doctors_avatar' => '{{Profielfoto Zorgverlener}}',
 						  'username' => '{{Naam Praktijk}}',
 						  'q_name' => '{{Vraagstelling}}',
 						  'q_desc' => '{{Formulering van de vraagstelling}}');
@@ -50,6 +51,156 @@
 			$this->last_time = time();
 			$this->set_defaults();
 			$this->renew_logout();
+		}
+		
+		function set_test_data()
+		{
+			$users_id = 1;
+
+			$questions_ids = array(0, 1, 2, 3, 4);
+			$title = array('Mr.', 'Dr.', '');
+			$name = array('John', 'Sam', 'Jack', 'Tom', 'Bill', 'George', 'William', 'Roger', 'Andrew', 'Jim');
+			$sname = array('Peterson', 'Smith', 'Doe', 'Gordon', 'Jackson', 'Clinton', 'Burns', 'Dent', 'Walker', 'Eastwood');
+			$age = array(0, 25, 35, 60, 87, 54, 21, 16, 5, 18);
+			
+			$treatment = array('', '', 'Treatment A', 'Treatment B', 'Treatment C', 'Treatment D', 'Treatment E', 'Treatment F');
+			$feedback = array('I want my money back', 'I want more service', 'I want better service');
+			$reply = array('', '', 'You do not get it', 'We will give you all what you want', 'Thanks for your feedback');
+			$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
+			
+			$zorgkaart_doctor = 'https://www.zorgkaartnederland.nl/zorgverlener/basisarts-basisarts-nickolson-v-m-hoorn-120456/waardeer';
+			$zorgkaart_location = 'https://www.zorgkaartnederland.nl/zorgverlener/basisarts-basisarts-nickolson-v-m-hoorn-120456';
+			$address = array('First Avenue, 56', 'Green Street, 56', 'Apple Street, 153');
+			$postcode = array('256874', '231145', '899635', '785469', '789965', '123569');
+			$city = array('New York', 'Los Angeles', 'Chicago', 'Detroit', 'Washington');
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('doctors');
+			
+			$doctors_num = 10;
+			$doctors_ids = array('', '');
+			for ($i = 0; $i < $doctors_num; $i++)
+			{
+				$data_array = array('users_id' => $users_id,
+									'title' => $title[array_rand($title)],
+									'firstname' => $name[array_rand($name)],
+									'lastname' => $sname[array_rand($sname)],
+									'zorgkaart' => $zorgkaart_doctor,
+									'date' => time());
+				$this->db->insert('doctors', $data_array);
+				$doctors_ids[] = $this->db->insert_id();
+			}
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('locations');
+			
+			$locations_num = 10;
+			$locations_ids = array('', '');
+			for ($i = 0; $i < $locations_num; $i++)
+			{
+				$t = $city[array_rand($city)];
+				$data_array = array('users_id' => $users_id,
+									'title' => $t,
+									'address' => $address[array_rand($address)],
+									'postcode' => $postcode[array_rand($postcode)],
+									'city' => $t,
+									'zorgkaart' => $zorgkaart_location,
+									'date' => time());
+				$this->db->insert('locations', $data_array);
+				$locations_ids[] = $this->db->insert_id();
+			}
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('sent');
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('sent_dates');
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('sent_questions');
+			
+			$limit = 5000;
+			$count = 0;
+			while ($count < $limit)
+			{
+				mt_srand();
+				$batches_num = mt_rand(1, 10);
+				$date = mt_rand(time() - 200 * 24 * 3600, time());
+				$count += $batches_num;
+				
+				$data_array = array('users_id' => $users_id,
+									'emails_amount' => $batches_num,
+									'sent_date' => $date);
+				$this->db->insert('sent_dates', $data_array);
+				$batches_id = $this->db->insert_id();
+				
+				for ($i = 0; $i < $batches_num; $i++)
+				{
+					$q = $questions_ids[array_rand($questions_ids)];
+					$n = $name[array_rand($name)];
+					$s = $sname[array_rand($sname)];
+					$star = mt_rand(0, 5);
+					$f = ($star > 0 && $star <= 2) ? $feedback[array_rand($feedback)] : '';
+					$r = '';
+					$rt = 0;
+					if ( ! empty($f))
+					{
+						$r = $reply[array_rand($reply)];
+						$rt = $date + mt_rand(13, 24) * 3600;
+					}
+					
+					$data_array = array('users_id' => $users_id,
+										'questions_id' => $q,
+										'batches_id' => $batches_id,
+										'title' => $title[array_rand($title)],
+										'name' => $n,
+										'sname' => $s,
+										'doctor' => $doctors_ids[array_rand($doctors_ids)],
+										'location' => $locations_ids[array_rand($locations_ids)],
+										'treatment' => $treatment[array_rand($treatment)],
+										'age' => $age[array_rand($age)],
+										'email' => $n.'_'.$s.'@gmail.com',
+										'date' => $date,
+										'last' => $star > 0 ? ($date + mt_rand(1, 12) * 3600) : 0,
+										'stars' => $star,
+										'status' => $star > 0 ? 2 : 1,
+										'feedback' => $f,
+										'reply' => $r,
+										'reply_time' => $rt);
+					$onlines_num = mt_rand(0, 8);
+					$onlines_array = array();
+					for ($k = 0; $k < $onlines_num; $k++)
+					{
+						$onlines_array[] = $onlines[array_rand($onlines)];
+					}
+					$onlines_array = array_unique($onlines_array);
+					
+					foreach ($onlines_array as $o)
+					{
+						$data_array[$o] = TRUE;
+					}
+					
+					$this->db->insert('sent', $data_array);
+					$sent_id = $this->db->insert_id();
+					
+					$questions_num = mt_rand(0, 3);
+					if ( ! empty($questions_num))
+					{
+						for ($k = 1; $k <= $questions_num; $k++)
+						{
+							if ($questions_ids[$k] != $q)
+							{
+								$data_array = array('sent_id' => $sent_id,
+													'users_id' => $users_id,
+													'questions_id' => $questions_ids[$k],
+													'stars' => mt_rand(1, 5),
+													'date' => $date);
+								$this->db->insert('sent_questions', $data_array);
+							}
+						}
+					}
+				}
+			}
 		}
 		
 		function set_defaults()
@@ -1121,6 +1272,33 @@
 										"zorgkaart" => ! empty($post['zorgkaart']) ? strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer' : '',
 										"short" => ! empty($post['short']) ? $post['short'] : "",
 										"short_checked" => ! empty($post['short_checked']) ? $post['short_checked'] : 0);
+										
+					if ( ! empty($post['new_avatar']) || ! empty($post['remove_avatar']))
+					{
+						if ( ! empty($post['id']))
+						{
+							$this->db->where("id", $post['id']);
+							$this->db->limit(1);
+							$row = $this->db->get("doctors")->row_array();
+
+							if ( ! empty($row['avatar']))
+							{
+								unlink($row['avatar']);
+								$data_array['avatar'] = '';
+							}
+						}
+
+						if ( ! empty($post['new_avatar']))
+						{
+							$source = './avatars/tmp/'.$post['new_avatar'];
+							$dest = './avatars/'.$post['new_avatar'];
+							if (rename($source, $dest))
+							{
+								$data_array['avatar'] = $dest;
+								delete_files('./avatars/tmp/');
+							}
+						}
+					}
 
 					$doctors_id = 0;
 					if ( ! empty($post['id']))
@@ -1565,6 +1743,19 @@
 					$items[] = $row;
 				}
 			}
+			
+			foreach ($items as $key => $row)
+			{
+				$row['count'] = 0;
+				
+				$this->db->where('questions_id', $row['id']);
+				$row['count'] += $this->db->count_all_results('sent');
+				
+				$this->db->where('questions_id', $row['id']);
+				$row['count'] += $this->db->count_all_results('sent_questions');
+				
+				$items[$key] = $row;
+			}
 
 			return $items;
 		}
@@ -1574,10 +1765,27 @@
 			return $this->db->get('rating_questions')->result_array();
 		}
 		
-		function questions_save($questions_id)
+		function questions_save($question)
 		{
 			if ($this->logged_in())
 			{
+				$questions_id = 0;
+				$this->db->where('LOWER(question_name)', strtolower($question['name']));
+				$this->db->where('LOWER(question_description)', strtolower($question['desc']));
+				$this->db->limit(1);
+				$row = $this->db->get('rating_questions')->row_array();
+				if ( ! empty($row))
+				{
+					$questions_id = $row['id'];
+				}
+				else
+				{
+					$data_array = array('question_name' => $question['name'],
+										'question_description' => $question['desc']);
+					$this->db->insert('rating_questions', $data_array);
+					$questions_id = $this->db->insert_id();
+				}
+				
 				$this->db->where('questions_id', $questions_id);
 				$this->db->where('users_id', $this->session->userdata("id"));
 				if ( ! $this->db->count_all_results('users_questions'))
@@ -1617,12 +1825,12 @@
 			}
 		}
 		
-		function questions_edit($questions_id, $new_id)
+		function questions_edit($questions_id, $question)
 		{
 			if ($this->logged_in())
 			{
 				$this->questions_remove($questions_id);
-				$this->questions_save($new_id);
+				$this->questions_save($question);
 			}
 		}
 
@@ -2380,6 +2588,7 @@
 												"address" => $post['address'],
 												"postcode" => $post['postcode'],
 												"city" => $post['city'],
+												"emails_skip" => $post['emails_skip'],
 												"patients_reminder" => $post['patients_reminder'],
 												"reminder_checked" => $post['reminder_checked'],
 												"reminder_period" => $post['reminder_period'],
@@ -3196,11 +3405,15 @@
 			$users_fields = $this->get_users_fields();
 			
 			$this->db->where("id", $this->session->userdata('id'));
-			$this->db->where("organization", TRUE);
-			if ($this->db->count_all_results('users'))
+			$this->db->limit(1);
+			$users = $this->db->get("users")->row_array();
+			if ( ! empty($users))
 			{
-				$tags[] = 'location';
-				$fields['location'] = 'Locatie';
+				if ( ! empty($users['organization']) || $users['account'] == 2)
+				{
+					$tags[] = 'location';
+					$fields['location'] = 'Locatie';
+				}
 			}
 			
 			$cols = array();
@@ -3294,6 +3507,20 @@
 											$line['error'] = 1;
 											$result['check'] = FALSE;
 										}
+										
+										if ( ! empty($users['emails_skip']))
+										{
+											$from = time() - ($users['emails_skip'] == 1 ? 7 : ($users['emails_skip'] == 2 ? 30 : 90)) * 24 * 3600;
+											$this->db->where('email', $email);
+											$this->db->where('date >=', $from);
+											$this->db->limit(1);
+											if ($this->db->count_all_results('sent') > 0)
+											{
+												$line['error'] = 3;
+												$result['check'] = FALSE;
+											}
+										}
+										
 										$emails[] = $email;
 									}
 									else
@@ -3739,6 +3966,7 @@
 							empty($doc['title']) ? '{{EMPTY}}' : $doc['title'],
 							empty($doc['firstname']) ? '{{EMPTY}}' : $doc['firstname'],
 							empty($doc['lastname']) ? '{{EMPTY}}' : $doc['lastname'],
+							empty($doc['avatar']) ? '{{EMPTY}}' : '<img src="'.str_replace('./avatars/', base_url().'avatars/', $doc['avatar']).'" style="vertical-align: baseline;" alt="" />',
 							empty($user['username']) ? '{{EMPTY}}' : $user['username'],
 							empty($user['q_name']) ? '{{EMPTY}}' : $user['q_name'],
 							empty($user['q_desc']) ? '{{EMPTY}}' : $user['q_desc'],
@@ -3795,6 +4023,7 @@
 							empty($post['values']['doctors_title']) ? '' : $post['values']['doctors_title'],
 							empty($post['values']['doctors_name']) ? '' : $post['values']['doctors_name'],
 							empty($post['values']['doctors_sname']) ? '' : $post['values']['doctors_sname'],
+							empty($post['values']['doctors_avatar']) ? '' : '<img src="'.$post['values']['doctors_avatar'].'" style="vertical-align: baseline;" alt="" />',
 							empty($post['user']['username']) ? '' : $post['user']['username'],
 							'<br />');
 			
@@ -6081,7 +6310,7 @@
 				$users_id = $this->session->userdata("id");
 				$onlines = array('zorgkaart', 'facebook', 'independer', 'google');
 				$stat = array();
-				
+
 				$this->db->order_by('date', 'asc');
 				$this->db->where('users_id', $users_id);
 				$result = $this->db->get('reviews_history')->result_array();
@@ -7319,6 +7548,39 @@
 				$config['new_image'] = './logos/tmp/'.$file;
 				$config['width'] = '300';
 				$config['height'] = '80';
+
+				$this->load->library('image_lib', $config);
+				if ( ! $this->image_lib->resize())
+				{
+					$this->errors[] = array($this->image_lib->display_errors());
+				}
+				else
+				{
+					return $file;
+				}
+			}
+			else
+			{
+				$this->errors[] = array("U kunt alleen .png en .jpg bestanden gebruiken.");
+			}
+		}
+		
+		function save_avatar($tmp_file)
+		{
+			if ($tmp_file['type'] == "image/jpeg" || $tmp_file['type'] == "image/png")
+			{
+				if ( ! file_exists('./avatars/tmp/'))
+				{
+					mkdir('./avatars/tmp/', 0755, TRUE);
+				}
+				
+				$part = explode('.', $tmp_file['name']);
+				$ext = strtolower(array_pop($part));
+				$file = time().mt_rand(1000, 9999).'.'.$ext;
+				$config['source_image'] = $tmp_file['tmp_name'];
+				$config['new_image'] = './avatars/tmp/'.$file;
+				$config['width'] = '60';
+				$config['height'] = '60';
 
 				$this->load->library('image_lib', $config);
 				if ( ! $this->image_lib->resize())

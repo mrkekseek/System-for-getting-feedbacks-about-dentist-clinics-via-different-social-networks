@@ -4,12 +4,12 @@
 			<div class="row">
 				<div class="col-md-8 col-xs-12">
 					<div class="row stat-filter-row" ng-repeat="(i, f) in stat_filter_list">
-						<div class="col-xs-12" ng-show="user.organization == '0'">
+						<div class="col-xs-12" ng-show="user.organization == '0' && user.account != '2'">
 							Upgrade naar Ultimate om een diepgaande analyse uit te voeren op uw beoordelingen.
 							<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
 						</div>
 						
-						<div class="col-sm-4 first-filter" ng-class="{'form-inline': i == 0}" ng-show="user.organization == '1'">
+						<div class="col-sm-4 first-filter" ng-class="{'form-inline': i == 0}" ng-show="user.organization == '1' || user.account == '2'">
 							<label ng-if="i == 0">Filter</label>
 							<select class="form-control pull-right" ng-model="f.filter" ng-change="change_filter(f)">
 								<option value="">KIES FILTER</option>
@@ -22,11 +22,11 @@
 							</select>
 						</div>
 						
-						<div class="col-sm-1 text-center" ng-show="user.organization == '1'">
+						<div class="col-sm-1 text-center" ng-show="user.organization == '1' || user.account == '2'">
 							<label ng-show="f.filter != '' && f.filter != 'date'">is</label>
 						</div>
 						
-						<div class="col-sm-5" ng-show="user.organization == '1'">
+						<div class="col-sm-5" ng-show="user.organization == '1' || user.account == '2'">
 							<div class="row" ng-class="{'show-filter': f.filter == 'date', 'hide-filter': f.filter != 'date'}">
 								<div class="col-xs-6">
 									<div class="input-group ui-datepicker">
@@ -69,7 +69,7 @@
 							</select>
 						</div>
 						
-						<div class="col-sm-2 stat-filter-buttons" ng-show="user.organization == '1'">
+						<div class="col-sm-2 stat-filter-buttons" ng-show="user.organization == '1' || user.account == '2'">
 							<button ng-show="f.filter != '' && (stat_filter_list.length > 1)" ng-click="remove_filter(i)" class="btn btn-default btn-filter">-</button>
 							<button ng-show="f.filter != '' && i == (stat_filter_list.length - 1)" ng-click="add_filter()" class="btn btn-default btn-filter">+</button>
 						</div>
@@ -208,6 +208,10 @@
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Historische weergave beoordelingen</h3>
+								</div>
+								
 								<div id="area_averages" style="height: 300px;" ng-show=" ! area_averages_empty"></div>
 								<div class="empty_data" ng-show="area_averages_empty">Er is geen data om weer te geven</div>
 							</div>
@@ -215,6 +219,10 @@
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Historische weergave verdeling beoordelingen</h3>
+								</div>
+								
 								<div id="area_stars" style="height: 300px;" ng-show=" ! area_stars_empty"></div>
 								<div class="empty_data" ng-show="area_stars_empty">Er is geen data om weer te geven</div>
 							</div>
@@ -240,7 +248,7 @@
 								</div>
 							</div>
 
-							<div class="ultimate-lock" ng-if="user.account_type == '0'" ng-class="ultimate_class[q.question_name]" ng-mouseover="ultimate_over(q.question_name)" ng-mouseout="ultimate_out(q.question_name)">
+							<div class="ultimate-lock" ng-if="user.account_type == '0' && user.account != '2'" ng-class="ultimate_class[q.question_name]" ng-mouseover="ultimate_over(q.question_name)" ng-mouseout="ultimate_out(q.question_name)">
 								<i class="fa fa-lock"></i>
 								<div class="ultimate-text">
 									<p>Upgrade naar Pro om dit onderdeel te bekijken.</p>
@@ -272,7 +280,7 @@
 											</div>
 											
 											<div class="charts2-side-text">
-												De NPS van uw praktijk
+												De NPS van uw praktijk  <a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="De Net Promotor Score geeft op een schaal van 0 tot 100 weer hoe u scoort als het gaat om de loyaliteit van patiënten. De score wordt berekend door het percentage Criticasters af te trekken van het percentage Promotors. Een score hoger dan 0 kan als positief gezien worden. Een score van +50 kan als uitstekend gezien worden."><i class="fa fa-question-circle"></i></a>
 											</div>
 										</div>
 									</div>
@@ -291,7 +299,7 @@
 									
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-value">
-											{{data.average_nps['45']}} promotors
+											{{data.average_nps['45']}} promotors <a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="De promotors is het aantal patiënten dat u met meer dan 3 sterren heeft beoordeeld. Van deze patiënten is het waarschijnlijk dat zij u en/of uw praktijk zullen aanbevelen bij familie of vrienden."><i class="fa fa-question-circle"></i></a>
 										</div>
 									</div>
 								</div>
@@ -305,7 +313,7 @@
 									
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-value">
-											{{data.average_nps['3']}} passives
+											{{data.average_nps['3']}} passives <a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="De passives is het aantal patiënten dat uw praktijk met 3 sterren heeft beoordeeld. Deze patiënten zijn weliswaar niet ontevreden over u en/of uw praktijk, maar zijn in de regel onverschillig, en daarmee gevoelig voor een aantrekkelijk aanbod van uw concurrenten."><i class="fa fa-question-circle"></i></a>
 										</div>
 									</div>
 								</div>
@@ -319,7 +327,7 @@
 									
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-value">
-											{{data.average_nps['12']}} detractors
+											{{data.average_nps['12']}} detractors <a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="De criticasters is het aantal patiënten dat u met minder dan 3 sterren heeft beoordeeld. Van deze patiënten is het waarschijnlijk dat zij u en/of uw praktijk, niet zullen aanbevelen bij familie of vrienden."><i class="fa fa-question-circle"></i></a>
 										</div>
 									</div>
 								</div>
@@ -348,6 +356,10 @@
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Historische weergave NPS</h3>
+								</div>
+								
 								<div id="area_nps_average" style="height: 300px;" ng-show=" ! area_nps_average_empty"></div>
 								<div class="empty_data" ng-show="area_nps_average_empty">Er is geen data om weer te geven</div>
 							</div>
@@ -355,6 +367,10 @@
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Historische weergave verdeling NPS</h3>
+								</div>
+								
 								<div id="area_nps" style="height: 300px;" ng-show=" ! area_nps_empty"></div>
 								<div class="empty_data" ng-show="area_nps_empty">Er is geen data om weer te geven</div>
 							</div>

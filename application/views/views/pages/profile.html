@@ -15,6 +15,7 @@
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Zorgverlener')">Aanhef Zorgverlener</a>
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Profielfoto Zorgverlener')">Profielfoto Zorgverlener</a>
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
 						</span>
                     </div>
@@ -62,10 +63,24 @@
                 </div>
 				
 				<div class="divider divider-dashed divider-lg pull-in"></div>
+
+				<div class="form-group">
+                    <label class="col-md-4">Maximum te ontvangen uitnodigingen</label>
+                    <div class="col-md-8">
+                        <select class="form-control" ng-model="user.emails_skip">
+							<option value="0"></option>
+							<option value="1">Eén keer per week</option>
+							<option value="2">Eén keer per maand</option>
+							<option value="3">Eén keer per 3 maanden</option>
+						</select>
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">Promotiecampagne<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
-                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0'}" ng-click="upgrade_to_pro()">
+                    <label class="col-md-4">Promotiecampagne<span class="label label-primary label-pro" ng-show="user.account_type == '0' && user.account != 2" ng-click="upgrade_to_pro()">Pro</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0' && user.account != 2}" ng-click="upgrade_to_pro()">
                         <label class="ui-switch ui-switch-lg">
 							<input type="checkbox" name="promo_checked" ng-model="user.promo_checked" ng-checked="user.promo_checked == '1'" ng-change="user.promo_checked == '1' ? email_text_class = 'open' : ''" />
 							<i></i>
@@ -261,8 +276,8 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">Meervoudige vraagstelling<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
-                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0'}" ng-click="upgrade_to_pro()">
+                    <label class="col-md-4">Meervoudige vraagstelling<span class="label label-primary label-pro" ng-show="user.account_type == '0' && user.account != '2'" ng-click="upgrade_to_pro()">Pro</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.account != '2'}" ng-click="upgrade_to_pro()">
                         <label class="ui-switch ui-switch-lg">
 							<input type="checkbox" name="rating_questions" ng-model="user.rating_questions" ng-change="check_questions_for_user()" ng-checked="user.rating_questions == '1'" />
 							<i></i>
@@ -271,7 +286,7 @@
 							U kunt tot maximaal vier verschillende vraagstellingen gebruiken voor uw uitnodigingen.
 						</span>
 						
-						<div class="table-responsive" ng-show="user.rating_questions == '1'">
+						<div class="table-responsive1" ng-show="user.rating_questions == '1'">
 							<table class="table table-striped">
 								<thead>
 									<tr>
@@ -285,12 +300,18 @@
 									<tr class="tr_questions" ng-class="{'edit_question': (edit_question[q.id] == 1)}" ng-repeat="q in user.questions">
 										<td class="question_first">
 											<span ng-show="edit_question[q.id] == 0">{{q.question_name}}</span>
-											<select ng-show="edit_question[q.id] == 1" ng-model="edit_questions[q.id].name" ng-change="change_edit_question(q.id)" class="form-control" ng-options="option.question_name for option in edit_questions_list[q.id] track by option.id">
-											</select>
+											<!--select ng-show="edit_question[q.id] == 1" ng-model="edit_questions[q.id].name" ng-change="change_edit_question(q.id)" class="form-control" ng-options="option.question_name for option in edit_questions_list[q.id] track by option.id">
+											</select-->
+											<div class="questions-auto-box" ng-class="index[q.id]" ng-show="edit_question[q.id] == 1">
+												<input type="text" class="form-control" ng-model="edit_questions[q.id].name" ng-keyup="auto_keyup($event, q.id)" ng-focus="auto_question(q.id)" ng-change="auto_question(q.id)" placeholder="Typ vraagstelling..." maxlength="30" />
+												<div class="questions-auto-inner">
+													<a href="javascript:void(0);" class="questions-auto-link" ng-click="auto_click(q.id, a.id)" ng-mouseover="auto_over(q.id, a.id)" ng-mouseout="auto_out(q.id)" ng-repeat="a in autos[q.id]">{{a.question_name}}</a>
+												</div>
+											</div>
 										</td>
 										<td class="question_second">
 											<span ng-show="edit_question[q.id] == 0">{{q.question_description}}</span>
-											<span ng-show="edit_question[q.id] == 1" ng-bind="edit_questions[q.id].desc"></span>
+											<input type="text" ng-show="edit_question[q.id] == 1" class="form-control" id="desc_{{q.id}}" ng-model="edit_questions[q.id].desc" placeholder="Typ formulering..." maxlength="200" />
 										</td>
 										<td class="question_third">
 											<a href="javascript:void(0);" ng-show="edit_question[q.id] == 0" class="question_icon" ng-click="edit_questions(q.id)"><i class="fa fa-pencil"></i></a>
@@ -301,11 +322,19 @@
 									
 									<tr ng-show="add_new_question == '1'">
 										<td class="question_first">
-											<select ng-model="new_question" ng-change="change_new_question()" class="form-control" ng-options="option.question_name for option in questions_list track by option.id">
+											<!--select ng-model="new_question" ng-change="change_new_question()" class="form-control" ng-options="option.question_name for option in questions_list track by option.id">
 												<option value="">Kies bestaande...</option>
-											</select>
+											</select-->
+											<div class="questions-auto-box" ng-class="index[q.id]">
+												<input type="text" class="form-control" ng-model="new_question.name" ng-keyup="auto_keyup($event)" ng-focus="auto_question()" ng-change="auto_question()" placeholder="Typ vraagstelling..." maxlength="30" />
+												<div class="questions-auto-inner">
+													<a href="javascript:void(0);" class="questions-auto-link" ng-click="auto_click(false, a.id)" ng-mouseover="auto_over(false, a.id)" ng-mouseout="auto_out()" ng-repeat="a in autos[0]">{{a.question_name}}</a>
+												</div>
+											</div>
 										</td>
-										<td class="question_second" ng-bind="question_desc"></td>
+										<td class="question_second">
+											<input type="text" class="form-control" ng-model="new_question.desc" id="desc_0" placeholder="Typ formulering..." maxlength="200" />
+										</td>
 										<td class="question_third">
 											<a href="javascript:void(0);" class="question_icon" ng-click="add_new_question_save()"><i class="fa fa-floppy-o"></i></a>
 											<a href="javascript:void(0);" class="question_icon" ng-click="add_new_question_hide()"><i class="fa fa-trash"></i></a>
@@ -400,11 +429,11 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">Beoordelingspagina en Widgets<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
-					<div class="col-md-1 col-xs-3 margin-bottom" ng-class="{'basis-box': user.account_type == '0'}" ng-click="upgrade_to_pro()">
+                    <label class="col-md-4">Beoordelingspagina en Widgets<span class="label label-primary label-pro" ng-show="user.account_type == '0' && user.account != '2'" ng-click="upgrade_to_pro()">Pro</span></label>
+					<div class="col-md-1 col-xs-3 margin-bottom" ng-class="{'basis-box': user.account_type == '0' && user.account != '2'}" ng-click="upgrade_to_pro()">
 						<label class="ui-switch ui-switch-lg"><input type="checkbox" name="short_checked" ng-model="user.short_checked" ng-checked="user.short_checked == '1'" /><i></i></label>
                     </div>
-                    <div class="col-md-offset-4 col-md-8 col-xs-12" ng-show="user.short_checked == '1'" ng-class="{'basis-box': user.account_type == '0'}" ng-click="upgrade_to_pro()">
+                    <div class="col-md-offset-4 col-md-8 col-xs-12" ng-show="user.short_checked == '1'" ng-class="{'basis-box': user.account_type == '0' && user.account != '2'}" ng-click="upgrade_to_pro()">
 						<div class="input-group">
 							<span class="input-group-addon">app.patientenreview.nl/</span>
 							<input type="text" class="form-control" name="name" ng-model="user.short" value="" ng-change="validate_url()" ng-class="short_class" />
@@ -514,8 +543,8 @@
 				<div class="divider divider-dashed divider-lg pull-in" id="intro4"></div>
 
 				<div class="form-group">
-                    <label class="col-md-4">Logo en huisstijl<span class="label label-primary label-pro" ng-show="user.account_type == '0'" ng-click="upgrade_to_pro()">Pro</span></label>
-                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.organization == '0'}" ng-click="upgrade_to_pro()">
+                    <label class="col-md-4">Logo en huisstijl<span class="label label-primary label-pro" ng-show="user.account_type == '0' && user.account != '2'" ng-click="upgrade_to_pro()">Pro</span></label>
+                    <div class="col-md-8" ng-class="{'basis-box': user.account_type == '0' && user.account != '2'}" ng-click="upgrade_to_pro()">
 						<span class="logo_here"><img src="{{user.logo}}" alt="" ng-if="user.logo != ''" /><a href="javascript:void(0);" class="remove_logo" ng-if="user.logo != ''" ng-click="remove_logo()" ng-class="{show: user.logo != ''}"><i class="glyphicon glyphicon-remove"></i></a></span>
                         <upload-button class="btn btn-primary btn-upload" url="/pub/upload_logo/" on-success="onLogo(response)">Upload logo</upload-button>
 						<button class="btn btn-primary" colorpicker ng-model="user.color">Wijzig kleur</button>
@@ -542,7 +571,7 @@
 	</div>
 	<div class="modal-body">
 		<textarea ng-model="value" class="form-control edit-emails-area" froala="froalaOptions"></textarea>
-		<span class="help-block with-margin" ng-show="user.account_type > 0">
+		<span class="help-block with-margin" ng-show="user.account_type > 0 || user.account == '2'">
 			Klik om een variabele in te voegen:
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Patiënt')">Aanhef Patiënt</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Patiënt')">Voornaam Patiënt</a>
@@ -550,10 +579,11 @@
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Aanhef Zorgverlener')">Aanhef Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Profielfoto Zorgverlener')">Profielfoto Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
 		</span>
 		
-		<span class="help-block" ng-show="user.account_type == '0'" ng-click="cancel()">
+		<span class="help-block" ng-show="user.account_type == '0' && user.account != '2'" ng-click="cancel()">
 			Upgrade naar Pro om variabelen in uw e-mailuitnodigingen te gebruiken.
 			<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
 		</span>
@@ -682,6 +712,13 @@
 			<div class="col-sm-6 col-xs-12" ng-show="items.subject">
 				<div class="form-group">
 					<input type="text" class="form-control" ng-model="test.subject" placeholder="Onderwerp van e-mail" />
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-xs-12" ng-show="items.doctors_avatar">
+				<div class="form-group">
+					<span class="avatar_here"><img src="{{test.doctors_avatar}}" alt="" ng-if="test.doctors_avatar != ''" /><a href="javascript:void(0);" class="remove_logo" ng-if="test.doctors_avatar != ''" ng-click="remove_avatar()" ng-class="{show: test.doctors_avatar != ''}"><i class="glyphicon glyphicon-remove"></i></a></span>
+					<upload-button class="btn btn-primary btn-upload" url="/pub/upload_avatar/" on-success="onAvatar(response)">Upload avatar</upload-button>
 				</div>
 			</div>
 		</div>

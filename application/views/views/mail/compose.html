@@ -120,6 +120,7 @@
 									<td>
 										<span class="btn btn-sm btn-success" ng-if="d.error == 0">In orde</span>
 										<span class="btn btn-sm btn-warning" ng-if="d.error == 1">Dubbel</span>
+										<span class="btn btn-sm btn-warning" ng-if="d.error == 3">Reeds uitgenodigd</span>
 										<span class="btn btn-sm btn-danger" ng-if="d.error == 2">Mist gegevens</span>
 									</td>
 									<td ng-repeat="key in keys" ng-bind-html="d[key]">
