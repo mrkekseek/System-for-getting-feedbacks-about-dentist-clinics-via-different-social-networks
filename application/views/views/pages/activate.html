@@ -12,7 +12,7 @@
 					<div class="panel panel-default">
 						<div class="panel-body activity-box" ng-show="step == 1">
                             <p>
-                                U kunt hier kiezen naar welke versie van Patiëntenreview u wilt upgraden. <u>Bekijk de features per pakket</u>
+                                U kunt hier kiezen naar welke versie van Patiëntenreview u wilt upgraden. <!--u>Bekijk de features per pakket</u-->
                             </p>
                             
                             <p>
@@ -157,10 +157,10 @@
 									</tr>
 								</tbody>
 								
-								<tbody ng-if="user.account == '1' && user.account_type == '0' && type == '1'">
+								<tbody ng-if="user.account == '1' && user.account_type == '0'">
 									<tr>
 										<td>Patiëntenreview {{type == 1 ? 'Pro' : 'Ultimate'}} {{info.today}} t/m {{info.suspension}}</td>
-										<td>&euro;{{info.half_pro.toFixed(2).replace(".", ",")}}</td>
+										<td>&euro;{{(type == 1 ? info.half_pro : info.half_ultimate).toFixed(2).replace(".", ",")}}</td>
 									</tr>
 									
 									<tr>

@@ -56,7 +56,7 @@
 
             routes = [
                 'dashboard', 'invitation/:hash?',
-                'charts/charts',
+                'charts/charts', 'charts/onlines',
                 'pages/404', 'pages/500', 'pages/forgot-password', 'pages/new-password/:hash', 'pages/lock-screen', 'pages/signin', 'pages/signup',
 				'pages/profile', 'pages/subscription', 'pages/advanced', 'pages/doctors_add', 'pages/doctors_edit/:id', 'pages/locations_add', 'pages/locations_add/:id', 'pages/online', 'pages/activate/:id', 'pages/invoice/:id', 
                 'mail/compose', 'mail/inbox', 'mail/single/:id', 'mail/reply/:id',
@@ -89,6 +89,7 @@
 					  'manage/add': 'Nieuw abonnement',
 					  'manage/view': 'Beheer abonnementen',
 					  'charts/acharts': 'Statistieken',
+					  'charts/onlines': 'Statistieken',
 					  'charts/stat': 'Statistieken'
             };
 
@@ -682,8 +683,6 @@
             $scope.ultimate_class[name] = '';
         };
 		
-		$scope.type = 'email';
-		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
 		{
 			hex = hex.replace('#', '');
@@ -760,16 +759,7 @@
 		$scope.format = $scope.formats[2];
 
 		$scope.run_filter = function() {
-			$scope.get();
-		};
-		
-		$scope.change_type = function(type)
-		{
-			if (type != $scope.type)
-			{
-				$scope.type = type;
-				$scope.get();
-			}
+			$scope.get_email();
 		};
 		
 		$scope.data = {};
@@ -896,11 +886,30 @@
 					}
 				}
 
-				if ($scope.data.for_user >= 0 || (is_filter && $scope.data && $scope.data.for_user > 0))
+				if ($scope.data.for_user >= 30 || (is_filter && $scope.data && $scope.data.for_user > 0))
 				{
 					$scope.less_30 = false;
 					$scope.empty_filter = false;
 
+					if ($scope.data && $scope.data.hours != '')
+					{
+						$scope.data.hours_from = ($scope.data.hours < 10 ? '0' : '') + $scope.data.hours + ":00";
+						$scope.data.hours_to = ($scope.data.hours + 1) > 23 ? '0' : ($scope.data.hours + 1);
+						$scope.data.hours_to = ($scope.data.hours_to < 10 ? '0' : '') + $scope.data.hours_to + ":00";
+					}
+					
+					if ($scope.data && $scope.data.days != '')
+					{
+						$scope.days = {'1': 'maandag',
+									   '2': 'dinsdag',
+									   '3': 'woensdag',
+									   '4': 'donderdag',
+									   '5': 'vrijdag',
+									   '6': 'zaterdag',
+									   '7': 'zondag'};
+						$scope.data.days_text = $scope.days[$scope.data.days];
+					}
+					
 					if ($scope.data && $scope.data.stars_count)
 					{
 						for (var i = 5; i > 0; i--)
@@ -1142,6 +1151,42 @@
 			});
 		};
 
+		$scope.get_email();
+		
+		$scope.range = function(num)
+		{
+			var array = [];
+			for (var i = 0; i < num; i++)
+			{
+				array.push(i);
+			}
+			return array;
+		};
+    }
+
+})();
+;
+(function () {
+    'use strict';
+
+    angular.module('app')
+        .controller('OnlinesCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', OnlinesCtrl]); // overall control
+
+    function OnlinesCtrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
+		$scope.hex_to_rgba = function(hex, opacity)
+		{
+			hex = hex.replace('#', '');
+			var r = parseInt(hex.substring(0, 2), 16);
+			var g = parseInt(hex.substring(2, 4), 16);
+			var b = parseInt(hex.substring(4, 6), 16);
+
+			var result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
+			return result;
+		};
+		$scope.color = $scope.user.color || '#0F75BC';
+		$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
+		
 		$scope.pie_online = echarts.init(document.getElementById('pie_online'));
 		$window.onresize = function() { $scope.pie_online.resize(); };
 		$scope.pie_online.setOption({
@@ -1174,62 +1219,60 @@
 		});
 		
 		$scope.onl = {};
+		$scope.empty_filter = false;
 		$scope.area_online_empty = false;
 		$scope.get_online = function()
 		{
 			$http.post('/pub/stat_online/', {}).success(function(data, status, headers, config) {
 				$scope.onl = logger.check(data);
-				if ($scope.onl && $scope.onl.pie)
+
+				if ($scope.onl && $scope.onl.months)
 				{
-					for (var k in $scope.onlines)
+					$scope.empty_filter = false;
+					if ($scope.onl && $scope.onl.pie)
 					{
-						$scope.pie_online.addData([[0, {name: $scope.onlines[k], value: ($scope.onl.pie[$scope.onlines[k].toLowerCase()] ? $scope.onl.pie[$scope.onlines[k].toLowerCase()] : 0) * 1}, false, false]]);
+						for (var k in $scope.onlines)
+						{
+							$scope.pie_online.addData([[0, {name: $scope.onlines[k], value: ($scope.onl.pie[$scope.onlines[k].toLowerCase()] ? $scope.onl.pie[$scope.onlines[k].toLowerCase()] : 0) * 1}, false, false]]);
+						}
+					}
+						
+					if ($scope.onl && $scope.onl.history)
+					{
+						var series = [];
+						var max = 5;
+						var data = [];
+						var empty_check = true;
+						for (var k in $scope.onlines)
+						{
+							data = [];
+							for (var m in $scope.onl.history)
+							{
+								var value = $scope.onl.history[m][$scope.onlines[k].toLowerCase()];
+								data.push(value);
+								if (value > 0)
+								{
+									empty_check = false;
+								}
+							}
+							series.push({type: 'line', name: $scope.onlines[k], data: data});
+						}
+						
+						$scope.area_online.setOption({xAxis: [{data: $scope.onl.months}],
+													  yAxis: [{min: 0, max: max}],
+													  series: series});
+						$scope.area_online.resize();
+						$scope.area_online_empty = empty_check;
 					}
 				}
-					
-				if ($scope.onl && $scope.onl.history)
+				else
 				{
-					var series = [];
-					var max = 5;
-					var data = [];
-					var empty_check = true;
-					for (var k in $scope.onlines)
-					{
-						data = [];
-						for (var m in $scope.onl.history)
-						{
-							var value = $scope.onl.history[m][$scope.onlines[k].toLowerCase()];
-							data.push(value);
-							if (value > 0)
-							{
-								empty_check = false;
-							}
-						}
-						series.push({type: 'line', name: $scope.onlines[k], data: data});
-					}
-					
-					$scope.area_online.setOption({xAxis: [{data: $scope.onl.months}],
-												  yAxis: [{min: 0, max: max}],
-												  series: series});
-					$scope.area_online.resize();
-					$scope.area_online_empty = empty_check;
+					$scope.empty_filter = true;
 				}
 			});
 		};
-		
-		$scope.get = function()
-		{
-			if ($scope.type == 'email')
-			{
-				$scope.get_email();
-			}
-			else
-			{
-				$scope.get_online();
-			}
-		};
 
-		$scope.get();
+		$scope.get_online();
 		
 		$scope.range = function(num)
 		{
@@ -2049,6 +2092,25 @@
 				if ($scope.data && $scope.data.for_user > 0)
 				{
 					$scope.empty_filter = false;
+					if ($scope.data && $scope.data.hours != '')
+					{
+						$scope.data.hours_from = ($scope.data.hours < 10 ? '0' : '') + $scope.data.hours + ":00";
+						$scope.data.hours_to = ($scope.data.hours + 1) > 23 ? '0' : ($scope.data.hours + 1);
+						$scope.data.hours_to = ($scope.data.hours_to < 10 ? '0' : '') + $scope.data.hours_to + ":00";
+					}
+					
+					if ($scope.data && $scope.data.days != '')
+					{
+						$scope.days = {'1': 'maandag',
+									   '2': 'dinsdag',
+									   '3': 'woensdag',
+									   '4': 'donderdag',
+									   '5': 'vrijdag',
+									   '6': 'zaterdag',
+									   '7': 'zondag'};
+						$scope.data.days_text = $scope.days[$scope.data.days];
+					}
+					
 					if ($scope.data && $scope.data.stars_count)
 					{
 						for (var i = 5; i > 0; i--)
@@ -2389,7 +2451,14 @@
 		$scope.user = {};
 		$scope.old_user = {};
 		$scope.email_text_class = "close";
-		$scope.tags = ['{{Vraagstelling}}', '{{Formulering van de vraagstelling}}', '{{Aanhef Patiënt}}', '{{Voornaam Patiënt}}', '{{Achternaam Patiënt}}', '{{Aanhef Zorgverlener}}', '{{Voornaam Zorgverlener}}', '{{Achternaam Zorgverlener}}', '{{Onderwerp van E-mail}}', '{{Naam Praktijk}}'];
+		$scope.tags = ['{{Vraagstelling}}', '{{Formulering van de vraagstelling}}', '{{Aanhef Patiënt}}', '{{Voornaam Patiënt}}', '{{Achternaam Patiënt}}', '{{Aanhef Zorgverlener}}', '{{Voornaam Zorgverlener}}', '{{Achternaam Zorgverlener}}', '{{Profielfoto Zorgverlener}}', '{{Onderwerp van E-mail}}', '{{Naam Praktijk}}'];
+		
+		$scope.set_var = function(variable) {
+			var pos = jQuery('[name=subject]').prop("selectionStart");
+			var start = $scope.user.emails.subject.slice(0, pos);
+			var finish = $scope.user.emails.subject.slice(pos);
+			$scope.user.emails.subject = start + '{{' + variable + '}}' + finish;
+		};
 		
 		$scope.find_tags = function(text, key) {
 			if (text)
@@ -2442,7 +2511,7 @@
 					size: 'lg',
 					resolve: {
 						items: function() {
-							return {value: $scope.user.emails[type], type: type};
+							return {value: $scope.user.emails[type], type: type, user: $scope.user};
 						}
 					}
 				});
@@ -2551,7 +2620,8 @@
 						sname: '{{Achternaam Patiënt}}',
 						doctors_title: '{{Aanhef Zorgverlener}}',
 						doctors_name: '{{Voornaam Zorgverlener}}',
-						doctors_sname: '{{Achternaam Zorgverlener}}'};
+						doctors_sname: '{{Achternaam Zorgverlener}}',
+						doctors_avatar: '{{Profielfoto Zorgverlener}}'};
 						
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
 			for (var i in fields)
@@ -2571,7 +2641,7 @@
 				controller: 'ModalInstanceTestEmailCtrl',
 				resolve: {
 					items: function() {
-						return existing_tags;
+						return [existing_tags, $scope.user];
 					}
 				}
 			});
@@ -2587,7 +2657,7 @@
 		
 		$scope.upgrade_to_pro = function()
 		{
-			if ($scope.user.account_type == 0 && $scope.user.organization == 0)
+			if ($scope.user.account_type == 0 && $scope.user.organization == 0 && $scope.user.account != 2)
 			{
 				var modalInstance;
 				modalInstance = $modal.open({
@@ -2610,7 +2680,7 @@
 		
 		$scope.upgrade_to_ultimate = function()
 		{
-			if ($scope.user.account_type == 1 && $scope.user.organization == 0)
+			if ($scope.user.account_type == 1 && $scope.user.organization == 0 && $scope.user.account != 2)
 			{
 				var modalInstance;
 				modalInstance = $modal.open({
@@ -2688,7 +2758,7 @@
 		$scope.rating = 0;
 		$scope.questions_list = {};
 		$scope.add_new_question = 0;
-		$scope.new_question = '';
+		$scope.new_question = {};
 		$http.get("/pub/user/profile/").success(function(data, status, headers, config) {
 			var result;
 			if (result = logger.check(data))
@@ -2731,7 +2801,7 @@
 				$scope.edit_question[item.id] = 0;
 				
 				$scope.edit_questions[item.id] = {};
-				$scope.edit_questions[item.id].name = item;
+				$scope.edit_questions[item.id].name = item.question_name;
 				$scope.edit_questions[item.id].desc = item.question_description;
 				
 				$scope.edit_questions_list[item.id] = angular.copy($scope.questions_list);
@@ -2751,9 +2821,9 @@
 		
 		$scope.add_new_question_save = function()
 		{
-			if ($scope.new_question && $scope.new_question.id)
+			if ($scope.new_question && $scope.new_question.name != '' && $scope.new_question.desc != '')
 			{
-				$http.post("/pub/questions_save/", {questions_id: $scope.new_question.id}).success(function(data, status, headers, config) {
+				$http.post("/pub/questions_save/", $scope.new_question).success(function(data, status, headers, config) {
 					var result = logger.check(data);
 					$scope.user.questions = result.questions;
 					$scope.questions_list = result.questions_list;
@@ -2812,19 +2882,125 @@
 			}
 		};
 		
+		$scope.autos = {};
+		$scope.index = {};
+		$scope.auto_question = function(questions_id)
+		{
+			questions_id = questions_id || 0;
+			$scope.autos = {};
+			$scope.index = {};
+			$scope.index[questions_id] = 'z-top';
+			
+			var field = false;
+			if (questions_id)
+			{
+				field = $scope.edit_questions[questions_id];
+			}
+			else
+			{
+				field = $scope.new_question;
+			}
+			
+			var text = field.name || '';
+			var list = [];
+			if (text != '')
+			{
+				for (var k in $scope.questions_list)
+				{
+					if ($scope.questions_list[k].question_name.toLowerCase().indexOf(text.toLowerCase()) == 0 && $scope.questions_list[k].question_name.toLowerCase() != text.toLowerCase())
+					{
+						list.push($scope.questions_list[k]);
+					}
+				}
+			}
+			else
+			{
+				list = $scope.questions_list;
+			}
+			list = list.slice(0, (text != '' ? 30 : 7));
+			list.sort(function(a, b) { return (a.count - b.count); });
+
+			$scope.autos[questions_id] = list;
+		};
+		
+		$scope.auto_over = function(questions_id, auto_id)
+		{
+			questions_id = questions_id || false;
+			for (var k in $scope.questions_list)
+			{
+				if ($scope.questions_list[k].id == auto_id)
+				{
+					if (questions_id)
+					{
+						$scope.edit_questions[questions_id].desc = $scope.questions_list[k].question_description;
+					}
+					else
+					{
+						$scope.new_question.desc = $scope.questions_list[k].question_description;
+					}
+				}
+			}
+		};
+		
+		$scope.auto_out = function(questions_id)
+		{
+			questions_id = questions_id || false;
+			if (questions_id)
+			{
+				$scope.edit_questions[questions_id].desc = $scope.last_edit_desc;
+			}
+			else
+			{
+				$scope.new_question.desc = '';
+			}
+		};
+		
+		$scope.auto_click = function(questions_id, auto_id)
+		{
+			questions_id = questions_id || false;
+			for (var k in $scope.questions_list)
+			{
+				if ($scope.questions_list[k].id == auto_id)
+				{
+					if (questions_id)
+					{
+						$scope.edit_questions[questions_id].id = $scope.questions_list[k].id;
+						$scope.edit_questions[questions_id].name = $scope.questions_list[k].question_name;
+						$scope.edit_questions[questions_id].desc = $scope.questions_list[k].question_description;
+					}
+					else
+					{
+						$scope.new_question.id = $scope.questions_list[k].id;
+						$scope.new_question.name = $scope.questions_list[k].question_name;
+						$scope.new_question.desc = $scope.questions_list[k].question_description;
+					}
+				}
+			}
+			
+			$scope.autos = {};
+		};
+		
+		$scope.auto_keyup = function($event, questions_id)
+		{
+			if ($event.keyCode == 13)
+			{
+				questions_id = questions_id || 0;
+				$window.document.getElementById('desc_' + questions_id).focus();
+
+				$scope.autos = {};
+			}
+		};
+		
+		$scope.last_edit_desc = '';
 		$scope.edit_questions = function(questions_id)
 		{
+			$scope.last_edit_desc = $scope.edit_questions[questions_id].desc;
 			$scope.edit_question[questions_id] = 1;
 		};
-		
-		$scope.change_edit_question = function(questions_id)
-		{
-			$scope.edit_questions[questions_id].desc = $scope.edit_questions[questions_id].name['question_description'];
-		};
-		
+
 		$scope.save_questions = function(questions_id)
 		{
-			$http.post("/pub/questions_edit/", {questions_id: questions_id, new_id: $scope.edit_questions[questions_id].name.id}).success(function(data, status, headers, config) {
+			$http.post("/pub/questions_edit/", {questions_id: questions_id, question: $scope.edit_questions[questions_id]}).success(function(data, status, headers, config) {
 				var result = logger.check(data);
 				$scope.user.questions = result.questions;
 				$scope.questions_list = result.questions_list;
@@ -3065,9 +3241,9 @@
     'use strict';
 
     angular.module('app')
-        .controller('SubscriptionCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', 'logger', SubscriptionCtrl]); // overall control
+        .controller('SubscriptionCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$modal', '$timeout', 'logger', SubscriptionCtrl]); // overall control
 
-    function SubscriptionCtrl($scope, $rootScope, $window, $http, $location, $modal, logger) {
+    function SubscriptionCtrl($scope, $rootScope, $window, $http, $location, $modal, $timeout, logger) {
 		$scope.info = {};
 		$http.get("/pub/subscription_info/").success(function(data, status, headers, config) {
 			var result;
@@ -3081,10 +3257,12 @@
 			$scope.info.account_link = $scope.info.account != 1 ? ("#/pages/activate/" + $scope.info.id) : "#/pages/subscription";
 			$scope.info.account_text = $scope.info.account == 0 ? ($scope.info.account_stop == 1 ? "Actief tot einde betaaltermijn" : "Gestopt") : ($scope.info.account == 1 ? ($scope.info.account_stop == 1 ? "Actief tot einde betaaltermijn" : "Actief") : "Proefperiode");
 			
-			if ($scope.info.account != $scope.user.account || $scope.info.account_type != $scope.user.account_type)
-			{
-				$window.location.reload();
-			}
+			$timeout(function() {
+				if ($scope.info.account != $scope.user.account || $scope.info.account_type != $scope.user.account_type)
+				{
+					$window.location.reload();
+				}
+			}, 500);
 		});
 		
 		$scope.account_change = function()
@@ -3191,7 +3369,7 @@
 		$scope.blocked = {};
 		
 		$timeout(function() {
-			if ($scope.user.account_type == '0')
+			if ($scope.user.account_type < 1 && $scope.user.account != 2)
 			{
 				$scope.blocked = {'telefoonboek': true, 'vergelijkmondzorg': true, 'kliniekoverzicht': true, 'own': true};
 			}
@@ -3386,6 +3564,7 @@
 		
 		if ($location.path() == "/pages/doctors_add")
 		{
+			$scope.doctor.avatar = '';
 			$scope.amount = {};
 			$http.get("/pub/get_amount/").success(function(data, status, headers, config) {
 				var result;
@@ -3450,6 +3629,23 @@
 				$scope.step = index;
 			};
 		}
+		
+		$scope.onAvatar = function(response)
+		{
+			var data = response.data;
+			$scope.doctor.avatar = logger.check(data);
+			if ($scope.doctor.avatar)
+			{
+				$scope.doctor.new_avatar = $scope.doctor.avatar;
+				$scope.doctor.avatar = './avatars/tmp/' + $scope.doctor.avatar;
+			}
+		};
+		
+		$scope.remove_avatar = function()
+		{
+			$scope.doctor.remove_avatar = 1;
+			$scope.doctor.avatar = '';
+		};
 		
 		if ($location.path().indexOf("/pages/doctors_edit") + 1)
 		{
@@ -3766,19 +3962,70 @@
 		{
 			if ( ! $scope.form.$error.required && ! $scope.form.$error.email)
 			{
-				var date = new Date($scope.user.activation);
-				$scope.user.activation = date.getTime() / 1000;
-
-				var date = new Date($scope.user.suspension);
-				$scope.user.suspension = date.getTime() / 1000;
-
-				$http.post("/pub/signup/", $scope.user).success(function(data, status, headers, config) {
-					if (logger.check(data))
+				var mobile_check = true;
+				if ($scope.user.mobile != '')
+				{
+					var numeric = true;
+					for (var k in $scope.user.mobile)
 					{
-						$scope.user = {};
+						if ($scope.user.mobile[k] != ' ' && typeof($scope.user.mobile[k]) != 'function')
+						{
+							if ( ! ( ! isNaN(parseFloat($scope.user.mobile[k])) && isFinite($scope.user.mobile[k])))
+							{
+								numeric = false;
+							}
+						}
 					}
-				});
+					
+					if ( ! numeric)
+					{
+						logger.logError("Het telefoonnummer kan enkel nummers bevatten");
+						mobile_check = false;
+					}
+					
+					if (($scope.user.mobile.indexOf('06') + 1) != 1)
+					{
+						logger.logError("Het telefoonnummer dient met 06 te beginnen");
+						mobile_check = false;
+					}
+					
+					var length_mobile = $scope.user.mobile.replace(/ /gi, '');
+					if (length_mobile.length != 10)
+					{
+						logger.logError("Het telefoonnummer dient 10 cijfers te bevatten");
+						mobile_check = false;
+					}
+				}
+				
+				if (mobile_check)
+				{
+					var date = new Date($scope.user.activation);
+					$scope.user.activation = date.getTime() / 1000;
+
+					var date = new Date($scope.user.suspension);
+					$scope.user.suspension = date.getTime() / 1000;
+
+					$http.post("/pub/signup/", $scope.user).success(function(data, status, headers, config) {
+						if (logger.check(data))
+						{
+							$scope.user = {};
+						}
+					});
+				}
 			}
+		};
+		
+		$scope.check_mobile = function(mobile)
+		{
+			var new_mobile = '';
+			for (var k in mobile)
+			{
+				if ((mobile[k] >= 0 && mobile[k] <= 9) || mobile[k] == ' ')
+				{
+					new_mobile += mobile[k];
+				}
+			}
+			$scope.user.mobile = new_mobile;
 		};
 
 		$scope.today = function(type) {
@@ -4629,6 +4876,8 @@
     function ComposeCtrl($scope, $rootScope, $window, $http, $location, $modal, logger, Upload, $timeout) {
 		$scope.step = 0;
 		$scope.status = 0;
+		$scope.compose_type = 'upload';
+		$scope.paste_rows = '';
 		$scope.first_upload = true;
 		$scope.all_finished = false;
 		$scope.too_long_time = false;
@@ -4719,6 +4968,24 @@
 					}, 300);
 				}
 			});
+		};
+		
+		$scope.parse_paste = function() {
+			if ($scope.paste_rows != '')
+			{
+				$http.post("/pub/parse_paste/", {'text': $scope.paste_rows}).success(function(data, status, headers, config) {
+					$scope.result = logger.check(data)
+					if ($scope.result.error)
+					{
+						$scope.status = 3;
+					}
+					else
+					{
+						$scope.status = 2;
+						$scope.print($scope.result);
+					}
+				});
+			}
 		};
 		
 		$scope.page = 1;
@@ -6965,7 +7232,7 @@
 					}
 					else
 					{
-						logger.logError("Passwords don't match");
+						logger.logError("Wachtwoorden komen niet overeen");
 					}
 				}
             };
@@ -8300,9 +8567,11 @@
 	function ModalInstanceEmailsEditCtrl($scope, $modalInstance, $http, $location, logger, items) {
         $scope.value = items.value;
 		$scope.type = items.type;
+		$scope.user = items.user;
 		$scope.froalaOptions = {
 			height: 250,
-			toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
+			language: 'nl',
+			toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'insertLink', 'insertImage', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
 		};
 		
 		$scope.set_var = function(variable) {
@@ -8426,8 +8695,11 @@
     };
 	
 	function ModalInstanceTestEmailCtrl($scope, $modalInstance, $http, $location, logger, items) {
-		$scope.items = items;
+		$scope.items = items[0];
+		$scope.user = items[1];
 		$scope.test = {};
+		$scope.test.email = $scope.user.email;
+		$scope.test.doctors_avatar = '';
 		
 		$scope.cancel = function() {
 			$modalInstance.dismiss("cancel");
@@ -8457,6 +8729,24 @@
 				$modalInstance.close($scope.test);
 			}
         };
+		
+		$scope.onAvatar = function(response)
+		{
+			var temp = window.location.href.split('/');
+			var base_url = temp[0] + "//" + temp[2];
+			
+			var data = response.data;
+			$scope.test.doctors_avatar = logger.check(data);
+			if ($scope.test.doctors_avatar)
+			{
+				$scope.test.doctors_avatar = base_url + '/avatars/tmp/' + $scope.test.doctors_avatar;
+			}
+		};
+		
+		$scope.remove_avatar = function()
+		{
+			$scope.test.doctors_avatar = '';
+		};
     };
 	
 	function ModalInstanceStarsEditCtrl($scope, $modalInstance, $http, $location, logger, items) {

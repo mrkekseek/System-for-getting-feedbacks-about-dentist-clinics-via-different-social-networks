@@ -2,14 +2,14 @@
 	<div ng-class="{'hide': less_30}">
 		<div class="charts-filter-panel">
 			<div class="row">
-				<div class="col-md-8 col-xs-12" ng-show="type == 'email'">
+				<div class="col-md-8 col-xs-12">
 					<div class="row stat-filter-row" ng-repeat="(i, f) in stat_filter_list">
-						<div class="col-xs-12" ng-show="user.organization == '0'">
+						<div class="col-xs-12" ng-show="user.organization == '0' && user.account != '2'">
 							Upgrade naar Ultimate om een diepgaande analyse uit te voeren op uw beoordelingen.
 							<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
 						</div>
 						
-						<div class="col-sm-4 first-filter" ng-class="{'form-inline': i == 0}" ng-show="user.organization == '1'">
+						<div class="col-sm-4 first-filter" ng-class="{'form-inline': i == 0}" ng-show="user.organization == '1' || user.account == '2'">
 							<label ng-if="i == 0">Filter</label>
 							<select class="form-control pull-right" ng-model="f.filter" ng-change="change_filter(f)">
 								<option value="">KIES FILTER</option>
@@ -22,11 +22,11 @@
 							</select>
 						</div>
 						
-						<div class="col-sm-1 text-center" ng-show="user.organization == '1'">
+						<div class="col-sm-1 text-center" ng-show="user.organization == '1' || user.account == '2'">
 							<label ng-show="f.filter != '' && f.filter != 'date'">is</label>
 						</div>
 						
-						<div class="col-sm-5" ng-show="user.organization == '1'">
+						<div class="col-sm-5" ng-show="user.organization == '1' || user.account == '2'">
 							<div class="row" ng-class="{'show-filter': f.filter == 'date', 'hide-filter': f.filter != 'date'}">
 								<div class="col-xs-6">
 									<div class="input-group ui-datepicker">
@@ -69,29 +69,17 @@
 							</select>
 						</div>
 						
-						<div class="col-sm-2 stat-filter-buttons" ng-show="user.organization == '1'">
+						<div class="col-sm-2 stat-filter-buttons" ng-show="user.organization == '1' || user.account == '2'">
 							<button ng-show="f.filter != '' && (stat_filter_list.length > 1)" ng-click="remove_filter(i)" class="btn btn-default btn-filter">-</button>
 							<button ng-show="f.filter != '' && i == (stat_filter_list.length - 1)" ng-click="add_filter()" class="btn btn-default btn-filter">+</button>
 						</div>
-					</div>
-				</div>
-				
-				<div class="col-md-8 col-xs-12" ng-show="type == 'online'">
-					<label class="label-online">Filters zijn alleen beschikbaar in e-mailweergave.</label>
-				</div>
-				
-				<div class="col-md-4 col-xs-12 form-inline text-right">
-					<label>Toon</label>&nbsp;&nbsp;
-					<div class="btn-group" role="group" aria-label="...">
-						<button type="button" class="btn btn-default" ng-class="{'active': type == 'email'}" ng-click="change_type('email')">E-MAIL <i class="fa fa-envelope"></i></button>
-						<button type="button" class="btn btn-default" ng-class="{'active': type == 'online'}" ng-click="change_type('online')">ONLINE <i class="fa fa-share-alt"></i></button>
 					</div>
 				</div>
 			</div>
 		</div>
 		
 		<div class="charts-result-panel" ng-class="{'hide': empty_filter}">
-			<div class="page page-charts" ng-show="type == 'email'">
+			<div class="page page-charts">
 				<section>
 					<div class="row charts2-row">
 						<div class="col-lg-6 col-slg-12 col-xs-12">
@@ -220,6 +208,10 @@
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Historische weergave beoordelingen</h3>
+								</div>
+								
 								<div id="area_averages" style="height: 300px;" ng-show=" ! area_averages_empty"></div>
 								<div class="empty_data" ng-show="area_averages_empty">Er is geen data om weer te geven</div>
 							</div>
@@ -227,6 +219,10 @@
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Historische weergave verdeling beoordelingen</h3>
+								</div>
+								
 								<div id="area_stars" style="height: 300px;" ng-show=" ! area_stars_empty"></div>
 								<div class="empty_data" ng-show="area_stars_empty">Er is geen data om weer te geven</div>
 							</div>
@@ -252,10 +248,10 @@
 								</div>
 							</div>
 
-							<div class="ultimate-lock" ng-if="user.organization == '0'" ng-class="ultimate_class[q.question_name]" ng-mouseover="ultimate_over(q.question_name)" ng-mouseout="ultimate_out(q.question_name)">
+							<div class="ultimate-lock" ng-if="user.account_type == '0' && user.account != '2'" ng-class="ultimate_class[q.question_name]" ng-mouseover="ultimate_over(q.question_name)" ng-mouseout="ultimate_out(q.question_name)">
 								<i class="fa fa-lock"></i>
 								<div class="ultimate-text">
-									<p>Upgrade naar Ultimate om dit onderdeel te bekijken.</p>
+									<p>Upgrade naar Pro om dit onderdeel te bekijken.</p>
 									<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
 								</div>
 							</div>
@@ -284,7 +280,7 @@
 											</div>
 											
 											<div class="charts2-side-text">
-												De NPS van uw praktijk
+												De NPS van uw praktijk  <a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="De Net Promotor Score geeft op een schaal van 0 tot 100 weer hoe u scoort als het gaat om de loyaliteit van patiënten. De score wordt berekend door het percentage Criticasters af te trekken van het percentage Promotors. Een score hoger dan 0 kan als positief gezien worden. Een score van +50 kan als uitstekend gezien worden."><i class="fa fa-question-circle"></i></a>
 											</div>
 										</div>
 									</div>
@@ -303,7 +299,7 @@
 									
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-value">
-											{{data.average_nps['45']}} promotors
+											{{data.average_nps['45']}} promotors <a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="De promotors is het aantal patiënten dat u met meer dan 3 sterren heeft beoordeeld. Van deze patiënten is het waarschijnlijk dat zij u en/of uw praktijk zullen aanbevelen bij familie of vrienden."><i class="fa fa-question-circle"></i></a>
 										</div>
 									</div>
 								</div>
@@ -317,7 +313,7 @@
 									
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-value">
-											{{data.average_nps['3']}} passives
+											{{data.average_nps['3']}} passives <a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="De passives is het aantal patiënten dat uw praktijk met 3 sterren heeft beoordeeld. Deze patiënten zijn weliswaar niet ontevreden over u en/of uw praktijk, maar zijn in de regel onverschillig, en daarmee gevoelig voor een aantrekkelijk aanbod van uw concurrenten."><i class="fa fa-question-circle"></i></a>
 										</div>
 									</div>
 								</div>
@@ -331,7 +327,7 @@
 									
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-value">
-											{{data.average_nps['12']}} detractors
+											{{data.average_nps['12']}} detractors <a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="De criticasters is het aantal patiënten dat u met minder dan 3 sterren heeft beoordeeld. Van deze patiënten is het waarschijnlijk dat zij u en/of uw praktijk, niet zullen aanbevelen bij familie of vrienden."><i class="fa fa-question-circle"></i></a>
 										</div>
 									</div>
 								</div>
@@ -360,6 +356,10 @@
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Historische weergave NPS</h3>
+								</div>
+								
 								<div id="area_nps_average" style="height: 300px;" ng-show=" ! area_nps_average_empty"></div>
 								<div class="empty_data" ng-show="area_nps_average_empty">Er is geen data om weer te geven</div>
 							</div>
@@ -367,6 +367,10 @@
 						
 						<div class="col-md-6 col-xs-12">
 							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Historische weergave verdeling NPS</h3>
+								</div>
+								
 								<div id="area_nps" style="height: 300px;" ng-show=" ! area_nps_empty"></div>
 								<div class="empty_data" ng-show="area_nps_empty">Er is geen data om weer te geven</div>
 							</div>
@@ -403,30 +407,30 @@
 						
 						<div class="col-lg-3 col-slg-6 col-md-6 col-xs-12">
 							<div class="panel panel-default charts2-min-box">
-								<div class="row charts2-stars-count">
+								<div class="row charts2-stars-count" ng-show="data.hours != ''">
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-text">
-											Hoogst
+											Tijdstip meest beoordeeld
 										</div>
 									</div>
 									
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-value">
-											{{data.reply_highest}}%
+											Tussen {{data.hours_from}} en {{data.hours_to}}
 										</div>
 									</div>
 								</div>
 								
-								<div class="row charts2-stars-count">
+								<div class="row charts2-stars-count" ng-show="data.days != ''">
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-text">
-											Laagst
+											Weekdag meest beoordeeld
 										</div>
 									</div>
 									
 									<div class="col-xs-6">
 										<div class="charts2-stars-count-value">
-											{{data.reply_lowest}}%
+											{{data.days_text}}
 										</div>
 									</div>
 								</div>
@@ -489,178 +493,6 @@
 						</p>
 					</div>
 				</div>
-			</div>
-			
-			<div class="page page-charts" ng-show="type == 'online'">
-				<section>
-					<div class="row charts2-row">
-						<div class="col-md-3 col-xs-12" ng-repeat="o in onlines">
-							<div class="panel panel-default">
-								<div class="row">
-									<div class="col-sm-6 col-xs-12">
-										<div class="online-side-logo" ng-class="o.toLowerCase()">
-											<div class="rating-logo">
-												<img src="/application/views/images/online-{{o.toLowerCase()}}.png" alt="{{o}}" />
-											</div>
-										</div>
-									</div>
-									
-									<div class="col-sm-6 col-xs-12">
-										<div class="charts2-side-value">
-											<div class="charts2-side-amount">
-												{{(onl.average[o.toLowerCase()] || 0).toFixed(1)}}
-											</div>
-											
-											<div class="charts2-side-text">
-												{{o}}
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					
-					<div class="row charts2-row">
-						<div class="col-md-3 col-xs-12" ng-repeat="o in onlines">
-							<div class="panel panel-default">
-								<div class="row charts2-stars-count">
-									<div class="col-xs-5">
-										<div class="charts2-stars-count-icons">
-											<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-										</div>
-									</div>
-									
-									<div class="col-xs-7">
-										<div class="charts2-stars-count-value">
-											{{onl.stars[o.toLowerCase()][5] || 0}} beoordelingen
-										</div>
-									</div>
-								</div>
-								
-								<div class="row charts2-stars-count">
-									<div class="col-xs-5">
-										<div class="charts2-stars-count-icons">
-											<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-										</div>
-									</div>
-									
-									<div class="col-xs-7">
-										<div class="charts2-stars-count-value">
-											{{onl.stars[o.toLowerCase()][4] || 0}} beoordelingen
-										</div>
-									</div>
-								</div>
-								
-								<div class="row charts2-stars-count">
-									<div class="col-xs-5">
-										<div class="charts2-stars-count-icons">
-											<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-										</div>
-									</div>
-									
-									<div class="col-xs-7">
-										<div class="charts2-stars-count-value">
-											{{onl.stars[o.toLowerCase()][3] || 0}} beoordelingen
-										</div>
-									</div>
-								</div>
-								
-								<div class="row charts2-stars-count">
-									<div class="col-xs-5">
-										<div class="charts2-stars-count-icons">
-											<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-										</div>
-									</div>
-									
-									<div class="col-xs-7">
-										<div class="charts2-stars-count-value">
-											{{onl.stars[o.toLowerCase()][2] || 0}} beoordelingen
-										</div>
-									</div>
-								</div>
-								
-								<div class="row charts2-stars-count">
-									<div class="col-xs-5">
-										<div class="charts2-stars-count-icons">
-											<i class="fa fa-star-o"></i>
-										</div>
-									</div>
-									
-									<div class="col-xs-7">
-										<div class="charts2-stars-count-value">
-											{{onl.stars[o.toLowerCase()][1] || 0}} beoordelingen
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					
-					<div class="row charts2-row">
-						<div class="col-xs-12">
-							<div class="panel panel-default">
-								<div id="area_online" style="height: 300px;" ng-show=" ! area_online_empty"></div>
-								<div class="empty_data" ng-show="area_online_empty">Er is geen data om weer te geven</div>
-							</div>
-						</div>
-					</div>
-					
-					<div class="row charts2-row">
-						<div class="col-md-3 col-xs-12" ng-repeat="o in onlines">
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h3 class="panel-title">
-										Feedback op {{o}}
-									</h3>
-								</div>
-								
-								<div class="panel-body panel-same-scroll">
-									<div class="reviews_container" ng-repeat="review in onl.reviews[o.toLowerCase()]">
-										<div class="divider divider-dashed divider-lg pull-in"></div>
-										<div class="row">
-											<div class="col-xs-12">
-												<span class="reviews-date">{{review.date}}</span>
-												<span class="badge badge-primary pull-right" ng-show="review.marked_as_read == '0'">Nieuw</span>
-												<i class="fa fa-star-o" ng-if="review.score >= 1">
-												</i><i class="fa fa-star-o" ng-if="review.score >= 2">
-												</i><i class="fa fa-star-o" ng-if="review.score >= 3">
-												</i><i class="fa fa-star-o" ng-if="review.score >= 4">
-												</i><i class="fa fa-star-o" ng-if="review.score >= 5">
-												</i>
-											</div>
-										</div>
-										
-										<a href="{{review.link}}" class="in-google-text" ng-if="review.text != ''" target="_blank" ng-bind-html="review.text">{{review.text}}</a>
-									</div>
-									
-									<p ng-if=" ! onl.reviews[o.toLowerCase()] || onl.reviews[o.toLowerCase()].length == 0" class="text-small empty-feedback">
-										Er zijn nog geen online recensies om te laten zien.
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-					
-					<div class="row charts2-row">
-						<div class="col-md-offset-6 col-md-6 col-xs-12">
-							<div class="panel panel-default">
-								<div class="panel-body small-padding-x">
-									<div id="pie_online" style="height: 178px;"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>
-			</div>
-		</div>
-			
-		<div class="empty_reviews" ng-class="{'show': empty_filter}">
-			<div class="empty_reviews_inner text-center">
-				<i class="fa fa-filter" aria-hidden="true"></i>
-				<p>
-					Er zijn onvoldoende resultaten om weer te geven met de gekozen filters.
-				</p>
 			</div>
 		</div>
 	</div>

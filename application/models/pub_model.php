@@ -18,6 +18,7 @@
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
 		var $period = 365;
+		var $last_time = 0;
 		var $tags = array('subject' => '{{Onderwerp van E-mail}}',
 						  'title' => '{{Aanhef Patiënt}}',
 						  'name' => '{{Voornaam Patiënt}}',
@@ -25,6 +26,7 @@
 						  'doctors_title' => '{{Aanhef Zorgverlener}}',
 						  'doctors_name' => '{{Voornaam Zorgverlener}}',
 						  'doctors_sname' => '{{Achternaam Zorgverlener}}',
+						  'doctors_avatar' => '{{Profielfoto Zorgverlener}}',
 						  'username' => '{{Naam Praktijk}}',
 						  'q_name' => '{{Vraagstelling}}',
 						  'q_desc' => '{{Formulering van de vraagstelling}}');
@@ -46,10 +48,159 @@
 			{
 				$this->period = 366;
 			}
-			
+			$this->last_time = time();
 			$this->set_defaults();
-			
 			$this->renew_logout();
+		}
+		
+		function set_test_data()
+		{
+			$users_id = 1;
+
+			$questions_ids = array(0, 1, 2, 3, 4);
+			$title = array('Mr.', 'Dr.', '');
+			$name = array('John', 'Sam', 'Jack', 'Tom', 'Bill', 'George', 'William', 'Roger', 'Andrew', 'Jim');
+			$sname = array('Peterson', 'Smith', 'Doe', 'Gordon', 'Jackson', 'Clinton', 'Burns', 'Dent', 'Walker', 'Eastwood');
+			$age = array(0, 25, 35, 60, 87, 54, 21, 16, 5, 18);
+			
+			$treatment = array('', '', 'Treatment A', 'Treatment B', 'Treatment C', 'Treatment D', 'Treatment E', 'Treatment F');
+			$feedback = array('I want my money back', 'I want more service', 'I want better service');
+			$reply = array('', '', 'You do not get it', 'We will give you all what you want', 'Thanks for your feedback');
+			$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
+			
+			$zorgkaart_doctor = 'https://www.zorgkaartnederland.nl/zorgverlener/basisarts-basisarts-nickolson-v-m-hoorn-120456/waardeer';
+			$zorgkaart_location = 'https://www.zorgkaartnederland.nl/zorgverlener/basisarts-basisarts-nickolson-v-m-hoorn-120456';
+			$address = array('First Avenue, 56', 'Green Street, 56', 'Apple Street, 153');
+			$postcode = array('256874', '231145', '899635', '785469', '789965', '123569');
+			$city = array('New York', 'Los Angeles', 'Chicago', 'Detroit', 'Washington');
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('doctors');
+			
+			$doctors_num = 10;
+			$doctors_ids = array('', '');
+			for ($i = 0; $i < $doctors_num; $i++)
+			{
+				$data_array = array('users_id' => $users_id,
+									'title' => $title[array_rand($title)],
+									'firstname' => $name[array_rand($name)],
+									'lastname' => $sname[array_rand($sname)],
+									'zorgkaart' => $zorgkaart_doctor,
+									'date' => time());
+				$this->db->insert('doctors', $data_array);
+				$doctors_ids[] = $this->db->insert_id();
+			}
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('locations');
+			
+			$locations_num = 10;
+			$locations_ids = array('', '');
+			for ($i = 0; $i < $locations_num; $i++)
+			{
+				$t = $city[array_rand($city)];
+				$data_array = array('users_id' => $users_id,
+									'title' => $t,
+									'address' => $address[array_rand($address)],
+									'postcode' => $postcode[array_rand($postcode)],
+									'city' => $t,
+									'zorgkaart' => $zorgkaart_location,
+									'date' => time());
+				$this->db->insert('locations', $data_array);
+				$locations_ids[] = $this->db->insert_id();
+			}
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('sent');
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('sent_dates');
+			
+			$this->db->where('users_id', $users_id);
+			$this->db->delete('sent_questions');
+			
+			$limit = 5000;
+			$count = 0;
+			while ($count < $limit)
+			{
+				mt_srand();
+				$batches_num = mt_rand(1, 10);
+				$date = mt_rand(time() - 200 * 24 * 3600, time());
+				$count += $batches_num;
+				
+				$data_array = array('users_id' => $users_id,
+									'emails_amount' => $batches_num,
+									'sent_date' => $date);
+				$this->db->insert('sent_dates', $data_array);
+				$batches_id = $this->db->insert_id();
+				
+				for ($i = 0; $i < $batches_num; $i++)
+				{
+					$q = $questions_ids[array_rand($questions_ids)];
+					$n = $name[array_rand($name)];
+					$s = $sname[array_rand($sname)];
+					$star = mt_rand(0, 5);
+					$f = ($star > 0 && $star <= 2) ? $feedback[array_rand($feedback)] : '';
+					$r = '';
+					$rt = 0;
+					if ( ! empty($f))
+					{
+						$r = $reply[array_rand($reply)];
+						$rt = $date + mt_rand(13, 24) * 3600;
+					}
+					
+					$data_array = array('users_id' => $users_id,
+										'questions_id' => $q,
+										'batches_id' => $batches_id,
+										'title' => $title[array_rand($title)],
+										'name' => $n,
+										'sname' => $s,
+										'doctor' => $doctors_ids[array_rand($doctors_ids)],
+										'location' => $locations_ids[array_rand($locations_ids)],
+										'treatment' => $treatment[array_rand($treatment)],
+										'age' => $age[array_rand($age)],
+										'email' => $n.'_'.$s.'@gmail.com',
+										'date' => $date,
+										'last' => $star > 0 ? ($date + mt_rand(1, 12) * 3600) : 0,
+										'stars' => $star,
+										'status' => $star > 0 ? 2 : 1,
+										'feedback' => $f,
+										'reply' => $r,
+										'reply_time' => $rt);
+					$onlines_num = mt_rand(0, 8);
+					$onlines_array = array();
+					for ($k = 0; $k < $onlines_num; $k++)
+					{
+						$onlines_array[] = $onlines[array_rand($onlines)];
+					}
+					$onlines_array = array_unique($onlines_array);
+					
+					foreach ($onlines_array as $o)
+					{
+						$data_array[$o] = TRUE;
+					}
+					
+					$this->db->insert('sent', $data_array);
+					$sent_id = $this->db->insert_id();
+					
+					$questions_num = mt_rand(0, 3);
+					if ( ! empty($questions_num))
+					{
+						for ($k = 1; $k <= $questions_num; $k++)
+						{
+							if ($questions_ids[$k] != $q)
+							{
+								$data_array = array('sent_id' => $sent_id,
+													'users_id' => $users_id,
+													'questions_id' => $questions_ids[$k],
+													'stars' => mt_rand(1, 5),
+													'date' => $date);
+								$this->db->insert('sent_questions', $data_array);
+							}
+						}
+					}
+				}
+			}
 		}
 		
 		function set_defaults()
@@ -70,7 +221,7 @@
 					{
 						$this->account_amount = $row['account_type'] == '0' ? $this->base_amount : ($row['account_type'] == '1' && $row['organization'] == '1' ? $this->ultimate_amount : $this->pro_amount);
 					}
-					
+
 					if ( ! empty($row['doctors_amount']) &&  $row['doctors_amount'] != '0.00')
 					{
 						$this->doctor_amount = $row['doctors_amount'];
@@ -318,6 +469,7 @@
 			{
 				$this->db->where("id", $this->session->userdata("id"));
 				$this->db->update("users", array("last" => time()));
+				$this->last_time = time();
 			}
  		}
 		
@@ -792,13 +944,14 @@
 				$result['suspension'] = date("d-m-Y", empty($row['suspension']) ? ($row['trial_end'] + $this->period * 24 * 3600) : $row['suspension']);
 				$end = $row['suspension'];
 				$result['days'] = ceil((mktime(0, 0, 0, date("n", $end), date("j", $end), date("Y", $end)) - $time) / (24 * 3600));
-				$result['half_pro'] = round(($this->account_amount / $this->period) * $result['days'], 2);
-				$result['half_basic'] = round(($this->account_amount / $this->period) * $result['days'], 2);
+				$result['half_ultimate'] = round(($this->ultimate_amount / $this->period) * $result['days'], 2);
+				$result['half_pro'] = round(($this->pro_amount / $this->period) * $result['days'], 2);
+				$result['half_basic'] = round(($this->base_amount / $this->period) * $result['days'], 2);
 
 				$result['amount'] = 0;
 				if ($row['account'] == 1 && $row['account_type'] == 0)
 				{
-					$result['amount'] = $result['half_pro'] - $result['half_basic'];
+					$result['amount'] = ($type == 1 ? $result['half_pro'] : $result['half_ultimate']) - $result['half_basic'];
 					$result['half'] = TRUE;
 				}
 				else
@@ -1119,6 +1272,33 @@
 										"zorgkaart" => ! empty($post['zorgkaart']) ? strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer' : '',
 										"short" => ! empty($post['short']) ? $post['short'] : "",
 										"short_checked" => ! empty($post['short_checked']) ? $post['short_checked'] : 0);
+										
+					if ( ! empty($post['new_avatar']) || ! empty($post['remove_avatar']))
+					{
+						if ( ! empty($post['id']))
+						{
+							$this->db->where("id", $post['id']);
+							$this->db->limit(1);
+							$row = $this->db->get("doctors")->row_array();
+
+							if ( ! empty($row['avatar']))
+							{
+								unlink($row['avatar']);
+								$data_array['avatar'] = '';
+							}
+						}
+
+						if ( ! empty($post['new_avatar']))
+						{
+							$source = './avatars/tmp/'.$post['new_avatar'];
+							$dest = './avatars/'.$post['new_avatar'];
+							if (rename($source, $dest))
+							{
+								$data_array['avatar'] = $dest;
+								delete_files('./avatars/tmp/');
+							}
+						}
+					}
 
 					$doctors_id = 0;
 					if ( ! empty($post['id']))
@@ -1563,6 +1743,19 @@
 					$items[] = $row;
 				}
 			}
+			
+			foreach ($items as $key => $row)
+			{
+				$row['count'] = 0;
+				
+				$this->db->where('questions_id', $row['id']);
+				$row['count'] += $this->db->count_all_results('sent');
+				
+				$this->db->where('questions_id', $row['id']);
+				$row['count'] += $this->db->count_all_results('sent_questions');
+				
+				$items[$key] = $row;
+			}
 
 			return $items;
 		}
@@ -1572,10 +1765,27 @@
 			return $this->db->get('rating_questions')->result_array();
 		}
 		
-		function questions_save($questions_id)
+		function questions_save($question)
 		{
 			if ($this->logged_in())
 			{
+				$questions_id = 0;
+				$this->db->where('LOWER(question_name)', strtolower($question['name']));
+				$this->db->where('LOWER(question_description)', strtolower($question['desc']));
+				$this->db->limit(1);
+				$row = $this->db->get('rating_questions')->row_array();
+				if ( ! empty($row))
+				{
+					$questions_id = $row['id'];
+				}
+				else
+				{
+					$data_array = array('question_name' => $question['name'],
+										'question_description' => $question['desc']);
+					$this->db->insert('rating_questions', $data_array);
+					$questions_id = $this->db->insert_id();
+				}
+				
 				$this->db->where('questions_id', $questions_id);
 				$this->db->where('users_id', $this->session->userdata("id"));
 				if ( ! $this->db->count_all_results('users_questions'))
@@ -1615,12 +1825,12 @@
 			}
 		}
 		
-		function questions_edit($questions_id, $new_id)
+		function questions_edit($questions_id, $question)
 		{
 			if ($this->logged_in())
 			{
 				$this->questions_remove($questions_id);
-				$this->questions_save($new_id);
+				$this->questions_save($question);
 			}
 		}
 
@@ -2378,6 +2588,7 @@
 												"address" => $post['address'],
 												"postcode" => $post['postcode'],
 												"city" => $post['city'],
+												"emails_skip" => $post['emails_skip'],
 												"patients_reminder" => $post['patients_reminder'],
 												"reminder_checked" => $post['reminder_checked'],
 												"reminder_period" => $post['reminder_period'],
@@ -3089,34 +3300,12 @@
 				delete_files($path);
 			}
 			
-			$tags_required = $this->get_emails_tags();
-			$tags = array('title', 'name', 'sname', 'email', 'birth', 'doctor', 'treatment');
-			$fields = array('title' => 'Aanhef Patiënt',
-							'name' => 'Voornaam Patiënt',
-							'sname' => 'Achternaam Patiënt',
-							'email' => 'E-mailadres',
-							'birth' => 'Geboortedatum',
-							'doctor' => 'Zorgverlenernummer',
-							'treatment' => 'Behandeling');
-			$users_fields = $this->get_users_fields();
-			
-			$this->db->where("id", $this->session->userdata('id'));
-			$this->db->where("organization", TRUE);
-			if ($this->db->count_all_results('users'))
-			{
-				$tags[] = 'location';
-				$fields['location'] = 'Locatie';
-			}
-			
-			$cols = array();
-			$result = array('dont_use' => array(), 'file' => '', 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
-
+			$result = array();
 			mt_srand();
 			$ext = pathinfo($name, PATHINFO_EXTENSION);
 			$dest = $path.time().mt_rand(100, 999).".".$ext;
 			if (copy($file, $dest))
 			{
-				$result['file'] = $dest;
 				$rows = array();
 				if ($ext == 'tab')
 				{
@@ -3144,179 +3333,32 @@
 				
 				if ( ! empty($rows))
 				{
-					$first = 0;
-					$result['cols'] = $rows[0];
-					foreach ($tags as $tag)
+					$this->db->where('id', $this->session->userdata('id'));
+					$this->db->limit(1);
+					$user = $this->db->get('users')->row_array();
+					if ( ! empty($user) && $user['account'] == 2)
 					{
-						$col = FALSE;
-						foreach ($rows[0] as $key => $row)
+						if (count($rows) > 101)
 						{
-							if ((isset($users_fields[$tag]) && strtolower(trim($row)) == $users_fields[$tag]) || (strtolower(trim($row)) == strtolower($fields[$tag]) && ! isset($users_fields[$tag])))
-							{
-								$col = $key;
-							}
-							
-							if (strpos($row, '@') === FALSE)
-							{
-								$first = 1;
-							}
-						}
-
-						$cols[$tag] = ($col !== FALSE) ? $col : FALSE;
-						if ($cols[$tag] === FALSE)
-						{
-							$result['empty'] = TRUE;
-							$result['cols_check'][$tag] = 0;
+							$this->errors[] = array("Met een trial account kunt u maximaal 100 uitnodigingen per dag versturen.");
+							$result['error'] = TRUE;
+							return $result;
 						}
 						else
 						{
-							$result['cols_check'][$tag] = $result['cols'][$col];
-						}
-						$result['headers'][$tag] = $fields[$tag];
-					}
-					
-					$result['cols'] = array_values($result['cols']);
-					$unique = array();
-					foreach ($result['cols'] as $val)
-					{
-						if ( ! empty($val))
-						{
-							if (in_array($val, $unique))
+							$today = mktime(0, 0, 0, date('n'), date('j'), date('Y'));
+							$this->db->where('date >=', $today);
+							$this->db->where('status <>', 3);
+							if (($this->db->count_all_results('sent') + count($rows)) > 101)
 							{
-								$val = $val.'[2]';
-							}
-
-							$unique[] = $val;
-						}
-					}
-					$result['cols'] = $unique;
-					
-					if ( ! empty($cols))
-					{
-						setLocale(LC_CTYPE, 'nl_NL.UTF-8');
-						$emails = array();
-						$init_count = count($rows[0]);
-						
-						for ($i = $first, $count = count($rows); $i < $count; $i++)
-						{
-							if ($init_count == count($rows[$i]))
-							{
-								$line = array('error' => 0);
-								
-								foreach ($tags as $tag)
-								{
-									if ($tag != 'email' && ! in_array($tag, $tags_required))
-									{
-										$result['dont_use'][$tag] = TRUE;
-									}
-									
-									if ($cols[$tag] !== FALSE)
-									{
-										$line[$tag] = empty($rows[$i][$cols[$tag]]) ? '' : $rows[$i][$cols[$tag]];
-										if ($tag == 'doctor')
-										{
-											$line['doctor_id'] = $this->get_doctors_id(strtolower($line[$tag]));
-										}
-										
-										if ($tag == 'location')
-										{
-											$line['location_id'] = $this->get_locations_id(strtolower($line[$tag]));
-										}
-										
-										if ($tag == 'email')
-										{
-											$email = strtolower($line[$tag]);
-											if (filter_var($email, FILTER_VALIDATE_EMAIL))
-											{
-												if (in_array($email, $emails) && $line['error'] < 2)
-												{
-													$line['error'] = 1;
-													$result['check'] = FALSE;
-												}
-												$emails[] = $email;
-											}
-											else
-											{
-												$line[$tag] = '<b>!</b>';
-												$line['error'] = 2;
-												$result['check'] = FALSE;
-											}
-										}
-										
-										if ($tag == 'name' || $tag == 'sname')
-										{
-											if ( ! empty($line[$tag]) && ! ctype_alpha(str_replace(array(' ', '.', '-'), '', $line[$tag])))
-											{
-												$line[$tag] = '<b>!</b>';
-												$line['error'] = 2;
-												$result['check'] = FALSE;
-											}
-										}
-										
-										if ($tag == 'birth')
-										{
-											if ( ! empty($line[$tag]))
-											{
-												$sep = (strpos($line[$tag], '/') ? '/' : '-');
-												$temp = explode($sep, $line[$tag]);
-												if (isset($temp[2]))
-												{
-													if ($temp[2] < 16)
-													{
-														$temp[2] += 2000;
-													}
-													elseif ($temp[2] > 16 && $temp[2] < 100)
-													{
-														$temp[2] += 1900;
-													}
-												}
-												
-												if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
-												{
-													$line[$tag] = '<b>!</b>';
-												}
-												else
-												{
-													$line[$tag] = implode($sep, $temp);
-												}
-											}
-											else
-											{
-												$line[$tag] = '<b>!</b>';
-											}
-										}
-										
-										if (empty($line[$tag]))
-										{
-											if (in_array($tag, $tags_required) || $tag == 'email')
-											{
-												$line['error'] = 2;
-												$result['check'] = FALSE;
-											}
-											else
-											{
-												if ($tag == 'name' || $tag == 'sname')
-												{
-													$line[$tag] = '<b>!</b>';
-												}
-											}
-										}
-									}
-									else
-									{
-										$line[$tag] = "";
-										if (in_array($tag, $tags_required))
-										{
-											$line['error'] = 2;
-										}
-										$result['check'] = FALSE;
-									}							
-								}
-
-								$result['data'][] = $line;
+								$this->errors[] = array("Met een trial account kunt u maximaal 100 uitnodigingen per dag versturen.");
+								$result['error'] = TRUE;
+								return $result;
 							}
 						}
 					}
+
+					$result = $this->parse($rows, $dest);
 				}
 				else
 				{
@@ -3324,6 +3366,257 @@
 				}
 			}
 
+			return $result;
+		}
+		
+		function parse_paste($post)
+		{
+			$result = array();
+			$rows = array(array('Aanhef Patiënt', 'Voornaam Patiënt', 'Achternaam Patiënt', 'Leeftijd', 'E-mailadres', 'Zorgverlenernummer'));
+			$list = explode("\n", $post['text']);
+			foreach ($list as $row)
+			{
+				$rows[] = explode("\t", $row);
+			}
+			
+			if ( ! empty($rows))
+			{
+				$result = $this->parse($rows);
+			}
+			else
+			{
+				$result['error'] = TRUE;
+			}
+			
+			return $result;
+		}
+		
+		function parse($rows, $file = '')
+		{
+			$tags_required = $this->get_emails_tags();
+			$tags = array('title', 'name', 'sname', 'email', 'birth', 'doctor', 'treatment');
+			$fields = array('title' => 'Aanhef Patiënt',
+							'name' => 'Voornaam Patiënt',
+							'sname' => 'Achternaam Patiënt',
+							'email' => 'E-mailadres',
+							'birth' => 'Leeftijd',
+							'doctor' => 'Zorgverlenernummer',
+							'treatment' => 'Behandeling');
+			$users_fields = $this->get_users_fields();
+			
+			$this->db->where("id", $this->session->userdata('id'));
+			$this->db->limit(1);
+			$users = $this->db->get("users")->row_array();
+			if ( ! empty($users))
+			{
+				if ( ! empty($users['organization']) || $users['account'] == 2)
+				{
+					$tags[] = 'location';
+					$fields['location'] = 'Locatie';
+				}
+			}
+			
+			$cols = array();
+			$result = array('dont_use' => array(), 'file' => $file, 'headers' => array(), 'data' => array(), 'cols' => array(), 'cols_check' => array(), 'empty' => FALSE, 'check' => TRUE);
+			
+			$first = 0;
+			$result['cols'] = $rows[0];
+			foreach ($tags as $tag)
+			{
+				$col = FALSE;
+				foreach ($rows[0] as $key => $row)
+				{
+					if ((isset($users_fields[$tag]) && strtolower(trim($row)) == $users_fields[$tag]) || (strtolower(trim($row)) == strtolower($fields[$tag]) && ! isset($users_fields[$tag])))
+					{
+						$col = $key;
+					}
+					
+					if (strpos($row, '@') === FALSE)
+					{
+						$first = 1;
+					}
+				}
+
+				$cols[$tag] = ($col !== FALSE) ? $col : FALSE;
+				if ($cols[$tag] === FALSE)
+				{
+					$result['empty'] = TRUE;
+					$result['cols_check'][$tag] = 0;
+				}
+				else
+				{
+					$result['cols_check'][$tag] = $result['cols'][$col];
+				}
+				$result['headers'][$tag] = $fields[$tag];
+			}
+			
+			$result['cols'] = array_values($result['cols']);
+			$unique = array();
+			foreach ($result['cols'] as $val)
+			{
+				if ( ! empty($val))
+				{
+					if (in_array($val, $unique))
+					{
+						$val = $val.'[2]';
+					}
+
+					$unique[] = $val;
+				}
+			}
+			$result['cols'] = $unique;
+			if ( ! empty($cols))
+			{
+				setLocale(LC_CTYPE, 'nl_NL.UTF-8');
+				$emails = array();
+				$init_count = count($rows[0]);
+				
+				for ($i = $first, $count = count($rows); $i < $count; $i++)
+				{
+					if ($init_count == count($rows[$i]))
+					{
+						$line = array('error' => 0);
+						
+						foreach ($tags as $tag)
+						{
+							if ($tag != 'email' && ! in_array($tag, $tags_required))
+							{
+								$result['dont_use'][$tag] = TRUE;
+							}
+							
+							if ($cols[$tag] !== FALSE)
+							{
+								$line[$tag] = empty($rows[$i][$cols[$tag]]) ? '' : $rows[$i][$cols[$tag]];
+								if ($tag == 'doctor')
+								{
+									$line['doctor_id'] = $this->get_doctors_id(strtolower($line[$tag]));
+								}
+								
+								if ($tag == 'location')
+								{
+									$line['location_id'] = $this->get_locations_id(strtolower($line[$tag]));
+								}
+								
+								if ($tag == 'email')
+								{
+									$email = strtolower($line[$tag]);
+									if (filter_var($email, FILTER_VALIDATE_EMAIL))
+									{
+										if (in_array($email, $emails) && $line['error'] < 2)
+										{
+											$line['error'] = 1;
+											$result['check'] = FALSE;
+										}
+										
+										if ( ! empty($users['emails_skip']))
+										{
+											$from = time() - ($users['emails_skip'] == 1 ? 7 : ($users['emails_skip'] == 2 ? 30 : 90)) * 24 * 3600;
+											$this->db->where('email', $email);
+											$this->db->where('date >=', $from);
+											$this->db->limit(1);
+											if ($this->db->count_all_results('sent') > 0)
+											{
+												$line['error'] = 3;
+												$result['check'] = FALSE;
+											}
+										}
+										
+										$emails[] = $email;
+									}
+									else
+									{
+										$line[$tag] = '<b>!</b>';
+										$line['error'] = 2;
+										$result['check'] = FALSE;
+									}
+								}
+								
+								if ($tag == 'name' || $tag == 'sname')
+								{
+									if ( ! empty($line[$tag]) && ! ctype_alpha(str_replace(array(' ', '.', '-'), '', $line[$tag])))
+									{
+										$line[$tag] = '<b>!</b>';
+										$line['error'] = 2;
+										$result['check'] = FALSE;
+									}
+								}
+								
+								if ($tag == 'birth')
+								{
+									if ( ! empty($line[$tag]))
+									{
+										$sep = (strpos($line[$tag], '/') ? '/' : '-');
+										$temp = explode($sep, $line[$tag]);
+										if (isset($temp[2]))
+										{
+											if ($temp[2] < 16)
+											{
+												$temp[2] += 2000;
+											}
+											elseif ($temp[2] > 16 && $temp[2] < 100)
+											{
+												$temp[2] += 1900;
+											}
+										}
+										
+										if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
+										{
+											$line[$tag] = '<b>!</b>';
+										}
+										else
+										{
+											$birth = mktime(0, 0, 0, $temp[1], $temp[0], $temp[2]);
+											$age = date('Y') - date('Y', $birth);
+											if (mktime(0, 0, 0, date('n'), date('j'), 2000) < mktime(0, 0, 0, date('n', $birth), date('j', $birth), 2000))
+											{
+												$age -= 1;
+											}
+
+											$line[$tag] = $age;
+										}
+									}
+									else
+									{
+										$line[$tag] = '<b>!</b>';
+									}
+								}
+								
+								if (empty($line[$tag]))
+								{
+									if (in_array($tag, $tags_required) || $tag == 'email')
+									{
+										$line['error'] = 2;
+										$result['check'] = FALSE;
+									}
+									else
+									{
+										if ($tag == 'name' || $tag == 'sname')
+										{
+											$line[$tag] = '<b>!</b>';
+										}
+									}
+								}
+							}
+							else
+							{
+								$line[$tag] = "";
+								if (in_array($tag, $tags_required))
+								{
+									$line['error'] = 2;
+								}
+								
+								if ($tag != 'treatment')
+								{
+									$result['check'] = FALSE;
+								}
+							}							
+						}
+
+						$result['data'][] = $line;
+					}
+				}
+			}
+			
 			return $result;
 		}
 		
@@ -3590,7 +3883,7 @@
 														'account_type' => $row['account_type'],
 														'account' => $row['account'],
 														'questions_info' => $questions_info);
-														
+
 									$data_array = array("users_id" => $this->session->userdata("id"),
 														"questions_id" => empty($questions_info) ? 0 : $questions_info['id'],
 														"batches_id" => $batches_id,
@@ -3600,7 +3893,8 @@
 														"doctor" => ( ! empty($list['doctor_id']) && ! empty($post['column']['doctor'])) ? $list['doctor_id'] : 0,
 														"location" => ( ! empty($list['location_id']) && ! empty($post['column']['location'])) ? $list['location_id'] : 0,
 														"treatment" => ( ! empty($list['treatment']) && ! empty($post['column']['treatment'])) ? $list['treatment'] : "",
-														"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
+														//"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
+														"age" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
 														"email" => strtolower($list['text']),
 														"date" => time(),
 														"status" => 1,
@@ -3672,6 +3966,7 @@
 							empty($doc['title']) ? '{{EMPTY}}' : $doc['title'],
 							empty($doc['firstname']) ? '{{EMPTY}}' : $doc['firstname'],
 							empty($doc['lastname']) ? '{{EMPTY}}' : $doc['lastname'],
+							empty($doc['avatar']) ? '{{EMPTY}}' : '<img src="'.str_replace('./avatars/', base_url().'avatars/', $doc['avatar']).'" style="vertical-align: baseline;" alt="" />',
 							empty($user['username']) ? '{{EMPTY}}' : $user['username'],
 							empty($user['q_name']) ? '{{EMPTY}}' : $user['q_name'],
 							empty($user['q_desc']) ? '{{EMPTY}}' : $user['q_desc'],
@@ -3728,6 +4023,7 @@
 							empty($post['values']['doctors_title']) ? '' : $post['values']['doctors_title'],
 							empty($post['values']['doctors_name']) ? '' : $post['values']['doctors_name'],
 							empty($post['values']['doctors_sname']) ? '' : $post['values']['doctors_sname'],
+							empty($post['values']['doctors_avatar']) ? '' : '<img src="'.$post['values']['doctors_avatar'].'" style="vertical-align: baseline;" alt="" />',
 							empty($post['user']['username']) ? '' : $post['user']['username'],
 							'<br />');
 			
@@ -4035,9 +4331,9 @@
 		
 		function send_payment($post)
 		{
-			$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+			/*$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 			$message = $this->load->view('views/mail/tpl_payment.html', $post, TRUE);
-			return $this->send("renew", $post['email'], 'Uw factuur van Patiëntenreview', $message, 'Patiëntenreview', 'info@patientenreview.nl', $post['attach']);
+			return $this->send("renew", $post['email'], 'Uw factuur van Patiëntenreview', $message, 'Patiëntenreview', 'info@patientenreview.nl', $post['attach']);*/
 		}
 
 		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'info@patientenreview.nl', $attach = FALSE)
@@ -4702,7 +4998,7 @@
 						}
 
 						$stat['diagram'][$row['stars']]++;
-						if ($row['last'] >= $this->session->userdata("login"))
+						if ($row['last'] >= $this->last_time)
 						{
 							if ($row['stars'] > 0)
 							{
@@ -5314,7 +5610,7 @@
 						}
 					}
 					
-					if ( ! empty($sent_id))
+					if ( ! empty($sent_ids))
 					{
 						$this->db->where_in('id', $sent_ids);
 					}
@@ -5394,6 +5690,8 @@
 					$stat['reply_highest'] = 0;
 					$stat['reply_lowest'] = 0;
 					$stat['reply_chart'] = array('reply' => 0, 'click' => 0, 'none' => 0);
+					$stat['hours'] = '';
+					$stat['days'] = '';
 
 					$count = array();
 					$count['all'] = 0;
@@ -5409,6 +5707,8 @@
 					$count['my_month_num'] = array();
 					$count['all_month_num'] = array();
 					$count['all_nps'] = array();
+					$count['hours'] = array();
+					$count['days'] = array();
 
 					$start_date = (time() - 365 * 24 * 3600) > $user['signup'] ? (time() - 365 * 24 * 3600) : $user['signup'];
 					$month_start = date('n', $start_date);
@@ -5462,6 +5762,24 @@
 
 						if ($row['users_id'] == $users_id)
 						{
+							if ( ! empty($row['last']))
+							{
+								$hours = date('G', $row['last']);
+								if ( ! isset($count['hours'][$hours]))
+								{
+									$count['hours'][$hours] = 0;
+								}
+								$count['hours'][$hours]++;
+								
+								$day = date('w', $row['last']);
+								$day = $day == 0 ? 7 : $day;
+								if ( ! isset($count['days'][$day]))
+								{
+									$count['days'][$day] = 0;
+								}
+								$count['days'][$day]++;
+							}
+							
 							if ($row['stars'] > 0)
 							{
 								$count['for_user']++;
@@ -5571,6 +5889,20 @@
 						$count['all']++;
 					}
 					
+					if ( ! empty($count['hours']))
+					{
+						arsort($count['hours']);
+						reset($count['hours']);
+						$stat['hours'] = key($count['hours']);
+					}
+					
+					if ( ! empty($count['days']))
+					{
+						arsort($count['days']);
+						reset($count['days']);
+						$stat['days'] = key($count['days']);
+					}
+					
 					if ( ! empty($count['for_user']))
 					{
 						$stat['average'] = number_format(round($count['average_sum'] / $count['for_user'], 1), 1);
@@ -5617,13 +5949,26 @@
 						$stat['nps_all_month'][$month] = $nps_all_45 - $nps_all_12;
 					}
 
-					$list = $this->pub->get_questions();
-					$stat['questions'] = $this->pub->user_questions($list);
+					$stat['questions'] = array();
+					if (empty($user['account_type']))
+					{
+						$stat['questions'] = $this->pub->get_questions();
+					}
+					else
+					{
+						$list = $this->pub->get_questions();
+						$stat['questions'] = $this->pub->user_questions($list);
+					}
+					
 					if ( ! empty($stat['questions']))
 					{
 						$q_sum = array();
 						$q_num = array();
 						$this->db->where('users_id', $users_id);
+						if ( ! empty($sent_ids))
+						{
+							$this->db->where_in('sent_id', $sent_ids);
+						}
 						$result = $this->db->get('sent_questions')->result_array();
 						foreach ($result as $row)
 						{
@@ -5965,7 +6310,7 @@
 				$users_id = $this->session->userdata("id");
 				$onlines = array('zorgkaart', 'facebook', 'independer', 'google');
 				$stat = array();
-				
+
 				$this->db->order_by('date', 'asc');
 				$this->db->where('users_id', $users_id);
 				$result = $this->db->get('reviews_history')->result_array();
@@ -5986,6 +6331,8 @@
 						$stat['history'][$month][$o]['num']++;
 					}
 				}
+				
+				$stat['months'] = array_values(array_unique($stat['months']));
 				
 				if ( ! empty($stat['history']))
 				{
@@ -6067,6 +6414,7 @@
 						$stat['history'][$month][$o]['num']++;
 					}
 				}
+				
 				$stat['months'] = array_values(array_unique($stat['months']));
 				
 				if ( ! empty($stat['history']))
@@ -6588,7 +6936,7 @@
 						}
 					}
 					
-					if ( ! empty($sent_id))
+					if ( ! empty($sent_ids))
 					{
 						$this->db->where_in('id', $sent_ids);
 					}
@@ -6668,6 +7016,8 @@
 					$stat['reply_highest'] = 0;
 					$stat['reply_lowest'] = 0;
 					$stat['reply_chart'] = array('reply' => 0, 'click' => 0, 'none' => 0);
+					$stat['hours'] = '';
+					$stat['days'] = '';
 
 					$count = array();
 					$count['all'] = 0;
@@ -6680,6 +7030,8 @@
 					$count['all_month_sum'] = array();
 					$count['all_month_num'] = array();
 					$count['all_nps'] = array();
+					$count['hours'] = array();
+					$count['days'] = array();
 
 					$start_date = (time() - 365 * 24 * 3600);
 					$month_start = date('n', $start_date);
@@ -6727,6 +7079,24 @@
 						if ( ! empty($row['last']))
 						{
 							$month = date('Y-m', $row['last']);
+						}
+						
+						if ( ! empty($row['last']))
+						{
+							$hours = date('G', $row['last']);
+							if ( ! isset($count['hours'][$hours]))
+							{
+								$count['hours'][$hours] = 0;
+							}
+							$count['hours'][$hours]++;
+							
+							$day = date('w', $row['last']);
+							$day = $day == 0 ? 7 : $day;
+							if ( ! isset($count['days'][$day]))
+							{
+								$count['days'][$day] = 0;
+							}
+							$count['days'][$day]++;
 						}
 
 						if ($row['stars'] > 0)
@@ -6831,6 +7201,20 @@
 						$count['all']++;
 					}
 					
+					if ( ! empty($count['hours']))
+					{
+						arsort($count['hours']);
+						reset($count['hours']);
+						$stat['hours'] = key($count['hours']);
+					}
+					
+					if ( ! empty($count['days']))
+					{
+						arsort($count['days']);
+						reset($count['days']);
+						$stat['days'] = key($count['days']);
+					}
+					
 					if ( ! empty($count['for_user']))
 					{
 						$stat['average'] = number_format(round($count['average_sum'] / $count['for_user'], 1), 1);
@@ -6868,6 +7252,10 @@
 					{
 						$q_sum = array();
 						$q_num = array();
+						if ( ! empty($sent_ids))
+						{
+							$this->db->where_in('sent_id', $sent_ids);
+						}
 						$result = $this->db->get('sent_questions')->result_array();
 						foreach ($result as $row)
 						{
@@ -7030,6 +7418,7 @@
 						  "trial_date" => "",
 						  "basic" => 0,
 						  "pro" => 0,
+						  "ultimate" => 0,
 						  "added14" => array(),
 						  "expire14" => array(),
 						  "spent" => 0,
@@ -7045,13 +7434,17 @@
 				}
 				elseif ($row['account'] == 1)
 				{
-					if ($row['account_type'] == 0)
+					if ($row['account_type'] == 0 && $row['organization'] == 0)
 					{
 						$stat['basic']++;
 					}
-					elseif ($row['account_type'] == 1)
+					elseif ($row['account_type'] == 1 && $row['organization'] == 0)
 					{
 						$stat['pro']++;
+					}
+					elseif ($row['organization'] == 1)
+					{
+						$stat['ultimate']++;
 					}
 				}
 				
@@ -7155,6 +7548,39 @@
 				$config['new_image'] = './logos/tmp/'.$file;
 				$config['width'] = '300';
 				$config['height'] = '80';
+
+				$this->load->library('image_lib', $config);
+				if ( ! $this->image_lib->resize())
+				{
+					$this->errors[] = array($this->image_lib->display_errors());
+				}
+				else
+				{
+					return $file;
+				}
+			}
+			else
+			{
+				$this->errors[] = array("U kunt alleen .png en .jpg bestanden gebruiken.");
+			}
+		}
+		
+		function save_avatar($tmp_file)
+		{
+			if ($tmp_file['type'] == "image/jpeg" || $tmp_file['type'] == "image/png")
+			{
+				if ( ! file_exists('./avatars/tmp/'))
+				{
+					mkdir('./avatars/tmp/', 0755, TRUE);
+				}
+				
+				$part = explode('.', $tmp_file['name']);
+				$ext = strtolower(array_pop($part));
+				$file = time().mt_rand(1000, 9999).'.'.$ext;
+				$config['source_image'] = $tmp_file['tmp_name'];
+				$config['new_image'] = './avatars/tmp/'.$file;
+				$config['width'] = '60';
+				$config['height'] = '60';
 
 				$this->load->library('image_lib', $config);
 				if ( ! $this->image_lib->resize())
@@ -7569,7 +7995,7 @@
 												'!PSK'
 											));
 				$context = stream_context_create(array(
-					'ssl' => array(
+					/*'ssl' => array(
 						'ciphers' => $ciphers,
 						'verify_peer' => true,
 						'cafile' => '/etc/ssl/certs/ca-certificates.crt', // <-- EDIT FOR NON-DEBIAN/UBUNTU SYSTEMS
@@ -7578,7 +8004,9 @@
 						'disable_compression' => true,
 						'SNI_enabled' => true,
 						'SNI_server_name' => "www.independer.nl"
-					)
+					)*/
+					'ssl' => array("verify_peer"=>false,
+									"verify_peer_name"=>false)
 				));
 				$content = file_get_contents($info['independer_scrap'], null, $context);
 
@@ -7618,7 +8046,7 @@
 													"date" => "",
 													"time" => 0,
 													"hash" => md5($desc));
-								
+
 								$this->db->where("hash", $data_array['hash']);
 								if ($this->db->count_all_results("reviews"))
 								{

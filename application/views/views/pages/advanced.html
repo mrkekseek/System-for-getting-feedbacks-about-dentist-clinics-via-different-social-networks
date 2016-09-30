@@ -10,6 +10,7 @@
 					<thead>
 						<tr>
 							<th>Zorgverlenernummer</th>
+							<th>Profielfoto</th>
 							<th>Aanhef</th>
 							<th>Voornaam</th>
 							<th>Achternaam</th>
@@ -20,6 +21,7 @@
 					<tbody>
 						<tr ng-repeat="d in doctors">
 							<td>{{d.id}}</td>
+							<td><img src="{{d.avatar}}" class="doctors_avatar" alt="" ng-if="d.avatar != ''" /></td>
 							<td>{{d.title}}</td>
 							<td>{{d.firstname}}</td>
 							<td>{{d.lastname}}</td>
@@ -34,7 +36,7 @@
 		</div>
 	</section>
 	
-	<section class="panel panel-default" ng-if="user.organization">
+	<section class="panel panel-default" ng-if="user.organization == '1' || user.account == '2'">
         <div class="panel-heading"><strong><i class="fa fa-hospital-o"></i> Locaties</strong></div>
 		<div class="panel-body">
 			U kunt beoordelingen verzamelen voor individuele locaties door ze toe te voegen aan uw abonnement. Vervolgens kunt u in een kolom in uw patiëntenbestand aangeven bij welke locatie de betreffende patiënt is behandeld.

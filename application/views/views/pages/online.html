@@ -35,7 +35,7 @@
 				
 				<div class="online-blocked" ng-show="blocked[o.name]">
 					<p>
-						Upgrade naar <b>Pro</b> om {{user.username}} te gebruiken.
+						Upgrade naar <b>Pro</b> om {{o.name == 'own' ? 'Aangepaste doorverwijzing' : (o.name.charAt(0).toUpperCase() + o.name.slice(1))}} te gebruiken.
 					</p>
 					
 					<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>

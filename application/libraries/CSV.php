@@ -6,7 +6,7 @@
 	use \ForceUTF8\Encoding;
 	require_once APPPATH."/third_party/Encoding.php";
 
-	class CSV extends parseCSV
+	class Csv extends parseCSV
 	{
 		public function __construct()
 		{ 

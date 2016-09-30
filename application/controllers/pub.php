@@ -32,6 +32,11 @@
 			}
 		}
 		
+		function test_data()
+		{
+			//$this->pub->set_test_data();
+		}
+		
 		function index()
 		{
 			$this->pub->send_code(1, '+380981745687');
@@ -321,6 +326,16 @@
 			$this->response($result);
 		}
 		
+		function parse_paste()
+		{
+			$result = array();
+			if ($this->pub->logged_in())
+			{
+				$result = $this->pub->parse_paste($this->post);
+			}
+			$this->response($result);
+		}
+		
 		function save_field()
 		{
 			$this->pub->save_field($this->post);
@@ -356,6 +371,19 @@
 				if ( ! empty($_FILES['file']['tmp_name']))
 				{
 					$result = $this->pub->save_logo($_FILES['file']);
+				}
+			}
+			$this->response($result);
+		}
+		
+		function upload_avatar()
+		{
+			$result = array();
+			if ($this->pub->logged_in())
+			{
+				if ( ! empty($_FILES['file']['tmp_name']))
+				{
+					$result = $this->pub->save_avatar($_FILES['file']);
 				}
 			}
 			$this->response($result);
@@ -731,7 +759,7 @@
 		function questions_save()
 		{
 			$result = array();
-			$this->pub->questions_save($this->post['questions_id']);
+			$this->pub->questions_save($this->post);
 			$questions_list = $this->pub->get_questions();
 			$result['questions'] = $this->pub->user_questions($questions_list);
 			$result['questions_list'] = $this->pub->free_questions($questions_list, $result['questions']);
@@ -761,7 +789,7 @@
 		function questions_edit()
 		{
 			$result = array();
-			$this->pub->questions_edit($this->post['questions_id'], $this->post['new_id']);
+			$this->pub->questions_edit($this->post['questions_id'], $this->post['question']);
 			$questions_list = $this->pub->get_questions();
 			$result['questions'] = $this->pub->user_questions($questions_list);
 			$result['questions_list'] = $this->pub->free_questions($questions_list, $result['questions']);
