@@ -35,7 +35,7 @@
 							  'header' => "Hoe was uw behandeling?",
 							  'header_mq' => "Hoe heeft u de {{Vraagstelling}} ervaren?",
 							  'text1' => "Geachte heer/mevrouw,\n\nU bent onlangs behandeld in onze praktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw beoordeling te plaatsen op online kanalen.\n\nOp een schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of vrienden?",
-							  'text1_mq' => '{{Formulering van de vraagstelling}}',
+							  'text1_mq' => 'Zou u onze praktijk aanbevelen omwille van de manier waarop {{Formulering van de vraagstelling}}',
 							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n{{Naam Praktijk}}",
 							  'promo' => "Beoordeel ons en win een ... t.w.v. €..,..!",
 							  'footer' => "U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het patiëntenbestand van {{Naam Praktijk}}. Deze e-mail is een eenmalige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend gebruikt voor het verzoek tot deelname aan dit patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar gemaakt.");
@@ -1268,7 +1268,7 @@
 					$data_array = array("users_id" => $this->session->userdata("id"),
 										"firstname" => $post['firstname'],
 										"lastname" => $post['lastname'],
-										"title" => $post['title'],
+										"title" => ! empty($post['title']) ? $post['title'] : '',
 										"zorgkaart" => ! empty($post['zorgkaart']) ? strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer' : '',
 										"short" => ! empty($post['short']) ? $post['short'] : "",
 										"short_checked" => ! empty($post['short_checked']) ? $post['short_checked'] : 0);
@@ -1668,6 +1668,15 @@
 						$result['text1'] = "Geachte heer/mevrouw,\n\nU bent onlangs behandeld in onze praktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw beoordeling te plaatsen op online kanalen.\n\nOp een schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of vrienden?";
 					}
 				}
+			}
+			
+			if ( ! empty($row['rating_questions']))
+			{
+				unset($result['header'], $result['text1']);
+			}
+			else
+			{
+				unset($result['header_mq'], $result['text1_mq']);
 			}
 			
 			foreach ($result as $key => $value)
@@ -3371,21 +3380,45 @@
 		
 		function parse_paste($post)
 		{
+			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
+			{
+				mkdir($path, 0755, TRUE);
+			}
+
 			$result = array();
-			$rows = array(array('Aanhef Patiënt', 'Voornaam Patiënt', 'Achternaam Patiënt', 'Leeftijd', 'E-mailadres', 'Zorgverlenernummer'));
-			$list = explode("\n", $post['text']);
-			foreach ($list as $row)
+			mt_srand();
+			$dest = $path.time().mt_rand(100, 999).".tmp";
+			if (file_put_contents($dest, $post['text']))
 			{
-				$rows[] = explode("\t", $row);
-			}
-			
-			if ( ! empty($rows))
-			{
-				$result = $this->parse($rows);
-			}
-			else
-			{
-				$result['error'] = TRUE;
+				$rows = array();
+				$list = explode("\n", $post['text']);
+				foreach ($list as $key => $row)
+				{
+					if ($key == 0)
+					{
+						$count = count(explode("\t", $row));
+						if ( ! empty($count))
+						{
+							$row_0 = array();
+							for ($i = 1; $i <= $count; $i++)
+							{
+								$row_0[] = '#'.$i;
+							}
+							$rows[] = $row_0;
+						}
+					}
+
+					$rows[] = explode("\t", $row);
+				}
+				
+				if ( ! empty($rows))
+				{
+					$result = $this->parse($rows, $dest);
+				}
+				else
+				{
+					$result['error'] = TRUE;
+				}
 			}
 			
 			return $result;
@@ -3725,7 +3758,7 @@
 						}
 					}
 				}
-				
+
 				$requred = array_unique($requred);
 				return $requred;
 			}
@@ -5710,7 +5743,16 @@
 					$count['hours'] = array();
 					$count['days'] = array();
 
-					$start_date = (time() - 365 * 24 * 3600) > $user['signup'] ? (time() - 365 * 24 * 3600) : $user['signup'];
+					$start = time();
+					foreach ($result as $row)
+					{
+						if ( ! empty($row['last']))
+						{
+							$start = min($start, $row['last']);
+						}
+					}
+
+					$start_date = (time() - 365 * 24 * 3600) > $start ? (time() - 365 * 24 * 3600) : $start;
 					$month_start = date('n', $start_date);
 					$year_start = date('Y', $start_date);
 					$month_finish = date('n');
@@ -7033,7 +7075,14 @@
 					$count['hours'] = array();
 					$count['days'] = array();
 
-					$start_date = (time() - 365 * 24 * 3600);
+					$start_date = time();
+					foreach ($result as $row)
+					{
+						if ( ! empty($row['last']))
+						{
+							$start_date = min($start, $row['last']);
+						}
+					}
 					$month_start = date('n', $start_date);
 					$year_start = date('Y', $start_date);
 					$month_finish = date('n');

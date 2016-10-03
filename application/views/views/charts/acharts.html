@@ -306,9 +306,10 @@
 				<div class="row charts2-row" ng-if="data.questions.length">
 					<div ng-repeat="q in data.questions" class="col-sm-{{12 / data.questions.length}} col-xs-12">
 						<div class="panel panel-default">
-							<div class="charts2-questions-icon">
-								<i class="{{q.stats_icon}}" ng-if="q.is_icon == '1'"></i>
-								<img src="{{q.stats_icon}}" ng-if="q.is_icon == '0'" alt="{{q.question_name}}" />
+							<div class="charts2-questions-title">
+								<!--i class="{{q.stats_icon}}" ng-if="q.is_icon == '1'"></i>
+								<img src="{{q.stats_icon}}" ng-if="q.is_icon == '0'" alt="{{q.question_name}}" /-->
+								{{q.question_name}}
 							</div>
 							
 							<div class="charts2-questions-info">
@@ -317,7 +318,7 @@
 								</div>
 								
 								<div class="charts2-questions-name">
-									{{q.question_name}}
+									<a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="Zou u onze praktijk aanbevelen omwille van de manier waarop {{q.question_description}}"><i class="fa fa-question-circle"></i></a>
 								</div>
 							</div>
 						</div>

@@ -3290,6 +3290,14 @@ body .btn-primary.compose-prev:disabled {
 	border-bottom: solid #E5E5E5 1px;
 }
 
+.charts2-questions-title {
+	padding: 20px 0;
+	text-align: center;
+	background: #494949;
+	color: #fff;
+	text-transform: uppercase;
+}
+
 .charts2-questions-icon {
 	padding: 20px 0;
 	text-align: center;

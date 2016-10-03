@@ -339,7 +339,15 @@
 		function save_field()
 		{
 			$this->pub->save_field($this->post);
-			$result = $this->pub->parse_xls($this->post['file'], FALSE, $this->post['file']);
+			$result = array();
+			if (strpos($this->post['file'], '.tmp') !== FALSE)
+			{
+				$result = $this->pub->parse_paste(array('text' => file_get_contents($this->post['file'])));
+			}
+			else
+			{
+				$result = $this->pub->parse_xls($this->post['file'], FALSE, $this->post['file']);
+			}
 			$this->response($result);
 		}
 		
