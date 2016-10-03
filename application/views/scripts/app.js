@@ -3610,7 +3610,8 @@
 				if (index == 2)
 				{
 					var error = 1;
-					if ( ! $scope.doctor.zorgkaart)
+					$scope.check_link();
+					if ($scope.zorgkaart != "valid")
 					{
 						logger.logError("Vergeet niet het Zorgkaart profiel in te vullen!");
 						error = 0;
@@ -3732,6 +3733,10 @@
 						}
 					});
 				}
+			}
+			else
+			{
+				logger.logError("Vergeet niet het Zorgkaart profiel in te vullen!");
 			}
 		};
 		

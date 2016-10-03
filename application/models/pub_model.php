@@ -1268,7 +1268,7 @@
 					$data_array = array("users_id" => $this->session->userdata("id"),
 										"firstname" => $post['firstname'],
 										"lastname" => $post['lastname'],
-										"title" => $post['title'],
+										"title" => ! empty($post['title']) ? $post['title'] : '',
 										"zorgkaart" => ! empty($post['zorgkaart']) ? strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer' : '',
 										"short" => ! empty($post['short']) ? $post['short'] : "",
 										"short_checked" => ! empty($post['short_checked']) ? $post['short_checked'] : 0);
