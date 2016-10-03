@@ -5743,7 +5743,16 @@
 					$count['hours'] = array();
 					$count['days'] = array();
 
-					$start_date = (time() - 365 * 24 * 3600) > $user['signup'] ? (time() - 365 * 24 * 3600) : $user['signup'];
+					$start = time();
+					foreach ($result as $row)
+					{
+						if ( ! empty($row['last']))
+						{
+							$start = min($start, $row['last']);
+						}
+					}
+
+					$start_date = (time() - 365 * 24 * 3600) > $start ? (time() - 365 * 24 * 3600) : $start;
 					$month_start = date('n', $start_date);
 					$year_start = date('Y', $start_date);
 					$month_finish = date('n');
@@ -7066,7 +7075,14 @@
 					$count['hours'] = array();
 					$count['days'] = array();
 
-					$start_date = (time() - 365 * 24 * 3600);
+					$start_date = time();
+					foreach ($result as $row)
+					{
+						if ( ! empty($row['last']))
+						{
+							$start_date = min($start, $row['last']);
+						}
+					}
 					$month_start = date('n', $start_date);
 					$year_start = date('Y', $start_date);
 					$month_finish = date('n');
