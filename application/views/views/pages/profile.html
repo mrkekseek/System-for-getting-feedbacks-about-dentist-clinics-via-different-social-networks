@@ -300,8 +300,6 @@
 									<tr class="tr_questions" ng-class="{'edit_question': (edit_question[q.id] == 1)}" ng-repeat="q in user.questions">
 										<td class="question_first">
 											<span ng-show="edit_question[q.id] == 0">{{q.question_name}}</span>
-											<!--select ng-show="edit_question[q.id] == 1" ng-model="edit_questions[q.id].name" ng-change="change_edit_question(q.id)" class="form-control" ng-options="option.question_name for option in edit_questions_list[q.id] track by option.id">
-											</select-->
 											<div class="questions-auto-box" ng-class="index[q.id]" ng-show="edit_question[q.id] == 1">
 												<input type="text" class="form-control" ng-model="edit_questions[q.id].name" ng-keyup="auto_keyup($event, q.id)" ng-focus="auto_question(q.id)" ng-change="auto_question(q.id)" placeholder="Typ vraagstelling..." maxlength="30" />
 												<div class="questions-auto-inner">
@@ -310,7 +308,9 @@
 											</div>
 										</td>
 										<td class="question_second">
-											<span ng-show="edit_question[q.id] == 0">{{q.question_description}}</span>
+											<div>
+												Zou u onze praktijk aanbevelen omwille van de manier waarop <span ng-show="edit_question[q.id] == 0">{{q.question_description}}</span>
+											</div>
 											<input type="text" ng-show="edit_question[q.id] == 1" class="form-control" id="desc_{{q.id}}" ng-model="edit_questions[q.id].desc" placeholder="Typ formulering..." maxlength="200" />
 										</td>
 										<td class="question_third">
@@ -322,9 +322,6 @@
 									
 									<tr ng-show="add_new_question == '1'">
 										<td class="question_first">
-											<!--select ng-model="new_question" ng-change="change_new_question()" class="form-control" ng-options="option.question_name for option in questions_list track by option.id">
-												<option value="">Kies bestaande...</option>
-											</select-->
 											<div class="questions-auto-box" ng-class="index[q.id]">
 												<input type="text" class="form-control" ng-model="new_question.name" ng-keyup="auto_keyup($event)" ng-focus="auto_question()" ng-change="auto_question()" placeholder="Typ vraagstelling..." maxlength="30" />
 												<div class="questions-auto-inner">
@@ -333,6 +330,9 @@
 											</div>
 										</td>
 										<td class="question_second">
+											<div>
+												Zou u onze praktijk aanbevelen omwille van de manier waarop
+											</div>
 											<input type="text" class="form-control" ng-model="new_question.desc" id="desc_0" placeholder="Typ formulering..." maxlength="200" />
 										</td>
 										<td class="question_third">
