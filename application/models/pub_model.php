@@ -3371,21 +3371,45 @@
 		
 		function parse_paste($post)
 		{
+			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
+			{
+				mkdir($path, 0755, TRUE);
+			}
+
 			$result = array();
-			$rows = array(array('Aanhef Patiënt', 'Voornaam Patiënt', 'Achternaam Patiënt', 'Leeftijd', 'E-mailadres', 'Zorgverlenernummer'));
-			$list = explode("\n", $post['text']);
-			foreach ($list as $row)
+			mt_srand();
+			$dest = $path.time().mt_rand(100, 999).".tmp";
+			if (file_put_contents($dest, $post['text']))
 			{
-				$rows[] = explode("\t", $row);
-			}
-			
-			if ( ! empty($rows))
-			{
-				$result = $this->parse($rows);
-			}
-			else
-			{
-				$result['error'] = TRUE;
+				$rows = array();
+				$list = explode("\n", $post['text']);
+				foreach ($list as $key => $row)
+				{
+					if ($key == 0)
+					{
+						$count = count(explode("\t", $row));
+						if ( ! empty($count))
+						{
+							$row_0 = array();
+							for ($i = 1; $i <= $count; $i++)
+							{
+								$row_0[] = '#'.$i;
+							}
+							$rows[] = $row_0;
+						}
+					}
+
+					$rows[] = explode("\t", $row);
+				}
+				
+				if ( ! empty($rows))
+				{
+					$result = $this->parse($rows, $dest);
+				}
+				else
+				{
+					$result['error'] = TRUE;
+				}
 			}
 			
 			return $result;
