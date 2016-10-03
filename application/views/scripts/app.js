@@ -2624,6 +2624,11 @@
 						doctors_avatar: '{{Profielfoto Zorgverlener}}'};
 						
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
+			if ($scope.user.rating_questions = '1')
+			{
+				fields = ['subject', 'header_mq', 'text1_mq', 'promo', 'text2', 'footer'];
+			}
+			
 			for (var i in fields)
 			{
 				for (var key in tags)
@@ -2634,7 +2639,7 @@
 					}
 				}
 			}
-			
+
 			var modalInstance;
 			modalInstance = $modal.open({
 				templateUrl: "test_emails.html",

@@ -1670,6 +1670,15 @@
 				}
 			}
 			
+			if ( ! empty($row['rating_questions']))
+			{
+				unset($result['header'], $result['text1']);
+			}
+			else
+			{
+				unset($result['header_mq'], $result['text1_mq']);
+			}
+			
 			foreach ($result as $key => $value)
 			{
 				$result[$key] = str_replace("\n", "<br />", $value);
@@ -3749,7 +3758,7 @@
 						}
 					}
 				}
-				
+
 				$requred = array_unique($requred);
 				return $requred;
 			}
