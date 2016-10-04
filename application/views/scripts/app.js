@@ -60,7 +60,7 @@
                 'pages/404', 'pages/500', 'pages/forgot-password', 'pages/new-password/:hash', 'pages/lock-screen', 'pages/signin', 'pages/signup',
 				'pages/profile', 'pages/subscription', 'pages/advanced', 'pages/doctors_add', 'pages/doctors_edit/:id', 'pages/locations_add', 'pages/locations_add/:id', 'pages/online', 'pages/activate/:id', 'pages/invoice/:id', 
                 'mail/compose', 'mail/inbox', 'mail/single/:id', 'mail/reply/:id',
-				'manage/add', 'manage/view', 'charts/acharts', 'charts/stat'
+				'manage/add', 'manage/view', 'charts/acharts', 'charts/aonlines', 'charts/stat'
             ];
 
 			titles = {'dashboard': 'Dashboard',
@@ -89,6 +89,7 @@
 					  'manage/add': 'Nieuw abonnement',
 					  'manage/view': 'Beheer abonnementen',
 					  'charts/acharts': 'Statistieken',
+					  'charts/aonlines': 'Statistieken',
 					  'charts/onlines': 'Statistieken',
 					  'charts/stat': 'Statistieken'
             };
@@ -1880,8 +1881,6 @@
 			});
 		};
 
-		$scope.type = 'email';
-		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
 		{
 			hex = hex.replace('#', '');
@@ -1960,16 +1959,7 @@
 		$scope.run_filter = function() {
 			$scope.get();
 		};
-		
-		$scope.change_type = function(type)
-		{
-			if (type != $scope.type)
-			{
-				$scope.type = type;
-				$scope.get();
-			}
-		};
-		
+
 		$scope.data = {};
 		$scope.nps = {};
 		$scope.pie_stars = echarts.init(document.getElementById('pie_stars'));
@@ -2076,7 +2066,7 @@
 		$scope.area_stars_empty = false;
 		$scope.area_nps_average_empty = false;
 		$scope.area_nps_empty = false;
-		$scope.get_email = function() {
+		$scope.get = function() {
 			$http.post("/pub/stat_achart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
 				$scope.data = logger.check(data);
 
@@ -2311,11 +2301,46 @@
 			});
 		};
 
+		$scope.get();
+		
+		$scope.range = function(num)
+		{
+			var array = [];
+			for (var i = 0; i < num; i++)
+			{
+				array.push(i);
+			}
+			return array;
+		};
+    }
+
+})();
+;
+(function () {
+    'use strict';
+
+    angular.module('app')
+        .controller('AOnlinesCtrl', [ '$scope', '$rootScope', '$window', '$http', '$timeout', 'logger', AOnlinesCtrl]); // overall control
+
+    function AOnlinesCtrl($scope, $rootScope, $window, $http, $timeout, logger) {
+		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
+		$scope.hex_to_rgba = function(hex, opacity)
+		{
+			hex = hex.replace('#', '');
+			var r = parseInt(hex.substring(0, 2), 16);
+			var g = parseInt(hex.substring(2, 4), 16);
+			var b = parseInt(hex.substring(4, 6), 16);
+
+			var result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
+			return result;
+		};
+		$scope.color = '#0F75BC';
+		$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
+
 		$scope.pie_online = echarts.init(document.getElementById('pie_online'));
 		$window.onresize = function() { $scope.pie_online.resize(); };
 		$scope.pie_online.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
-				/*toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},*/
 				legend: {orient: "vertical", x: "left", data: ["Zorgkaart", "Facebook", "Independer", "Google"]},
 				calculable: true,
 				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
@@ -2344,7 +2369,7 @@
 		
 		$scope.onl = {};
 		$scope.area_online_empty = false;
-		$scope.get_online = function()
+		$scope.get = function()
 		{
 			$http.post('/pub/astat_online/', {}).success(function(data, status, headers, config) {
 				$scope.onl = logger.check(data);
@@ -2384,18 +2409,6 @@
 					$scope.area_online_empty = empty_check;
 				}
 			});
-		};
-		
-		$scope.get = function()
-		{
-			if ($scope.type == 'email')
-			{
-				$scope.get_email();
-			}
-			else
-			{
-				$scope.get_online();
-			}
 		};
 
 		$scope.get();

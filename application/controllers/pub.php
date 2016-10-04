@@ -17,7 +17,7 @@
 			$row = $this->db->get('sent')->row_array();
 			print_r($row);*/
 
-			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/stat');
+			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/aonlines', 'charts/stat');
 		}
 
 		function cron()

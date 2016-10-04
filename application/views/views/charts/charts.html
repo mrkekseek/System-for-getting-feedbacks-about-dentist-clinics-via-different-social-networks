@@ -230,7 +230,7 @@
 					</div>
 					
 					<div class="row charts2-row" ng-if="data.questions.length">
-						<div ng-repeat="q in data.questions" class="col-sm-{{12 / data.questions.length}} col-xs-12">
+						<div ng-repeat="q in data.questions" class="col-sm-{{data.questions.length >= 5 ? 3 : (12 / data.questions.length)}} col-xs-12">
 							<div class="panel panel-default">
 								<div class="charts2-questions-title">
 									<!--i class="{{q.stats_icon}}" ng-if="q.is_icon == '1'"></i>

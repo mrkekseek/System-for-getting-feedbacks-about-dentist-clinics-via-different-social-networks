@@ -7080,7 +7080,7 @@
 					{
 						if ( ! empty($row['last']))
 						{
-							$start_date = min($start, $row['last']);
+							$start_date = min($start_date, $row['last']);
 						}
 					}
 					$month_start = date('n', $start_date);
@@ -7381,7 +7381,7 @@
 					
 					foreach ($actives as $key => $val)
 					{
-						if ($count < 3)
+						if ($count < 15)
 						{
 							$max[] = $key;
 							$users[] = $key;
@@ -7389,13 +7389,13 @@
 						}
 						$count++;
 					}
-					
+
 					asort($actives);
 					$min = array();
 					$count = 0;
 					foreach ($actives as $key => $val)
 					{
-						if ($count < 3)
+						if ($count < 15)
 						{
 							$min[] = $key;
 							$users[] = $key;
