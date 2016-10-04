@@ -96,6 +96,7 @@
                 <div class="panel-heading hidden-xs">
 					Ontvangen beoordelingen van uw praktijk
 					<button type="button" class="btn btn-primary" ng-show="count_letters()" ng-click="bulk_modal()">Stuur bedankje...</button>
+					<button type="button" class="btn btn-primary pull-right" ng-click="export_inbox()">Exporteer beoordelingen...</button>
 					<div class="dropdown pull-right" ng-if="filter == 'with_feedback'">
 						<button class="btn btn-primary dropdown-toggle" type="button" id="inbox_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 							Markeer als...
@@ -263,6 +264,21 @@
         </div>
     </div>
 </div>
+
+<script type="text/ng-template" id="export_inbox.html">
+	<div class="modal-body">
+		<div class="progress progress-bar-default">
+			<div class="progress-bar" ng-class="{'progress-bar-success': export_done == '1'}" role="progressbar" aria-valuenow="{{export_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{export_percent}}%;">
+				<i class="fa fa-check"></i>
+			</div>
+		</div>
+
+		<div class="text-center">
+			<button class="btn btn-default" ng-click="cancel()">Cancel</button>
+			<button class="btn btn-primary" ng-click="download()" ng-disabled="export_done == '0'"><i class="ti-download"></i> Download</button>
+		</div>
+	</div>
+</script>
 
 <script type="text/ng-template" id="bulk.html">
 	<div class="modal-header">

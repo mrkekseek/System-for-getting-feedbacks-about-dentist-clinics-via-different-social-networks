@@ -4691,6 +4691,44 @@
 		$scope.doctors = [];
 		inbox_count.set(0);
 		$scope.with_feedback_count = with_feedback_count.get;
+		
+		$scope.export_inbox = function() {
+			var filter = {stars: $scope.filter};
+
+			if ($scope.dates.from)
+			{
+				var date = new Date($scope.dates.from);
+				filter.from = date.getTime() / 1000;
+			}
+
+			if ($scope.dates.to)
+			{
+				var date = new Date($scope.dates.to);
+				filter.to = date.getTime() / 1000;
+			}
+			
+			if ($scope.doctor)
+			{
+				filter.doctor = $scope.doctor;
+			}
+				
+			var modalInstance;
+			modalInstance = $modal.open({
+				templateUrl: "export_inbox.html",
+				controller: 'ModalInstanceExportInboxCtrl',
+				resolve: {
+					items: function() {
+						return {filter: filter};
+					}
+				}
+			});
+			
+			modalInstance.result.then((function(items) {
+
+			}), function() {
+				console.log("Modal dismissed at: " + new Date());
+			});
+		};
 
 		$http.post("/pub/get_doctors/").success(function(data, status, headers, config) {
 			var result = logger.check(data);
@@ -8026,6 +8064,7 @@
 		.controller('ModalExampleInvCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalExampleInvCtrl])
 		.controller('ModalExampleNegativeCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalExampleNegativeCtrl])
 		.controller('ModalInstanceBulkCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceBulkCtrl])
+		.controller('ModalInstanceExportInboxCtrl', ['$scope', '$modalInstance', '$http', '$window', '$interval', 'logger', 'items', ModalInstanceExportInboxCtrl])
 		.controller('ModalUnsubscribeCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUnsubscribeCtrl])
 		.controller('ModalUndoCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUndoCtrl])
 		.controller('ModalInstanceHelpCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceHelpCtrl])
@@ -9165,6 +9204,38 @@
 		
 		$scope.close = function() {
             $modalInstance.dismiss("cancel");
+        };
+    };
+	
+	function ModalInstanceExportInboxCtrl($scope, $modalInstance, $http, $window, $interval, logger, items) {
+		$scope.export_done = '0';
+		$scope.export_percent = 0;
+		$scope.export_link = '';
+		var timer = $interval(function() {
+			if ($scope.export_percent < 90)
+			{
+				$scope.export_percent += 10;
+			}
+			else
+			{
+				$interval.cancel(timer);
+			}
+		}, 300);
+		
+		$http.post("/pub/export_inbox/", {filter: items.filter}).success(function(data, status, headers, config) {
+			$scope.export_link = logger.check(data);
+			$interval.cancel(timer);
+			$scope.export_percent = 100;
+			$scope.export_done = '1';
+		});
+			
+		$scope.cancel = function() {
+            $modalInstance.dismiss("cancel");
+        };
+		
+		$scope.download = function() {
+			$window.location.href = $scope.export_link;
+			$modalInstance.dismiss("cancel");
         };
     };
 	

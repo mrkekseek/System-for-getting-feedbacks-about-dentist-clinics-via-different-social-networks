@@ -598,6 +598,23 @@
 			$this->response($result);
 		}
 		
+		function export_inbox()
+		{
+			$result = $this->pub->inbox($this->post);
+			$result = $this->pub->export_inbox($result);
+			$this->response($result);
+		}
+		
+		function export_download($folder)
+		{
+			$file = './export/'.$folder.'/'.date('d-m-Y').'.csv';
+			header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+			header("Content-Transfer-Encoding: Binary"); 
+			header("Content-disposition: attachment; filename=\"".date("d-m-Y").".csv\"");
+			readfile($file);
+			exit;
+		}
+		
 		function read_letters()
 		{
 			$this->pub->read_letters($this->post);

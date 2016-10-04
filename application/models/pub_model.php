@@ -5031,6 +5031,58 @@
 
 			return $items;
 		}
+		
+		function export_inbox($list)
+		{
+			if ( ! empty($list) && $this->logged_in())
+			{
+				$this->db->where('id', $this->session->userdata('id'));
+				$this->db->limit(1);
+				$row = $this->db->get('users')->row_array();
+				if ( ! empty($row))
+				{
+					$folder = md5($row['id'].$row['signup']);
+					$path = './export/'.$folder.'/';
+					
+					if ( ! file_exists($path))
+					{
+						mkdir($path, 0755, TRUE);
+					}
+					
+					delete_files($path, TRUE);
+					
+					$filename = date('d-m-Y').'.csv';
+					if ($fp = fopen($path.$filename, 'w'))
+					{
+						fputcsv($fp, array('Datum', 'Aanhef', 'Voornaam', 'Achternaam', 'Leeftijd', 'E-mailadres', 'Facebook', 'Google', 'Zorgkaart', 'Independer', 'Vergelijk Mondzorg', 'Aangepaste doorverwijzing', 'Kliniekoverzicht', 'Telefoonboek', 'Uitgenodigd op', 'Beoordeeld op'), ';');
+						foreach ($list as $line)
+						{
+							fputcsv($fp, array(date('d-m-Y'),
+										   $line['title'],
+										   $line['name'],
+										   $line['sname'],
+										   $line['age'],
+										   $line['email'],
+										   $line['facebook'],
+										   $line['google'],
+										   $line['zorgkaart'],
+										   $line['independer'],
+										   $line['vergelijkmondzorg'],
+										   $line['own'],
+										   $line['kliniekoverzicht'],
+										   $line['telefoonboek'],
+										   date('d-m-Y H:i', $line['date']),
+										   date('d-m-Y H:i', $line['last'])), ';');
+						}
+						fclose($fp);
+					}
+
+					return base_url().'pub/export_download/'.$folder.'/';
+				}
+			}
+
+			return FALSE;
+		}
 
 		function feedback_info($id)
 		{
