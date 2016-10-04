@@ -20,10 +20,10 @@
 						<td>Extra zorgverleners</td>
 						<td>{{info.doctors_count}}</td>
 					</tr>
-					<tr>
+					<!--tr>
 						<td>Prijs abonnement per jaar</td>
 						<td>{{user.account == 2 ? 'n.v.t.' : ('&euro;' + info.amount.toFixed(2).replace(".", ","))}}</td>
-					</tr>
+					</tr-->
 					<tr>
 						<td>Startdatum huidige betaaltermijn</td>
 						<td>{{user.account == 2 && info.activation ? 'n.v.t.' : info.activation}}</td>
