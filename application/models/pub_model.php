@@ -3644,34 +3644,44 @@
 								{
 									if ( ! empty($line[$tag]))
 									{
-										$sep = (strpos($line[$tag], '/') ? '/' : '-');
-										$temp = explode($sep, $line[$tag]);
-										if (isset($temp[2]))
+										if (strpos($line[$tag], '/') !== FALSE || strpos($line[$tag], '-') !== FALSE)
 										{
-											if ($temp[2] < 16)
+											$sep = (strpos($line[$tag], '/') ? '/' : '-');
+											$temp = explode($sep, $line[$tag]);
+											if (isset($temp[2]))
 											{
-												$temp[2] += 2000;
+												if ($temp[2] < 16)
+												{
+													$temp[2] += 2000;
+												}
+												elseif ($temp[2] > 16 && $temp[2] < 100)
+												{
+													$temp[2] += 1900;
+												}
 											}
-											elseif ($temp[2] > 16 && $temp[2] < 100)
+											
+											if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
 											{
-												$temp[2] += 1900;
+												$line[$tag] = '<b>!</b>';
 											}
-										}
-										
-										if (count($temp) != 3 || (count($temp) == 3 && ! checkdate($temp[1], $temp[0], $temp[2])))
-										{
-											$line[$tag] = '<b>!</b>';
+											else
+											{
+												$birth = mktime(0, 0, 0, $temp[1], $temp[0], $temp[2]);
+												$age = date('Y') - date('Y', $birth);
+												if (mktime(0, 0, 0, date('n'), date('j'), 2000) < mktime(0, 0, 0, date('n', $birth), date('j', $birth), 2000))
+												{
+													$age -= 1;
+												}
+
+												$line[$tag] = $age;
+											}
 										}
 										else
 										{
-											$birth = mktime(0, 0, 0, $temp[1], $temp[0], $temp[2]);
-											$age = date('Y') - date('Y', $birth);
-											if (mktime(0, 0, 0, date('n'), date('j'), 2000) < mktime(0, 0, 0, date('n', $birth), date('j', $birth), 2000))
+											if ( ! is_numeric($line[$tag]))
 											{
-												$age -= 1;
+												$line[$tag] = '<b>!</b>';
 											}
-
-											$line[$tag] = $age;
 										}
 									}
 									else
