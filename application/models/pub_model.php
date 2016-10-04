@@ -2939,6 +2939,7 @@
 					$data_array['suspension'] = $data_array['activation'] + $this->period * 24 * 3600;
 					$data_array['trial_end'] = $data_array['suspension'];
 					$data_array['account'] = 2;
+					$data_array['stars_type'] = 0;
 					unset($data_array['suspension_str']);
 
 					$post['end_date'] = date("d-m-Y", ! empty($data_array['trial_end']) ? $data_array['trial_end'] : $data_array['suspension']);
@@ -2997,6 +2998,7 @@
 					$data_array['reminder_period'] = 0;
 					$data_array['reminder_time'] = 2703600;
 					$data_array['reminder_day'] = 2;
+					$data_array['stars_type'] = 0;
 
 					$send = array();
 					$send['username'] = $post['UserCompanyName'];
