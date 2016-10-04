@@ -4091,7 +4091,7 @@
 				$tags[] = $tag;
 			}
 			$tags[] = '\n';
-			
+
 			$texts = $post['emails'];
 			$values = array('',
 							empty($post['values']['title']) ? '' : $post['values']['title'],
@@ -4102,16 +4102,27 @@
 							empty($post['values']['doctors_sname']) ? '' : $post['values']['doctors_sname'],
 							empty($post['values']['doctors_avatar']) ? '' : '<img src="'.$post['values']['doctors_avatar'].'" style="vertical-align: baseline;" alt="" />',
 							empty($post['user']['username']) ? '' : $post['user']['username'],
+							'',
+							'',
 							'<br />');
 			
 			$texts['subject'] = str_replace($tags, $values, $texts['subject']);
 			$values[0] = $texts['subject'];
 			
+			if ( ! empty($post['user']['rating_questions']))
+			{
+				$questions_list = $this->pub->get_questions();
+				$questions_list = $this->pub->user_questions($questions_list);
+				$q = $questions_list[array_rand($questions_list)];
+				$values[9] = $q['question_name'];
+				$values[10] = $q['question_description'];
+			}
+			
 			foreach ($texts as $key => $text)
 			{
 				$texts[$key] = str_replace($tags, $values, $text);
 			}
-			
+
 			$data_array = array("users_id" => $this->session->userdata("id"),
 								"title" => "",
 								"name" => "",
@@ -4135,6 +4146,7 @@
 									'sent_id' => $this->db->insert_id(),
 									'stars_type' => $post['user']['stars_type'],
 									'stars_text' => $post['user']['stars_text'],
+									'questions_info' => $post['user']['rating_questions'],
 									'texts' => $texts);
 
 				$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
