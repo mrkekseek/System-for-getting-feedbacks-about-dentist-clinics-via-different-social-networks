@@ -7735,6 +7735,112 @@
 			}
 		}
 		
+		function editor_upload($file)
+		{
+			$link = array('link' => '');
+			if ($this->logged_in())
+			{
+				if ($file['type'] == "image/jpeg" || $file['type'] == "image/png")
+				{
+					$this->db->where('id', $this->session->userdata('id'));
+					$this->db->limit(1);
+					$row = $this->db->get('users')->row_array();
+					if ( ! empty($row))
+					{
+						$folder = md5($row['id'].$row['signup']);
+						$path = './files/'.$folder.'/';
+						$part = explode('.', $file['name']);
+						$ext = strtolower(array_pop($part));
+						$filename = time().mt_rand(1000, 9999).'.'.$ext;
+
+						if ( ! file_exists($path.'image/'))
+						{
+							mkdir($path.'image/', 0755, TRUE);
+						}
+						
+						if (rename($file['tmp_name'], $path.'image/'.$filename))
+						{
+							if ( ! file_exists($path.'thumb/'))
+							{
+								mkdir($path.'thumb/', 0755, TRUE);
+							}
+							
+							$config['source_image'] = $path.'image/'.$filename;
+							$config['new_image'] = $path.'thumb/'.$filename;
+							$config['width'] = '150';
+							$config['height'] = '150';
+
+							$this->load->library('image_lib', $config);
+							if ($this->image_lib->resize())
+							{
+								$link['link'] = base_url().'files/'.$folder.'/image/'.$filename;
+							}
+						}
+					}
+				}
+			}
+			
+			return $link;
+		}
+		
+		function editor_get()
+		{
+			$items = array();
+			if ($this->logged_in())
+			{
+				$this->db->where('id', $this->session->userdata('id'));
+				$this->db->limit(1);
+				$row = $this->db->get('users')->row_array();
+				if ( ! empty($row))
+				{
+					$folder = md5($row['id'].$row['signup']);
+					$path = './files/'.$folder.'/';
+					
+					if (file_exists($path.'image/'))
+					{
+						$files = array_diff(scandir($path.'image/'), array('.', '..'));
+						foreach ($files as $file)
+						{
+							$items[] = array('url' => base_url().'files/'.$folder.'/image/'.$file,
+											 'thumb' => base_url().'files/'.$folder.'/thumb/'.$file,
+											 'tag' => 'Images');
+						}
+					}
+				}
+			}
+			
+			return $items;
+		}
+		
+		function editor_delete()
+		{
+			if ( ! empty($_POST['src']))
+			{
+				$temp = explode('/thumb/', $_POST['src']);
+				$file = $temp['1'];
+				if ($this->logged_in())
+				{
+					$this->db->where('id', $this->session->userdata('id'));
+					$this->db->limit(1);
+					$row = $this->db->get('users')->row_array();
+					if ( ! empty($row))
+					{
+						$folder = md5($row['id'].$row['signup']);
+						$path = './files/'.$folder.'/';
+						
+						if (file_exists($path.'image/'.$file))
+						{
+							unlink($path.'image/'.$file);
+							if (file_exists($path.'thumb/'.$file))
+							{
+								unlink($path.'thumb/'.$file);
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		function users_invoices($ids)
 		{
 			$items = array();

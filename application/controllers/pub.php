@@ -332,6 +332,31 @@
 			$this->response($result);
 		}
 		
+		function editor_upload()
+		{
+			$result = array();
+			if ( ! empty($_FILES['file']['tmp_name']))
+			{
+				$result = $this->pub->editor_upload($_FILES['file']);
+			}
+			else
+			{
+				$result['link'] = '';
+			}
+			echo json_encode($result);
+		}
+		
+		function editor_get()
+		{
+			$result = $this->pub->editor_get();
+			echo json_encode($result);
+		}
+		
+		function editor_delete()
+		{
+			$this->pub->editor_delete();
+		}
+		
 		function parse_paste()
 		{
 			$result = array();

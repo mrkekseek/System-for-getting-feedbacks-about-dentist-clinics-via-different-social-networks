@@ -8662,6 +8662,9 @@
 		$scope.froalaOptions = {
 			height: 250,
 			language: 'nl',
+			imageUploadURL: '/pub/editor_upload/',
+			imageManagerLoadURL: '/pub/editor_get/',
+			imageManagerDeleteURL: '/pub/editor_delete/',
 			toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'insertLink', 'insertImage', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
 		};
 		
