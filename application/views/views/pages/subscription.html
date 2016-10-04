@@ -36,7 +36,7 @@
 			</table>
 			<a href="{{info.account_link}}" ng-if="user.account != 2" ng-click="account_change()" class="btn btn-primary btn-w-md">{{info.account_stop == 1 ? "Activeer abonnement..." : "Beëindig abonnement..."}}</a>
 			<button class="btn btn-danger" ng-click="suspend_account()" ng-if="info.account_stop == 1 || user.account == 2">Verwijder account…</button>
-			<a href="#pages/activate/{{user.id}}" class="btn btn-primary btn-w-md" ng-if="user.account_stop == 0 && user.account_type == 0">Upgrade abonnement...</a>
+			<a href="#pages/activate/{{user.id}}" class="btn btn-primary btn-w-md" ng-if="user.account_stop == 0 && (user.account_type == 0 || (user.account_type == 1 && user.organization == 0))">Upgrade abonnement...</a>
 		</div>
 	</section>
 	
