@@ -17,7 +17,7 @@
 			$row = $this->db->get('sent')->row_array();
 			print_r($row);*/
 
-			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/stat');
+			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/aonlines', 'charts/stat');
 		}
 
 		function cron()
@@ -247,6 +247,12 @@
 			$this->response($result);
 		}
 		
+		function save_new_pass()
+		{
+			$result = $this->pub->save_new_password($this->post);
+			$this->response($result);
+		}
+		
 		function profile_save()
 		{
 			$result = $this->pub->profile_save($this->post);
@@ -324,6 +330,31 @@
 				}
 			}
 			$this->response($result);
+		}
+		
+		function editor_upload()
+		{
+			$result = array();
+			if ( ! empty($_FILES['file']['tmp_name']))
+			{
+				$result = $this->pub->editor_upload($_FILES['file']);
+			}
+			else
+			{
+				$result['link'] = '';
+			}
+			echo json_encode($result);
+		}
+		
+		function editor_get()
+		{
+			$result = $this->pub->editor_get();
+			echo json_encode($result);
+		}
+		
+		function editor_delete()
+		{
+			$this->pub->editor_delete();
 		}
 		
 		function parse_paste()
@@ -567,6 +598,23 @@
 			$this->response($result);
 		}
 		
+		function export_inbox()
+		{
+			$result = $this->pub->inbox($this->post);
+			$result = $this->pub->export_inbox($result);
+			$this->response($result);
+		}
+		
+		function export_download($folder)
+		{
+			$file = './export/'.$folder.'/'.date('d-m-Y').'.csv';
+			header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+			header("Content-Transfer-Encoding: Binary"); 
+			header("Content-disposition: attachment; filename=\"".date("d-m-Y").".csv\"");
+			readfile($file);
+			exit;
+		}
+		
 		function read_letters()
 		{
 			$this->pub->read_letters($this->post);
@@ -712,6 +760,12 @@
 		{
 			$this->pub->remove_location($this->post['id']);
 			$result = $this->pub->get_locations();
+			$this->response($result);
+		}
+		
+		function access_location()
+		{
+			$result = $this->pub->access_location();
 			$this->response($result);
 		}
 		

@@ -73,6 +73,9 @@
 							<option value="2">Eén keer per maand</option>
 							<option value="3">Eén keer per 3 maanden</option>
 						</select>
+						<span class="help-block">
+							Met dit onderdeel zorgt u ervoor dat e-mailadressen van patiënten worden uitgefilterd indien zij reeds binnen de aangegeven periode een uitnodiging tot beoordeling hebben ontvangen.
+						</span>
                     </div>
                 </div>
 				
@@ -103,11 +106,11 @@
 						<!--a href="javascript:void(0);" class="btn btn-primary" ng-click="email_text_class = 'open'" ng-show="email_text_class == 'close'">Wijzig e-mail...</a-->
 
 						<div class="email-text-container open">
-							<div style="margin: 0 auto; min-width: 320px; background: #EAEAEA;">
+							<div class="fr-element fr-view" style="margin: 0 auto; min-width: 320px; background: #EAEAEA;">
 								<div style="height: 30px; background: #fff; padding: 10px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);">
 									<table cellpadding="0" cellspacing="0" width="100%">
 										<tr>
-											<td style="text-align: center; padding: 0; margin: 0; font-size: 0; line-height: 0; vertical-align: top;">
+											<td style="border: 0; text-align: center; padding: 0; margin: 0; font-size: 0; line-height: 0; vertical-align: top;">
 												<a href="javascript:void(0);">
 													<img src="{{ (user.logo != '' && (user.account == '2' || user.account_type == '1')) ? user.logo : '/application/views/images/logo_full.png' }}" height="30" alt="" />
 												</a>
@@ -118,13 +121,13 @@
 								
 								<table cellpadding="0" cellspacing="0" width="100%" ng-if="user.emails.header != ''">
 									<tr ng-show="user.rating_questions == '0'">
-										<td ng-bind-html="find_tags((user.emails.header || 'Klik om tekst in te voegen...'), 'header')" ng-click="emails_edit('header', $event)" class="emails-edit" style="padding: 0 15px; height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
+										<td ng-bind-html="find_tags((user.emails.header || 'Klik om tekst in te voegen...'), 'header')" ng-click="emails_edit('header', $event)" class="emails-edit" style="border: 0; padding: 0 15px; height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
 											{{ find_tags((user.emails.header || 'Klik om tekst in te voegen...'), 'header') }}
 										</td>
 									</tr>
 									
 									<tr ng-show="user.rating_questions == '1'">
-										<td ng-bind-html="find_tags((user.emails.header_mq || 'Klik om tekst in te voegen...'), 'header_mq')" ng-click="emails_edit('header_mq', $event)" class="emails-edit"  style="padding: 0 15px; height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
+										<td ng-bind-html="find_tags((user.emails.header_mq || 'Klik om tekst in te voegen...'), 'header_mq')" ng-click="emails_edit('header_mq', $event)" class="emails-edit"  style="border: 0; padding: 0 15px; height: 150px; vertical-align: middle; text-align: center; font: 30px/1.4 arial, sans-serif; color: #fff; background-image: url('/application/views/images/email-back.png'); background-repeat: no-repeat; background-position: center; background-color: {{user.color || '#0f75bc'}}; background-size: cover;">
 											{{ find_tags((user.emails.header_mq || 'Klik om tekst in te voegen...'), 'header_mq') }}
 										</td>
 									</tr>
@@ -152,35 +155,35 @@
 											<div ng-if="user.stars_type == 2" style="width: 100%; margin: 0 auto; padding: 30px 0; font-size: 0; white-space: nowrap;">
 												<table cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse;">
 													<tr>
-														<td style="vertical-align: middle; width: 18%; font: 13px/1.3 arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;">
+														<td style="border: 0; vertical-align: middle; width: 18%; font: 13px/1.3 arial, sans-serif; color: #ccc; text-align: right; padding-right: 2%;">
 															Onwaarschijnlijk
 														</td>
-														<td style="vertical-align: middle; width: 12%; text-align: center;">
+														<td style="border: 0; vertical-align: middle; width: 12%; text-align: center;">
 															<a href="javascript:void(0);" style="text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
 																<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
 															</a>
 														</td>
-														<td style="vertical-align: middle; width: 12%; text-align: center;">
+														<td style="border: 0; vertical-align: middle; width: 12%; text-align: center;">
 															<a href="javascript:void(0);" style="text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
 																<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
 															</a>
 														</td>
-														<td style="vertical-align: middle; width: 12%; text-align: center;">
+														<td style="border: 0; vertical-align: middle; width: 12%; text-align: center;">
 															<a href="javascript:void(0);" style="text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
 																<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
 															</a>
 														</td>
-														<td style="vertical-align: middle; width: 12%; text-align: center;">
+														<td style="border: 0; vertical-align: middle; width: 12%; text-align: center;">
 															<a href="javascript:void(0);" style="text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
 																<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
 															</a>
 														</td>
-														<td style="vertical-align: middle; width: 12%; text-align: center;">
+														<td style="border: 0; vertical-align: middle; width: 12%; text-align: center;">
 															<a href="javascript:void(0);" style="text-decoration: none; background-image: url('/application/views/images/star.png'); background-repeat: no-repeat; background-position: center 0; background-size: 100% auto;">
 																<img src="/application/views/images/star_default.png" alt="" style="width: 100%;" />
 															</a>
 														</td>
-														<td style="vertical-align: middle; width: 18%; font: 13px/1.3 arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;">
+														<td style="border: 0; vertical-align: middle; width: 18%; font: 13px/1.3 arial, sans-serif; color: #ccc; text-align: left; padding-left: 2%;">
 															Waarschijnlijk
 														</td>
 													</tr>
@@ -190,59 +193,59 @@
 											<div ng-if="user.stars_type == 0" style="width: 100%; margin: 0 auto; padding: 30px 0; font-size: 0;">
 												<table class="inner" cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse; margin: 20px 0;">
 													<tr>
-														<td style="vertical-align: middle; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;">
+														<td style="border: 0; vertical-align: middle; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;">
 															&nbsp;
 														</td>
-														<td class="star" style="vertical-align: middle; width: 12%; text-align: center;">
+														<td class="star" style="border: 0; vertical-align: middle; width: 12%; text-align: center;">
 															<a href="javascript:void(0);" style="text-decoration: none; opacity: 0.2;">
 																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%; vertical-align: middle;" />
 															</a>
 														</td>
-														<td class="star" style="vertical-align: middle; width: 12%; text-align: center;">
+														<td class="star" style="border: 0; vertical-align: middle; width: 12%; text-align: center;">
 															<a href="javascript:void(0);" style="text-decoration: none; opacity: 0.4;">
 																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%; vertical-align: middle;" />
 															</a>
 														</td>
-														<td class="star" style="vertical-align: middle; width: 12%; text-align: center;">
+														<td class="star" style="border: 0; vertical-align: middle; width: 12%; text-align: center;">
 															<a href="javascript:void(0);" style="text-decoration: none; opacity: 0.6;">
 																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%; vertical-align: middle;" />
 															</a>
 														</td>
-														<td class="star" style="vertical-align: middle; width: 12%; text-align: center;">
+														<td class="star" style="border: 0; vertical-align: middle; width: 12%; text-align: center;">
 															<a href="javascript:void(0);" style="text-decoration: none; opacity: 0.8;">
 																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%; vertical-align: middle;" />
 															</a>
 														</td>
-														<td class="star" style="vertical-align: middle; width: 12%; text-align: center;">
+														<td class="star" style="border: 0; vertical-align: middle; width: 12%; text-align: center;">
 															<a href="javascript:void(0);" style="text-decoration: none; opacity: 1.0;">
 																<img src="/application/views/images/star_hover.png" alt="" style="width: 100%; vertical-align: middle;" />
 															</a>
 														</td>
-														<td style="vertical-align: middle; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;">
+														<td style="border: 0; vertical-align: middle; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;">
 															&nbsp;
 														</td>
 													</tr>
 													
 													<tr>
-														<td style="padding-top: 10px; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;">
+														<td style="border: 0; padding-top: 10px; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: right; padding-right: 2%;">
 															Onwaarschijnlijk
 														</td>
-														<td style="width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
+														<td style="border: 0; width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
 															1
 														</td>
-														<td style="width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
+														<td style="border: 0; width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
 															2
 														</td>
-														<td style="width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
+														<td style="border: 0; width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
 															3
 														</td>
-														<td style="width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
+														<td style="border: 0; width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
 															4
 														</td>
-														<td style="width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
+														<td style="border: 0; width: 12%; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; padding-top: 10px; text-align: center;">
 															5
 														</td>
-														<td style="padding-top: 10px; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;">
+														<td style="border: 0; padding-top: 10px; font: 13px/1.3 arial, sans-serif; color: #6E6E6E; text-align: left; padding-left: 2%;">
 															Waarschijnlijk
 														</td>
 													</tr>
@@ -372,6 +375,42 @@
                     <label class="col-md-4">E-mailadres praktijk</label>
                     <div class="col-md-8">
                         <input type="email" class="form-control" name="email" ng-model="user.email" value="" required="required" />
+                    </div>
+                </div>
+				
+				<div class="divider divider-dashed divider-lg pull-in"></div>
+				
+				<div class="form-group">
+                    <label class="col-md-4">Accountwachtwoord</label>
+                    <div class="col-md-8">
+						<div class="password-form" ng-class="{'open': password_form == '1'}">
+							<div class="row">
+								<div class="col-xs-12">
+									<div class="form-group">
+										<input type="password" class="form-control" name="old_password" placeholder="Uw huidige wachtwoord" ng-model="passwords.old" />
+									</div>
+								</div>
+								
+								<div class="col-sm-6 col-xs-12">
+									<div class="form-group">
+										<input type="password" class="form-control" name="new_password" placeholder="Kies een nieuw wachtwoord" ng-model="passwords.new" />
+									</div>
+								</div>
+								
+								<div class="col-sm-6 col-xs-12">
+									<div class="form-group">
+										<input type="password" class="form-control" name="confirm_password" placeholder="Bevestig uw nieuwe wachtwoord" ng-model="passwords.confirm" />
+									</div>
+								</div>
+								
+								<div class="col-xs-12">
+									<div class="form-group">
+										<button type="button" class="btn btn-primary" ng-click="save_password()">Wijzig wachtwoord</button>
+									</div>
+								</div>
+							</div>
+						</div>
+                        <button type="button" class="btn btn-primary" ng-show="password_form == '0'" ng-click="show_password_form()">Wijzig wachtwoord...</button>
                     </div>
                 </div>
 				
