@@ -3342,7 +3342,7 @@
 				
 				if ( ! empty($rows))
 				{
-					$this->db->where('id', $this->session->userdata('id'));
+					/*$this->db->where('id', $this->session->userdata('id'));
 					$this->db->limit(1);
 					$user = $this->db->get('users')->row_array();
 					if ( ! empty($user) && $user['account'] == 2)
@@ -3365,7 +3365,7 @@
 								return $result;
 							}
 						}
-					}
+					}*/
 
 					$result = $this->parse($rows, $dest);
 				}
