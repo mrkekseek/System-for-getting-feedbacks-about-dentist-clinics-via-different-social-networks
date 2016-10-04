@@ -721,6 +721,12 @@
 			$this->response($result);
 		}
 		
+		function access_location()
+		{
+			$result = $this->pub->access_location();
+			$this->response($result);
+		}
+		
 		function get_doctors()
 		{
 			$result = $this->pub->get_doctors(empty($this->post['type']) ? FALSE : $this->post['type']);

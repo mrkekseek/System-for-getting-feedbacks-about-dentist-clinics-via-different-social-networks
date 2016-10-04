@@ -1150,6 +1150,28 @@
 			return FALSE;
 		}
 		
+		function access_location()
+		{
+			if ($this->logged_in())
+			{
+				$this->db->where("id", $this->session->userdata("id"));
+				$this->db->limit(1);
+				$row = $this->db->get("users")->row_array();
+				if ( ! empty($row))
+				{
+					$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+					$email_data['email'] = $row['email'];
+					$email_data['phone'] = $row['phone'];
+					$message = $this->load->view('views/mail/tpl_access_location.html', $email_data, TRUE);
+					$this->send("access_location", 'admin@patientenreview.nl', 'Locatie-functionaliteit aangevraagd', $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+					
+					return TRUE;
+				}
+			}
+			
+			return FALSE;
+		}
+		
 		function get_amount()
 		{
 			$result = array();

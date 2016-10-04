@@ -3618,6 +3618,33 @@
 					console.log("Modal dismissed at: " + new Date());
 				});
 			};
+			
+			$scope.locations_modal = function() {
+				var modalInstance;
+				modalInstance = $modal.open({
+					templateUrl: "access_location.html",
+					controller: 'ModalInstanceAccessLocationCtrl',
+					resolve: {
+						items: function() {
+							return [];
+						}
+					}
+				});
+				modalInstance.result.then((function(remove) {
+
+				}), function() {
+					console.log("Modal dismissed at: " + new Date());
+				});
+			};
+			
+			$scope.access_location = function() {
+				$http.post("/pub/access_location/", {}).success(function(data, status, headers, config) {
+					if (logger.check(data))
+					{
+						$scope.locations_modal();
+					}
+				});
+			};
 		}
 		
 		if ($location.path() == "/pages/doctors_add")
@@ -7990,6 +8017,7 @@
 		.controller('ModalInstanceSuspendAccountCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceSuspendAccountCtrl])
 		.controller('ModalInstanceRemoveDoctorCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceRemoveDoctorCtrl])
 		.controller('ModalInstanceRemoveLocationCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceRemoveLocationCtrl])
+		.controller('ModalInstanceAccessLocationCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceAccessLocationCtrl])
 		.controller('ModalInstanceSuspendPopupCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceSuspendPopupCtrl])
 		.controller('ModalInstanceTestEmailCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceTestEmailCtrl])
 		.controller('ModalInstanceStarsEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceStarsEditCtrl])
@@ -8749,6 +8777,12 @@
 		$scope.remove = function() {
 			$modalInstance.close("remove");
 		};
+    };
+	
+	function ModalInstanceAccessLocationCtrl($scope, $modalInstance, $http, $location, logger, items) {
+		$scope.cancel = function() {
+			$modalInstance.dismiss("cancel");
+        };
     };
 	
 	function ModalInstanceSuspendPopupCtrl($scope, $modalInstance, $http, $location, logger, items) {

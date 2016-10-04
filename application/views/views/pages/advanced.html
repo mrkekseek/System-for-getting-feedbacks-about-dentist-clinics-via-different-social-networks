@@ -38,10 +38,10 @@
 	
 	<section class="panel panel-default" ng-if="user.organization == '1' || user.account == '2'">
         <div class="panel-heading"><strong><i class="fa fa-hospital-o"></i> Locaties</strong></div>
-		<div class="panel-body">
+		<div class="panel-body" ng-show="user.use_locations == '1'">
 			U kunt beoordelingen verzamelen voor individuele locaties door ze toe te voegen aan uw abonnement. Vervolgens kunt u in een kolom in uw patiëntenbestand aangeven bij welke locatie de betreffende patiënt is behandeld.
 		</div>
-        <div class="panel-body">
+        <div class="panel-body" ng-show="user.use_locations == '1'">
 			<div class="table-responsive">
 				<table class="table" ng-if="doctors.length > 0">
 					<thead>
@@ -70,6 +70,11 @@
 			</div>
 			
 			<a href="#/pages/locations_add" class="btn btn-primary">Voeg locatie toe...</a>
+		</div>
+		
+		<div class="panel-body" ng-show="user.use_locations == '0'">
+			<p>Indien u beoordelingen per locatie wilt verzamelen kunt u bij ons een verzoek indienen voor het inschakelen van deze functionaliteit.</p>
+			<a href="javascript:void(0);" class="btn btn-primary" ng-click="access_location()">Dien verzoek in...</a>
 		</div>
 	</section>
 </div>
@@ -109,5 +114,21 @@
 	<div class="modal-footer">
 		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
 		<button class="btn btn-primary" ng-click="remove()">Verwijder</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="access_location.html">
+	<div class="modal-header">
+		<h3>
+			Verzoek ingediend
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			We hebben uw verzoek ontvangen. Eén van onze account managers zal spoedig contact met u opnemen voor het bespreken van de details en het inschakelen van de locatie functionaliteit.
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" ng-click="cancel()">Sluit</button>
 	</div>
 </script>
