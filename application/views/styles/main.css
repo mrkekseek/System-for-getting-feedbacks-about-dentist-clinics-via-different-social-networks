@@ -3729,7 +3729,7 @@ body .btn-primary.compose-prev:disabled {
 	width: 100%;
 }
 
-.fr-wrapper + div {
+.fr-box > div:last-of-type {
 	display: none;
 }
 
