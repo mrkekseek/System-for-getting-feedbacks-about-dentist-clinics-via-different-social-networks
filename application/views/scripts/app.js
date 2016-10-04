@@ -2560,6 +2560,46 @@
 			}
 		};
 		
+		$scope.passwords = {};
+		$scope.password_form = '0';
+		$scope.show_password_form = function() {
+			$scope.password_form = '1';
+		};
+		
+		$scope.save_password = function() {
+			if ($scope.passwords.old)
+			{
+				if ($scope.passwords.new && $scope.passwords.new.length >= 6)
+				{
+					if ($scope.passwords.new == $scope.passwords.confirm)
+					{
+						$http.post("/pub/save_new_pass/", $scope.passwords).success(function(data, status, headers, config) {
+							var result = logger.check(data);
+							if (result)
+							{
+								$scope.password_form = '0';
+								$scope.passwords.old = '';
+								$scope.passwords.new = '';
+								$scope.passwords.confirm = '';
+							}
+						});
+					}
+					else
+					{
+						logger.logError("De wachtwoorden komen niet overeen.");
+					}
+				}
+				else
+				{
+					logger.logError("Uw wachtwoord moet minimaal 6 tekens bevatten.");
+				}
+			}
+			else
+			{
+				logger.logError("Empty old password");
+			}
+		};
+		
 		$scope.widget_edit = function(type, $event) {
 			var modalInstance;
 			modalInstance = $modal.open({

@@ -2456,6 +2456,11 @@
 					$this->db->where("id", $row['id']);
 					if ($this->db->update("users", array("password" => $password, "reset" => 0)))
 					{
+						$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+						$email_data['username'] = $row['username'];
+						$message = $this->load->view('views/mail/tpl_password.html', $email_data, TRUE);
+						$this->send("password", $row['email'], 'Uw wachtwoord is gewijzigd', $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+
 						return $this->login(array("email" => $row['email'], "password" => $post['password']));
 					}
 					else
@@ -2466,6 +2471,43 @@
 				else
 				{
 					$this->errors[] = array("De link voor het herstellen van uw wachtwoord is verlopen");
+				}
+			}
+
+			return FALSE;
+		}
+		
+		function save_new_password($post)
+		{
+			if ($this->logged_in())
+			{
+				$this->db->where("id", $this->session->userdata('id'));
+				$this->db->where("password", crypt($post['old'], substr(md5($post['old']), 0, 8)));
+				$this->db->limit(1);
+				$row = $this->db->get("users")->row_array();
+
+				if ( ! empty($row))
+				{
+					$password = crypt($post['new'], substr(md5($post['new']), 0, 8));
+					$this->db->where("id", $row['id']);
+					if ($this->db->update("users", array("password" => $password)))
+					{
+						$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+						$email_data['username'] = $row['username'];
+						$message = $this->load->view('views/mail/tpl_password.html', $email_data, TRUE);
+						$this->send("password", $row['email'], 'Uw wachtwoord is gewijzigd', $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+			
+						$this->errors[] = array("Success" => "Password was changed");
+						return TRUE;
+					}
+					else
+					{
+						$this->errors[] = array("Er is een verbindingsfout opgetreden");
+					}
+				}
+				else
+				{
+					$this->errors[] = array("The old password is wrong");
 				}
 			}
 

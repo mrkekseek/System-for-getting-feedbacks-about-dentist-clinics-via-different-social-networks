@@ -247,6 +247,12 @@
 			$this->response($result);
 		}
 		
+		function save_new_pass()
+		{
+			$result = $this->pub->save_new_password($this->post);
+			$this->response($result);
+		}
+		
 		function profile_save()
 		{
 			$result = $this->pub->profile_save($this->post);

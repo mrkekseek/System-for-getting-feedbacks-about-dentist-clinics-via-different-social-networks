@@ -3771,3 +3771,17 @@ body .btn-primary.compose-prev:disabled {
 	text-decoration: none;
 	background: #F9F9F9;
 }
+
+.password-form {
+	max-height: 0;
+	overflow: hidden;
+	transition: all 0.3s ease 0s;
+}
+
+.password-form.open {
+	max-height: 150px;
+}
+
+.password-form .form-group {
+	margin: 0 0 15px 0;
+}
