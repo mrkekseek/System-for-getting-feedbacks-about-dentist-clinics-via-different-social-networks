@@ -3690,12 +3690,12 @@
 				if (index == 2)
 				{
 					var error = 1;
-					$scope.check_link();
+					/*$scope.check_link();
 					if ($scope.zorgkaart != "valid")
 					{
 						logger.logError("Vergeet niet het Zorgkaart profiel in te vullen!");
 						error = 0;
-					}
+					}*/
 					
 					if (error)
 					{
@@ -3794,9 +3794,9 @@
 		
 		$scope.save_doctor = function()
 		{
-			$scope.check_link();
+			/*$scope.check_link();
 			if ($scope.zorgkaart == "valid")
-			{
+			{*/
 				var check = true;
 				if ($scope.short_checked && ! $scope.validate_url())
 				{
@@ -3813,11 +3813,11 @@
 						}
 					});
 				}
-			}
+			/*}
 			else
 			{
 				logger.logError("Vergeet niet het Zorgkaart profiel in te vullen!");
-			}
+			}*/
 		};
 		
 		$scope.save_location = function()
