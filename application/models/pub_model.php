@@ -33,7 +33,7 @@
 						  
 		var $defaults = array('subject' => "Hoe was uw behandeling bij {{Naam Praktijk}}?",
 							  'header' => "Hoe was uw behandeling?",
-							  'header_mq' => "{{Vraagstelling}}",
+							  'header_mq' => "{{Formulering van de vraagstelling}}",
 							  'text1' => "Geachte heer/mevrouw,\n\nU bent onlangs behandeld in onze praktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw beoordeling te plaatsen op online kanalen.\n\nOp een schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of vrienden?",
 							  'text1_mq' => 'Geachte {{Aanhef Patiënt}} {{Voornaam Patiënt}} {{Achternaam Patiënt}},<br />We sturen u deze e-mail omdat we benieuwd zijn hoe u patientenreview heeft ervaren. Uw mening is ook van onmisbaar belang voor onze dienstverlening.',
 							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n{{Naam Praktijk}}",
@@ -231,6 +231,11 @@
 					{
 						$this->free_doctors_number = $row['doctors_number'];
 					}
+					
+					if ( ! empty($row['last']))
+					{
+						$this->last_time = $row['last'];
+					}
 				}
 			}
 		}
@@ -412,9 +417,10 @@
 			$time = mktime(0, 0, 0, date("m"), date("j"), date("Y"));
 
 			$this->db->where("stars", 0);
+			$this->db->where("status <>", 3);
 			$this->db->where("date <=", $time - 3 * 24 * 3600);
 			$this->db->where("date >", $time - 4 * 24 * 3600);
-			$this->db->group_by("email");
+			//$this->db->group_by("email");
 			$result = $this->db->get("sent")->result_array();
 			$post['emails'] = array();
 			foreach ($result as $row)
@@ -2529,7 +2535,7 @@
 				}
 				else
 				{
-					$this->errors[] = array("The old password is wrong");
+					$this->errors[] = array("Het huidige wachtwoord is onjuist");
 				}
 			}
 
@@ -2842,6 +2848,7 @@
 		{
 			$data_array = array('account_type' => $user['account_type'],
 								'organization' => $user['organization'],
+								'use_locations' => $user['use_locations'],
 								'activation' => $user['activation'],
 								'suspension' => $user['suspension'],
 								'account_amount' => $user['account_amount'],
@@ -3944,8 +3951,9 @@
 
 							$email = strtolower($list['text']);
 							$this->db->where("email", $email);
-							if ( ! $this->db->count_all_results("unsubscribes"))
-							{							$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+							if ( ! empty($row) && ! $this->db->count_all_results("unsubscribes"))
+							{
+								$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 								$email_data['logo'] = ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png');
 								$email_data['username'] = $row['username'];
 								$email_data['id'] = md5($row['id']);
@@ -4078,7 +4086,7 @@
 							empty($doc['avatar']) ? '{{EMPTY}}' : '<img src="'.str_replace('./avatars/', base_url().'avatars/', $doc['avatar']).'" style="vertical-align: baseline;" alt="" />',
 							empty($user['username']) ? '{{EMPTY}}' : $user['username'],
 							empty($user['q_name']) ? '{{EMPTY}}' : $user['q_name'],
-							empty($user['q_desc']) ? '{{EMPTY}}' : $user['q_desc'],
+							empty($user['q_desc']) ? '{{EMPTY}}' : 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$user['q_desc'],
 							'<br />');
 			
 			$texts = $this->user_emails($user['id']);
@@ -4147,7 +4155,7 @@
 				$questions_list = $this->pub->user_questions($questions_list);
 				$q = $questions_list[array_rand($questions_list)];
 				$values[9] = $q['question_name'];
-				$values[10] = $q['question_description'];
+				$values[10] = 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$q['question_description'];
 			}
 			
 			foreach ($texts as $key => $text)
@@ -5011,7 +5019,7 @@
 
 					foreach ($result as $row)
 					{
-						$row['new_letter'] = ($row['last'] >= $user['last']) ? 1 : 0;
+						$row['new_letter'] = ($row['last'] >= $this->last_time) ? 1 : 0;
 						$row['date_time'] = date("d-m-y H:i", ($row['last'] > 0 ? $row['last'] : $row['date']));
 						$row['date'] = $row['last'] > 0 ? $row['last'] : $row['date'];
 						$row['doctor_name'] = "";
@@ -5897,7 +5905,8 @@
 					$year_start = date('Y', $start_date);
 					$month_finish = date('n');
 					$year_finish = date('Y');
-					while ( ! ($month_start >= $month_finish && $year_start >= $year_finish))
+					$finish = mktime(0, 0, 0, $month_finish, 1, $year_finish);
+					while (mktime(0, 0, 0, $month_start, 1, $year_start) <= $finish)
 					{
 						$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
 						$stat['average_month_key'][] = $year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT);
@@ -6096,7 +6105,7 @@
 						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
-						$stat['average_nps']['delta'] = $stat['average_nps']['45'] - $stat['average_nps']['12'];
+						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
 					}
 
 					$sum_my_month = 0;
@@ -6210,6 +6219,7 @@
 					}
 					
 					$this->db->order_by('sent_date', 'desc');
+					$this->db->where('sent_date >=', mktime(0, 0, 0, 10, 1, 2016));
 					$this->db->where('users_id', $users_id);
 					$this->db->limit(10);
 					$result = $this->db->get('sent_dates')->result_array();
@@ -6329,7 +6339,7 @@
 						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
-						$stat['average_nps']['delta'] = $stat['average_nps']['45'] - $stat['average_nps']['12'];
+						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
 					}
 
 					$sum_all_month = 0;
@@ -6467,6 +6477,7 @@
 					}
 					
 					$this->db->order_by('sent_date', 'desc');
+					$this->db->where('sent_date >=', mktime(0, 0, 0, 10, 1, 2016));
 					$this->db->where('users_id', $users_id);
 					$this->db->limit(10);
 					$result = $this->db->get('sent_dates')->result_array();
@@ -6555,6 +6566,7 @@
 				$result = $this->db->get('reviews')->result_array();
 				foreach ($result as $row)
 				{
+					$row['marked_as_read'] = $row['time'] >= mktime(0, 0, 0, 10, 1, 2016) ? $row['marked_as_read'] : FALSE;
 					$stat['reviews'][$row['profile']][] = $row;
 					if ( ! isset($stat['stars'][$row['profile']][$row['score'] * 1]))
 					{
@@ -6655,6 +6667,7 @@
 				$result = $this->db->get('reviews')->result_array();
 				foreach ($result as $row)
 				{
+					$row['marked_as_read'] = $row['time'] >= mktime(0, 0, 0, 10, 1, 2016) ? $row['marked_as_read'] : FALSE;
 					$stat['reviews'][$row['profile']][] = $row;
 					if ( ! isset($stat['stars'][$row['profile']][$row['score'] * 1]))
 					{
@@ -7226,8 +7239,8 @@
 					$month_start = date('n', $start_date);
 					$year_start = date('Y', $start_date);
 					$month_finish = date('n');
-					$year_finish = date('Y');
-					while ( ! ($month_start >= $month_finish && $year_start >= $year_finish))
+					$finish = mktime(0, 0, 0, $month_finish, 1, $year_finish);
+					while (mktime(0, 0, 0, $month_start, 1, $year_start) <= $finish)
 					{
 						$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
 						$stat['average_month_key'][] = $year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT);
@@ -7415,7 +7428,7 @@
 						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
-						$stat['average_nps']['delta'] = $stat['average_nps']['45'] - $stat['average_nps']['12'];
+						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
 					}
 
 					$sum_all_month = 0;
@@ -7503,6 +7516,7 @@
 					}
 					
 					$this->db->order_by('sent_date', 'desc');
+					$this->db->where('sent_date >=', mktime(0, 0, 0, 10, 1, 2016));
 					$this->db->limit(10);
 					$result = $this->db->get('sent_dates')->result_array();
 					foreach ($result as $row)
@@ -7671,6 +7685,7 @@
 			$stat['uploads'] = round($count / $users_count);
 			
 			$this->db->order_by("sent_date", "desc");
+			$this->db->where('sent_date >=', mktime(0, 0, 0, 10, 1, 2016));
 			$result = $this->db->get("sent_dates")->result_array();
 			$dates = array();
 			if ( ! empty($result))
@@ -7768,8 +7783,8 @@
 				$file = time().mt_rand(1000, 9999).'.'.$ext;
 				$config['source_image'] = $tmp_file['tmp_name'];
 				$config['new_image'] = './avatars/tmp/'.$file;
-				$config['width'] = '60';
-				$config['height'] = '60';
+				$config['width'] = '100';
+				$config['height'] = '100';
 
 				$this->load->library('image_lib', $config);
 				if ( ! $this->image_lib->resize())

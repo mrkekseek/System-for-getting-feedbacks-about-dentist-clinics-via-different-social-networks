@@ -673,6 +673,8 @@
         .controller('Charts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', Charts2Ctrl]); // overall control
 
     function Charts2Ctrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.data_load = false;
+		
 		$scope.ultimate_class = {};
         $scope.ultimate_over = function(name)
         {
@@ -729,6 +731,7 @@
 				}
 			}
 			$scope.stat_filter_list = filter_list;
+			$scope.run_filter();
 		};
 		
 		$scope.stat_filter_dates = {'from': '', 'to': ''};
@@ -874,6 +877,7 @@
 		$scope.area_nps_empty = false;
 		$scope.get_email = function() {
 			$http.post("/pub/stat_chart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.data = logger.check(data);
 				$scope.color = $scope.user.color || '#0F75BC';
 				$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
@@ -1174,6 +1178,7 @@
         .controller('OnlinesCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', OnlinesCtrl]); // overall control
 
     function OnlinesCtrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.data_load = false;
 		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
 		{
@@ -1225,6 +1230,7 @@
 		$scope.get_online = function()
 		{
 			$http.post('/pub/stat_online/', {}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.onl = logger.check(data);
 
 				if ($scope.onl && $scope.onl.months)
@@ -1872,6 +1878,7 @@
         .controller('ACharts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$timeout', 'logger', ACharts2Ctrl]); // overall control
 
     function ACharts2Ctrl($scope, $rootScope, $window, $http, $timeout, logger) {
+		$scope.data_load = false;
 		$scope.login_as_user = function(users_id) {
 			$http.post("/pub/login_as_user/", {id: users_id}).success(function(data, status, headers, config) {
 				if (logger.check(data))
@@ -1926,6 +1933,7 @@
 				}
 			}
 			$scope.stat_filter_list = filter_list;
+			$scope.run_filter();
 		};
 		
 		$scope.stat_filter_dates = {'from': '', 'to': ''};
@@ -2068,6 +2076,7 @@
 		$scope.area_nps_empty = false;
 		$scope.get = function() {
 			$http.post("/pub/stat_achart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.data = logger.check(data);
 
 				var is_filter = false;
@@ -2323,6 +2332,7 @@
         .controller('AOnlinesCtrl', [ '$scope', '$rootScope', '$window', '$http', '$timeout', 'logger', AOnlinesCtrl]); // overall control
 
     function AOnlinesCtrl($scope, $rootScope, $window, $http, $timeout, logger) {
+		$scope.data_load = false;
 		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
 		{
@@ -2372,6 +2382,7 @@
 		$scope.get = function()
 		{
 			$http.post('/pub/astat_online/', {}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.onl = logger.check(data);
 				if ($scope.onl && $scope.onl.pie)
 				{
@@ -2490,7 +2501,7 @@
 			{
 				var rel = $event.target.getAttribute("rel");
 				var part = rel.split("|");
-				if (part[1].toLowerCase() == '{{vraagstelling}}' || part[1].toLowerCase() == '{{formulering van de vraagstelling}}')
+				if (part[1].toLowerCase() == '{{formulering van de vraagstelling}}')
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
@@ -2530,7 +2541,7 @@
 				});
 				
 				modalInstance.result.then((function(items) {
-					if (items.type == 'header_mq' && ! (items.value.toLowerCase().indexOf('{{vraagstelling}}') + 1) || items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('{{formulering van de vraagstelling}}') + 1))
+					if (items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('{{formulering van de vraagstelling}}') + 1))
 					{
 						var modalInstance;
 						modalInstance = $modal.open({
@@ -2677,16 +2688,16 @@
 						doctors_avatar: '{{Profielfoto Zorgverlener}}'};
 						
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
-			if ($scope.user.rating_questions = '1')
+			if ($scope.user.rating_questions == '1')
 			{
 				fields = ['subject', 'header_mq', 'text1_mq', 'promo', 'text2', 'footer'];
 			}
-			
+
 			for (var i in fields)
 			{
 				for (var key in tags)
 				{
-					if ($scope.user.emails[fields[i]].indexOf(tags[key]) + 1)
+					if ($scope.user.emails[fields[i]] && $scope.user.emails[fields[i]].indexOf(tags[key]) + 1)
 					{
 						existing_tags[key] = true;
 					}
@@ -4363,7 +4374,8 @@
 			}
 		};
 		
-		$scope.set_doctor = function() {
+		$scope.set_doctor = function(id) {
+			$scope.doc.id = id;
 			$scope.doctors_id = $scope.doc.id;
 			$http.post("/pub/vote_doc/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id}).success(function(data, status, headers, config) {
 				var result = logger.check(data);
@@ -5233,11 +5245,18 @@
 				}
 			});
 
-			modalInstance.result.then((function(ids) {
-				$http.post("/pub/upload_help/", {file: $scope.file}).success(function(data, status, headers, config) {
-					logger.check(data);
-					$location.url("/dashboard");
-				});
+			modalInstance.result.then((function(result) {
+				if (result == 'ignore')
+				{
+					$scope.first_upload = false;
+				}
+				else
+				{
+					$http.post("/pub/upload_help/", {file: $scope.file}).success(function(data, status, headers, config) {
+						logger.check(data);
+						$location.url("/dashboard");
+					});
+				}
 			}), function() {
 				console.log("Modal dismissed at: " + new Date());
 			});
@@ -9272,6 +9291,10 @@
 		
 		$scope.confirm = function() {
             $modalInstance.close("confirm");
+        };
+		
+		$scope.ignore = function() {
+            $modalInstance.close("ignore");
         };
     };
 	

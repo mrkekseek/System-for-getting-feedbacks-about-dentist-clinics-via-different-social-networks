@@ -117,10 +117,25 @@
 							
 							<div class="doctors-box" ng-if="i.doctors.length">
 								<h3 class="sub">Door wie bent u geholpen?</h3>
-								<select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
+								<!--select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
 									<option value="0">Kies een zorgverlener...</option>
 									<option ng-repeat="d in i.doctors" value="{{d.id}}" ng-selected="d.id == doc.id">{{[d.title, d.firstname, d.lastname].join(' ')}}</option>
-								</select>
+								</select-->
+								<div class="row doctors-items-box">
+									<div class="col-sm-4 col-xs-12" ng-repeat="d in i.doctors">
+										<div class="panel panel-default" ng-class="{'active': doc.id == d.id}" ng-click="set_doctor(d.id)">
+											<div class="panel-body">
+												<div class="doctors-items-avatar">
+													<img src="{{d.avatar != '' ? d.avatar.replace('./', '/') : '/application/views/images/empty-doctor.png'}}" alt="" />
+												</div>
+												
+												<div class="text-center">
+													<b>{{d.title + ' ' + d.firstname + ' ' + d.lastname}}</b>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 							
 							<div class="doctors-box" ng-if="i.locations.length">
