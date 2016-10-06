@@ -231,6 +231,11 @@
 					{
 						$this->free_doctors_number = $row['doctors_number'];
 					}
+					
+					if ( ! empty($row['last']))
+					{
+						$this->last_time = $row['last'];
+					}
 				}
 			}
 		}
@@ -5011,7 +5016,7 @@
 
 					foreach ($result as $row)
 					{
-						$row['new_letter'] = ($row['last'] >= $user['last']) ? 1 : 0;
+						$row['new_letter'] = ($row['last'] >= $this->last_time) ? 1 : 0;
 						$row['date_time'] = date("d-m-y H:i", ($row['last'] > 0 ? $row['last'] : $row['date']));
 						$row['date'] = $row['last'] > 0 ? $row['last'] : $row['date'];
 						$row['doctor_name'] = "";
