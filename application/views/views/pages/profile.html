@@ -409,12 +409,22 @@
 				<div class="divider divider-dashed divider-lg pull-in"></div>
 				
 				<div class="form-group">
-                    <label class="col-md-4">E-mailadres feedback patiënten</label>
+                    <label class="col-md-4">E-mailnotificatie feedback</label>
                     <div class="col-md-8">
-                        <input type="email" class="form-control" name="email_reply" ng-model="user.email_reply" value="" />
+						<label class="ui-switch ui-switch-lg">
+							<input type="checkbox" name="email_reply_check" ng-model="user.email_reply_check" ng-checked="user.email_reply_check == '1'" />
+							<i></i>
+						</label>
+						
 						<span class="help-block">
-							Met dit onderdeel wijzigt u het e-mailadres waarnaar binnengekomen feedback van patiënten zal worden gestuurd.
 						</span>
+						
+						<div ng-show="user.email_reply_check == '1'">
+							<input type="email" class="form-control" name="email_reply" ng-model="user.email_reply" value="" />
+							<span class="help-block">
+								Met dit onderdeel kiest u het e-mailadres waarop u een e-mailnotificatie van binnengekomen feedback van patiënten zult ontvangen.
+							</span>
+						</div>
                     </div>
                 </div>
 				

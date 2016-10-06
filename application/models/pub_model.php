@@ -459,7 +459,7 @@
 
 		function send_other()
 		{
-			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew"));
+			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply"));
 		}
 
 		function get_post()
@@ -2665,6 +2665,7 @@
 							$data_array = array("username" => $post['username'],
 												"email" => $post['email'],
 												"email_reply" => $post['email_reply'],
+												"email_reply_check" => $post['email_reply_check'],
 												"phone" => $post['phone'],
 												"mobile" => $post['mobile'],
 												"address" => $post['address'],
@@ -3333,9 +3334,8 @@
 					$post['last'] = $data_array['last'];
 					$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 					$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
-						
+
 					$this->errors[] = array("Success" => "Feedback verstuurd.");
-					return $post;
 				}
 				else
 				{
@@ -3363,13 +3363,36 @@
 					$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 					$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
 					$this->errors[] = array("Success" => "Feedback verstuurd.");
-					return $post;
 				}
 				else
 				{
 					$this->errors[] = array("Database error");
 				}
 			}
+			
+			$this->db->where('id', $post['users_id']);
+			$this->db->where('email_reply_check', TRUE);
+			$this->db->limit(1);
+			$user = $this->db->get('users')->row_array();
+			if ( ! empty($user['email_reply']))
+			{
+				$this->db->where('id', $post['id']);
+				$this->db->limit(1);
+				$sent = $this->db->get('sent')->row_array();
+				
+				$email_data = array();
+				$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+				$email_data['email'] = $sent['email'];
+				$email_data['stars'] = $sent['stars'];
+				$email_data['feedback'] = $sent['feedback'];
+				
+				$message = $this->load->view('views/mail/tpl_feedback_reply.html', $email_data, TRUE);
+
+				$subject = 'Er is nieuwe patiëntenfeedback binnengekomen';
+				$this->send("feedback_reply", $user['email_reply'], $subject, $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+			}
+			
+			return $post;
 		}
 
 		function parse_xls($file, $first = FALSE, $name = FALSE)

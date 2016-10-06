@@ -2495,7 +2495,7 @@
 			
 			return text;
 		};
-
+		
 		$scope.emails_edit = function(type, $event) {
 			if ($event.target.className == "tag-remove")
 			{
