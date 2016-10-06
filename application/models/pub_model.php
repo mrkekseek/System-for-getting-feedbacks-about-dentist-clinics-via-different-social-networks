@@ -4078,7 +4078,7 @@
 							empty($doc['avatar']) ? '{{EMPTY}}' : '<img src="'.str_replace('./avatars/', base_url().'avatars/', $doc['avatar']).'" style="vertical-align: baseline;" alt="" />',
 							empty($user['username']) ? '{{EMPTY}}' : $user['username'],
 							empty($user['q_name']) ? '{{EMPTY}}' : $user['q_name'],
-							empty($user['q_desc']) ? '{{EMPTY}}' : $user['q_desc'],
+							empty($user['q_desc']) ? '{{EMPTY}}' : 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$user['q_desc'],
 							'<br />');
 			
 			$texts = $this->user_emails($user['id']);
@@ -4147,7 +4147,7 @@
 				$questions_list = $this->pub->user_questions($questions_list);
 				$q = $questions_list[array_rand($questions_list)];
 				$values[9] = $q['question_name'];
-				$values[10] = $q['question_description'];
+				$values[10] = 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$q['question_description'];
 			}
 			
 			foreach ($texts as $key => $text)
