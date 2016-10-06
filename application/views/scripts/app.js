@@ -2490,7 +2490,7 @@
 			{
 				var rel = $event.target.getAttribute("rel");
 				var part = rel.split("|");
-				if (part[1].toLowerCase() == '{{vraagstelling}}' || part[1].toLowerCase() == '{{formulering van de vraagstelling}}')
+				if (part[1].toLowerCase() == '{{formulering van de vraagstelling}}')
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
@@ -2530,7 +2530,7 @@
 				});
 				
 				modalInstance.result.then((function(items) {
-					if (items.type == 'header_mq' && ! (items.value.toLowerCase().indexOf('{{vraagstelling}}') + 1) || items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('{{formulering van de vraagstelling}}') + 1))
+					if (items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('{{formulering van de vraagstelling}}') + 1))
 					{
 						var modalInstance;
 						modalInstance = $modal.open({
