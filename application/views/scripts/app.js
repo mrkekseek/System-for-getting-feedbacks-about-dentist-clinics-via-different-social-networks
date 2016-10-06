@@ -673,6 +673,8 @@
         .controller('Charts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', Charts2Ctrl]); // overall control
 
     function Charts2Ctrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.data_load = false;
+		
 		$scope.ultimate_class = {};
         $scope.ultimate_over = function(name)
         {
@@ -874,6 +876,7 @@
 		$scope.area_nps_empty = false;
 		$scope.get_email = function() {
 			$http.post("/pub/stat_chart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.data = logger.check(data);
 				$scope.color = $scope.user.color || '#0F75BC';
 				$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
@@ -1174,6 +1177,7 @@
         .controller('OnlinesCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', OnlinesCtrl]); // overall control
 
     function OnlinesCtrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.data_load = false;
 		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
 		{
@@ -1225,6 +1229,7 @@
 		$scope.get_online = function()
 		{
 			$http.post('/pub/stat_online/', {}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.onl = logger.check(data);
 
 				if ($scope.onl && $scope.onl.months)
@@ -1872,6 +1877,7 @@
         .controller('ACharts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$timeout', 'logger', ACharts2Ctrl]); // overall control
 
     function ACharts2Ctrl($scope, $rootScope, $window, $http, $timeout, logger) {
+		$scope.data_load = false;
 		$scope.login_as_user = function(users_id) {
 			$http.post("/pub/login_as_user/", {id: users_id}).success(function(data, status, headers, config) {
 				if (logger.check(data))
@@ -2068,6 +2074,7 @@
 		$scope.area_nps_empty = false;
 		$scope.get = function() {
 			$http.post("/pub/stat_achart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.data = logger.check(data);
 
 				var is_filter = false;
@@ -2323,6 +2330,7 @@
         .controller('AOnlinesCtrl', [ '$scope', '$rootScope', '$window', '$http', '$timeout', 'logger', AOnlinesCtrl]); // overall control
 
     function AOnlinesCtrl($scope, $rootScope, $window, $http, $timeout, logger) {
+		$scope.data_load = false;
 		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
 		{
@@ -2372,6 +2380,7 @@
 		$scope.get = function()
 		{
 			$http.post('/pub/astat_online/', {}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.onl = logger.check(data);
 				if ($scope.onl && $scope.onl.pie)
 				{

@@ -3807,3 +3807,12 @@ body .btn-primary.compose-prev:disabled {
 	cursor: pointer;
 	background: #FAFAFA;
 }
+
+.charts-box {
+	transition: all 0.3s ease 0s;
+	opacity: 1;
+}
+
+.charts-box.transparent {
+	opacity: 0;
+}

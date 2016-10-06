@@ -6468,6 +6468,7 @@
 					}
 					
 					$this->db->order_by('sent_date', 'desc');
+					$this->db->where('sent_date >=', mktime(0, 0, 0, 10, 1, 2016));
 					$this->db->where('users_id', $users_id);
 					$this->db->limit(10);
 					$result = $this->db->get('sent_dates')->result_array();
@@ -7504,6 +7505,7 @@
 					}
 					
 					$this->db->order_by('sent_date', 'desc');
+					$this->db->where('sent_date >=', mktime(0, 0, 0, 10, 1, 2016));
 					$this->db->limit(10);
 					$result = $this->db->get('sent_dates')->result_array();
 					foreach ($result as $row)
@@ -7672,6 +7674,7 @@
 			$stat['uploads'] = round($count / $users_count);
 			
 			$this->db->order_by("sent_date", "desc");
+			$this->db->where('sent_date >=', mktime(0, 0, 0, 10, 1, 2016));
 			$result = $this->db->get("sent_dates")->result_array();
 			$dates = array();
 			if ( ! empty($result))
