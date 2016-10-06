@@ -417,9 +417,10 @@
 			$time = mktime(0, 0, 0, date("m"), date("j"), date("Y"));
 
 			$this->db->where("stars", 0);
+			$this->db->where("status <>", 3);
 			$this->db->where("date <=", $time - 3 * 24 * 3600);
 			$this->db->where("date >", $time - 4 * 24 * 3600);
-			$this->db->group_by("email");
+			//$this->db->group_by("email");
 			$result = $this->db->get("sent")->result_array();
 			$post['emails'] = array();
 			foreach ($result as $row)
@@ -2847,6 +2848,7 @@
 		{
 			$data_array = array('account_type' => $user['account_type'],
 								'organization' => $user['organization'],
+								'use_locations' => $user['use_locations'],
 								'activation' => $user['activation'],
 								'suspension' => $user['suspension'],
 								'account_amount' => $user['account_amount'],
@@ -3949,8 +3951,9 @@
 
 							$email = strtolower($list['text']);
 							$this->db->where("email", $email);
-							if ( ! $this->db->count_all_results("unsubscribes"))
-							{							$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+							if ( ! empty($row) && ! $this->db->count_all_results("unsubscribes"))
+							{
+								$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 								$email_data['logo'] = ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png');
 								$email_data['username'] = $row['username'];
 								$email_data['id'] = md5($row['id']);
