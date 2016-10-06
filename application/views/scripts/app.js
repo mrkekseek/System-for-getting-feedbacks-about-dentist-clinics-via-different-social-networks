@@ -5234,11 +5234,18 @@
 				}
 			});
 
-			modalInstance.result.then((function(ids) {
-				$http.post("/pub/upload_help/", {file: $scope.file}).success(function(data, status, headers, config) {
-					logger.check(data);
-					$location.url("/dashboard");
-				});
+			modalInstance.result.then((function(result) {
+				if (result == 'ignore')
+				{
+					$scope.first_upload = false;
+				}
+				else
+				{
+					$http.post("/pub/upload_help/", {file: $scope.file}).success(function(data, status, headers, config) {
+						logger.check(data);
+						$location.url("/dashboard");
+					});
+				}
 			}), function() {
 				console.log("Modal dismissed at: " + new Date());
 			});
@@ -9273,6 +9280,10 @@
 		
 		$scope.confirm = function() {
             $modalInstance.close("confirm");
+        };
+		
+		$scope.ignore = function() {
+            $modalInstance.close("ignore");
         };
     };
 	
