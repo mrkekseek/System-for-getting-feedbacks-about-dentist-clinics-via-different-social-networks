@@ -4211,7 +4211,7 @@
 			var segments = $window.location.pathname.split('/');
 			$http.post("/pub/rating_page_get/", {segments: segments}).success(function(data, status, headers, config) {
 				$scope.i = logger.check(data);
-				if ($scope.i)
+				if ($scope.i && $scope.i.user)
 				{
 					$scope.short = $scope.i.short;
 					$scope.id = $scope.i.info.id || 0;
@@ -4277,8 +4277,12 @@
 						$scope.negative_modal();
 					}
 				}
+				else if ($scope.i.unsubscribe)
+				{
+					$scope.color_style = {"background-image": "linear-gradient(" + $scope.color + ", #F5F5F5)"};
+				}
 				
-				$scope.apps.title =  ! $scope.i.user.username ? "Oeps..." : ("Beoordeel " + $scope.i.user.username + " - Patiëntenreview");
+				$scope.apps.title = ! $scope.i.unsubscribe && ! $scope.i.user ? "Oeps..." : ($scope.i.unsubscribe ? "We hebben uw verzoek ontvangen" : "Beoordeel " + $scope.i.user.username + " - Patiëntenreview");
 				$scope.apps.ready = true;
 			});
 		};
@@ -4449,7 +4453,10 @@
 			});
 		};
 		
+		$scope.undo_check = false;
 		$scope.undo = function() {
+			var segments = $window.location.pathname.split('/');
+			$scope.hash = segments[2];
 			$http.post("/pub/undo/", {hash: $scope.hash}).success(function(data, status, headers, config) {
 				var modalInstance;
 				modalInstance = $modal.open({
@@ -4463,7 +4470,7 @@
 				});
 				
 				modalInstance.result.then((function(result) {
-					console.log(result);
+					$scope.undo_check = true;
 				}), function() {
 					console.log("Modal dismissed at: " + new Date());
 				});
@@ -9270,7 +9277,7 @@
 	
 	function ModalUndoCtrl($scope, $modalInstance, $http, logger, items) {
 		$scope.cancel = function() {
-            $modalInstance.dismiss("cancel");
+            $modalInstance.close();
         };
     };
 	

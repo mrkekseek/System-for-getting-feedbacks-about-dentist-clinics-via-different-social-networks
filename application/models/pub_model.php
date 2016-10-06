@@ -4612,6 +4612,31 @@
 						$return['locations'] = $this->get_locations($return['info']['users_id']);
 					}
 				}
+				elseif ($segments[0] == 'unsubscribe')
+				{
+					$return['unsubscribe'] = TRUE;
+					$this->db->where("MD5(id)", $segments[1]);
+					$this->db->limit(1);
+					$row = $this->db->get("sent")->row_array();
+
+					if ( ! empty($row))
+					{
+						$email = strtolower($row['email']);
+						$this->db->where("email", $email);
+						if ( ! $this->db->count_all_results("unsubscribes"))
+						{
+							$data_array = array("email" => strtolower($row['email']),
+												"time" => time());
+
+							$this->db->insert("unsubscribes", $data_array);
+						}
+						$return['result'] = TRUE;
+					}
+					else
+					{
+						$return['result'] = FALSE;
+					}
+				}
 			}
 			
 			return $return;
