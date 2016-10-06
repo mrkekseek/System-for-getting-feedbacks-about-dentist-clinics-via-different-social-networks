@@ -6557,6 +6557,7 @@
 				$result = $this->db->get('reviews')->result_array();
 				foreach ($result as $row)
 				{
+					$row['marked_as_read'] = $row['time'] >= mktime(0, 0, 0, 10, 1, 2016) ? $row['marked_as_read'] : FALSE;
 					$stat['reviews'][$row['profile']][] = $row;
 					if ( ! isset($stat['stars'][$row['profile']][$row['score'] * 1]))
 					{
@@ -6657,6 +6658,7 @@
 				$result = $this->db->get('reviews')->result_array();
 				foreach ($result as $row)
 				{
+					$row['marked_as_read'] = $row['time'] >= mktime(0, 0, 0, 10, 1, 2016) ? $row['marked_as_read'] : FALSE;
 					$stat['reviews'][$row['profile']][] = $row;
 					if ( ! isset($stat['stars'][$row['profile']][$row['score'] * 1]))
 					{
