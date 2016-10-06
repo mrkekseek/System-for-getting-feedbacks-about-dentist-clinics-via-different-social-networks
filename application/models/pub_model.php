@@ -6096,7 +6096,7 @@
 						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
-						$stat['average_nps']['delta'] = $stat['average_nps']['45'] - $stat['average_nps']['12'];
+						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
 					}
 
 					$sum_my_month = 0;
@@ -6330,7 +6330,7 @@
 						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
-						$stat['average_nps']['delta'] = $stat['average_nps']['45'] - $stat['average_nps']['12'];
+						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
 					}
 
 					$sum_all_month = 0;
@@ -7419,7 +7419,7 @@
 						$stat['average_nps']['12p'] = round($stat['average_nps']['12'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['3p'] = round($stat['average_nps']['3'] / $stat['average_nps']['all'] * 100);
 						$stat['average_nps']['45p'] = round($stat['average_nps']['45'] / $stat['average_nps']['all'] * 100);
-						$stat['average_nps']['delta'] = $stat['average_nps']['45'] - $stat['average_nps']['12'];
+						$stat['average_nps']['delta'] = $stat['average_nps']['45p'] - $stat['average_nps']['12p'];
 					}
 
 					$sum_all_month = 0;
