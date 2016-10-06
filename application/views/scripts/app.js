@@ -731,6 +731,7 @@
 				}
 			}
 			$scope.stat_filter_list = filter_list;
+			$scope.run_filter();
 		};
 		
 		$scope.stat_filter_dates = {'from': '', 'to': ''};
@@ -1932,6 +1933,7 @@
 				}
 			}
 			$scope.stat_filter_list = filter_list;
+			$scope.run_filter();
 		};
 		
 		$scope.stat_filter_dates = {'from': '', 'to': ''};
