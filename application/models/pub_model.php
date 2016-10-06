@@ -1657,7 +1657,7 @@
 			return $average;
 		}
 		
-		function user_emails($id = FALSE)
+		function user_emails($id = FALSE, $get = FALSE)
 		{
 			$id = $id ? $id : $this->session->userdata("id");
 			$this->db->where("users_id", $id);
@@ -1698,13 +1698,16 @@
 				}
 			}
 			
-			if ( ! empty($row['rating_questions']))
+			if (empty($get))
 			{
-				unset($result['header'], $result['text1']);
-			}
-			else
-			{
-				unset($result['header_mq'], $result['text1_mq']);
+				if ( ! empty($row['rating_questions']))
+				{
+					unset($result['header'], $result['text1']);
+				}
+				else
+				{
+					unset($result['header_mq'], $result['text1_mq']);
+				}
 			}
 			
 			foreach ($result as $key => $value)
