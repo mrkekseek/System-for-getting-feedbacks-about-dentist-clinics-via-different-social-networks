@@ -2529,7 +2529,7 @@
 				}
 				else
 				{
-					$this->errors[] = array("The old password is wrong");
+					$this->errors[] = array("Het huidige wachtwoord is onjuist");
 				}
 			}
 
