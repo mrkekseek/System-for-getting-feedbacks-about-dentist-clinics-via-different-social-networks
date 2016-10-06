@@ -3786,3 +3786,24 @@ body .btn-primary.compose-prev:disabled {
 .password-form .form-group {
 	margin: 0 0 15px 0;
 }
+
+.doctors-items-box > div {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.doctors-items-avatar {
+	width: 100px;
+	height: 100px;
+	line-height: 100px;
+	border-radius: 50%;
+	text-align: center;
+	overflow: hidden;
+	margin: 0 auto 10px;
+}
+
+.doctors-items-box .panel:hover,
+.doctors-items-box .panel.active {
+	cursor: pointer;
+	background: #FAFAFA;
+}

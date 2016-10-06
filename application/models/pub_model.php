@@ -7768,8 +7768,8 @@
 				$file = time().mt_rand(1000, 9999).'.'.$ext;
 				$config['source_image'] = $tmp_file['tmp_name'];
 				$config['new_image'] = './avatars/tmp/'.$file;
-				$config['width'] = '60';
-				$config['height'] = '60';
+				$config['width'] = '100';
+				$config['height'] = '100';
 
 				$this->load->library('image_lib', $config);
 				if ( ! $this->image_lib->resize())

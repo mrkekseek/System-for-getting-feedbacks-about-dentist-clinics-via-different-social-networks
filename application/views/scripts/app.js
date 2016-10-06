@@ -4363,7 +4363,8 @@
 			}
 		};
 		
-		$scope.set_doctor = function() {
+		$scope.set_doctor = function(id) {
+			$scope.doc.id = id;
 			$scope.doctors_id = $scope.doc.id;
 			$http.post("/pub/vote_doc/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id}).success(function(data, status, headers, config) {
 				var result = logger.check(data);
