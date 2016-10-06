@@ -5897,7 +5897,8 @@
 					$year_start = date('Y', $start_date);
 					$month_finish = date('n');
 					$year_finish = date('Y');
-					while ( ! ($month_start >= $month_finish && $year_start >= $year_finish))
+					$finish = mktime(0, 0, 0, $month_finish, 1, $year_finish);
+					while (mktime(0, 0, 0, $month_start, 1, $year_start) <= $finish)
 					{
 						$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
 						$stat['average_month_key'][] = $year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT);
@@ -7230,8 +7231,8 @@
 					$month_start = date('n', $start_date);
 					$year_start = date('Y', $start_date);
 					$month_finish = date('n');
-					$year_finish = date('Y');
-					while ( ! ($month_start >= $month_finish && $year_start >= $year_finish))
+					$finish = mktime(0, 0, 0, $month_finish, 1, $year_finish);
+					while (mktime(0, 0, 0, $month_start, 1, $year_start) <= $finish)
 					{
 						$stat['average_month_x'][] = date("M 'y", mktime(0, 0, 0, $month_start, 1, $year_start));
 						$stat['average_month_key'][] = $year_start.'-'.str_pad($month_start, 2, '0', STR_PAD_LEFT);
