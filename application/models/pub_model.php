@@ -4945,6 +4945,9 @@
 		function inbox($post)
 		{
 			$items = array();
+			$sort = empty($post['order']) ? FALSE : explode('-', $post['order']);
+			$inbox = empty($sort) ? FALSE : TRUE;
+			$count = 0;
 			if ($this->logged_in())
 			{
 				$users_id = $this->session->userdata("id");
@@ -4953,83 +4956,27 @@
 				$user = $this->db->get("users")->row_array();
 				if ( ! empty($user))
 				{
-					$this->db->order_by("last desc, date desc");
-					if ($post['filter']['stars'] != "no_rating" && $post['filter']['stars'] != "no_reply" && $post['filter']['stars'] != "positive" && $post['filter']['stars'] != "negative")
+					$this->inbox_query($post, $users_id);
+					$count = $this->db->count_all_results("sent");
+					
+					$this->inbox_query($post, $users_id);
+					if ( ! empty($post['this_page']) && ! empty($sort) && $sort[0] != 'doctor_name' && $sort[0] != 'location_name')
 					{
-						$this->db->where("stars >", 0);
-					}
-					$this->db->where("users_id", $users_id);
-					if ($post['filter']['stars'] !== "none")
-					{
-						if ($post['filter']['stars'] == "no_rating")
+						$this->db->limit($post['on_page'], ($post['this_page'] - 1) * $post['on_page']);
+						if ($sort[0] == 'last')
 						{
-							$this->db->where("stars", "0");
+							$this->db->order_by("last ".$sort[1].", date ".$sort[1]);
 						}
 						else
 						{
-							if ($post['filter']['stars'] == "no_reply")
-							{
-								$this->db->where("feedback <>", "");
-								$this->db->where("reply", "");
-							}
-							else
-							{
-								if ($post['filter']['stars'] == "with_feedback")
-								{
-									$this->db->where("(`stars` IN (1, 2) OR `feedback` <> '')");
-									$this->db->where("reply", "");
-									$this->db->where("email <>", "");
-									$this->db->where("marked_as_read", 0);
-								}
-								else
-								{
-									if ($post['filter']['stars'] == "with_reply")
-									{
-										$this->db->where("reply <>", "");
-									}
-									else
-									{
-										if ($post['filter']['stars'] == "positive")
-										{
-											$this->db->where_in("stars", array(3, 4, 5));
-										}
-										else
-										{
-											if ($post['filter']['stars'] == "negative")
-											{
-												$this->db->where_in("stars", array(1, 2));
-											}
-											else
-											{
-												$this->db->where("stars", $post['filter']['stars']);
-											}
-										}
-									}
-								}
-							}
+							$this->db->order_by($sort[0], $sort[1]);
 						}
 					}
-
-					if ( ! empty($post['filter']['from']))
+					else
 					{
-						$this->db->where("last >=", $post['filter']['from']);
-					}
-
-					if ( ! empty($post['filter']['to']))
-					{
-						$this->db->where("last <", $post['filter']['to']);
+						$this->db->order_by("last desc, date desc");
 					}
 					
-					if ( ! empty($post['filter']['doctor']))
-					{
-						$this->db->where("doctor", $post['filter']['doctor']);
-					}
-
-					if ( ! empty($post['limit']))
-					{
-						$this->db->limit($post['limit']);
-					}
-					$this->db->where("status <>", 3);
 					$result = $this->db->get("sent")->result_array();
 
 					$doctors = array();
@@ -5085,10 +5032,117 @@
 						}
 						$items[] = $row;
 					}
+					
+					if ($sort[0] == 'doctor_name' || $sort[0] == 'location_name')
+					{
+						function cmp_doctor_name_asc($a, $b)
+						{
+							return strcasecmp($a['doctor_name'], $b['doctor_name']);
+						}
+						
+						function cmp_doctor_name_desc($a, $b)
+						{
+							return strcasecmp($b['doctor_name'], $a['doctor_name']);
+						}
+						
+						function cmp_location_name_asc($a, $b)
+						{
+							return strcasecmp($a['location_name'], $b['location_name']);
+						}
+						
+						function cmp_location_name_desc($a, $b)
+						{
+							return strcasecmp($b['location_name'], $a['location_name']);
+						}
+						
+						usort($items, "cmp_".$sort[0]."_".$sort[1]);
+						$items = array_slice($items, ($post['this_page'] - 1) * $post['on_page'], $post['on_page']);
+					}
 				}
 			}
 
-			return $items;
+			return ! empty($inbox) ? array('letters' => $items, 'count' => $count) : $items;
+		}
+		
+		function inbox_query($post, $users_id)
+		{
+			if ($post['filter']['stars'] != "no_rating" && $post['filter']['stars'] != "no_reply" && $post['filter']['stars'] != "positive" && $post['filter']['stars'] != "negative")
+			{
+				$this->db->where("stars >", 0);
+			}
+			$this->db->where("users_id", $users_id);
+			if ($post['filter']['stars'] !== "none")
+			{
+				if ($post['filter']['stars'] == "no_rating")
+				{
+					$this->db->where("stars", "0");
+				}
+				else
+				{
+					if ($post['filter']['stars'] == "no_reply")
+					{
+						$this->db->where("feedback <>", "");
+						$this->db->where("reply", "");
+					}
+					else
+					{
+						if ($post['filter']['stars'] == "with_feedback")
+						{
+							$this->db->where("(`stars` IN (1, 2) OR `feedback` <> '')");
+							$this->db->where("reply", "");
+							$this->db->where("email <>", "");
+							$this->db->where("marked_as_read", 0);
+						}
+						else
+						{
+							if ($post['filter']['stars'] == "with_reply")
+							{
+								$this->db->where("reply <>", "");
+							}
+							else
+							{
+								if ($post['filter']['stars'] == "positive")
+								{
+									$this->db->where_in("stars", array(3, 4, 5));
+								}
+								else
+								{
+									if ($post['filter']['stars'] == "negative")
+									{
+										$this->db->where_in("stars", array(1, 2));
+									}
+									else
+									{
+										$this->db->where("stars", $post['filter']['stars']);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if ( ! empty($post['filter']['from']))
+			{
+				$this->db->where("last >=", $post['filter']['from']);
+			}
+
+			if ( ! empty($post['filter']['to']))
+			{
+				$this->db->where("last <", $post['filter']['to']);
+			}
+			
+			if ( ! empty($post['filter']['doctor']))
+			{
+				$this->db->where("doctor", $post['filter']['doctor']);
+			}
+
+			if ( ! empty($post['limit']))
+			{
+				$this->db->limit($post['limit']);
+			}
+			
+			$this->db->where("status <>", 3);
 		}
 		
 		function export_inbox($list)

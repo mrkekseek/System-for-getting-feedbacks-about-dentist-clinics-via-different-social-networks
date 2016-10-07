@@ -4796,6 +4796,10 @@
 			});
 		};
 
+		$scope.on_page = 30;
+		$scope.this_page = 1;
+		$scope.order = 'last-desc';
+		$scope.count = 0;
 		$scope.reprint = function(stars) {
 			$scope.filter = (stars || $scope.filter);
 			with_feedback_count.filter = $scope.filter;
@@ -4818,15 +4822,16 @@
 				filter.doctor = $scope.doctor;
 			}
 
-			$http.post("/pub/inbox/", {filter: filter}).success(function(data, status, headers, config) {
-				$scope.letters = logger.check(data);
+			$http.post("/pub/inbox/", {filter: filter, on_page: $scope.on_page, this_page: $scope.this_page, order: $scope.order}).success(function(data, status, headers, config) {
+				var result = logger.check(data);
+				$scope.letters = result.letters;
+				$scope.count = result.count;
 				for (var key in $scope.letters)
 				{
 					$scope.letters[key].date *= 1;
 				}
 				$scope.ready = true;
-				init();
-				
+
 				$scope.check_letter = {};
 				$scope.check_all[0] = false;
 				
@@ -4846,6 +4851,18 @@
 			{
 				$scope.filter = filter;
 			}
+			$scope.this_page = 1;
+			$scope.reprint();
+		};
+		
+		$scope.change_page = function(page) {
+			$scope.this_page = page;
+			$scope.reprint();
+		};
+		
+		$scope.set_order = function(order) {
+			$scope.this_page = 1;
+			$scope.order = order;
 			$scope.reprint();
 		};
 
@@ -4955,62 +4972,44 @@
 
 		$scope.date_change = function()
 		{
+			$scope.this_page = 1;
 			$scope.reprint();
 		};
 		
-		
-		
-		var init;
-        $scope.searchKeywords = '';
-        $scope.filteredStores = [];
-        $scope.row = '-date';
+		$scope.all_pages = 0;
+		$scope.visible = 2;
+		$scope.pages = function()
+		{
+			var begin = $scope.this_page - $scope.visible;
+			var end = $scope.this_page + $scope.visible;
+			$scope.all_pages = Math.ceil($scope.count / $scope.on_page);
+			if ($scope.all_pages <= ($scope.visible * 2 + 1))
+			{
+				begin = 1;
+				end = $scope.all_pages;
+			}
+			else
+			{
+				if (begin < 1)
+				{
+					end += (1 - begin);
+					begin = 1;
+				}
+				
+				if (end > $scope.all_pages)
+				{
+					begin -= (end - $scope.all_pages);
+					end = $scope.all_pages;
+				}
+			}
 
-        $scope.select = function(page) {
-            var end, start;
-            start = (page - 1) * $scope.numPerPage;
-            end = start + $scope.numPerPage;
-            return $scope.currentPageStores = $scope.filteredStores.slice(start, end);
-        };
-
-        $scope.onFilterChange = function() {
-            $scope.select(1);
-            $scope.currentPage = 1;
-            return $scope.row = '-date';
-        };
-
-        $scope.onNumPerPageChange = function() {
-            $scope.select(1);
-            return $scope.currentPage = 1;
-        };
-
-        $scope.onOrderChange = function() {
-            $scope.select(1);
-            return $scope.currentPage = 1;
-        };
-
-        $scope.search = function() {
-            $scope.filteredStores = $filter('filter')($scope.letters, $scope.searchKeywords);
-            return $scope.onFilterChange();
-        };
-
-        $scope.order = function(rowName) {
-            /*if ($scope.row === rowName && ! reprint) {
-                return;
-            }*/
-            $scope.row = rowName;
-            $scope.filteredStores = $filter('orderBy')($scope.letters, rowName);
-            return $scope.onOrderChange();
-        };
-
-        $scope.numPerPageOpt = [10, 20, 30, 50];
-        $scope.numPerPage = $scope.numPerPageOpt[2];
-        $scope.currentPage = 1;
-        $scope.currentPageStores = [];
-
-        init = function() {
-			$scope.order($scope.row);
-            return $scope.select($scope.currentPage);
-        };
+			var array = [];
+			for (var i = begin; i <= end; i++)
+			{
+				array.push(i);
+			}
+			return array;
+		};
     }
 })();
 ;
