@@ -34,7 +34,7 @@
 					<img src="{{logo}}" height="32" alt="" />
 				</div>
 
-				<div class="cards-container">
+				<div class="cards-container" ng-show=" ! i.unsubscribe">
 					<div class="cards-box promo-box" ng-show="short && ! limit && ! errors && i.user.promo_checked">
 						<div class="cards-box-content">
 							<div class="cards-number">
@@ -96,7 +96,7 @@
 										Stap 1
 									</div>
 									
-									<h2>{{questions.main.question_description}}</h2>
+									<h2>Zou u onze praktijk aanbevelen omwille van de manier waarop {{questions.main.question_description}}</h2>
 									
 									<h3 class="sub">Gemeten op een schaal van 1 tot en met 5.</h3>
 									
@@ -117,10 +117,25 @@
 							
 							<div class="doctors-box" ng-if="i.doctors.length">
 								<h3 class="sub">Door wie bent u geholpen?</h3>
-								<select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
+								<!--select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
 									<option value="0">Kies een zorgverlener...</option>
 									<option ng-repeat="d in i.doctors" value="{{d.id}}" ng-selected="d.id == doc.id">{{[d.title, d.firstname, d.lastname].join(' ')}}</option>
-								</select>
+								</select-->
+								<div class="row doctors-items-box">
+									<div class="col-sm-4 col-xs-12" ng-repeat="d in i.doctors">
+										<div class="panel panel-default" ng-class="{'active': doc.id == d.id}" ng-click="set_doctor(d.id)">
+											<div class="panel-body">
+												<div class="doctors-items-avatar">
+													<img src="{{d.avatar != '' ? d.avatar.replace('./', '/') : '/application/views/images/empty-doctor.png'}}" alt="" />
+												</div>
+												
+												<div class="text-center">
+													<b>{{d.title + ' ' + d.firstname + ' ' + d.lastname}}</b>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 							
 							<div class="doctors-box" ng-if="i.locations.length">
@@ -142,7 +157,7 @@
 									Stap 1{{abc[i]}}
 								</div>
 								
-								<h2>{{q.question_description}}</h2>
+								<h2>Zou u onze praktijk aanbevelen omwille van de manier waarop {{q.question_description}}</h2>
 								
 								<h3 class="sub">Gemeten op een schaal van 1 tot en met 5.</h3>
 								
@@ -293,6 +308,40 @@
 							
 							<h3 class="sub">
 								Uw e-mailuitnodiging is verlopen of de praktijk heeft het onderzoek beëindigd.
+							</h3>
+						</div>
+					</div>
+				</div>
+				
+				<div class="cards-container" ng-show="i.unsubscribe">
+					<div class="cards-box" ng-show="i.result == '1'">
+						<div class="cards-box-content" ng-if=" ! undo_check">
+							<h2>We hebben uw verzoek ontvangen.</h2>
+							
+							<h3 class="sub">
+								U zult vanaf nu geen e-mailuitnodigingen van Patiëntenreview meer ontvangen.
+							</h3>
+							
+							<div class="form-group text-center">
+								<a href="javascript:void(0);" ng-click="undo()">Maak ongedaan</a>
+							</div>
+						</div>
+						
+						<div class="cards-box-content" ng-if="undo_check">
+							<h2>We hebben uw verzoek ongedaan gemaakt.</h2>
+
+							<h3 class="sub">
+								U ontvangt in de toekomst mogelijk een e-mailuitnodiging van uw zorgverlener.
+							</h3>
+						</div>
+					</div>
+					
+					<div class="cards-box" ng-show="i.result == '0'">
+						<div class="cards-box-content">
+							<h2>Oeps...</h2>
+							
+							<h3 class="sub">
+								De beoordelingspagina is niet meer beschikbaar.
 							</h3>
 						</div>
 					</div>

@@ -17,7 +17,7 @@
 			$row = $this->db->get('sent')->row_array();
 			print_r($row);*/
 
-			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/stat');
+			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/aonlines', 'charts/stat');
 		}
 
 		function cron()
@@ -209,7 +209,7 @@
 			
 			if ($param == "profile")
 			{
-				$result['emails'] = $this->pub->user_emails();
+				$result['emails'] = $this->pub->user_emails(FALSE, TRUE);
 				$result['widget'] = $this->pub->user_widget();
 				$result['questions_list'] = $this->pub->get_questions();
 				$result['questions'] = $this->pub->user_questions($result['questions_list']);
@@ -244,6 +244,12 @@
 		function save_pass()
 		{
 			$result = $this->pub->save_password($this->post);
+			$this->response($result);
+		}
+		
+		function save_new_pass()
+		{
+			$result = $this->pub->save_new_password($this->post);
 			$this->response($result);
 		}
 		
@@ -326,6 +332,31 @@
 			$this->response($result);
 		}
 		
+		function editor_upload()
+		{
+			$result = array();
+			if ( ! empty($_FILES['file']['tmp_name']))
+			{
+				$result = $this->pub->editor_upload($_FILES['file']);
+			}
+			else
+			{
+				$result['link'] = '';
+			}
+			echo json_encode($result);
+		}
+		
+		function editor_get()
+		{
+			$result = $this->pub->editor_get();
+			echo json_encode($result);
+		}
+		
+		function editor_delete()
+		{
+			$this->pub->editor_delete();
+		}
+		
 		function parse_paste()
 		{
 			$result = array();
@@ -339,7 +370,15 @@
 		function save_field()
 		{
 			$this->pub->save_field($this->post);
-			$result = $this->pub->parse_xls($this->post['file'], FALSE, $this->post['file']);
+			$result = array();
+			if (strpos($this->post['file'], '.tmp') !== FALSE)
+			{
+				$result = $this->pub->parse_paste(array('text' => file_get_contents($this->post['file'])));
+			}
+			else
+			{
+				$result = $this->pub->parse_xls($this->post['file'], FALSE, $this->post['file']);
+			}
 			$this->response($result);
 		}
 		
@@ -475,7 +514,7 @@
 		
 		function rating_page_get()
 		{
-			$result = $this->pub->rating_page_get($this->post['segments']);
+			$result = $this->pub->rating_page_get(array_values(array_diff($this->post['segments'], array(''))));
 			$this->response($result);
 		}
 		
@@ -500,7 +539,7 @@
 			$this->load->view('invitation.html', $this->data);
 		}
 		
-		function unsubscribe($hash)
+		/*function unsubscribe($hash)
 		{
 			$this->data['short'] = FALSE;
 			$this->data['info'] = array();
@@ -508,7 +547,7 @@
 			$this->pub->unsubscribe($hash);
 			$this->data['unsubscribe'] = TRUE;
 			$this->load->view('invitation.html', $this->data);
-		}
+		}*/
 		
 		function unsubscribe_ajax()
 		{
@@ -557,6 +596,23 @@
 			$result = $this->pub->inbox($this->post);
 			$this->pub->save_last();
 			$this->response($result);
+		}
+		
+		function export_inbox()
+		{
+			$result = $this->pub->inbox($this->post);
+			$result = $this->pub->export_inbox($result);
+			$this->response($result);
+		}
+		
+		function export_download($folder)
+		{
+			$file = './export/'.$folder.'/'.date('d-m-Y').'.csv';
+			header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+			header("Content-Transfer-Encoding: Binary"); 
+			header("Content-disposition: attachment; filename=\"".date("d-m-Y").".csv\"");
+			readfile($file);
+			exit;
 		}
 		
 		function read_letters()
@@ -704,6 +760,12 @@
 		{
 			$this->pub->remove_location($this->post['id']);
 			$result = $this->pub->get_locations();
+			$this->response($result);
+		}
+		
+		function access_location()
+		{
+			$result = $this->pub->access_location();
 			$this->response($result);
 		}
 		

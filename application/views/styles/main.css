@@ -3290,6 +3290,15 @@ body .btn-primary.compose-prev:disabled {
 	border-bottom: solid #E5E5E5 1px;
 }
 
+.charts2-questions-title {
+	padding: 20px 0;
+	text-align: center;
+	background: #494949;
+	color: #fff;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
 .charts2-questions-icon {
 	padding: 20px 0;
 	text-align: center;
@@ -3720,7 +3729,7 @@ body .btn-primary.compose-prev:disabled {
 	width: 100%;
 }
 
-.fr-wrapper + div {
+.fr-box > div:not([class^="fr-"]) {
 	display: none;
 }
 
@@ -3762,4 +3771,48 @@ body .btn-primary.compose-prev:disabled {
 	color: #555;
 	text-decoration: none;
 	background: #F9F9F9;
+}
+
+.password-form {
+	max-height: 0;
+	overflow: hidden;
+	transition: all 0.3s ease 0s;
+}
+
+.password-form.open {
+	max-height: 150px;
+}
+
+.password-form .form-group {
+	margin: 0 0 15px 0;
+}
+
+.doctors-items-box > div {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.doctors-items-avatar {
+	width: 100px;
+	height: 100px;
+	line-height: 100px;
+	border-radius: 50%;
+	text-align: center;
+	overflow: hidden;
+	margin: 0 auto 10px;
+}
+
+.doctors-items-box .panel:hover,
+.doctors-items-box .panel.active {
+	cursor: pointer;
+	background: #FAFAFA;
+}
+
+.charts-box {
+	transition: all 0.3s ease 0s;
+	opacity: 1;
+}
+
+.charts-box.transparent {
+	opacity: 0;
 }

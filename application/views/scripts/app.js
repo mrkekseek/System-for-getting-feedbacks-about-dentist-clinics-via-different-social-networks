@@ -60,7 +60,7 @@
                 'pages/404', 'pages/500', 'pages/forgot-password', 'pages/new-password/:hash', 'pages/lock-screen', 'pages/signin', 'pages/signup',
 				'pages/profile', 'pages/subscription', 'pages/advanced', 'pages/doctors_add', 'pages/doctors_edit/:id', 'pages/locations_add', 'pages/locations_add/:id', 'pages/online', 'pages/activate/:id', 'pages/invoice/:id', 
                 'mail/compose', 'mail/inbox', 'mail/single/:id', 'mail/reply/:id',
-				'manage/add', 'manage/view', 'charts/acharts', 'charts/stat'
+				'manage/add', 'manage/view', 'charts/acharts', 'charts/aonlines', 'charts/stat'
             ];
 
 			titles = {'dashboard': 'Dashboard',
@@ -89,6 +89,7 @@
 					  'manage/add': 'Nieuw abonnement',
 					  'manage/view': 'Beheer abonnementen',
 					  'charts/acharts': 'Statistieken',
+					  'charts/aonlines': 'Statistieken',
 					  'charts/onlines': 'Statistieken',
 					  'charts/stat': 'Statistieken'
             };
@@ -672,6 +673,8 @@
         .controller('Charts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', Charts2Ctrl]); // overall control
 
     function Charts2Ctrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.data_load = false;
+		
 		$scope.ultimate_class = {};
         $scope.ultimate_over = function(name)
         {
@@ -728,6 +731,7 @@
 				}
 			}
 			$scope.stat_filter_list = filter_list;
+			$scope.run_filter();
 		};
 		
 		$scope.stat_filter_dates = {'from': '', 'to': ''};
@@ -873,6 +877,7 @@
 		$scope.area_nps_empty = false;
 		$scope.get_email = function() {
 			$http.post("/pub/stat_chart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.data = logger.check(data);
 				$scope.color = $scope.user.color || '#0F75BC';
 				$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
@@ -1173,6 +1178,7 @@
         .controller('OnlinesCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', 'logger', OnlinesCtrl]); // overall control
 
     function OnlinesCtrl($scope, $rootScope, $window, $http, $location, $timeout, logger) {
+		$scope.data_load = false;
 		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
 		{
@@ -1224,6 +1230,7 @@
 		$scope.get_online = function()
 		{
 			$http.post('/pub/stat_online/', {}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.onl = logger.check(data);
 
 				if ($scope.onl && $scope.onl.months)
@@ -1871,6 +1878,7 @@
         .controller('ACharts2Ctrl', [ '$scope', '$rootScope', '$window', '$http', '$timeout', 'logger', ACharts2Ctrl]); // overall control
 
     function ACharts2Ctrl($scope, $rootScope, $window, $http, $timeout, logger) {
+		$scope.data_load = false;
 		$scope.login_as_user = function(users_id) {
 			$http.post("/pub/login_as_user/", {id: users_id}).success(function(data, status, headers, config) {
 				if (logger.check(data))
@@ -1880,8 +1888,6 @@
 			});
 		};
 
-		$scope.type = 'email';
-		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
 		$scope.hex_to_rgba = function(hex, opacity)
 		{
 			hex = hex.replace('#', '');
@@ -1927,6 +1933,7 @@
 				}
 			}
 			$scope.stat_filter_list = filter_list;
+			$scope.run_filter();
 		};
 		
 		$scope.stat_filter_dates = {'from': '', 'to': ''};
@@ -1960,16 +1967,7 @@
 		$scope.run_filter = function() {
 			$scope.get();
 		};
-		
-		$scope.change_type = function(type)
-		{
-			if (type != $scope.type)
-			{
-				$scope.type = type;
-				$scope.get();
-			}
-		};
-		
+
 		$scope.data = {};
 		$scope.nps = {};
 		$scope.pie_stars = echarts.init(document.getElementById('pie_stars'));
@@ -2076,8 +2074,9 @@
 		$scope.area_stars_empty = false;
 		$scope.area_nps_average_empty = false;
 		$scope.area_nps_empty = false;
-		$scope.get_email = function() {
+		$scope.get = function() {
 			$http.post("/pub/stat_achart2/", {'filter': $scope.stat_filter_list}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.data = logger.check(data);
 
 				var is_filter = false;
@@ -2311,11 +2310,47 @@
 			});
 		};
 
+		$scope.get();
+		
+		$scope.range = function(num)
+		{
+			var array = [];
+			for (var i = 0; i < num; i++)
+			{
+				array.push(i);
+			}
+			return array;
+		};
+    }
+
+})();
+;
+(function () {
+    'use strict';
+
+    angular.module('app')
+        .controller('AOnlinesCtrl', [ '$scope', '$rootScope', '$window', '$http', '$timeout', 'logger', AOnlinesCtrl]); // overall control
+
+    function AOnlinesCtrl($scope, $rootScope, $window, $http, $timeout, logger) {
+		$scope.data_load = false;
+		$scope.onlines = ['Zorgkaart', 'Facebook', 'Independer', 'Google'];
+		$scope.hex_to_rgba = function(hex, opacity)
+		{
+			hex = hex.replace('#', '');
+			var r = parseInt(hex.substring(0, 2), 16);
+			var g = parseInt(hex.substring(2, 4), 16);
+			var b = parseInt(hex.substring(4, 6), 16);
+
+			var result = 'rgba(' + r + ',' + g + ',' + b + ',' + opacity / 100 + ')';
+			return result;
+		};
+		$scope.color = '#0F75BC';
+		$scope.color_a = $scope.hex_to_rgba($scope.color, 50);
+
 		$scope.pie_online = echarts.init(document.getElementById('pie_online'));
 		$window.onresize = function() { $scope.pie_online.resize(); };
 		$scope.pie_online.setOption({
 				tooltip: {trigger:"item", formatter:"{b} : {c} ({d}%)"},
-				/*toolbox: {show: true, feature: {restore : {show: true, title: 'Herstel weergave'}, saveAsImage : {show: true, title: 'Bewaar afbeelding'}}},*/
 				legend: {orient: "vertical", x: "left", data: ["Zorgkaart", "Facebook", "Independer", "Google"]},
 				calculable: true,
 				series:[{type: "pie", radius:["50%", "88%"], center: ['63%', '50%'],
@@ -2344,9 +2379,10 @@
 		
 		$scope.onl = {};
 		$scope.area_online_empty = false;
-		$scope.get_online = function()
+		$scope.get = function()
 		{
 			$http.post('/pub/astat_online/', {}).success(function(data, status, headers, config) {
+				$scope.data_load = true;
 				$scope.onl = logger.check(data);
 				if ($scope.onl && $scope.onl.pie)
 				{
@@ -2384,18 +2420,6 @@
 					$scope.area_online_empty = empty_check;
 				}
 			});
-		};
-		
-		$scope.get = function()
-		{
-			if ($scope.type == 'email')
-			{
-				$scope.get_email();
-			}
-			else
-			{
-				$scope.get_online();
-			}
 		};
 
 		$scope.get();
@@ -2471,13 +2495,13 @@
 			
 			return text;
 		};
-
+		
 		$scope.emails_edit = function(type, $event) {
 			if ($event.target.className == "tag-remove")
 			{
 				var rel = $event.target.getAttribute("rel");
 				var part = rel.split("|");
-				if (part[1].toLowerCase() == '{{vraagstelling}}' || part[1].toLowerCase() == '{{formulering van de vraagstelling}}')
+				if (part[1].toLowerCase() == '{{formulering van de vraagstelling}}')
 				{
 					var modalInstance;
 					modalInstance = $modal.open({
@@ -2517,7 +2541,7 @@
 				});
 				
 				modalInstance.result.then((function(items) {
-					if (items.type == 'header_mq' && ! (items.value.toLowerCase().indexOf('{{vraagstelling}}') + 1) || items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('{{formulering van de vraagstelling}}') + 1))
+					if (items.type == 'text1_mq' && ! (items.value.toLowerCase().indexOf('{{formulering van de vraagstelling}}') + 1))
 					{
 						var modalInstance;
 						modalInstance = $modal.open({
@@ -2544,6 +2568,46 @@
 				}), function() {
 					console.log("Modal dismissed at: " + new Date());
 				});
+			}
+		};
+		
+		$scope.passwords = {};
+		$scope.password_form = '0';
+		$scope.show_password_form = function() {
+			$scope.password_form = '1';
+		};
+		
+		$scope.save_password = function() {
+			if ($scope.passwords.old)
+			{
+				if ($scope.passwords.new && $scope.passwords.new.length >= 6)
+				{
+					if ($scope.passwords.new == $scope.passwords.confirm)
+					{
+						$http.post("/pub/save_new_pass/", $scope.passwords).success(function(data, status, headers, config) {
+							var result = logger.check(data);
+							if (result)
+							{
+								$scope.password_form = '0';
+								$scope.passwords.old = '';
+								$scope.passwords.new = '';
+								$scope.passwords.confirm = '';
+							}
+						});
+					}
+					else
+					{
+						logger.logError("De wachtwoorden komen niet overeen.");
+					}
+				}
+				else
+				{
+					logger.logError("Uw wachtwoord moet minimaal 6 tekens bevatten.");
+				}
+			}
+			else
+			{
+				logger.logError("Empty old password");
 			}
 		};
 		
@@ -2624,17 +2688,22 @@
 						doctors_avatar: '{{Profielfoto Zorgverlener}}'};
 						
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
+			if ($scope.user.rating_questions == '1')
+			{
+				fields = ['subject', 'header_mq', 'text1_mq', 'promo', 'text2', 'footer'];
+			}
+
 			for (var i in fields)
 			{
 				for (var key in tags)
 				{
-					if ($scope.user.emails[fields[i]].indexOf(tags[key]) + 1)
+					if ($scope.user.emails[fields[i]] && $scope.user.emails[fields[i]].indexOf(tags[key]) + 1)
 					{
 						existing_tags[key] = true;
 					}
 				}
 			}
-			
+
 			var modalInstance;
 			modalInstance = $modal.open({
 				templateUrl: "test_emails.html",
@@ -3560,6 +3629,33 @@
 					console.log("Modal dismissed at: " + new Date());
 				});
 			};
+			
+			$scope.locations_modal = function() {
+				var modalInstance;
+				modalInstance = $modal.open({
+					templateUrl: "access_location.html",
+					controller: 'ModalInstanceAccessLocationCtrl',
+					resolve: {
+						items: function() {
+							return [];
+						}
+					}
+				});
+				modalInstance.result.then((function(remove) {
+
+				}), function() {
+					console.log("Modal dismissed at: " + new Date());
+				});
+			};
+			
+			$scope.access_location = function() {
+				$http.post("/pub/access_location/", {}).success(function(data, status, headers, config) {
+					if (logger.check(data))
+					{
+						$scope.locations_modal();
+					}
+				});
+			};
 		}
 		
 		if ($location.path() == "/pages/doctors_add")
@@ -3605,11 +3701,12 @@
 				if (index == 2)
 				{
 					var error = 1;
-					if ( ! $scope.doctor.zorgkaart)
+					/*$scope.check_link();
+					if ($scope.zorgkaart != "valid")
 					{
 						logger.logError("Vergeet niet het Zorgkaart profiel in te vullen!");
 						error = 0;
-					}
+					}*/
 					
 					if (error)
 					{
@@ -3708,9 +3805,9 @@
 		
 		$scope.save_doctor = function()
 		{
-			$scope.check_link();
+			/*$scope.check_link();
 			if ($scope.zorgkaart == "valid")
-			{
+			{*/
 				var check = true;
 				if ($scope.short_checked && ! $scope.validate_url())
 				{
@@ -3727,7 +3824,11 @@
 						}
 					});
 				}
-			}
+			/*}
+			else
+			{
+				logger.logError("Vergeet niet het Zorgkaart profiel in te vullen!");
+			}*/
 		};
 		
 		$scope.save_location = function()
@@ -4110,7 +4211,7 @@
 			var segments = $window.location.pathname.split('/');
 			$http.post("/pub/rating_page_get/", {segments: segments}).success(function(data, status, headers, config) {
 				$scope.i = logger.check(data);
-				if ($scope.i)
+				if ($scope.i && $scope.i.user)
 				{
 					$scope.short = $scope.i.short;
 					$scope.id = $scope.i.info.id || 0;
@@ -4176,8 +4277,12 @@
 						$scope.negative_modal();
 					}
 				}
+				else if ($scope.i.unsubscribe)
+				{
+					$scope.color_style = {"background-image": "linear-gradient(" + $scope.color + ", #F5F5F5)"};
+				}
 				
-				$scope.apps.title =  ! $scope.i.user.username ? "Oeps..." : ("Beoordeel " + $scope.i.user.username + " - Patiëntenreview");
+				$scope.apps.title = ! $scope.i.unsubscribe && ! $scope.i.user ? "Oeps..." : ($scope.i.unsubscribe ? "We hebben uw verzoek ontvangen" : "Beoordeel " + $scope.i.user.username + " - Patiëntenreview");
 				$scope.apps.ready = true;
 			});
 		};
@@ -4273,7 +4378,8 @@
 			}
 		};
 		
-		$scope.set_doctor = function() {
+		$scope.set_doctor = function(id) {
+			$scope.doc.id = id;
 			$scope.doctors_id = $scope.doc.id;
 			$http.post("/pub/vote_doc/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id}).success(function(data, status, headers, config) {
 				var result = logger.check(data);
@@ -4347,7 +4453,10 @@
 			});
 		};
 		
+		$scope.undo_check = false;
 		$scope.undo = function() {
+			var segments = $window.location.pathname.split('/');
+			$scope.hash = segments[2];
 			$http.post("/pub/undo/", {hash: $scope.hash}).success(function(data, status, headers, config) {
 				var modalInstance;
 				modalInstance = $modal.open({
@@ -4361,7 +4470,7 @@
 				});
 				
 				modalInstance.result.then((function(result) {
-					console.log(result);
+					$scope.undo_check = true;
 				}), function() {
 					console.log("Modal dismissed at: " + new Date());
 				});
@@ -4601,6 +4710,44 @@
 		$scope.doctors = [];
 		inbox_count.set(0);
 		$scope.with_feedback_count = with_feedback_count.get;
+		
+		$scope.export_inbox = function() {
+			var filter = {stars: $scope.filter};
+
+			if ($scope.dates.from)
+			{
+				var date = new Date($scope.dates.from);
+				filter.from = date.getTime() / 1000;
+			}
+
+			if ($scope.dates.to)
+			{
+				var date = new Date($scope.dates.to);
+				filter.to = date.getTime() / 1000;
+			}
+			
+			if ($scope.doctor)
+			{
+				filter.doctor = $scope.doctor;
+			}
+				
+			var modalInstance;
+			modalInstance = $modal.open({
+				templateUrl: "export_inbox.html",
+				controller: 'ModalInstanceExportInboxCtrl',
+				resolve: {
+					items: function() {
+						return {filter: filter};
+					}
+				}
+			});
+			
+			modalInstance.result.then((function(items) {
+
+			}), function() {
+				console.log("Modal dismissed at: " + new Date());
+			});
+		};
 
 		$http.post("/pub/get_doctors/").success(function(data, status, headers, config) {
 			var result = logger.check(data);
@@ -4649,6 +4796,10 @@
 			});
 		};
 
+		$scope.on_page = 30;
+		$scope.this_page = 1;
+		$scope.order = 'last-desc';
+		$scope.count = 0;
 		$scope.reprint = function(stars) {
 			$scope.filter = (stars || $scope.filter);
 			with_feedback_count.filter = $scope.filter;
@@ -4671,15 +4822,16 @@
 				filter.doctor = $scope.doctor;
 			}
 
-			$http.post("/pub/inbox/", {filter: filter}).success(function(data, status, headers, config) {
-				$scope.letters = logger.check(data);
+			$http.post("/pub/inbox/", {filter: filter, on_page: $scope.on_page, this_page: $scope.this_page, order: $scope.order}).success(function(data, status, headers, config) {
+				var result = logger.check(data);
+				$scope.letters = result.letters;
+				$scope.count = result.count;
 				for (var key in $scope.letters)
 				{
 					$scope.letters[key].date *= 1;
 				}
 				$scope.ready = true;
-				init();
-				
+
 				$scope.check_letter = {};
 				$scope.check_all[0] = false;
 				
@@ -4699,6 +4851,18 @@
 			{
 				$scope.filter = filter;
 			}
+			$scope.this_page = 1;
+			$scope.reprint();
+		};
+		
+		$scope.change_page = function(page) {
+			$scope.this_page = page;
+			$scope.reprint();
+		};
+		
+		$scope.set_order = function(order) {
+			$scope.this_page = 1;
+			$scope.order = order;
 			$scope.reprint();
 		};
 
@@ -4808,62 +4972,44 @@
 
 		$scope.date_change = function()
 		{
+			$scope.this_page = 1;
 			$scope.reprint();
 		};
 		
-		
-		
-		var init;
-        $scope.searchKeywords = '';
-        $scope.filteredStores = [];
-        $scope.row = '-date';
+		$scope.all_pages = 0;
+		$scope.visible = 2;
+		$scope.pages = function()
+		{
+			var begin = $scope.this_page - $scope.visible;
+			var end = $scope.this_page + $scope.visible;
+			$scope.all_pages = Math.ceil($scope.count / $scope.on_page);
+			if ($scope.all_pages <= ($scope.visible * 2 + 1))
+			{
+				begin = 1;
+				end = $scope.all_pages;
+			}
+			else
+			{
+				if (begin < 1)
+				{
+					end += (1 - begin);
+					begin = 1;
+				}
+				
+				if (end > $scope.all_pages)
+				{
+					begin -= (end - $scope.all_pages);
+					end = $scope.all_pages;
+				}
+			}
 
-        $scope.select = function(page) {
-            var end, start;
-            start = (page - 1) * $scope.numPerPage;
-            end = start + $scope.numPerPage;
-            return $scope.currentPageStores = $scope.filteredStores.slice(start, end);
-        };
-
-        $scope.onFilterChange = function() {
-            $scope.select(1);
-            $scope.currentPage = 1;
-            return $scope.row = '-date';
-        };
-
-        $scope.onNumPerPageChange = function() {
-            $scope.select(1);
-            return $scope.currentPage = 1;
-        };
-
-        $scope.onOrderChange = function() {
-            $scope.select(1);
-            return $scope.currentPage = 1;
-        };
-
-        $scope.search = function() {
-            $scope.filteredStores = $filter('filter')($scope.letters, $scope.searchKeywords);
-            return $scope.onFilterChange();
-        };
-
-        $scope.order = function(rowName) {
-            /*if ($scope.row === rowName && ! reprint) {
-                return;
-            }*/
-            $scope.row = rowName;
-            $scope.filteredStores = $filter('orderBy')($scope.letters, rowName);
-            return $scope.onOrderChange();
-        };
-
-        $scope.numPerPageOpt = [10, 20, 30, 50];
-        $scope.numPerPage = $scope.numPerPageOpt[2];
-        $scope.currentPage = 1;
-        $scope.currentPageStores = [];
-
-        init = function() {
-			$scope.order($scope.row);
-            return $scope.select($scope.currentPage);
-        };
+			var array = [];
+			for (var i = begin; i <= end; i++)
+			{
+				array.push(i);
+			}
+			return array;
+		};
     }
 })();
 ;
@@ -5105,11 +5251,18 @@
 				}
 			});
 
-			modalInstance.result.then((function(ids) {
-				$http.post("/pub/upload_help/", {file: $scope.file}).success(function(data, status, headers, config) {
-					logger.check(data);
-					$location.url("/dashboard");
-				});
+			modalInstance.result.then((function(result) {
+				if (result == 'ignore')
+				{
+					$scope.first_upload = false;
+				}
+				else
+				{
+					$http.post("/pub/upload_help/", {file: $scope.file}).success(function(data, status, headers, config) {
+						logger.check(data);
+						$location.url("/dashboard");
+					});
+				}
 			}), function() {
 				console.log("Modal dismissed at: " + new Date());
 			});
@@ -7927,6 +8080,7 @@
 		.controller('ModalInstanceSuspendAccountCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceSuspendAccountCtrl])
 		.controller('ModalInstanceRemoveDoctorCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceRemoveDoctorCtrl])
 		.controller('ModalInstanceRemoveLocationCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceRemoveLocationCtrl])
+		.controller('ModalInstanceAccessLocationCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceAccessLocationCtrl])
 		.controller('ModalInstanceSuspendPopupCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceSuspendPopupCtrl])
 		.controller('ModalInstanceTestEmailCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceTestEmailCtrl])
 		.controller('ModalInstanceStarsEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceStarsEditCtrl])
@@ -7935,6 +8089,7 @@
 		.controller('ModalExampleInvCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalExampleInvCtrl])
 		.controller('ModalExampleNegativeCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalExampleNegativeCtrl])
 		.controller('ModalInstanceBulkCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceBulkCtrl])
+		.controller('ModalInstanceExportInboxCtrl', ['$scope', '$modalInstance', '$http', '$window', '$interval', 'logger', 'items', ModalInstanceExportInboxCtrl])
 		.controller('ModalUnsubscribeCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUnsubscribeCtrl])
 		.controller('ModalUndoCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalUndoCtrl])
 		.controller('ModalInstanceHelpCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalInstanceHelpCtrl])
@@ -8571,6 +8726,9 @@
 		$scope.froalaOptions = {
 			height: 250,
 			language: 'nl',
+			imageUploadURL: '/pub/editor_upload/',
+			imageManagerLoadURL: '/pub/editor_get/',
+			imageManagerDeleteURL: '/pub/editor_delete/',
 			toolbarButtons: ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'insertLink', 'insertImage', 'insertTable', 'undo', 'redo', 'clearFormatting', 'selectAll', 'html']
 		};
 		
@@ -8686,6 +8844,12 @@
 		$scope.remove = function() {
 			$modalInstance.close("remove");
 		};
+    };
+	
+	function ModalInstanceAccessLocationCtrl($scope, $modalInstance, $http, $location, logger, items) {
+		$scope.cancel = function() {
+			$modalInstance.dismiss("cancel");
+        };
     };
 	
 	function ModalInstanceSuspendPopupCtrl($scope, $modalInstance, $http, $location, logger, items) {
@@ -9068,6 +9232,38 @@
         };
     };
 	
+	function ModalInstanceExportInboxCtrl($scope, $modalInstance, $http, $window, $interval, logger, items) {
+		$scope.export_done = '0';
+		$scope.export_percent = 0;
+		$scope.export_link = '';
+		var timer = $interval(function() {
+			if ($scope.export_percent < 90)
+			{
+				$scope.export_percent += 10;
+			}
+			else
+			{
+				$interval.cancel(timer);
+			}
+		}, 300);
+		
+		$http.post("/pub/export_inbox/", {filter: items.filter}).success(function(data, status, headers, config) {
+			$scope.export_link = logger.check(data);
+			$interval.cancel(timer);
+			$scope.export_percent = 100;
+			$scope.export_done = '1';
+		});
+			
+		$scope.cancel = function() {
+            $modalInstance.dismiss("cancel");
+        };
+		
+		$scope.download = function() {
+			$window.location.href = $scope.export_link;
+			$modalInstance.dismiss("cancel");
+        };
+    };
+	
 	function ModalUnsubscribeCtrl($scope, $modalInstance, $http, logger, items) {
 		$scope.cancel = function() {
             $modalInstance.dismiss("cancel");
@@ -9080,7 +9276,7 @@
 	
 	function ModalUndoCtrl($scope, $modalInstance, $http, logger, items) {
 		$scope.cancel = function() {
-            $modalInstance.dismiss("cancel");
+            $modalInstance.close();
         };
     };
 	
@@ -9101,6 +9297,10 @@
 		
 		$scope.confirm = function() {
             $modalInstance.close("confirm");
+        };
+		
+		$scope.ignore = function() {
+            $modalInstance.close("ignore");
         };
     };
 	

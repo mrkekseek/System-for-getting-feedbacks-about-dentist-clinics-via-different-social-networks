@@ -1,5 +1,5 @@
 <div ng-controller="Charts2Ctrl">
-	<div ng-class="{'hide': less_30}">
+	<div class="charts-box transparent" ng-class="{'hide': less_30, 'transparent': ! data_load}">
 		<div class="charts-filter-panel">
 			<div class="row">
 				<div class="col-md-8 col-xs-12">
@@ -230,11 +230,12 @@
 					</div>
 					
 					<div class="row charts2-row" ng-if="data.questions.length">
-						<div ng-repeat="q in data.questions" class="col-sm-{{12 / data.questions.length}} col-xs-12">
+						<div ng-repeat="q in data.questions" class="col-sm-{{data.questions.length >= 5 ? 3 : (12 / data.questions.length)}} col-xs-12">
 							<div class="panel panel-default">
-								<div class="charts2-questions-icon">
-									<i class="{{q.stats_icon}}" ng-if="q.is_icon == '1'"></i>
-									<img src="{{q.stats_icon}}" ng-if="q.is_icon == '0'" alt="{{q.question_name}}" />
+								<div class="charts2-questions-title">
+									<!--i class="{{q.stats_icon}}" ng-if="q.is_icon == '1'"></i>
+									<img src="{{q.stats_icon}}" ng-if="q.is_icon == '0'" alt="{{q.question_name}}" /-->
+									{{q.question_name}}
 								</div>
 								
 								<div class="charts2-questions-info">
@@ -243,7 +244,7 @@
 									</div>
 									
 									<div class="charts2-questions-name">
-										{{q.question_name}}
+										<a href="javascript:void(0);" class="question_icon" tooltip-placement="top" tooltip="Zou u onze praktijk aanbevelen omwille van de manier waarop {{q.question_description}}"><i class="fa fa-question-circle"></i></a>
 									</div>
 								</div>
 							</div>
@@ -459,6 +460,10 @@
 						
 						<div class="col-xs-12">
 							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Meest recente batches</h3>
+								</div>
+								
 								<div class="table-responsive">
 									<table class="table">
 										<thead>
