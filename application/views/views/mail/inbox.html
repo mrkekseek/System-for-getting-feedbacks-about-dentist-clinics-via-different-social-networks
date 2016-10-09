@@ -119,39 +119,39 @@
 								<th><div class="th">
 									Datum
 									<span class="fa fa-angle-up"
-										  data-ng-click=" order('date') "
-										  data-ng-class="{active: row == 'date'}"></span>
+										  data-ng-click="set_order('last-asc')"
+										  data-ng-class="{active: order == 'last-asc'}"></span>
 									<span class="fa fa-angle-down"
-										  data-ng-click=" order('-date') "
-										  data-ng-class="{active: row == '-date'}"></span>
+										  data-ng-click="set_order('last-desc')"
+										  data-ng-class="{active: order == 'last-desc'}"></span>
 								</div></th>
 								<th><div class="th">
 									Beoordeling
 									<span class="fa fa-angle-up"
-										  data-ng-click=" order('stars') "
-										  data-ng-class="{active: row == 'stars'}"></span>
+										  data-ng-click="set_order('stars-asc')"
+										  data-ng-class="{active: order == 'stars-asc'}"></span>
 									<span class="fa fa-angle-down"
-										  data-ng-click=" order('-stars') "
-										  data-ng-class="{active: row == '-stars'}"></span>
+										  data-ng-click="set_order('stars-desc')"
+										  data-ng-class="{active: order == 'stars-desc'}"></span>
 								</div></th>
 								<th></th>
 								<th><div class="th">
 									Voornaam
 									<span class="fa fa-angle-up"
-										  data-ng-click=" order('name') "
-										  data-ng-class="{active: row == 'name'}"></span>
+										  data-ng-click="set_order('name-asc')"
+										  data-ng-class="{active: order == 'name-asc'}"></span>
 									<span class="fa fa-angle-down"
-										  data-ng-click=" order('-name') "
-										  data-ng-class="{active: row == '-name'}"></span>
+										  data-ng-click="set_order('name-desc')"
+										  data-ng-class="{active: order == 'name-desc'}"></span>
 								</div></th>
 								<th><div class="th">
 									Achternaam
 									<span class="fa fa-angle-up"
-										  data-ng-click=" order('sname') "
-										  data-ng-class="{active: row == 'sname'}"></span>
+										  data-ng-click="set_order('sname-asc')"
+										  data-ng-class="{active: order == 'sname-asc'}"></span>
 									<span class="fa fa-angle-down"
-										  data-ng-click=" order('-sname') "
-										  data-ng-class="{active: row == '-sname'}"></span>
+										  data-ng-click="set_order('sname-desc')"
+										  data-ng-class="{active: order == 'sname-desc'}"></span>
 								</div></th>
 								<th><div class="th">Doorgeklikt naar</div></th>
 								<!--th><div class="th">
@@ -166,43 +166,43 @@
 								<th><div class="th">
 									Leeftijd
 									<span class="fa fa-angle-up"
-										  data-ng-click=" order('age') "
-										  data-ng-class="{active: row == 'age'}"></span>
+										  data-ng-click="set_order('age-asc')"
+										  data-ng-class="{active: order == 'age-asc'}"></span>
 									<span class="fa fa-angle-down"
-										  data-ng-click=" order('-age') "
-										  data-ng-class="{active: row == '-age'}"></span>
+										  data-ng-click="set_order('age-desc')"
+										  data-ng-class="{active: order == 'age-desc'}"></span>
 								</div></th>
 								<th><div class="th">
 									Zorgverlener
 									<span class="fa fa-angle-up"
-										  data-ng-click=" order('doctor_name') "
-										  data-ng-class="{active: row == 'doctor_name'}"></span>
+										  data-ng-click="set_order('doctor_name-asc') "
+										  data-ng-class="{active: order == 'doctor_name-asc'}"></span>
 									<span class="fa fa-angle-down"
-										  data-ng-click=" order('-doctor_name') "
-										  data-ng-class="{active: row == '-doctor_name'}"></span>
+										  data-ng-click="set_order('doctor_name-desc')"
+										  data-ng-class="{active: order == 'doctor_name-desc'}"></span>
 								</div></th>
 								<th ng-if="user.organization"><div class="th">
 									Locatie
 									<span class="fa fa-angle-up"
-										  data-ng-click=" order('location_name') "
-										  data-ng-class="{active: row == 'location_name'}"></span>
+										  data-ng-click="set_order('location_name-asc')"
+										  data-ng-class="{active: order == 'location_name-asc'}"></span>
 									<span class="fa fa-angle-down"
-										  data-ng-click=" order('-location_name') "
-										  data-ng-class="{active: row == '-location_name'}"></span>
+										  data-ng-click="set_order('location_name-desc') "
+										  data-ng-class="{active: order == 'location_name-desc'}"></span>
 								</div></th>
 								<th><div class="th">
 									E-mail
 									<span class="fa fa-angle-up"
-										  data-ng-click=" order('email') "
-										  data-ng-class="{active: row == 'email'}"></span>
+										  data-ng-click="set_order('email-asc')"
+										  data-ng-class="{active: order == 'email-asc'}"></span>
 									<span class="fa fa-angle-down"
-										  data-ng-click=" order('-email') "
-										  data-ng-class="{active: row == '-email'}"></span>
+										  data-ng-click="set_order('email-desc')"
+										  data-ng-class="{active: order == 'email-desc'}"></span>
 								</div></th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" data-ng-repeat="l in currentPageStores" ng-click="more(l.id, l.feedback != '', l.email, $event)">
+							<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" data-ng-repeat="l in letters" ng-click="more(l.id, l.feedback != '', l.email, $event)">
 								<td ng-show="filter == 'positive' || filter == 'with_feedback'">
 									<label class="ui-checkbox"><input type="checkbox" ng-model="check_letter[l.id]" ng-change="check_one_letter(l.id)"/><span></span></label>
 								</td>
@@ -242,18 +242,18 @@
 				<footer class="table-footer" ng-if="letters.length">
 					<div class="row">
 						<div class="col-md-6 page-num-info">
-							Aantal beoordelingen: {{letters.length}}
+							Aantal beoordelingen: {{count}}
 						</div>
 						<div class="col-md-6 text-right pagination-container">
-							<pagination class="pagination-sm"
-										ng-model="currentPage"
-										total-items="filteredStores.length"
-										max-size="4"
-										ng-change="select(currentPage)"
-										items-per-page="numPerPage"
-										rotate="false"
-										previous-text="&lsaquo;" next-text="&rsaquo;"
-										boundary-links="true"></pagination>
+							<ul class="pagination-sm pagination ng-isolate-scope ng-pristine ng-valid">
+								<li ng-class="{disabled: this_page == 1}" class="ng-scope disabled"><a href="javascript:void(0);" ng-click="change_page(1)" class="ng-binding">Eerste</a></li>
+								<li ng-class="{disabled: this_page == 1}" class="ng-scope disabled"><a href="javascript:void(0);" ng-click="change_page(this_page - 1)" class="ng-binding">‹</a></li>
+								<li ng-if="(this_page - 1) > visible" class="ng-scope"><a href="javascript:void(0);" class="ng-binding">...</a></li>
+								<li ng-repeat="p in pages()" ng-class="{active: this_page == p}" class="ng-scope"><a href="javascript:void(0);" ng-click="change_page(p)" class="ng-binding">{{p}}</a></li>
+								<li ng-if="(all_pages - this_page) > visible" class="ng-scope"><a href="javascript:void(0);" class="ng-binding">...</a></li>
+								<li ng-class="{disabled: this_page == count}" class="ng-scope"><a href="javascript:void(0);" ng-click="change_page(this_page + 1)" class="ng-binding">›</a></li>
+								<li ng-class="{disabled: this_page == count}" class="ng-scope"><a href="javascript:void(0);" ng-click="change_page(all_pages)" class="ng-binding">Laatste</a></li>
+							</ul>
 						</div>
 					</div>
 				</footer>

@@ -209,7 +209,7 @@
 			
 			if ($param == "profile")
 			{
-				$result['emails'] = $this->pub->user_emails();
+				$result['emails'] = $this->pub->user_emails(FALSE, TRUE);
 				$result['widget'] = $this->pub->user_widget();
 				$result['questions_list'] = $this->pub->get_questions();
 				$result['questions'] = $this->pub->user_questions($result['questions_list']);
@@ -514,7 +514,7 @@
 		
 		function rating_page_get()
 		{
-			$result = $this->pub->rating_page_get($this->post['segments']);
+			$result = $this->pub->rating_page_get(array_values(array_diff($this->post['segments'], array(''))));
 			$this->response($result);
 		}
 		
@@ -539,7 +539,7 @@
 			$this->load->view('invitation.html', $this->data);
 		}
 		
-		function unsubscribe($hash)
+		/*function unsubscribe($hash)
 		{
 			$this->data['short'] = FALSE;
 			$this->data['info'] = array();
@@ -547,7 +547,7 @@
 			$this->pub->unsubscribe($hash);
 			$this->data['unsubscribe'] = TRUE;
 			$this->load->view('invitation.html', $this->data);
-		}
+		}*/
 		
 		function unsubscribe_ajax()
 		{
