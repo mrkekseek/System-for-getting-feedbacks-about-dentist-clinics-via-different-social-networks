@@ -1169,7 +1169,7 @@
 					$email_data['email'] = $row['email'];
 					$email_data['phone'] = $row['phone'];
 					$message = $this->load->view('views/mail/tpl_access_location.html', $email_data, TRUE);
-					$this->send("access_location", 'admin@patientenreview.nl', 'Locatie-functionaliteit aangevraagd', $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+					$this->send("access_location", 'admin@patientenreview.nl', 'Locatie-functionaliteit aangevraagd', $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
 					
 					return TRUE;
 				}
@@ -2490,7 +2490,7 @@
 						$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 						$email_data['username'] = $row['username'];
 						$message = $this->load->view('views/mail/tpl_password.html', $email_data, TRUE);
-						$this->send("password", $row['email'], 'Uw wachtwoord is gewijzigd', $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+						$this->send("password", $row['email'], 'Uw wachtwoord is gewijzigd', $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
 
 						return $this->login(array("email" => $row['email'], "password" => $post['password']));
 					}
@@ -2526,7 +2526,7 @@
 						$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 						$email_data['username'] = $row['username'];
 						$message = $this->load->view('views/mail/tpl_password.html', $email_data, TRUE);
-						$this->send("password", $row['email'], 'Uw wachtwoord is gewijzigd', $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+						$this->send("password", $row['email'], 'Uw wachtwoord is gewijzigd', $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
 			
 						$this->errors[] = array("Success" => "Password was changed");
 						return TRUE;
@@ -3389,7 +3389,7 @@
 				$message = $this->load->view('views/mail/tpl_feedback_reply.html', $email_data, TRUE);
 
 				$subject = 'Er is nieuwe patiëntenfeedback binnengekomen';
-				$this->send("feedback_reply", $user['email_reply'], $subject, $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+				$this->send("feedback_reply", $user['email_reply'], $subject, $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
 			}
 			
 			return $post;
@@ -3996,7 +3996,7 @@
 								$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
 
 								$subject = (empty($subject) ? $email_data['texts']['subject'] : $subject);
-								if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], 'no-reply@patientenreview.nl'))
+								if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], 'no-reply@mg.patientenreview.nl'))
 								{
 									$error = FALSE;
 									$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
@@ -4056,7 +4056,7 @@
 										
 										$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
 
-										if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], 'no-reply@patientenreview.nl'))
+										if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], 'no-reply@mg.patientenreview.nl'))
 										{
 											$error = FALSE;
 											$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
@@ -4491,7 +4491,7 @@
 			return $this->send("renew", $post['email'], 'Uw factuur van Patiëntenreview', $message, 'Patiëntenreview', 'info@patientenreview.nl', $post['attach']);*/
 		}
 
-		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'info@patientenreview.nl', $attach = FALSE)
+		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'no-reply@mg.patientenreview.nl', $attach = FALSE)
 		{
 			$data_array = array("letters_to" => $to,
 								"letters_subject" => $subject,
