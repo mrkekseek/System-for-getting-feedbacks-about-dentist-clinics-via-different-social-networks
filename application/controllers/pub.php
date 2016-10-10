@@ -39,7 +39,6 @@
 		
 		function index()
 		{
-			$this->pub->send_code(1, '+380981745687');
 			$this->load->view('index.html', $this->data);
 		}
 		

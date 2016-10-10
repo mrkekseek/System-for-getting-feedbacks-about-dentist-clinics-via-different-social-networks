@@ -2571,6 +2571,26 @@
 			}
 		};
 		
+		$scope.check_reply = function() {
+			if ($scope.user.email_negative_check == 0 && $scope.user.email_feedback_check == 0)
+			{
+				$scope.user.email_reply_check = 0;
+			}
+		};
+		
+		$scope.check_reply_check = function() {
+			if ($scope.user.email_reply_check == 1 && $scope.user.email_negative_check == 0 && $scope.user.email_feedback_check == 0)
+			{
+				$scope.user.email_feedback_check = 1;
+			}
+			
+			if ($scope.user.email_reply_check == 0)
+			{
+				$scope.user.email_negative_check = 0;
+				$scope.user.email_feedback_check = 0;
+			}
+		};
+		
 		$scope.passwords = {};
 		$scope.password_form = '0';
 		$scope.show_password_form = function() {

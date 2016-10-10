@@ -2666,6 +2666,8 @@
 												"email" => $post['email'],
 												"email_reply" => $post['email_reply'],
 												"email_reply_check" => $post['email_reply_check'],
+												"email_negative_check" => $post['email_negative_check'],
+												"email_feedback_check" => $post['email_feedback_check'],
 												"phone" => $post['phone'],
 												"mobile" => $post['mobile'],
 												"address" => $post['address'],
@@ -3118,7 +3120,6 @@
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
 				
 						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
-						return $post;
 					}
 					else
 					{
@@ -3134,13 +3135,19 @@
 						$post['last'] = time();
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
-						return $post;
 					}
 					else
 					{
 						$this->errors[] = array("Database error");
 					}
 				}
+				
+				if (in_array($post['stars'], array(1, 2)))
+				{
+					$this->email_reply($post['users_id'], $post['id'], 'negative');
+				}
+				
+				return $post;
 			}
 			else
 			{
@@ -3183,7 +3190,6 @@
 						$this->db->insert('sent_questions', $data_array);
 				
 						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
-						return $post;
 					}
 					else
 					{
@@ -3218,14 +3224,19 @@
 						{
 							$this->db->insert('sent_questions', $data_array);
 						}
-						
-						return $post;
 					}
 					else
 					{
 						$this->errors[] = array("Database error");
 					}
 				}
+				
+				if (in_array($post['stars'], array(1, 2)))
+				{
+					$this->email_reply($post['users_id'], $post['id'], 'negative');
+				}
+				
+				return $post;
 			}
 			else
 			{
@@ -3370,29 +3381,42 @@
 				}
 			}
 			
-			$this->db->where('id', $post['users_id']);
+			$this->email_reply($post['users_id'], $post['id'], 'feedback');
+			
+			return $post;
+		}
+		
+		function email_reply($users_id, $sent_id, $type)
+		{
+			$this->db->where('id', $users_id);
 			$this->db->where('email_reply_check', TRUE);
+			$this->db->where('email_'.$type.'_check', TRUE);
 			$this->db->limit(1);
 			$user = $this->db->get('users')->row_array();
 			if ( ! empty($user['email_reply']))
 			{
-				$this->db->where('id', $post['id']);
+				$this->db->where('id', $sent_id);
+				$this->db->where('reply_sent', FALSE);
 				$this->db->limit(1);
 				$sent = $this->db->get('sent')->row_array();
 				
-				$email_data = array();
-				$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
-				$email_data['email'] = $sent['email'];
-				$email_data['stars'] = $sent['stars'];
-				$email_data['feedback'] = $sent['feedback'];
-				
-				$message = $this->load->view('views/mail/tpl_feedback_reply.html', $email_data, TRUE);
+				if ( ! empty($sent))
+				{
+					$email_data = array();
+					$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+					$email_data['email'] = $sent['email'];
+					$email_data['stars'] = $sent['stars'];
+					$email_data['feedback'] = $sent['feedback'];
+					
+					$message = $this->load->view('views/mail/tpl_feedback_reply.html', $email_data, TRUE);
 
-				$subject = 'Er is nieuwe patiëntenfeedback binnengekomen';
-				$this->send("feedback_reply", $user['email_reply'], $subject, $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
+					$subject = 'Er is nieuwe patiëntenfeedback binnengekomen';
+					$this->send("feedback_reply", $user['email_reply'], $subject, $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
+					
+					$this->db->where('id', $sent_id);
+					$this->db->update('sent', array('reply_sent' => TRUE));
+				}
 			}
-			
-			return $post;
 		}
 
 		function parse_xls($file, $first = FALSE, $name = FALSE)
