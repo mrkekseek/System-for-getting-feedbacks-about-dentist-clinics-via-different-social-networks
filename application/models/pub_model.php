@@ -5167,7 +5167,7 @@
 					$filename = date('d-m-Y').'.csv';
 					if ($fp = fopen($path.$filename, 'w'))
 					{
-						fputcsv($fp, array('Datum', 'Aanhef', 'Voornaam', 'Achternaam', 'Leeftijd', 'E-mailadres', 'Facebook', 'Google', 'Zorgkaart', 'Independer', 'Vergelijk Mondzorg', 'Aangepaste doorverwijzing', 'Kliniekoverzicht', 'Telefoonboek', 'Uitgenodigd op', 'Beoordeeld op'), ';');
+						fputcsv($fp, array('Datum', 'Aanhef', 'Voornaam', 'Achternaam', 'Leeftijd', 'E-mailadres', 'Facebook', 'Google', 'Zorgkaart', 'Independer', 'Vergelijk Mondzorg', 'Aangepaste doorverwijzing', 'Kliniekoverzicht', 'Telefoonboek', 'Behandelaar', 'Behandeling','Uitgenodigd op', 'Beoordeeld op'), ';');
 						foreach ($list as $line)
 						{
 							fputcsv($fp, array(date('d-m-Y'),
@@ -5184,6 +5184,8 @@
 										   $line['own'],
 										   $line['kliniekoverzicht'],
 										   $line['telefoonboek'],
+										   $line['doctor_name'],
+										   $line['treatment'],
 										   date('d-m-Y H:i', $line['date']),
 										   date('d-m-Y H:i', $line['last'])), ';');
 						}
