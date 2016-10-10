@@ -1564,6 +1564,9 @@
 									"own_checked" => $post['own_checked'],
 									"own" => $post['own'],
 									"own_name" => $post['own_name'],
+									"youtube_pos" => $post['youtube_pos'],
+									"youtube_checked" => $post['youtube_checked'],
+									"youtube" => $post['youtube'],
 									"google_pos" => $post['google_pos'],
 									"google_checked" => $post['google_checked'],
 									"google" => $post['google']);

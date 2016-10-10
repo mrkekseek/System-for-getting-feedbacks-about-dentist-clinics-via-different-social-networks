@@ -28,6 +28,7 @@
 			}
 			else
 			{
+				$this->pub->cron();
 				exit("error");
 			}
 		}

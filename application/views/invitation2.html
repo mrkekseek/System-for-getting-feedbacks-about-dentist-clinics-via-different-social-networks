@@ -256,7 +256,7 @@
 													</div>
 												</div>
 												
-												<a href="javascript:void(0);" class="rating-btn" ng-click="click(o.system, o.url)">Schrijf review</a>
+												<a href="javascript:void(0);" class="rating-btn" ng-click="click(o.system, o.url)">{{o.system == 'youtube' ? 'Maak video-review' : 'Schrijf review'}}</a>
 											</div>
 										</div>
 									</div>
@@ -264,6 +264,26 @@
 								
 								<div class="cards-lock">
 									<i class="fa fa-lock"></i>
+								</div>
+							</div>
+							
+							<div class="cards-box top-marging" ng-if="onlines_youtube == '1'">
+								<div class="cards-box-content">
+									<div class="cards-number" ng-if="voted >= 0">
+										Stap <span ng-if="voted == 0">3</span><span ng-if="voted != 0">2</span>
+									</div>
+									
+									<h2>Maak je video review</h2>
+									
+									<h3 class="sub">Laat een videoboodschap achter voor je zorgverlener.</h3>
+									
+									<div class="youtube-upload-box">
+									</div>
+									
+									<div class="youtube-small-text">
+										De door jouw opgenomen video-review wordt mogelijk voor promotiedoeleinden gebruikt door {{user.username}}.
+										Door een video te uploaden ga je akkoord met de openbaarmaking van jouw video-review.
+									</div>
 								</div>
 							</div>
 						</div>

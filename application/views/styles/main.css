@@ -1541,6 +1541,16 @@ section.logo {
 	max-height: 40px;
 }
 
+.online-youtube .panel-heading {
+	background: #E8381E;
+}
+
+.online-youtube .btn {
+	background: #E8381E;
+	border-color: #E8381E;
+	padding: 10px 18px;
+}
+
 .online-google .panel-heading {
 	background: #34A954;
 }
@@ -2378,6 +2388,17 @@ span.pro {
 	margin-bottom: 0;
 }
 
+.cards-box.top-marging {
+	margin-bottom: 0;
+	margin-top: 20px;
+}
+
+.youtube-small-text {
+	font-size: 12px;
+	text-align: center;
+	color: #999;
+}
+
 .cards-box.promo-box {
 	background-color: #FAD200;
 }
@@ -2647,6 +2668,10 @@ span.pro {
 
 .rating-own {
 	background: #757575;
+}
+
+.rating-youtube {
+	background: #DF2E28;
 }
 
 .cards-box-content h5 {

@@ -35,7 +35,7 @@
 				
 				<div class="online-blocked" ng-show="blocked[o.name]">
 					<p>
-						Upgrade naar <b>Pro</b> om {{o.name == 'own' ? 'Aangepaste doorverwijzing' : (o.name.charAt(0).toUpperCase() + o.name.slice(1))}} te gebruiken.
+						Upgrade naar <b>{{o.name == 'youtube' ? 'Ultimate' : 'Pro'}}</b> om {{o.name == 'own' ? 'Aangepaste doorverwijzing' : (o.name.charAt(0).toUpperCase() + o.name.slice(1))}} te gebruiken.
 					</p>
 					
 					<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
@@ -237,6 +237,27 @@
 		
 		<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="m.url" ng-class="valid" />
 	</div>
+	
+	<div class="modal-body" ng-if="system == 'youtube'">
+		<p>
+			Om uw patiënten door te verwijzen naar dit online profiel dient u het internetadres van uw profiel op Youtube in te vullen.
+		</p>
+		
+		<input type="text" class="form-control" placeholder="http://" style="margin-top:30px; margin-bottom:30px;" ng-model="m.url" ng-class="valid" />
+		
+		<!--div class="well-box" ng-class="{active: show_well}">
+			<div class="well">
+				<strong>De correcte URL voor uw profiel op Youtube</strong>
+				<br /><br />
+				<ul>
+					<li>Gebruik de 'Klinieken op Alfabet'-lijst op <a href="http://youtube.com/">Youtube</a> om de pagina van uw praktijk op te zoeken.</li>
+					<li>Op uw praktijkpagina, klik op het tab 'Beoordelingen'.</li>
+					<li>Kopieer de URL in de adresbalk van de pagina waar u terechtkomt en plak deze in het invoerveld hierboven.</li>
+				</ul>
+			</div>
+		</div-->
+	</div>
+	
 	<div class="modal-footer">
 		<div class="row">
 			<div class="col-sm-7 col-xs-12 text-left">

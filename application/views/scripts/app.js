@@ -3434,13 +3434,18 @@
         .controller('OnlineCtrl', [ '$scope', '$rootScope', '$window', '$http', '$location', '$timeout', '$modal', 'logger', OnlineCtrl]); // overall control
 
     function OnlineCtrl($scope, $rootScope, $window, $http, $location, $timeout, $modal, logger) {
-		$scope.online = ['google', 'facebook', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own'];
+		$scope.online = ['google', 'facebook', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own', 'youtube'];
 		$scope.blocked = {};
 		
 		$timeout(function() {
 			if ($scope.user.account_type < 1 && $scope.user.account != 2)
 			{
 				$scope.blocked = {'telefoonboek': true, 'vergelijkmondzorg': true, 'kliniekoverzicht': true, 'own': true};
+			}
+			
+			if ($scope.user.organization == 0 && $scope.user.account != 2)
+			{
+				$scope.blocked.youtube = true;
 			}
 		}, 500);
 		
@@ -4257,6 +4262,10 @@
 						if ($scope.i.user.account_type == "1" || $scope.i.user.account == "2")
 						{
 							$scope.onlines_keys = ['google', 'facebook', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own'];
+							if ($scope.i.user.organization == "1" || $scope.i.user.account == "2")
+							{
+								$scope.onlines_keys.push('youtube');
+							}
 						}
 						
 						if ($scope.voted < 0)
@@ -4673,17 +4682,22 @@
 			}
 		};
 
+		$scope.onlines_youtube = 0;
 		$scope.click = function(type, url)
 		{
 			if ( ! $scope.ex)
 			{
 				type = type || false;
-				if (type)
+				if (type && type != 'youtube')
 				{
 					$http.post("/pub/click/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, type: type}).success(function(data, status, headers, config) {
 						$scope.id = logger.check(data);
 						$window.location.href = url;
 					});
+				}
+				else if (type && type == 'youtube')
+				{
+					$scope.onlines_youtube = 1;
 				}
 			}
 			else
