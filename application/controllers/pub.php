@@ -493,6 +493,12 @@
 			$this->response($result);
 		}
 		
+		function vote_treat()
+		{
+			$result = $this->pub->vote_treat($this->post);
+			$this->response($result);
+		}
+		
 		function feedback()
 		{
 			$result = $this->pub->feedback($this->post);
@@ -765,6 +771,31 @@
 		function access_location()
 		{
 			$result = $this->pub->access_location();
+			$this->response($result);
+		}
+		
+		function get_treatments()
+		{
+			$result = $this->pub->get_treatments();
+			$this->response($result);
+		}
+		
+		function save_treatment()
+		{
+			$result = $this->pub->save_treatment($this->post);
+			$this->response($result);
+		}
+		
+		function get_treatment()
+		{
+			$result = $this->pub->treatment_info($this->post['id']);
+			$this->response($result);
+		}
+		
+		function remove_treatment()
+		{
+			$this->pub->remove_treatment($this->post['id']);
+			$result = $this->pub->get_treatments();
 			$this->response($result);
 		}
 		

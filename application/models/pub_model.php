@@ -852,6 +852,34 @@
 			return $row;
 		}
 		
+		function get_treatments()
+		{
+			$this->db->where("users_id", $this->session->userdata("id"));
+			return $this->db->get("treatments")->result_array();
+		}
+		
+		function treatment_info($id)
+		{
+			$this->db->where("id", $id);
+			$this->db->limit(1);
+			$row = $this->db->get("treatments")->row_array();
+			
+			/*$row['name'] = '';
+			if ( ! empty($row['id']))
+			{
+				$this->db->where('users_id', $this->session->userdata("id"));
+				$this->db->where('treatments_id', $id);
+				$this->db->limit(1);
+				$result = $this->db->get("treatments_ids")->row_array();
+				if ( ! empty($result))
+				{
+					$row['name'] = $result['treatments_name'];
+				}
+			}*/
+			
+			return $row;
+		}
+		
 		function get_doctors_amount($users_id)
 		{
 			$this->db->where("users_id", $users_id);
@@ -1170,6 +1198,64 @@
 					$email_data['phone'] = $row['phone'];
 					$message = $this->load->view('views/mail/tpl_access_location.html', $email_data, TRUE);
 					$this->send("access_location", 'admin@patientenreview.nl', 'Locatie-functionaliteit aangevraagd', $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
+					
+					return TRUE;
+				}
+			}
+			
+			return FALSE;
+		}
+		
+		function save_treatment($post)
+		{
+			if ($this->logged_in())
+			{
+				$data_array = array("users_id" => $this->session->userdata("id"),
+									"name" => $post['name']);
+
+				$treatments_id = 0;
+				if ( ! empty($post['id']))
+				{
+					$this->errors[] = array("Success" => "Wijzigingen bewaard.");
+					$this->db->where("id", $post['id']);
+					$this->db->update("treatments", $data_array);
+					
+					$treatments_id = $post['id'];
+				}
+				else
+				{
+					$this->errors[] = array("Success" => "Wijzigingen bewaard.");
+					$data_array['date'] = time();
+					$this->db->insert("treatments", $data_array);
+					
+					$treatments_id = $this->db->insert_id();
+				}
+				
+				$this->db->where('users_id', $this->session->userdata("id"));
+				$this->db->where('treatments_id', $treatments_id);
+				$this->db->delete('treatments_ids');
+				
+				$data_array = array('users_id' => $this->session->userdata("id"),
+									'treatments_id' => $treatments_id,
+									'treatments_name' => strtolower( ! empty($post['name']) ? $post['name'] : ''));
+				$this->db->insert('treatments_ids', $data_array);
+				
+				return $treatments_id;
+			}
+			
+			return FALSE;
+		}
+		
+		function remove_treatment($id)
+		{
+			if ($this->logged_in())
+			{
+				$this->db->where("id", $id);
+				$this->db->where("users_id", $this->session->userdata("id"));
+				if ($this->db->delete("treatments"))
+				{
+					$this->db->where("treatments_id", $id);
+					$this->db->delete("treatments_ids");
 					
 					return TRUE;
 				}
@@ -3327,6 +3413,47 @@
 
 			return FALSE;
 		}
+		
+		function vote_treat($post)
+		{
+			$this->db->where("id", $post['id']);
+			$this->db->where("start >=", time() - 7200);
+			if ($this->db->count_all_results('sent') || $post['id'] == 0)
+			{
+				if (empty($post['id']))
+				{
+					$data_array = array('users_id' => $post['users_id'],
+										'treatment' => $post['treatments_id'],
+										'start' => time(),
+										'date' => time(),
+										'last' => time(),
+										'ip' => $_SERVER['REMOTE_ADDR']);
+					if ($this->db->insert("sent", $data_array))
+					{
+						$post['id'] = $this->db->insert_id();
+						$post['last'] = $data_array['last'];
+						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+						$post['treatment'] = $this->treatment_info($post['treatments_id']);
+						return $post;
+					}
+				}
+				else
+				{
+					$this->db->where("id", $post['id']);
+					if ($this->db->update("sent", array('treatment' => $post['treatments_id'], 'last' => time())))
+					{
+						$post['last'] = time();
+						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
+						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
+						$post['treatment'] = $this->treatment_info($post['treatments_id']);
+						return $post;
+					}
+				}
+			}
+
+			return FALSE;
+		}
 
 		function feedback($post)
 		{
@@ -3653,6 +3780,11 @@
 									$line['location_id'] = $this->get_locations_id(strtolower($line[$tag]));
 								}
 								
+								if ($tag == 'treatment')
+								{
+									$line['treatment_id'] = $this->get_treatments_id(strtolower($line[$tag]));
+								}
+								
 								if ($tag == 'email')
 								{
 									$email = strtolower($line[$tag]);
@@ -3769,10 +3901,6 @@
 								if (in_array($tag, $tags_required))
 								{
 									$line['error'] = 2;
-								}
-								
-								if ($tag != 'treatment')
-								{
 									$result['check'] = FALSE;
 								}
 							}							
@@ -3838,6 +3966,34 @@
 										'locations_id' => $location['id'],
 										'locations_name' => strtolower($name));
 					$this->db->insert('locations_ids', $data_array);
+				}
+			}
+		}
+		
+		function get_treatments_id($name)
+		{
+			$this->db->where('users_id', $this->session->userdata("id"));
+			$this->db->where('treatments_name', $name);
+			$this->db->limit(1);
+			$row = $this->db->get('treatments_ids')->row_array();
+			if ( ! empty($row))
+			{
+				return $row['treatments_id'];
+			}
+			
+			return 0;
+		}
+		
+		function save_treatments_ids($ids)
+		{
+			foreach ($ids as $name => $treatment)
+			{
+				if ( ! empty($treatment))
+				{
+					$data_array = array('users_id' => $this->session->userdata('id'),
+										'treatments_id' => $treatment['id'],
+										'treatments_name' => strtolower($name));
+					$this->db->insert('treatments_ids', $data_array);
 				}
 			}
 		}
@@ -4003,6 +4159,16 @@
 							$this->db->where("email", $email);
 							if ( ! empty($row) && ! $this->db->count_all_results("unsubscribes"))
 							{
+								$questions_info = array();
+								if (count($questions))
+								{
+									$questions_info = $questions[$q_counter];
+									$q_counter = ($q_counter + 1) >= count($questions) ? 0 : ($q_counter + 1);
+								}
+								
+								$row['q_name'] = empty($questions_info) ? '' : '<strong>'.strtolower($questions_info['question_name']).'</strong>';
+								$row['q_desc'] = empty($questions_info) ? '' : $questions_info['question_description'];
+
 								$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 								$email_data['logo'] = ( ! empty($row['logo']) ? str_replace('./', '', $row['logo']) : 'application/views/images/logo_full.png');
 								$email_data['username'] = $row['username'];
@@ -4059,7 +4225,7 @@
 														"sname" => ( ! empty($list['sname']) && ! empty($post['column']['sname'])) ? $list['sname'] : "",
 														"doctor" => ( ! empty($list['doctor_id']) && ! empty($post['column']['doctor'])) ? $list['doctor_id'] : 0,
 														"location" => ( ! empty($list['location_id']) && ! empty($post['column']['location'])) ? $list['location_id'] : 0,
-														"treatment" => ( ! empty($list['treatment']) && ! empty($post['column']['treatment'])) ? $list['treatment'] : "",
+														"treatment" => ( ! empty($list['treatment_id']) && ! empty($post['column']['treatment'])) ? $list['treatment_id'] : 0,
 														//"birth" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
 														"age" => ( ! empty($list['birth']) && $list['birth'] != '<b>!</b>' && ! empty($post['column']['birth'])) ? $list['birth'] : "",
 														"email" => strtolower($list['text']),
@@ -4118,7 +4284,7 @@
 				$this->db->limit(1);
 				$doc = $this->db->get("doctors")->row_array();
 			}
-			
+
 			$tags = array();
 			foreach ($this->tags as $tag)
 			{
@@ -4139,7 +4305,7 @@
 							empty($user['q_desc']) ? '{{EMPTY}}' : 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$user['q_desc'],
 							'<br />');
 			
-			$texts = $this->user_emails($user['id']);
+			$texts = $this->user_emails($user['id'], TRUE);
 			if ($text == "")
 			{
 				if ($user['account'] == 1 && $user['account_type'] == 0)
@@ -4658,6 +4824,15 @@
 					{
 						$return['locations'] = $this->get_locations($return['info']['users_id']);
 					}
+					
+					if ( ! empty($return['info']['treatment']))
+					{
+						$return['treatment'] = $this->treatment_info($return['info']['treatment']);
+					}
+					else
+					{
+						$return['treatments'] = $this->get_treatments($return['info']['users_id']);
+					}
 				}
 				elseif ($segments[0] == 'unsubscribe')
 				{
@@ -4984,7 +5159,7 @@
 					$count = $this->db->count_all_results("sent");
 					
 					$this->inbox_query($post, $users_id);
-					if ( ! empty($post['this_page']) && ! empty($sort) && $sort[0] != 'doctor_name' && $sort[0] != 'location_name')
+					if ( ! empty($post['this_page']) && ! empty($sort) && $sort[0] != 'doctor_name' && $sort[0] != 'location_name' && $sort[0] != 'treatment_name')
 					{
 						$this->db->limit($post['on_page'], ($post['this_page'] - 1) * $post['on_page']);
 						if ($sort[0] == 'last')
@@ -5038,6 +5213,24 @@
 							$locations[$row['id']] = $row;
 						}
 					}
+					
+					$treatments = array();
+					$treatments_ids = array();
+					foreach ($result as $row)
+					{
+						$treatments_ids[] = $row['treatment'];
+					}
+					$treatments_ids = array_diff(array_unique($treatments_ids), array('0'));
+					
+					if ( ! empty($treatments_ids))
+					{
+						$this->db->where_in("id", $treatments_ids);
+						$treats = $this->db->get("treatments")->result_array();
+						foreach ($treats as $row)
+						{
+							$treatments[$row['id']] = $row;
+						}
+					}
 
 					foreach ($result as $row)
 					{
@@ -5054,10 +5247,15 @@
 						{
 							$row['location_name'] = $locations[$row['location']]['title'];
 						}
+						$row['treatment_name'] = "";
+						if ( ! empty($treatments[$row['treatment']]))
+						{
+							$row['treatment_name'] = $treatments[$row['treatment']]['name'];
+						}
 						$items[] = $row;
 					}
 					
-					if ($sort[0] == 'doctor_name' || $sort[0] == 'location_name')
+					if ($sort[0] == 'doctor_name' || $sort[0] == 'location_name' || $sort[0] == 'treatment_name')
 					{
 						function cmp_doctor_name_asc($a, $b)
 						{
@@ -5077,6 +5275,16 @@
 						function cmp_location_name_desc($a, $b)
 						{
 							return strcasecmp($b['location_name'], $a['location_name']);
+						}
+						
+						function cmp_treatment_name_asc($a, $b)
+						{
+							return strcasecmp($a['treatment_name'], $b['treatment_name']);
+						}
+						
+						function cmp_treatment_name_desc($a, $b)
+						{
+							return strcasecmp($b['treatment_name'], $a['treatment_name']);
 						}
 						
 						usort($items, "cmp_".$sort[0]."_".$sort[1]);
@@ -5861,6 +6069,19 @@
 				$data['location'] = $items;
 			}
 			
+			if ( ! empty($data['treatment']))
+			{
+				$items = array();
+				$this->db->order_by('name asc');
+				$this->db->where_in('id', $data['treatment']);
+				$result = $this->db->get('treatments')->result_array();
+				foreach ($result as $row)
+				{
+					$items[] = array('id' => $row['id'], 'name' => $row['name']);
+				}
+				$data['treatment'] = $items;
+			}
+			
 			$questions_ids = array();
 			$this->db->group_by('questions_id');
 			if (empty($post['admin']))
@@ -6069,6 +6290,7 @@
 						$count['all_month_sum'][$key] = 0;
 						$count['all_month_num'][$key] = 0;
 						$count['all_nps']['12'][$key] = 0;
+						$count['all_nps']['3'][$key] = 0;
 						$count['all_nps']['45'][$key] = 0;
 					}
 					
@@ -6188,17 +6410,21 @@
 								$count['my_month_sum'][$month] += $row['stars'];
 								$count['my_month_num'][$month]++;
 							}
-							
-							if ( ! empty($month) && isset($count['all_nps']['12'][$month]))
+						}
+						
+						if ( ! empty($month) && isset($count['all_nps']['12'][$month]))
+						{
+							if ($row['stars'] <= 2 && isset($count['all_nps']['12'][$month]))
 							{
-								if ($row['stars'] <= 2 && isset($count['all_nps']['12'][$month]))
-								{
-									$count['all_nps']['12'][$month]++;
-								}
-								elseif ($row['stars'] >= 4 && isset($count['all_nps']['45'][$month]))
-								{
-									$count['all_nps']['45'][$month]++;
-								}
+								$count['all_nps']['12'][$month]++;
+							}
+							elseif ($row['stars'] == 3 && isset($count['all_nps']['3'][$month]))
+							{
+								$count['all_nps']['3'][$month]++;
+							}
+							elseif ($row['stars'] >= 4 && isset($count['all_nps']['45'][$month]))
+							{
+								$count['all_nps']['45'][$month]++;
 							}
 						}
 
@@ -6247,6 +6473,8 @@
 					$nps_my_12 = 0;
 					$nps_all_45 = 0;
 					$nps_all_12 = 0;
+					$nps_my_all = 0;
+					$nps_all_all = 0;
 					
 					foreach ($count['my_month_num'] as $month => $val)
 					{
@@ -6264,11 +6492,13 @@
 						
 						$nps_my_45 += $stat['history_nps']['45'][$month];
 						$nps_my_12 += $stat['history_nps']['12'][$month];
-						$stat['nps_my_month'][$month] = $nps_my_45 - $nps_my_12;
+						$nps_my_all += ($stat['history_nps']['12'][$month] + $stat['history_nps']['3'][$month] + $stat['history_nps']['45'][$month]);
+						$stat['nps_my_month'][$month] = round($nps_my_45 / $nps_my_all * 100) - round($nps_my_12 / $nps_my_all * 100);
 						
 						$nps_all_45 += $count['all_nps']['45'][$month];
 						$nps_all_12 += $count['all_nps']['12'][$month];
-						$stat['nps_all_month'][$month] = $nps_all_45 - $nps_all_12;
+						$nps_all_all += ($count['all_nps']['12'][$month] + $count['all_nps']['3'][$month] + $count['all_nps']['45'][$month]);
+						$stat['nps_all_month'][$month] = round($nps_all_45 / $nps_all_all * 100) - round($nps_all_12 / $nps_all_all * 100);
 					}
 
 					$stat['questions'] = array();
@@ -8578,7 +8808,7 @@
 			$mg = new Mailgun($config['key']);
 			$domain = $config['domain'];
 			
-			if ($id)
+			if ( ! empty($id))
 			{
 				$this->db->where("letters_id", $id);
 			}
@@ -8596,54 +8826,62 @@
 			{
 				foreach ($result as $row)
 				{
-					$data = array('from' => $row['letters_from'].' <'.$row['letters_from_email'].'>', 
-								  'to' => $row['letters_to'], 
-								  'subject' => $row['letters_subject'],
-								  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',							  
-								  'html' => $row['letters_message']);
-					$attachment = array();
-
-					if ($row['letters_type'] == "reminder")
+					if ( ! empty($row['letters_to']))
 					{
-						$this->db->where("email", $row['letters_to']);
-						$this->db->limit(1);
-						$val = $this->db->get("users")->row_array();
-						if ($val['account'] == 1 && $val['account_type'] == 0)
+						$data = array('from' => $row['letters_from'].' <'.$row['letters_from_email'].'>', 
+									  'to' => $row['letters_to'], 
+									  'subject' => $row['letters_subject'],
+									  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',							  
+									  'html' => $row['letters_message']);
+						$attachment = array();
+
+						if ($row['letters_type'] == "reminder")
 						{
-							$attachment[] = ROOT.'/excel-basis-tpl.xls';
+							$this->db->where("email", $row['letters_to']);
+							$this->db->limit(1);
+							$val = $this->db->get("users")->row_array();
+							if ($val['account'] == 1 && $val['account_type'] == 0)
+							{
+								$attachment[] = ROOT.'/excel-basis-tpl.xls';
+							}
+							else
+							{
+								$attachment[] = ROOT.'/excel-tpl.xls';
+							}
+						}
+						
+						if ( ! empty($row['letters_attach']))
+						{
+							$attach = explode('&&', $row['letters_attach']);
+							foreach ($attach as $file)
+							{
+								$attachment[] = str_replace('./', ROOT.'/', $file);
+							}
+						}
+
+						$result = $mg->sendMessage($domain, $data, array('attachment' => $attachment));
+						$code = $result->http_response_code;
+						
+						if ($code == 200)
+						{
+							$this->db->where("letters_id", $row['letters_id']);
+							$this->db->delete("letters");
 						}
 						else
 						{
-							$attachment[] = ROOT.'/excel-tpl.xls';
+							$content = '';
+							$logItems = $result->http_response_body->items;
+							foreach($logItems as $logItem)
+							{
+								$content .= $logItem->message_id."\n";
+							}
+							file_put_contents("log.txt", $content);
 						}
-					}
-					
-					if ( ! empty($row['letters_attach']))
-					{
-						$attach = explode('&&', $row['letters_attach']);
-						foreach ($attach as $file)
-						{
-							$attachment[] = str_replace('./', ROOT.'/', $file);
-						}
-					}
-
-					$result = $mg->sendMessage($domain, $data, array('attachment' => $attachment));
-					$code = $result->http_response_code;
-					
-					if ($code == 200)
-					{
-						$this->db->where("letters_id", $row['letters_id']);
-						$this->db->delete("letters");
 					}
 					else
 					{
-						$content = '';
-						$logItems = $result->http_response_body->items;
-						foreach($logItems as $logItem)
-						{
-							$content .= $logItem->message_id."\n";
-						}
-						file_put_contents("log.txt", $content);
+						$this->db->where("letters_id", $row['letters_id']);
+						$this->db->delete("letters");
 					}
 				}
 			}
