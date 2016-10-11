@@ -2571,6 +2571,26 @@
 			}
 		};
 		
+		$scope.check_reply = function() {
+			if ($scope.user.email_negative_check == 0 && $scope.user.email_feedback_check == 0)
+			{
+				$scope.user.email_reply_check = 0;
+			}
+		};
+		
+		$scope.check_reply_check = function() {
+			if ($scope.user.email_reply_check == 1 && $scope.user.email_negative_check == 0 && $scope.user.email_feedback_check == 0)
+			{
+				$scope.user.email_feedback_check = 1;
+			}
+			
+			if ($scope.user.email_reply_check == 0)
+			{
+				$scope.user.email_negative_check = 0;
+				$scope.user.email_feedback_check = 0;
+			}
+		};
+		
 		$scope.passwords = {};
 		$scope.password_form = '0';
 		$scope.show_password_form = function() {
@@ -3408,8 +3428,9 @@
 			});
 		};
 		
-		$scope.next_step = function()
+		$scope.next_step = function(type)
 		{
+			$scope.type[0] = type * 1;
 			$scope.step = 2;
 			$scope.info = {};
 			$http.post("/pub/invoice_info/", {id: $scope.user.id, type: $scope.type[0]}).success(function(data, status, headers, config) {
@@ -3418,7 +3439,6 @@
 				{
 					$scope.doctors.push($scope.info.doctors[k]);
 				}
-				
 				$scope.info.price = ($scope.type[0] == 0 ? $scope.info.base_amount : ($scope.type[0] == 1 ? $scope.info.pro_amount : $scope.info.ultimate_amount));
 				$scope.info.amount = $scope.info.amount == 0 ? ($scope.info.price + $scope.info.doctors_amount) : $scope.info.amount;
 			});

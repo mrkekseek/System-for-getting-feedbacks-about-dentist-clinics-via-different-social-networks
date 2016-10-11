@@ -336,7 +336,7 @@
 										</td>
 									</tr>
 									
-									<tr class="last_question_tr" ng-show="user.questions.length < 4">
+									<tr class="last_question_tr">
 										<td></td>
 										<td class="text-right"><a href="javascript:void(0);" class="add_question_link" ng-click="add_new_question_show()">Voeg vraagstelling toe</a></td>
 										<td class="question_third"></td>
@@ -412,7 +412,7 @@
                     <label class="col-md-4">E-mailnotificatie feedback</label>
                     <div class="col-md-8">
 						<label class="ui-switch ui-switch-lg">
-							<input type="checkbox" name="email_reply_check" ng-model="user.email_reply_check" ng-checked="user.email_reply_check == '1'" />
+							<input type="checkbox" name="email_reply_check" ng-model="user.email_reply_check" ng-change="check_reply_check()" ng-checked="user.email_reply_check == '1'" />
 							<i></i>
 						</label>
 						
@@ -424,6 +424,20 @@
 							<span class="help-block">
 								Met dit onderdeel kiest u het e-mailadres waarop u een e-mailnotificatie van binnengekomen feedback van patiënten zult ontvangen.
 							</span>
+							
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" ng-model="user.email_negative_check" ng-change="check_reply()" ng-checked="user.email_negative_check == '1'"/>
+									Bij negatieve beoordeling
+								</label>
+							</div>
+							
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" ng-model="user.email_feedback_check" ng-change="check_reply()" ng-checked="user.email_feedback_check == '1'" />
+									Bij beoordeling met feedback
+								</label>
+							</div>
 						</div>
                     </div>
                 </div>

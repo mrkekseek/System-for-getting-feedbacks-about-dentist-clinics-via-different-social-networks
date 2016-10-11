@@ -3,16 +3,16 @@
         <div class="panel-heading"><strong><i class="glyphicon glyphicon-credit-card"></i> Abonnement Activeren</strong></div>
         <div class="panel-body">
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<span class="btn btn-round btn-primary btn-lg btn-block btn-invoice-label" ng-class="{active: step == 1, future: step < 1}">1. <span>Kies uw versie</span></span>
 					<span class="btn btn-round btn-primary btn-lg btn-block btn-invoice-label" ng-class="{active: step == 2, future: step < 2}">2. <span>Bevestig activatie</span></span>
 				</div>
 				
-				<div class="col-md-8">
+				<div class="col-md-9">
 					<div class="panel panel-default">
 						<div class="panel-body activity-box" ng-show="step == 1">
-                            <p>
-                                U kunt hier kiezen naar welke versie van Patiëntenreview u wilt upgraden. <!--u>Bekijk de features per pakket</u-->
+                            <!--p>
+                                U kunt hier kiezen naar welke versie van Patiëntenreview u wilt upgraden. <u>Bekijk de features per pakket</u>
                             </p>
                             
                             <p>
@@ -44,6 +44,64 @@
                                 <br />
                                 <span class="help-block clear-help-block">Ultieme manier om beoordelingen te verzamelen met veilige 2-staps authenticatie, meervoudige vraagstelling en uitgebreide statistieken-filters. Tevens krijgt u als eerste toegang tot de laatste nieuwe features.</span>
                             </p>
+
+                                <span class="help-block clear-help-block">&euro;600,00 excl. BTW per jaar</span>
+                            </p-->
+							
+							<div class="row pricing-row">
+								<div class="col-md-4 col-xsm-6" ng-show="user.account == 2">
+									<section class="pricing-table">
+										<header> <h2>Basis</h2> </header>
+										<p class="pricing-price-detail">Beoordelingen verzamelen en publiceren zonder huisstijl of statistieken.</p>
+										<div class="pricing-plan-details">
+											<ul>
+												<li><span class="ti-check"></span> Inzicht in patiënttevredenheid</li>
+												<li><span class="ti-check"></span> Stimuleer beoordelingen op Facebook, Independer, Google en Zorgkaart</li>
+											</ul>                            
+										</div>
+										<footer><a href="javascript:void(0);" ng-click="next_step(0)" class="btn btn-default">Upgrade nu...</a></footer>
+									</section>
+								</div>
+
+								<div class="col-xsm-6" ng-class="{'col-md-4': user.account == 2, 'col-md-6': user.account != 2 && user.account_type == 0}">
+									<section class="pricing-table">
+										<header> <h2>Pro</h2> </header>
+										<p class="pricing-price-detail">Professioneel beoordelingen verzamelen met eigen huisstijl, statistieken, 3 gratis zorgverlener-licenties en andere uitgebreide mogelijkheden.</p>
+										<div class="pricing-plan-details">
+											<ul>
+												<li><span class="ti-check"></span> Inzicht in patiënttevredenheid</li>
+												<li><span class="ti-check"></span> Stimuleer beoordelingen op Facebook, Independer, Google, Zorgkaart, Telefoonboek, Kliniekoverzicht, Vergelijk Mondzorg en uw eigen URL.</li>
+												<li><span class="ti-check"></span> Uitnodigingen in eigen huisstijl</li>
+												<li><span class="ti-check"></span> Statistieken</li>
+												<li><span class="ti-check"></span> Exporteren beoordelingen</li>
+												<li><span class="ti-check"></span> Widget voor eigen website</li>
+											</ul>                            
+										</div>
+										<footer><a href="javascript:void(0);" ng-click="next_step(1)" class="btn btn-default">Upgrade nu...</a></footer>
+									</section>
+								</div>
+
+								<div class="col-xsm-6" ng-class="{'col-md-4': user.account == 2, 'col-md-6': user.account != 2 && user.account_type == 0}">
+									<section class="pricing-table">
+										<header> <h2>Ultimate</h2> </header>
+										<p class="pricing-price-detail">Ultieme manier om beoordelingen verzamelen met alle features van Pro, plus een veilige 2-staps authenticatie, meervoudige vraagstelling, uitgebreide filters en video-reviews.</p>
+										<div class="pricing-plan-details">
+											<ul>
+												<li><span class="ti-check"></span> Inzicht in patiënttevredenheid</li>
+												<li><span class="ti-check"></span> Stimuleer beoordelingen op Facebook, Independer, Google, Zorgkaart, Telefoonboek, Kliniekoverzicht, Vergelijk Mondzorg en uw eigen URL.</li>
+												<li><span class="ti-check"></span> Uitnodigingen in eigen huisstijl</li>
+												<li><span class="ti-check"></span> Statistieken</li>
+												<li><span class="ti-check"></span> Exporteren beoordelingen</li>
+												<li><span class="ti-check"></span> Widget voor eigen website</li>
+												<li><span class="ti-check"></span> Veilige 2-staps authenticate</li>
+												<li><span class="ti-check"></span> Uitgebreide statistieken filters</li>
+												<li><span class="ti-check"></span> Als eerste toegang tot nieuwe features</li>
+											</ul>                            
+										</div>
+										<footer><a href="javascript:void(0);" ng-click="next_step(2)" class="btn btn-default">Upgrade nu...</a></footer>
+									</section>
+								</div>
+							</div>
 						</div>
 
 						<!--div>
@@ -138,7 +196,7 @@
 								
 								<tbody ng-if="user.account != '1'">
 									<tr>
-										<td>Patiëntenreview {{ type == 0 ? 'Basis' : 'Pro' }}</td>
+										<td>Patiëntenreview {{ type == 0 ? 'Basis' : (type == 1 ? 'Pro' : 'Ultimate') }}</td>
 										<td>&euro;{{info.price.toFixed(2).replace(".", ",")}}</td>
 									</tr>
 									
@@ -157,7 +215,7 @@
 									</tr>
 								</tbody>
 								
-								<tbody ng-if="user.account == '1' && user.account_type == '0'">
+								<tbody ng-if="user.account == '1'">
 									<tr>
 										<td>Patiëntenreview {{type == 1 ? 'Pro' : 'Ultimate'}} {{info.today}} t/m {{info.suspension}}</td>
 										<td>&euro;{{(type == 1 ? info.half_pro : info.half_ultimate).toFixed(2).replace(".", ",")}}</td>
@@ -177,11 +235,11 @@
 						</div>
 					</div>
 					
-					<div class="text-right" ng-if="step == 1">
+					<!--div class="text-right" ng-if="step == 1">
 						<a href="javascript:void(0);" class="btn btn-secondary disabled">Vorige</a>
 						&nbsp;
 						<a href="javascript:void(0);" class="btn btn-primary" ng-click="next_step()" ng-disabled="user.account == 1 && user.account_type == 0 && type == 0">Volgende</a>
-					</div>
+					</div-->
 					
 					<div class="text-right" ng-if="step == 2">
 						<a href="#/pages/subscription" class="btn btn-warning">Annuleer</a>

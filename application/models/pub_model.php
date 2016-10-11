@@ -1169,7 +1169,7 @@
 					$email_data['email'] = $row['email'];
 					$email_data['phone'] = $row['phone'];
 					$message = $this->load->view('views/mail/tpl_access_location.html', $email_data, TRUE);
-					$this->send("access_location", 'admin@patientenreview.nl', 'Locatie-functionaliteit aangevraagd', $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+					$this->send("access_location", 'admin@patientenreview.nl', 'Locatie-functionaliteit aangevraagd', $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
 					
 					return TRUE;
 				}
@@ -2490,7 +2490,7 @@
 						$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 						$email_data['username'] = $row['username'];
 						$message = $this->load->view('views/mail/tpl_password.html', $email_data, TRUE);
-						$this->send("password", $row['email'], 'Uw wachtwoord is gewijzigd', $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+						$this->send("password", $row['email'], 'Uw wachtwoord is gewijzigd', $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
 
 						return $this->login(array("email" => $row['email'], "password" => $post['password']));
 					}
@@ -2526,7 +2526,7 @@
 						$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
 						$email_data['username'] = $row['username'];
 						$message = $this->load->view('views/mail/tpl_password.html', $email_data, TRUE);
-						$this->send("password", $row['email'], 'Uw wachtwoord is gewijzigd', $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+						$this->send("password", $row['email'], 'Uw wachtwoord is gewijzigd', $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
 			
 						$this->errors[] = array("Success" => "Password was changed");
 						return TRUE;
@@ -2666,6 +2666,8 @@
 												"email" => $post['email'],
 												"email_reply" => $post['email_reply'],
 												"email_reply_check" => $post['email_reply_check'],
+												"email_negative_check" => $post['email_negative_check'],
+												"email_feedback_check" => $post['email_feedback_check'],
 												"phone" => $post['phone'],
 												"mobile" => $post['mobile'],
 												"address" => $post['address'],
@@ -3118,7 +3120,6 @@
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
 				
 						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
-						return $post;
 					}
 					else
 					{
@@ -3134,13 +3135,19 @@
 						$post['last'] = time();
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
-						return $post;
 					}
 					else
 					{
 						$this->errors[] = array("Database error");
 					}
 				}
+				
+				if (in_array($post['stars'], array(1, 2)))
+				{
+					$this->email_reply($post['users_id'], $post['id'], 'negative');
+				}
+				
+				return $post;
 			}
 			else
 			{
@@ -3183,7 +3190,6 @@
 						$this->db->insert('sent_questions', $data_array);
 				
 						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
-						return $post;
 					}
 					else
 					{
@@ -3218,14 +3224,19 @@
 						{
 							$this->db->insert('sent_questions', $data_array);
 						}
-						
-						return $post;
 					}
 					else
 					{
 						$this->errors[] = array("Database error");
 					}
 				}
+				
+				if (in_array($post['stars'], array(1, 2)))
+				{
+					$this->email_reply($post['users_id'], $post['id'], 'negative');
+				}
+				
+				return $post;
 			}
 			else
 			{
@@ -3370,29 +3381,42 @@
 				}
 			}
 			
-			$this->db->where('id', $post['users_id']);
+			$this->email_reply($post['users_id'], $post['id'], 'feedback');
+			
+			return $post;
+		}
+		
+		function email_reply($users_id, $sent_id, $type)
+		{
+			$this->db->where('id', $users_id);
 			$this->db->where('email_reply_check', TRUE);
+			$this->db->where('email_'.$type.'_check', TRUE);
 			$this->db->limit(1);
 			$user = $this->db->get('users')->row_array();
 			if ( ! empty($user['email_reply']))
 			{
-				$this->db->where('id', $post['id']);
+				$this->db->where('id', $sent_id);
+				$this->db->where('reply_sent', FALSE);
 				$this->db->limit(1);
 				$sent = $this->db->get('sent')->row_array();
 				
-				$email_data = array();
-				$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
-				$email_data['email'] = $sent['email'];
-				$email_data['stars'] = $sent['stars'];
-				$email_data['feedback'] = $sent['feedback'];
-				
-				$message = $this->load->view('views/mail/tpl_feedback_reply.html', $email_data, TRUE);
+				if ( ! empty($sent))
+				{
+					$email_data = array();
+					$email_data['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+					$email_data['email'] = $sent['email'];
+					$email_data['stars'] = $sent['stars'];
+					$email_data['feedback'] = $sent['feedback'];
+					
+					$message = $this->load->view('views/mail/tpl_feedback_reply.html', $email_data, TRUE);
 
-				$subject = 'Er is nieuwe patiëntenfeedback binnengekomen';
-				$this->send("feedback_reply", $user['email_reply'], $subject, $message, 'Patiëntenreview', 'no-reply@patientenreview.nl');
+					$subject = 'Er is nieuwe patiëntenfeedback binnengekomen';
+					$this->send("feedback_reply", $user['email_reply'], $subject, $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl');
+					
+					$this->db->where('id', $sent_id);
+					$this->db->update('sent', array('reply_sent' => TRUE));
+				}
 			}
-			
-			return $post;
 		}
 
 		function parse_xls($file, $first = FALSE, $name = FALSE)
@@ -3996,7 +4020,7 @@
 								$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
 
 								$subject = (empty($subject) ? $email_data['texts']['subject'] : $subject);
-								if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], 'no-reply@patientenreview.nl'))
+								if ( ! $this->send("mailing", $list['text'], $subject, $message, $row['username'], 'no-reply@mg.patientenreview.nl'))
 								{
 									$error = FALSE;
 									$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
@@ -4056,7 +4080,7 @@
 										
 										$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
 
-										if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], 'no-reply@patientenreview.nl'))
+										if ( ! $this->send("mailing", $list['text'], (empty($subject) ? $email_data['texts']['subject'] : $subject), $message, $row['username'], 'no-reply@mg.patientenreview.nl'))
 										{
 											$error = FALSE;
 											$this->errors[] = array("Warning" => "Wasn't send to ".$list['text']);
@@ -4491,7 +4515,7 @@
 			return $this->send("renew", $post['email'], 'Uw factuur van Patiëntenreview', $message, 'Patiëntenreview', 'info@patientenreview.nl', $post['attach']);*/
 		}
 
-		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'info@patientenreview.nl', $attach = FALSE)
+		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'no-reply@mg.patientenreview.nl', $attach = FALSE)
 		{
 			$data_array = array("letters_to" => $to,
 								"letters_subject" => $subject,
@@ -5167,7 +5191,7 @@
 					$filename = date('d-m-Y').'.csv';
 					if ($fp = fopen($path.$filename, 'w'))
 					{
-						fputcsv($fp, array('Datum', 'Aanhef', 'Voornaam', 'Achternaam', 'Leeftijd', 'E-mailadres', 'Facebook', 'Google', 'Zorgkaart', 'Independer', 'Vergelijk Mondzorg', 'Aangepaste doorverwijzing', 'Kliniekoverzicht', 'Telefoonboek', 'Uitgenodigd op', 'Beoordeeld op'), ';');
+						fputcsv($fp, array('Datum', 'Aanhef', 'Voornaam', 'Achternaam', 'Leeftijd', 'E-mailadres', 'Facebook', 'Google', 'Zorgkaart', 'Independer', 'Vergelijk Mondzorg', 'Aangepaste doorverwijzing', 'Kliniekoverzicht', 'Telefoonboek', 'Behandelaar', 'Behandeling','Uitgenodigd op', 'Beoordeeld op'), ';');
 						foreach ($list as $line)
 						{
 							fputcsv($fp, array(date('d-m-Y'),
@@ -5184,6 +5208,8 @@
 										   $line['own'],
 										   $line['kliniekoverzicht'],
 										   $line['telefoonboek'],
+										   $line['doctor_name'],
+										   $line['treatment'],
 										   date('d-m-Y H:i', $line['date']),
 										   date('d-m-Y H:i', $line['last'])), ';');
 						}
