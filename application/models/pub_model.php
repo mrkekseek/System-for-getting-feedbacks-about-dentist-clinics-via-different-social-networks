@@ -4119,6 +4119,14 @@
 				$doc = $this->db->get("doctors")->row_array();
 			}
 			
+			$q = array();
+			if ( ! empty($list['questions_id']))
+			{
+				$this->db->where("id", $list['questions_id']);
+				$this->db->limit(1);
+				$q = $this->db->get("rating_questions")->row_array();
+			}
+			
 			$tags = array();
 			foreach ($this->tags as $tag)
 			{
@@ -4135,11 +4143,11 @@
 							empty($doc['lastname']) ? '{{EMPTY}}' : $doc['lastname'],
 							empty($doc['avatar']) ? '{{EMPTY}}' : '<img src="'.str_replace('./avatars/', base_url().'avatars/', $doc['avatar']).'" style="vertical-align: baseline;" alt="" />',
 							empty($user['username']) ? '{{EMPTY}}' : $user['username'],
-							empty($user['q_name']) ? '{{EMPTY}}' : $user['q_name'],
-							empty($user['q_desc']) ? '{{EMPTY}}' : 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$user['q_desc'],
+							empty($q['question_name']) ? '{{EMPTY}}' : $q['question_name'],
+							empty($q['question_description']) ? '{{EMPTY}}' : 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$q['question_description'],
 							'<br />');
 			
-			$texts = $this->user_emails($user['id']);
+			$texts = $this->user_emails($user['id'], TRUE);
 			if ($text == "")
 			{
 				if ($user['account'] == 1 && $user['account_type'] == 0)
@@ -6069,6 +6077,7 @@
 						$count['all_month_sum'][$key] = 0;
 						$count['all_month_num'][$key] = 0;
 						$count['all_nps']['12'][$key] = 0;
+						$count['all_nps']['3'][$key] = 0;
 						$count['all_nps']['45'][$key] = 0;
 					}
 					
@@ -6188,17 +6197,21 @@
 								$count['my_month_sum'][$month] += $row['stars'];
 								$count['my_month_num'][$month]++;
 							}
-							
-							if ( ! empty($month) && isset($count['all_nps']['12'][$month]))
+						}
+						
+						if ( ! empty($month) && isset($count['all_nps']['12'][$month]))
+						{
+							if ($row['stars'] <= 2 && isset($count['all_nps']['12'][$month]))
 							{
-								if ($row['stars'] <= 2 && isset($count['all_nps']['12'][$month]))
-								{
-									$count['all_nps']['12'][$month]++;
-								}
-								elseif ($row['stars'] >= 4 && isset($count['all_nps']['45'][$month]))
-								{
-									$count['all_nps']['45'][$month]++;
-								}
+								$count['all_nps']['12'][$month]++;
+							}
+							elseif ($row['stars'] == 3 && isset($count['all_nps']['3'][$month]))
+							{
+								$count['all_nps']['3'][$month]++;
+							}
+							elseif ($row['stars'] >= 4 && isset($count['all_nps']['45'][$month]))
+							{
+								$count['all_nps']['45'][$month]++;
 							}
 						}
 
@@ -6247,6 +6260,8 @@
 					$nps_my_12 = 0;
 					$nps_all_45 = 0;
 					$nps_all_12 = 0;
+					$nps_my_all = 0;
+					$nps_all_all = 0;
 					
 					foreach ($count['my_month_num'] as $month => $val)
 					{
@@ -6264,11 +6279,13 @@
 						
 						$nps_my_45 += $stat['history_nps']['45'][$month];
 						$nps_my_12 += $stat['history_nps']['12'][$month];
-						$stat['nps_my_month'][$month] = $nps_my_45 - $nps_my_12;
+						$nps_my_all += ($stat['history_nps']['12'][$month] + $stat['history_nps']['3'][$month] + $stat['history_nps']['45'][$month]);
+						$stat['nps_my_month'][$month] = round($nps_my_45 / $nps_my_all * 100) - round($nps_my_12 / $nps_my_all * 100);
 						
 						$nps_all_45 += $count['all_nps']['45'][$month];
 						$nps_all_12 += $count['all_nps']['12'][$month];
-						$stat['nps_all_month'][$month] = $nps_all_45 - $nps_all_12;
+						$nps_all_all += ($count['all_nps']['12'][$month] + $count['all_nps']['3'][$month] + $count['all_nps']['45'][$month]);
+						$stat['nps_all_month'][$month] = round($nps_all_45 / $nps_all_all * 100) - round($nps_all_12 / $nps_all_all * 100);
 					}
 
 					$stat['questions'] = array();
