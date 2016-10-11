@@ -437,4 +437,66 @@
 			</div>
 		</div>
 	</script>
+	
+	<script type="text/ng-template" id="define_treatments.html">
+		<div class="modal-outer" ng-show=" ! add_treatment_var">
+			<div class="modal-header">
+				<h3>
+					Koppel behandelingen
+				</h3>
+			</div>
+			<div class="modal-body">
+				<p>
+					In het door u geüploade patiëntenbestand zijn behandelingen aangetroffen die nog niet in uw abonnement voorkomen. Koppel hieronder uw behandelingen of voeg een nieuwe behandelingen toe.
+				</p>
+				
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th>Behandelingen in geüpload bestand</th>
+							<th>Behandelingen in abonnement</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="u in unknown">
+							<td class="vertical-middle">{{u}}</td>
+							<td>
+								<select ng-model="selected[u]" class="form-control" ng-options="(t.name) for t in treatments track by t.id">
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<button type="button" class="btn btn-primary" ng-click="add()">Voeg behandelingen toe...</button>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="save()">Bewaar</button>
+				<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+			</div>
+		</div>
+		
+		<div class="modal-outer" ng-show="add_treatment_var">
+			<div class="modal-header">
+				<h3>
+					Voeg nieuwe behandelingen toe
+				</h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form" name="form">
+					<div class="form-group">
+						<label class="col-md-4">Behandelingen</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" name="name" ng-model="treatment.name" value="" required="required" />
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="add_treatment()">Voeg toe</button>
+				<button class="btn btn-default" ng-click="cancel_treatment()">Annuleer</button>
+			</div>
+		</div>
+	</script>
 </div>

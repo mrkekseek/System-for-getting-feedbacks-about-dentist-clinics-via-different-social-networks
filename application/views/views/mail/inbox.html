@@ -181,7 +181,7 @@
 										  data-ng-click="set_order('doctor_name-desc')"
 										  data-ng-class="{active: order == 'doctor_name-desc'}"></span>
 								</div></th>
-								<th ng-if="user.organization"><div class="th">
+								<th ng-if="user.use_locations == '1'"><div class="th">
 									Locatie
 									<span class="fa fa-angle-up"
 										  data-ng-click="set_order('location_name-asc')"
@@ -189,6 +189,15 @@
 									<span class="fa fa-angle-down"
 										  data-ng-click="set_order('location_name-desc') "
 										  data-ng-class="{active: order == 'location_name-desc'}"></span>
+								</div></th>
+								<th><div class="th">
+									Behandelingen
+									<span class="fa fa-angle-up"
+										  data-ng-click="set_order('treatment_name-asc')"
+										  data-ng-class="{active: order == 'treatment_name-asc'}"></span>
+									<span class="fa fa-angle-down"
+										  data-ng-click="set_order('treatment_name-desc') "
+										  data-ng-class="{active: order == 'treatment_name-desc'}"></span>
 								</div></th>
 								<th><div class="th">
 									E-mail
@@ -231,7 +240,8 @@
 								<!--td ng-class="{'color-danger bold': l.stars <= 2}">{{l.birth}}</td-->
 								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.age > 0 ? l.age : ''}}</td>
 								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.doctor_name}}</td>
-								<td ng-class="{'color-danger bold': l.stars <= 2}" ng-if="user.organization">{{l.location_name}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2}" ng-if="user.use_locations == '1'">{{l.location_name}}</td>
+								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.treatment_name}}</td>
 								<td ng-class="{'color-danger bold': l.stars <= 2 && l.email != '', 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
 								
 							</tr>
