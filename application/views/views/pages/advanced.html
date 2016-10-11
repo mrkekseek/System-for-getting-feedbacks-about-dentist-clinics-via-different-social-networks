@@ -43,7 +43,7 @@
 		</div>
         <div class="panel-body" ng-show="user.use_locations == '1'">
 			<div class="table-responsive">
-				<table class="table" ng-if="doctors.length > 0">
+				<table class="table" ng-if="locations.length > 0">
 					<thead>
 						<tr>
 							<th>Locatienummer</th>
@@ -77,6 +77,38 @@
 			<a href="javascript:void(0);" class="btn btn-primary" ng-click="access_location()">Dien verzoek in...</a>
 		</div>
 	</section>
+	
+	<section class="panel panel-default">
+        <div class="panel-heading"><strong><i class="fa fa-medkit"></i> Behandelingen</strong></div>
+		<div class="panel-body">
+			U kunt beoordelingen verzamelen voor uw behandelingen door ze toe te voegen aan uw abonnement. Uw patiënten kunnen vervolgens aangeven welke behandeling ze hebben ondergaan.
+		</div>
+        <div class="panel-body">
+			<div class="table-responsive">
+				<table class="table" ng-if="treatments.length > 0">
+					<thead>
+						<tr>
+							<th>Behandelingennummer</th>
+							<th>Behandelingen</th>
+							<th>Behandelingen</th>
+							<th>Instellingen</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="t in treatments">
+							<td>{{t.id}}</td>
+							<td>{{t.name}}</td>
+							<td><a href="#/pages/treatments_add/{{t.id}}"><i class="glyphicon glyphicon-cog"></i></a></td>
+							<td><a href="javascript:void(0);" class="btn btn-sm btn-primary" ng-click="remove_treatment(t.id)">Verwijder dit profiel</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<a href="#/pages/treatments_add" class="btn btn-primary">Voeg behandelingen toe...</a>
+		</div>
+	</section>
 </div>
 
 <script type="text/ng-template" id="removeDoctor.html">
@@ -108,6 +140,25 @@
 		<p>
 			Het verwijderen van deze locatie zorgt ervoor dat alle ontvangen beoordelingen en andere
 			gegevens gerelateerd aan deze locatie definitief zullen worden verwijderd. Deze actie kan niet
+			ongedaan worden gemaakt.
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
+		<button class="btn btn-primary" ng-click="remove()">Verwijder</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="removeTreatment.html">
+	<div class="modal-header">
+		<h3>
+			Behandelingen verwijderen
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p>
+			Het verwijderen van deze behandelingen zorgt ervoor dat alle ontvangen beoordelingen en andere
+			gegevens gerelateerd aan deze behandelingen definitief zullen worden verwijderd. Deze actie kan niet
 			ongedaan worden gemaakt.
 		</p>
 	</div>

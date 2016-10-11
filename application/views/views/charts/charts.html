@@ -64,7 +64,7 @@
 							
 							<select class="form-control" ng-change="run_filter()" ng-class="{'show-filter': f.filter == 'treatment', 'hide-filter': f.filter != 'treatment'}" ng-model="f.value">
 								<option value="">KIES SUBFILTER</option>
-								<option ng-repeat="d in stat_filter_data['treatment']" value="{{d}}">{{d}}</option>
+								<option ng-repeat="d in stat_filter_data['treatment']" value="{{d.id}}">{{d.name}}</option>
 							</select>
 							
 							<select class="form-control" ng-change="run_filter()" ng-class="{'show-filter': f.filter == 'doctor', 'hide-filter': f.filter != 'doctor'}" ng-model="f.value">
