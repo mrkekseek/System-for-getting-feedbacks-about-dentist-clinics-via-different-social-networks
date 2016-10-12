@@ -333,6 +333,26 @@
 			$this->response($result);
 		}
 		
+		function upload_video()
+		{
+			$result = array();
+			if ( ! empty($_FILES['file']['tmp_name']))
+			{
+				$result = $this->pub->upload_video($_FILES['file']['tmp_name'], TRUE, strtolower($_FILES['file']['name']));
+			}
+			else
+			{
+				$result['error'] = TRUE;
+			}
+			$this->response($result);
+		}
+		
+		function video_review()
+		{
+			$result = $this->pub->video_review($this->post);
+			echo json_encode($result);
+		}
+		
 		function editor_upload()
 		{
 			$result = array();
