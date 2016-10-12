@@ -8831,7 +8831,8 @@
 						$data = array('from' => $row['letters_from'].' <'.$row['letters_from_email'].'>', 
 									  'to' => $row['letters_to'], 
 									  'subject' => $row['letters_subject'],
-									  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',							  
+									  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',
+									  'text' => '',
 									  'html' => $row['letters_message']);
 						$attachment = array();
 
