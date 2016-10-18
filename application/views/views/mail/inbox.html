@@ -5,6 +5,7 @@
                 <div class="panel-heading">
 					Ontvangen beoordelingen van uw praktijk
 					<button type="button" class="btn btn-primary" ng-show="count_letters()" ng-click="bulk_modal()">Stuur bedankje...</button>
+					<button type="button" class="btn btn-primary pull-right export-button" ng-click="export_inbox()">Exporteer beoordelingen...</button>
 					<div class="dropdown pull-right" ng-if="filter == 'with_feedback'">
 						<button class="btn btn-primary dropdown-toggle" type="button" id="inbox_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 							Markeer als...
@@ -96,7 +97,7 @@
                 <div class="panel-heading hidden-xs">
 					Ontvangen beoordelingen van uw praktijk
 					<button type="button" class="btn btn-primary" ng-show="count_letters()" ng-click="bulk_modal()">Stuur bedankje...</button>
-					<button type="button" class="btn btn-primary pull-right" ng-click="export_inbox()">Exporteer beoordelingen...</button>
+					<button type="button" class="btn btn-primary pull-right export-button" ng-click="export_inbox()">Exporteer beoordelingen...</button>
 					<div class="dropdown pull-right" ng-if="filter == 'with_feedback'">
 						<button class="btn btn-primary dropdown-toggle" type="button" id="inbox_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 							Markeer als...

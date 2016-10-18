@@ -3870,3 +3870,9 @@ body .btn-primary.compose-prev:disabled {
 .pricing-table > footer {
 	margin-top: 0;
 }
+
+.export-button {
+	vertical-align: middle;
+	margin-left: 10px;
+	margin-top: 1px;
+}
