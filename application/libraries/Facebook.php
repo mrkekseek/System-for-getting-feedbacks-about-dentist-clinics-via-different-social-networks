@@ -5,10 +5,15 @@
 
 	class Facebook
 	{
-		var $app_id = '816105301769238';
-		var $app_secret = '0d256ed4c6080e94abe6bf3f624204d2';
+		var $app_id = '704314823029423';
+		var $app_secret = '8060bff0b3b33d0ae638fa7046ad9f86';
 		public function __construct()
-		{ 
+		{
+			if (ENVIRONMENT == 'production')
+			{
+				$this->app_id = '642099332584306';
+				$this->app_secret = 'c42011c9bdaa8773712d258898bc2ab5';
+			}
 			$this->init();
 		}
 		

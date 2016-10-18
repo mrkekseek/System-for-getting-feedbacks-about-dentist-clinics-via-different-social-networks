@@ -2712,7 +2712,7 @@
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
 			if ($scope.user.rating_questions == '1')
 			{
-				fields = ['subject', 'header_mq', 'text1_mq', 'promo', 'text2', 'footer'];
+				fields = ['subject', 'header_mq', 'text1_mq', 'promo', 'text2_mq', 'footer'];
 			}
 
 			for (var i in fields)
