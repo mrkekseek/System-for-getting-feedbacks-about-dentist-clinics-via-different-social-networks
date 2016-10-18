@@ -13,7 +13,7 @@
 		var $per_hour = 350;
 		var $base_amount = 275;
 		var $pro_amount = 450;
-		var $ultimate_amount = 600;
+		var $ultimate_amount = 700;
 		var $account_amount = 0;
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
@@ -982,11 +982,12 @@
 				$result['half_ultimate'] = round(($this->ultimate_amount / $this->period) * $result['days'], 2);
 				$result['half_pro'] = round(($this->pro_amount / $this->period) * $result['days'], 2);
 				$result['half_basic'] = round(($this->base_amount / $this->period) * $result['days'], 2);
+				$result['half_half'] = $row['account_type'] == 1 ? $result['half_pro'] : $result['half_basic'];
 
 				$result['amount'] = 0;
-				if ($row['account'] == 1 && $row['account_type'] == 0)
+				if ($row['account'] == 1)
 				{
-					$result['amount'] = ($type == 1 ? $result['half_pro'] : $result['half_ultimate']) - $result['half_basic'];
+					$result['amount'] = ($type == 1 ? $result['half_pro'] : $result['half_ultimate']) - $result['half_half'];
 					$result['half'] = TRUE;
 				}
 				else
