@@ -5469,6 +5469,12 @@
 				{
 					$row['locations_info'] = $this->location_info($row['location']);
 				}
+				
+				$row['treatments_info'] = array();
+				if ( ! empty($row['treatment']))
+				{
+					$row['treatments_info'] = $this->treatment_info($row['treatment']);
+				}
 			}
 			
 			return $row;
