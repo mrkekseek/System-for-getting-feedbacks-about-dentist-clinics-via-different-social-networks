@@ -3817,10 +3817,6 @@ body .btn-primary.compose-prev:disabled {
 	opacity: 0;
 }
 
-.pricing-table {
-	padding: 10px 5px;
-}
-
 .pricing-table header h2 {
 	text-align: center;
 	margin: 0 0 15px 0;
