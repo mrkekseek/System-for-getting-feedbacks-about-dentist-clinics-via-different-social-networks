@@ -1890,7 +1890,12 @@
 		
 		function get_questions()
 		{
-			return $this->db->get('rating_questions')->result_array();
+			$result = $this->db->get('rating_questions')->result_array();
+			foreach ($result as $key => $row)
+			{
+				$result[$key]['question_name'] = strtolower($row['question_name']);
+			}
+			return $result;
 		}
 		
 		function questions_save($question)
@@ -1908,7 +1913,7 @@
 				}
 				else
 				{
-					$data_array = array('question_name' => $question['name'],
+					$data_array = array('question_name' => strtolower($question['name']),
 										'question_description' => $question['desc']);
 					$this->db->insert('rating_questions', $data_array);
 					$questions_id = $this->db->insert_id();
@@ -4372,7 +4377,7 @@
 				$questions_list = $this->pub->get_questions();
 				$questions_list = $this->pub->user_questions($questions_list);
 				$q = $questions_list[array_rand($questions_list)];
-				$values[9] = $q['question_name'];
+				$values[9] = strtolower($q['question_name']);
 				$values[10] = 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$q['question_description'];
 			}
 			
@@ -6105,7 +6110,7 @@
 				$result = $this->db->get('rating_questions')->result_array();
 				foreach ($result as $row)
 				{
-					$items[] = array('id' => $row['id'], 'name' => $row['question_name']);
+					$items[] = array('id' => $row['id'], 'name' => strtolower($row['question_name']));
 				}
 				$data['question'] = $items;
 			}
