@@ -58,7 +58,7 @@
                 'dashboard', 'invitation/:hash?',
                 'charts/charts', 'charts/onlines',
                 'pages/404', 'pages/500', 'pages/forgot-password', 'pages/new-password/:hash', 'pages/lock-screen', 'pages/signin', 'pages/signup',
-				'pages/profile', 'pages/subscription', 'pages/advanced', 'pages/doctors_add', 'pages/doctors_edit/:id', 'pages/locations_add', 'pages/locations_add/:id', 'pages/online', 'pages/activate/:id', 'pages/invoice/:id', 
+				'pages/profile', 'pages/subscription', 'pages/advanced', 'pages/doctors_add', 'pages/doctors_edit/:id', 'pages/locations_add', 'pages/locations_add/:id', 'pages/treatments_add', 'pages/treatments_add/:id', 'pages/online', 'pages/activate/:id', 'pages/invoice/:id', 
                 'mail/compose', 'mail/inbox', 'mail/single/:id', 'mail/reply/:id',
 				'manage/add', 'manage/view', 'charts/acharts', 'charts/aonlines', 'charts/stat'
             ];
@@ -79,6 +79,8 @@
 					  'pages/doctors_edit/:id': 'Instellingen',
 					  'pages/locations_add': 'Voeg locatie toe',
 					  'pages/locations_add/:id': 'Instellingen',
+					  'pages/treatments_add': 'Voeg behandelingen toe',
+					  'pages/treatments_add/:id': 'Instellingen',
 					  'pages/online': 'Online profielen',
 					  'pages/activate/:id': 'Abonnement Activeren',
 					  'pages/invoice/:id': 'Abonnement Activeren',
@@ -2571,6 +2573,26 @@
 			}
 		};
 		
+		$scope.check_reply = function() {
+			if ($scope.user.email_negative_check == 0 && $scope.user.email_feedback_check == 0)
+			{
+				$scope.user.email_reply_check = 0;
+			}
+		};
+		
+		$scope.check_reply_check = function() {
+			if ($scope.user.email_reply_check == 1 && $scope.user.email_negative_check == 0 && $scope.user.email_feedback_check == 0)
+			{
+				$scope.user.email_feedback_check = 1;
+			}
+			
+			if ($scope.user.email_reply_check == 0)
+			{
+				$scope.user.email_negative_check = 0;
+				$scope.user.email_feedback_check = 0;
+			}
+		};
+		
 		$scope.passwords = {};
 		$scope.password_form = '0';
 		$scope.show_password_form = function() {
@@ -2690,7 +2712,7 @@
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
 			if ($scope.user.rating_questions == '1')
 			{
-				fields = ['subject', 'header_mq', 'text1_mq', 'promo', 'text2', 'footer'];
+				fields = ['subject', 'header_mq', 'text1_mq', 'promo', 'text2_mq', 'footer'];
 			}
 
 			for (var i in fields)
@@ -3408,8 +3430,9 @@
 			});
 		};
 		
-		$scope.next_step = function()
+		$scope.next_step = function(type)
 		{
+			$scope.type[0] = type * 1;
 			$scope.step = 2;
 			$scope.info = {};
 			$http.post("/pub/invoice_info/", {id: $scope.user.id, type: $scope.type[0]}).success(function(data, status, headers, config) {
@@ -3418,7 +3441,6 @@
 				{
 					$scope.doctors.push($scope.info.doctors[k]);
 				}
-				
 				$scope.info.price = ($scope.type[0] == 0 ? $scope.info.base_amount : ($scope.type[0] == 1 ? $scope.info.pro_amount : $scope.info.ultimate_amount));
 				$scope.info.amount = $scope.info.amount == 0 ? ($scope.info.price + $scope.info.doctors_amount) : $scope.info.amount;
 			});
@@ -3561,6 +3583,7 @@
     function DoctorsCtrl($scope, $rootScope, $window, $http, $location, $modal, logger) {
 		$scope.doctor = {};
 		$scope.location = {};
+		$scope.treatment = {};
 		$scope.redirect_url = "";
 		$scope.zorgkaart = "none";
 		
@@ -3654,6 +3677,38 @@
 					{
 						$scope.locations_modal();
 					}
+				});
+			};
+			
+			$scope.treatments = [];
+			$http.get("/pub/get_treatments/").success(function(data, status, headers, config) {
+				var result;
+				if (result = logger.check(data))
+				{
+					for (var key in result)
+					{
+						$scope.treatments.push(result[key]);
+					}
+				}
+			});
+			
+			$scope.remove_treatment = function(id) {
+				var modalInstance;
+				modalInstance = $modal.open({
+					templateUrl: "removeTreatments.html",
+					controller: 'ModalInstanceRemoveTreatmentCtrl',
+					resolve: {
+						items: function() {
+							return [id];
+						}
+					}
+				});
+				modalInstance.result.then((function(remove) {
+					$http.post("/pub/remove_treatment/", {id: id}).success(function(data, status, headers, config) {
+						$scope.treatments = logger.check(data);
+					});
+				}), function() {
+					console.log("Modal dismissed at: " + new Date());
 				});
 			};
 		}
@@ -3781,6 +3836,27 @@
 				}
 			});
 		}
+		
+		if ($location.path() == "/pages/treatments_add")
+		{
+			$scope.redirect_url = "pages/advanced";
+		}
+		
+		if ($location.path().indexOf("/pages/treatments_add/") + 1)
+		{
+			var id = $location.path().split("/").pop();
+			$scope.redirect_url = "pages/advanced";
+			$http.post("/pub/get_treatment/", {id: id}).success(function(data, status, headers, config) {
+				var result = {};
+				if (result = logger.check(data))
+				{
+					for (var key in result)
+					{
+						$scope.treatment[key] = result[key];
+					}
+				}
+			});
+		}
 
 		$scope.check_link = function(type)
 		{
@@ -3843,6 +3919,16 @@
 					}
 				});
 			}
+		};
+		
+		$scope.save_treatment = function()
+		{
+			$http.post("/pub/save_treatment/", $scope.treatment).success(function(data, status, headers, config) {
+				if (logger.check(data))
+				{
+					$location.url($scope.redirect_url);
+				}
+			});
 		};
 		
 		$scope.short_class = "none";
@@ -4181,6 +4267,9 @@
 		$scope.location = {};
 		$scope.loc = {};
 		$scope.loc.id = 0;
+		$scope.treatment = {};
+		$scope.treat = {};
+		$scope.treat.id = 0;
 		$scope.short = false;
 		$scope.feedback_success = false;
 		$scope.feedback = {};
@@ -4225,6 +4314,8 @@
 					$scope.doc.id = $scope.doctors_id * 1;
 					$scope.locations_id = ($scope.i.info && $scope.i.info.location) ? $scope.i.info.location : 0;
 					$scope.loc.id = $scope.locations_id * 1;
+					$scope.treatments_id = ($scope.i.info && $scope.i.info.treatment) ? $scope.i.info.treatment : 0;
+					$scope.treat.id = $scope.treatments_id * 1;
 					$scope.ex = $scope.i.info ? $scope.i.info.ex : $scope.ex;
 					$scope.limit = $scope.i.info ? $scope.i.info.limit : $scope.limit;
 					$scope.errors = $scope.i.info ? $scope.i.info.errors : $scope.errors;
@@ -4398,6 +4489,18 @@
 				if (result.location)
 				{
 					$scope.i.location = result.location;
+				}
+				$scope.rebuild_onlines();
+			});
+		};
+		
+		$scope.set_treatment = function() {
+			$scope.treatments_id = $scope.treat.id;
+			$http.post("/pub/vote_treat/", {id: $scope.id, users_id: $scope.users_id, treatments_id: $scope.treatments_id}).success(function(data, status, headers, config) {
+				var result = logger.check(data);
+				if (result.treatment)
+				{
+					$scope.i.treatment = result.treatment;
 				}
 				$scope.rebuild_onlines();
 			});
@@ -5175,10 +5278,13 @@
 		$scope.unknown_doctors = [];
 		$scope.locations = [];
 		$scope.unknown_locations = [];
+		$scope.treatments = [];
+		$scope.unknown_treatments = [];
 		$scope.reprint_rows = function()
 		{
 			$scope.unknown_doctors = [];
 			$scope.unknown_locations = [];
+			$scope.unknown_treatments = [];
 			$scope.data = [];
 			$scope.send_emails = [];
 			$scope.rows_all = $scope.all_data.length;
@@ -5223,6 +5329,23 @@
 					if (check)
 					{
 						$scope.unknown_locations.push($scope.all_data[key].location);
+					}
+				}
+				
+				if ($scope.all_data[key].treatment != '' && $scope.all_data[key].treatment_id == 0)
+				{
+					var check = true;
+					for (var i in $scope.unknown_treatments)
+					{
+						if ($scope.all_data[key].treatment == $scope.unknown_treatments[i])
+						{
+							check = false;
+						}
+					}
+					
+					if (check)
+					{
+						$scope.unknown_treatments.push($scope.all_data[key].treatment);
 					}
 				}
 				
@@ -5329,6 +5452,44 @@
 
 					modalInstance.result.then((function(ids) {
 						$http.post("/pub/save_locations_ids/", {ids: ids, file: $scope.file}).success(function(data, status, headers, config) {
+							$scope.result = logger.check(data);
+							if ($scope.result.data && $scope.result.data.length)
+							{
+								$scope.result.data.sort(function(a, b) { return b.error - a.error});
+								$scope.print($scope.result);
+							}
+						});
+					}), function() {
+						console.log("Modal dismissed at: " + new Date());
+					});
+				});
+			}
+			else
+			{
+				$scope.define_treatments();
+			}
+		};
+		
+		$scope.define_treatments = function()
+		{
+			if ($scope.unknown_treatments.length)
+			{
+				$http.post("/pub/get_treatments/", {}).success(function(data, status, headers, config) {
+					$scope.treatments = logger.check(data);
+					
+					var modalInstance;
+					modalInstance = $modal.open({
+						templateUrl: 'define_treatments.html',
+						controller: 'ModalDefineTreatmentsCtrl',
+						resolve: {
+							items: function() {
+								return [$scope.treatments, $scope.unknown_treatments];
+							}
+						}
+					});
+
+					modalInstance.result.then((function(ids) {
+						$http.post("/pub/save_treatments_ids/", {ids: ids, file: $scope.file}).success(function(data, status, headers, config) {
 							$scope.result = logger.check(data);
 							if ($scope.result.data && $scope.result.data.length)
 							{
@@ -8081,6 +8242,7 @@
 		.controller('ModalInstanceRemoveDoctorCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceRemoveDoctorCtrl])
 		.controller('ModalInstanceRemoveLocationCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceRemoveLocationCtrl])
 		.controller('ModalInstanceAccessLocationCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceAccessLocationCtrl])
+		.controller('ModalInstanceRemoveTreatmentCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceRemoveTreatmentCtrl])
 		.controller('ModalInstanceSuspendPopupCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceSuspendPopupCtrl])
 		.controller('ModalInstanceTestEmailCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceTestEmailCtrl])
 		.controller('ModalInstanceStarsEditCtrl', ['$scope', '$modalInstance', '$http', '$location', 'logger', 'items', ModalInstanceStarsEditCtrl])
@@ -8096,6 +8258,7 @@
 		.controller('ModalDefineDoctorsCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalDefineDoctorsCtrl])
 		.controller('ModalFirstUploadCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalFirstUploadCtrl])
 		.controller('ModalDefineLocationsCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalDefineLocationsCtrl])
+		.controller('ModalDefineTreatmentsCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalDefineTreatmentsCtrl])
 		.controller('ModalQuestionsBasicCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalQuestionsBasicCtrl])
 		.controller('ModalQuestionsConfirmCtrl', ['$scope', '$modalInstance', '$http', 'logger', 'items', ModalQuestionsConfirmCtrl])
         .controller('PaginationDemoCtrl', ['$scope', PaginationDemoCtrl])
@@ -8852,6 +9015,16 @@
         };
     };
 	
+	function ModalInstanceRemoveTreatmentCtrl($scope, $modalInstance, $http, $location, logger, items) {
+		$scope.cancel = function() {
+			$modalInstance.dismiss("cancel");
+        };
+		
+		$scope.remove = function() {
+			$modalInstance.close("remove");
+		};
+    };
+	
 	function ModalInstanceSuspendPopupCtrl($scope, $modalInstance, $http, $location, logger, items) {
 		$scope.ok = function() {
 			$modalInstance.dismiss("cancel");
@@ -9468,6 +9641,71 @@
 								}
 							}
 							$scope.add_location_var = false;
+						});
+					}
+				});
+			}
+		};
+		
+    };
+	
+	function ModalDefineTreatmentsCtrl($scope, $modalInstance, $http, logger, items) {
+		$scope.treatments = items[0];
+		$scope.unknown = items[1];
+		$scope.add_treatment_var = false;
+		$scope.treatment = {};
+		
+		$scope.selected = {};
+		for (var k in $scope.unknown)
+		{
+			$scope.selected[$scope.unknown[k]] = '';
+		}
+		
+		$scope.user = {};
+		$http.post("/pub/user/", {}).success(function(data, status, headers, config) {
+			$scope.user = logger.check(data);
+		});
+
+		$scope.cancel = function() {
+            $modalInstance.dismiss("cancel");
+        };
+		
+		$scope.save = function() {
+            $modalInstance.close($scope.selected);
+        };
+		
+		$scope.add = function() {
+			$scope.add_treatment_var = true;
+        };
+
+		$scope.cancel_location = function() {
+			$scope.add_treatment_var = false;
+		};
+		
+		$scope.add_treatment = function() {
+			var error = 1;
+			if ( ! $scope.treatment.name)
+			{
+				logger.logError("Vergeet niet de Behandelingen in te vullen!");
+				error = 0;
+			}
+			
+			if (error)
+			{
+				$scope.id = 0;
+				$http.post("/pub/save_treatment/", $scope.treatment).success(function(data, status, headers, config) {
+					if ($scope.id = logger.check(data))
+					{
+						$http.post("/pub/get_treatments/", {}).success(function(data, status, headers, config) {
+							$scope.treatments = logger.check(data);
+							for (var k in $scope.treatments)
+							{
+								if ($scope.treatments[k].id == $scope.id)
+								{
+									$scope.selected[$scope.treatment.name] = $scope.treatments[k];
+								}
+							}
+							$scope.add_treatment_var = false;
 						});
 					}
 				});

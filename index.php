@@ -19,7 +19,7 @@
  * NOTE: If you change these, also change the error_reporting() code below
  *
  */
-	define('ENVIRONMENT', 'development');
+	define('ENVIRONMENT', strpos($_SERVER['HTTP_HOST'], 'patientenreview.nl') !== FALSE ? 'production' : 'development');
 	ini_set("display_errors", TRUE);
 /*
  *---------------------------------------------------------------

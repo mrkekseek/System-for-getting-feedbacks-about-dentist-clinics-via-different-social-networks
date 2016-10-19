@@ -56,7 +56,7 @@
 							<i></i>
 						</label>
 						<span class="help-block">
-							Het inschakelen van dit onderdeel zorgt ervoor dat uw patiënt na 3 dagen een eenmalige herinnering ontvangt indien er geen beoordeling is achtergelaten.
+							Het inschakelen van dit onderdeel zorgt ervoor dat uw patiënt na 3 dagen een eenmalige herinnering ontvangt indien er niet is doorgeklikt naar één van uw online profielen.
 						</span>
                     </div>
                 </div>
@@ -250,10 +250,7 @@
 										<p ng-show="user.rating_questions == '0'" ng-bind-html="find_tags((user.emails.text2 || 'Klik om tekst in te voegen...'), 'text2')" ng-click="emails_edit('text2', $event)" class="emails-edit" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
 										</p>
 										
-										<p ng-show="user.rating_questions == '1'"style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
-											Als u op een van de sterretjes heeft geklikt kunt u desgewenst een beoordeling geven op andere vragen.
-											<br /><br />
-											<?php echo @$user['username']; ?>
+										<p ng-show="user.rating_questions == '1'" ng-bind-html="find_tags((user.emails.text2_mq || 'Klik om tekst in te voegen...'), 'text2_mq')" ng-click="emails_edit('text2_mq', $event)" class="emails-edit" style="margin: 0; font: 14px/1.3 arial, sans-serif; color: #525354; padding-bottom: 15px;">
 										</p>
 									</div>
 								</div>
@@ -278,7 +275,7 @@
 							<i></i>
 						</label>
 						<span class="help-block">
-							U kunt tot maximaal vier verschillende vraagstellingen gebruiken voor uw uitnodigingen.
+							U kunt bestaande of zelfgemaakte vraagstellingen gebruiken voor uw uitnodigingen.
 						</span>
 						
 						<div class="table-responsive1" ng-show="user.rating_questions == '1'">
@@ -336,7 +333,7 @@
 										</td>
 									</tr>
 									
-									<tr class="last_question_tr" ng-show="user.questions.length < 4">
+									<tr class="last_question_tr">
 										<td></td>
 										<td class="text-right"><a href="javascript:void(0);" class="add_question_link" ng-click="add_new_question_show()">Voeg vraagstelling toe</a></td>
 										<td class="question_third"></td>
@@ -412,7 +409,7 @@
                     <label class="col-md-4">E-mailnotificatie feedback</label>
                     <div class="col-md-8">
 						<label class="ui-switch ui-switch-lg">
-							<input type="checkbox" name="email_reply_check" ng-model="user.email_reply_check" ng-checked="user.email_reply_check == '1'" />
+							<input type="checkbox" name="email_reply_check" ng-model="user.email_reply_check" ng-change="check_reply_check()" ng-checked="user.email_reply_check == '1'" />
 							<i></i>
 						</label>
 						
@@ -424,6 +421,20 @@
 							<span class="help-block">
 								Met dit onderdeel kiest u het e-mailadres waarop u een e-mailnotificatie van binnengekomen feedback van patiënten zult ontvangen.
 							</span>
+							
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" ng-model="user.email_negative_check" ng-change="check_reply()" ng-checked="user.email_negative_check == '1'"/>
+									Bij negatieve beoordeling
+								</label>
+							</div>
+							
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" ng-model="user.email_feedback_check" ng-change="check_reply()" ng-checked="user.email_feedback_check == '1'" />
+									Bij beoordeling met feedback
+								</label>
+							</div>
 						</div>
                     </div>
                 </div>

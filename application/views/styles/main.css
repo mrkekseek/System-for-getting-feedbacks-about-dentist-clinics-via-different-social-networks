@@ -3816,3 +3816,59 @@ body .btn-primary.compose-prev:disabled {
 .charts-box.transparent {
 	opacity: 0;
 }
+
+.pricing-table header h2 {
+	text-align: center;
+	margin: 0 0 15px 0;
+}
+
+.pricing-table header h2 span {
+	margin-left: 0;
+}
+
+.row.pricing-row {
+	margin: 0 -5px;
+}
+
+.row.pricing-row > div {
+	padding: 0 5px;
+}
+
+.pricing-table .pricing-price {
+	font-size: 35px;
+}
+
+.pricing-table .pricing-price span {
+	font-size: 15px;
+}
+
+.pricing-table > footer > a {
+	font-size: 14px;
+}
+
+.pricing-table .pricing-plan-details > ul {
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.pricing-table .pricing-plan-details > ul > li {
+	margin: 3px 0;
+}
+
+.pricing-price-detail {
+	min-height: 100px;
+}
+
+.pricing-plan-details {
+	min-height: 270px;
+}
+
+.pricing-table > footer {
+	margin-top: 0;
+}
+
+.export-button {
+	vertical-align: middle;
+	margin-left: 10px;
+	margin-top: 1px;
+}

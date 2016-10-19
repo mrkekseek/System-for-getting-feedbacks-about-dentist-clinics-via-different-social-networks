@@ -4,9 +4,28 @@
 			<div class="row">
 				<div class="col-md-8 col-xs-12">
 					<div class="row stat-filter-row" ng-repeat="(i, f) in stat_filter_list">
-						<div class="col-xs-12" ng-show="user.organization == '0' && user.account != '2'">
+						<div class="col-xs-12" ng-show="user.organization == '0' && user.account != '2'" ng-class="{'form-group': user.organization == '0' && user.account != '2' && user.account_type == '1'}">
 							Upgrade naar Ultimate om een diepgaande analyse uit te voeren op uw beoordelingen.
 							<a href="#pages/activate/{{user.id}}" class="btn btn-primary">Upgrade...</a>
+						</div>
+						
+						<div class="col-sm-4 first-filter" ng-class="{'form-inline': i == 0}" ng-show="user.organization == '0' && user.account != '2' && user.account_type == '1'">
+							<label ng-if="i == 0">Filter</label>
+							<select class="form-control pull-right" ng-model="f.filter" ng-change="change_filter(f)">
+								<option value="">KIES FILTER</option>
+								<option value="doctor">Zorgverlener</option>
+							</select>
+						</div>
+						
+						<div class="col-sm-1 text-center" ng-show="user.organization == '0' && user.account != '2' && user.account_type == '1'">
+							<label ng-show="f.filter != '' && f.filter != 'date'">is</label>
+						</div>
+						
+						<div class="col-sm-5" ng-show="user.organization == '0' && user.account != '2' && user.account_type == '1'">
+							<select class="form-control" ng-change="run_filter()" ng-class="{'show-filter': f.filter == 'doctor', 'hide-filter': f.filter != 'doctor'}" ng-model="f.value">
+								<option value="">KIES SUBFILTER</option>
+								<option ng-repeat="d in stat_filter_data['doctor']" value="{{d.id}}">{{d.name}}</option>
+							</select>
 						</div>
 						
 						<div class="col-sm-4 first-filter" ng-class="{'form-inline': i == 0}" ng-show="user.organization == '1' || user.account == '2'">
@@ -45,7 +64,7 @@
 							
 							<select class="form-control" ng-change="run_filter()" ng-class="{'show-filter': f.filter == 'treatment', 'hide-filter': f.filter != 'treatment'}" ng-model="f.value">
 								<option value="">KIES SUBFILTER</option>
-								<option ng-repeat="d in stat_filter_data['treatment']" value="{{d}}">{{d}}</option>
+								<option ng-repeat="d in stat_filter_data['treatment']" value="{{d.id}}">{{d.name}}</option>
 							</select>
 							
 							<select class="form-control" ng-change="run_filter()" ng-class="{'show-filter': f.filter == 'doctor', 'hide-filter': f.filter != 'doctor'}" ng-model="f.value">
