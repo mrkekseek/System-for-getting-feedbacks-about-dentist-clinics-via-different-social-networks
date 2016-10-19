@@ -3864,7 +3864,7 @@
 			$scope.zorgkaart = "none";
 			if ($scope[type].zorgkaart && $scope[type].zorgkaart != '')
 			{
-				if ( ! ($scope[type].zorgkaart.indexOf("https://www.zorgkaartnederland.nl/zorgverlener/") + 1) && ! ($scope[type].zorgkaart.indexOf("http://www.zorgkaartnederland.nl/zorgverlener/") + 1) &&  ! ($scope[type].zorgkaart.indexOf("https://zorgkaartnederland.nl/zorgverlener/") + 1) && ! ($scope[type].zorgkaart.indexOf("http://zorgkaartnederland.nl/zorgverlener/") + 1))
+				if ( ! ($scope[type].zorgkaart.indexOf("https://www.zorgkaartnederland.nl/") + 1) && ! ($scope[type].zorgkaart.indexOf("http://www.zorgkaartnederland.nl/") + 1) &&  ! ($scope[type].zorgkaart.indexOf("https://zorgkaartnederland.nl/") + 1) && ! ($scope[type].zorgkaart.indexOf("http://zorgkaartnederland.nl/") + 1))
 				{
 					$scope.zorgkaart = "invalid";
 				}
