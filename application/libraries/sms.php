@@ -7,7 +7,7 @@
 	{
 		public function message($numbers = array(), $code = '', $date = '')
 		{
-			$MessageBird = new \MessageBird\Client('test_r2xBD6Kemoht7X8DE1gTh87xS');
+			$MessageBird = new \MessageBird\Client('live_aWcCGkKCYHuF6RH2QYIGO7Ezg');
 			$Message = new \MessageBird\Objects\Message();
 			$Message->originator = 'Pat.review';
 			$Message->recipients = $numbers;

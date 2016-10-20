@@ -35,7 +35,7 @@
 							  'header' => "Hoe was uw behandeling?",
 							  'header_mq' => "{{Formulering van de vraagstelling}}",
 							  'text1' => "Geachte heer/mevrouw,\n\nU bent onlangs behandeld in onze praktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw beoordeling te plaatsen op online kanalen.\n\nOp een schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of vrienden?",
-							  'text1_mq' => 'Geachte {{Aanhef Patiënt}} {{Voornaam Patiënt}} {{Achternaam Patiënt}},<br />We sturen u deze e-mail omdat we benieuwd zijn hoe u patientenreview heeft ervaren. Uw mening is ook van onmisbaar belang voor onze dienstverlening.',
+							  'text1_mq' => 'Geachte {{Aanhef Patiënt}} {{Voornaam Patiënt}} {{Achternaam Patiënt}},<br />We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is ook van onmisbaar belang voor onze dienstverlening.',
 							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n{{Naam Praktijk}}",
 							  'text2_mq' => "Als u op een van de sterretjes heeft geklikt kunt u desgewenst een beoordeling geven op andere vragen.\n\n{{Naam Praktijk}}",
 							  'promo' => "Beoordeel ons en win een ... t.w.v. €..,..!",
