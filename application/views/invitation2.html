@@ -115,7 +115,7 @@
 								</div>
 							</div>
 							
-							<div class="doctors-box" ng-if="i.doctors.length">
+							<div class="doctors-box step-cont" ng-if="i.doctors.length">
 								<h3 class="sub">Door wie bent u geholpen?</h3>
 								<!--select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
 									<option value="0">Kies een zorgverlener...</option>
@@ -123,7 +123,7 @@
 								</select-->
 								<div class="row doctors-items-box">
 									<div class="col-sm-4 col-xs-12" ng-repeat="d in i.doctors">
-										<div class="panel panel-default" ng-class="{'active': doc.id == d.id}" ng-click="set_doctor(d.id)">
+										<div class="panel panel-default" ng-class="{'active': doc.id == d.id}" ng-click="set_doctor($event, d.id)">
 											<div class="panel-body">
 												<div class="doctors-items-avatar">
 													<img src="{{d.avatar != '' ? d.avatar.replace('./', '/') : '/application/views/images/empty-doctor.png'}}" alt="" />
@@ -138,17 +138,17 @@
 								</div>
 							</div>
 							
-							<div class="doctors-box" ng-if="i.locations.length">
+							<div class="doctors-box step-cont" ng-if="i.locations.length">
 								<h3 class="sub">Op welke locatie bent u geweest?</h3>
-								<select class="form-control doctors-list" ng-change="set_location()" ng-model="loc.id">
+								<select class="form-control doctors-list" ng-change="set_location('loc')" id="loc" ng-model="loc.id">
 									<option value="0">Kies een locatie...</option>
 									<option ng-repeat="l in i.locations" value="{{l.id}}" ng-selected="l.id == loc.id">{{l.title}}</option>
 								</select>
 							</div>
 							
-							<div class="doctors-box" ng-if="i.treatments.length">
+							<div class="doctors-box step-cont" ng-if="i.treatments.length">
 								<h3 class="sub">Welke behandeling heeft u gehad?</h3>
-								<select class="form-control doctors-list" ng-change="set_treatment()" ng-model="treat.id">
+								<select class="form-control doctors-list" ng-change="set_treatment('treat')" id="treat" ng-model="treat.id">
 									<option value="0">Kies een behandelingen...</option>
 									<option ng-repeat="t in i.treatments" value="{{t.id}}" ng-selected="t.id == treat.id">{{t.name}}</option>
 								</select>
@@ -185,7 +185,7 @@
 						</div>
 					</div>
 					
-					<div class="row rating-row" ng-show=" ! limit && ! errors">
+					<div class="row rating-row step-cont-last" ng-show=" ! limit && ! errors">
 						<div class="col-xs-12" ng-show="voted <= 0" ng-class="{'col-md-6': voted < 0}">
 							<div class="cards-box" ng-if="onlines_col > 0"  ng-class="{active: voted != 0}">
 								<div class="cards-box-content">
