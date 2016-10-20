@@ -1169,6 +1169,37 @@
 			}
 			return array;
 		};
+		
+		$scope.pdf_export = function() {
+			var pdf = new jsPDF('p', 'pt', 'letter');
+			var source = $("#charts")[0];
+			var specialElementHandlers = {
+				'#bypassme': function (element, renderer) {
+					return true
+				}
+			};
+			
+			var margins = {
+				top: 80,
+				bottom: 60,
+				left: 40,
+				width: 522
+			};
+			
+			pdf.fromHTML(
+				source,
+				margins.left,
+				margins.top,
+				{
+					'width': margins.width,
+					'elementHandlers': specialElementHandlers
+				},
+				function (dispose) {
+					pdf.save('Test.pdf');
+				},
+				margins
+			);
+		};
     }
 
 })();
