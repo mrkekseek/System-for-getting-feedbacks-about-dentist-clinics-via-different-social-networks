@@ -13,7 +13,7 @@
 		var $per_hour = 350;
 		var $base_amount = 275;
 		var $pro_amount = 450;
-		var $ultimate_amount = 700;
+		var $ultimate_amount = 750;
 		var $account_amount = 0;
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
