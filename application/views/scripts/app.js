@@ -4469,9 +4469,19 @@
 			}
 		};
 		
-		$scope.set_doctor = function(id) {
+		$scope.set_doctor = function($event, id) {
 			$scope.doc.id = id;
 			$scope.doctors_id = $scope.doc.id;
+			var next = $($event.target).closest('.step-cont').next('.step-cont');
+			if (next.length)
+			{
+				$("html, body").animate({scrollTop: next.offset().top + 'px'}, "fast");
+			}
+			else
+			{
+				$("html, body").animate({scrollTop: $('.step-cont-last').offset().top + 'px'}, "fast");
+			}
+			
 			$http.post("/pub/vote_doc/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id}).success(function(data, status, headers, config) {
 				var result = logger.check(data);
 				if (result.doctor)
@@ -4482,8 +4492,17 @@
 			});
 		};
 		
-		$scope.set_location = function() {
+		$scope.set_location = function(id) {
 			$scope.locations_id = $scope.loc.id;
+			var next = $('#' + id).closest('.step-cont').next('.step-cont');
+			if (next.length)
+			{
+				$("html, body").animate({scrollTop: next.offset().top + 'px'}, "fast");
+			}
+			else
+			{
+				$("html, body").animate({scrollTop: $('.step-cont-last').offset().top + 'px'}, "fast");
+			}
 			$http.post("/pub/vote_loc/", {id: $scope.id, users_id: $scope.users_id, locations_id: $scope.locations_id}).success(function(data, status, headers, config) {
 				var result = logger.check(data);
 				if (result.location)
@@ -4494,8 +4513,17 @@
 			});
 		};
 		
-		$scope.set_treatment = function() {
+		$scope.set_treatment = function(id) {
 			$scope.treatments_id = $scope.treat.id;
+			var next = $('#' + id).closest('.step-cont').next('.step-cont');
+			if (next.length)
+			{
+				$("html, body").animate({scrollTop: next.offset().top + 'px'}, "fast");
+			}
+			else
+			{
+				$("html, body").animate({scrollTop: $('.step-cont-last').offset().top + 'px'}, "fast");
+			}
 			$http.post("/pub/vote_treat/", {id: $scope.id, users_id: $scope.users_id, treatments_id: $scope.treatments_id}).success(function(data, status, headers, config) {
 				var result = logger.check(data);
 				if (result.treatment)

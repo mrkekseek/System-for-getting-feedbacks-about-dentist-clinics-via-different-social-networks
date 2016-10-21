@@ -13,7 +13,7 @@
 		var $per_hour = 350;
 		var $base_amount = 275;
 		var $pro_amount = 450;
-		var $ultimate_amount = 700;
+		var $ultimate_amount = 750;
 		var $account_amount = 0;
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
@@ -4376,11 +4376,13 @@
 			$texts['subject'] = str_replace($tags, $values, $texts['subject']);
 			$values[0] = $texts['subject'];
 			
+			$questions_id = 0;
 			if ( ! empty($post['user']['rating_questions']))
 			{
 				$questions_list = $this->pub->get_questions();
 				$questions_list = $this->pub->user_questions($questions_list);
 				$q = $questions_list[array_rand($questions_list)];
+				$questions_id = $q['id'];
 				$values[9] = strtolower($q['question_name']);
 				$values[10] = 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$q['question_description'];
 			}
@@ -4395,6 +4397,7 @@
 								"name" => "",
 								"sname" => "",
 								"doctor" => 0,
+								"questions_id" => $questions_id,
 								"email" => strtolower($post['values']['email']),
 								"date" => time(),
 								"status" => 3,
@@ -4994,7 +4997,7 @@
 		function rating_questions($info)
 		{
 			$items = array();
-			if ($info['questions_id'])
+			if ( ! empty($info['questions_id']))
 			{
 				$ids = array();
 				$this->db->where('users_id', $info['users_id']);
