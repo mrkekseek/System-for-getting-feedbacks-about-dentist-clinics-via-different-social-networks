@@ -13,7 +13,7 @@
 		var $per_hour = 350;
 		var $base_amount = 275;
 		var $pro_amount = 450;
-		var $ultimate_amount = 700;
+		var $ultimate_amount = 750;
 		var $account_amount = 0;
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
@@ -4376,11 +4376,13 @@
 			$texts['subject'] = str_replace($tags, $values, $texts['subject']);
 			$values[0] = $texts['subject'];
 			
+			$questions_id = 0;
 			if ( ! empty($post['user']['rating_questions']))
 			{
 				$questions_list = $this->pub->get_questions();
 				$questions_list = $this->pub->user_questions($questions_list);
 				$q = $questions_list[array_rand($questions_list)];
+				$questions_id = $q['id'];
 				$values[9] = strtolower($q['question_name']);
 				$values[10] = 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$q['question_description'];
 			}
@@ -4395,6 +4397,7 @@
 								"name" => "",
 								"sname" => "",
 								"doctor" => 0,
+								"questions_id" => $questions_id,
 								"email" => strtolower($post['values']['email']),
 								"date" => time(),
 								"status" => 3,
@@ -4994,7 +4997,7 @@
 		function rating_questions($info)
 		{
 			$items = array();
-			if ($info['questions_id'])
+			if ( ! empty($info['questions_id']))
 			{
 				$ids = array();
 				$this->db->where('users_id', $info['users_id']);
@@ -8198,19 +8201,19 @@
 						$ext = strtolower(array_pop($part));
 						$filename = time().mt_rand(1000, 9999).'.'.$ext;
 
-						if ( ! file_exists($path.'image/'))
+						if ( ! file_exists($path.'img/'))
 						{
-							mkdir($path.'image/', 0755, TRUE);
+							mkdir($path.'img/', 0755, TRUE);
 						}
 						
-						if (rename($file['tmp_name'], $path.'image/'.$filename))
+						if (rename($file['tmp_name'], $path.'img/'.$filename))
 						{
 							if ( ! file_exists($path.'thumb/'))
 							{
 								mkdir($path.'thumb/', 0755, TRUE);
 							}
 							
-							$config['source_image'] = $path.'image/'.$filename;
+							$config['source_image'] = $path.'img/'.$filename;
 							$config['new_image'] = $path.'thumb/'.$filename;
 							$config['width'] = '150';
 							$config['height'] = '150';
@@ -8218,7 +8221,7 @@
 							$this->load->library('image_lib', $config);
 							if ($this->image_lib->resize())
 							{
-								$link['link'] = base_url().'files/'.$folder.'/image/'.$filename;
+								$link['link'] = base_url().'files/'.$folder.'/img/'.$filename;
 							}
 						}
 					}
@@ -8241,12 +8244,12 @@
 					$folder = md5($row['id'].$row['signup']);
 					$path = './files/'.$folder.'/';
 					
-					if (file_exists($path.'image/'))
+					if (file_exists($path.'img/'))
 					{
-						$files = array_diff(scandir($path.'image/'), array('.', '..'));
+						$files = array_diff(scandir($path.'img/'), array('.', '..'));
 						foreach ($files as $file)
 						{
-							$items[] = array('url' => base_url().'files/'.$folder.'/image/'.$file,
+							$items[] = array('url' => base_url().'files/'.$folder.'/img/'.$file,
 											 'thumb' => base_url().'files/'.$folder.'/thumb/'.$file,
 											 'tag' => 'Images');
 						}
@@ -8273,9 +8276,9 @@
 						$folder = md5($row['id'].$row['signup']);
 						$path = './files/'.$folder.'/';
 						
-						if (file_exists($path.'image/'.$file))
+						if (file_exists($path.'img/'.$file))
 						{
-							unlink($path.'image/'.$file);
+							unlink($path.'img/'.$file);
 							if (file_exists($path.'thumb/'.$file))
 							{
 								unlink($path.'thumb/'.$file);
