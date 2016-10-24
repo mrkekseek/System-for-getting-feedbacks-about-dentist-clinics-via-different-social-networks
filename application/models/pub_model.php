@@ -13,7 +13,7 @@
 		var $per_hour = 350;
 		var $base_amount = 275;
 		var $pro_amount = 450;
-		var $ultimate_amount = 600;
+		var $ultimate_amount = 700;
 		var $account_amount = 0;
 		var $doctor_amount = 60;
 		var $free_doctors_number = 3;
@@ -37,6 +37,7 @@
 							  'text1' => "Geachte heer/mevrouw,\n\nU bent onlangs behandeld in onze praktijk. We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is van onmisbaar belang voor de zorgverlener. Bovendien kunt u bijdragen aan het bevorderen van transparantie in de gezondheidszorg door uw beoordeling te plaatsen op online kanalen.\n\nOp een schaal van 1 tot 5 sterren, hoe waarschijnlijk is het dat u onze praktijk zou aanbevelen bij familie of vrienden?",
 							  'text1_mq' => 'Geachte {{Aanhef Patiënt}} {{Voornaam Patiënt}} {{Achternaam Patiënt}},<br />We sturen u deze e-mail omdat we benieuwd zijn hoe u uw behandeling heeft ervaren. Uw mening is ook van onmisbaar belang voor onze dienstverlening.',
 							  'text2' => "Klik op de knop hierboven om aan te geven in hoeverre u ons zou aanbevelen. Op de pagina die wordt geopend kunt u uw mening delen met anderen of ons team van feedback voorzien.\n\nBedankt voor het delen van uw mening!\n\nMet vriendelijke groet,\n\n{{Naam Praktijk}}",
+							  'text2_mq' => "Als u op een van de sterretjes heeft geklikt kunt u desgewenst een beoordeling geven op andere vragen.\n\n{{Naam Praktijk}}",
 							  'promo' => "Beoordeel ons en win een ... t.w.v. €..,..!",
 							  'footer' => "U ontvangt deze eenmalige e-mail omdat uw e-mailadres is opgenomen in het patiëntenbestand van {{Naam Praktijk}}. Deze e-mail is een eenmalige uitnodiging volgend op uw behandeling. Uw e-mailadres wordt uitsluitend gebruikt voor het verzoek tot deelname aan dit patiënttevredenheidsonderzoek en wordt op geen enkele manier openbaar gemaakt.");
 						  
@@ -415,12 +416,15 @@
 		function resend_letters()
 		{
 			$time = mktime(0, 0, 0, date("m"), date("j"), date("Y"));
+			$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
 
-			$this->db->where("stars", 0);
+			foreach ($onlines as $o)
+			{
+				$this->db->where($o, 0);
+			}
 			$this->db->where("status <>", 3);
 			$this->db->where("date <=", $time - 3 * 24 * 3600);
 			$this->db->where("date >", $time - 4 * 24 * 3600);
-			//$this->db->group_by("email");
 			$result = $this->db->get("sent")->result_array();
 			$post['emails'] = array();
 			foreach ($result as $row)
@@ -981,11 +985,12 @@
 				$result['half_ultimate'] = round(($this->ultimate_amount / $this->period) * $result['days'], 2);
 				$result['half_pro'] = round(($this->pro_amount / $this->period) * $result['days'], 2);
 				$result['half_basic'] = round(($this->base_amount / $this->period) * $result['days'], 2);
+				$result['half_half'] = $row['account_type'] == 1 ? $result['half_pro'] : $result['half_basic'];
 
 				$result['amount'] = 0;
-				if ($row['account'] == 1 && $row['account_type'] == 0)
+				if ($row['account'] == 1)
 				{
-					$result['amount'] = ($type == 1 ? $result['half_pro'] : $result['half_ultimate']) - $result['half_basic'];
+					$result['amount'] = ($type == 1 ? $result['half_pro'] : $result['half_ultimate']) - $result['half_half'];
 					$result['half'] = TRUE;
 				}
 				else
@@ -1756,6 +1761,7 @@
 			$result['text1'] = empty($result['text1']) ? $this->defaults['text1'] : $result['text1'];
 			$result['text1_mq'] = empty($result['text1_mq']) ? $this->defaults['text1_mq'] : $result['text1_mq'];
 			$result['text2'] = empty($result['text2']) ? $this->defaults['text2'] : $result['text2'];
+			$result['text2_mq'] = empty($result['text2_mq']) ? $this->defaults['text2_mq'] : $result['text2_mq'];
 			$result['promo'] = empty($result['promo']) ? $this->defaults['promo'] : $result['promo'];
 			$result['footer'] = empty($result['footer']) ? $this->defaults['footer'] : $result['footer'];
 			
@@ -1788,11 +1794,11 @@
 			{
 				if ( ! empty($row['rating_questions']))
 				{
-					unset($result['header'], $result['text1']);
+					unset($result['header'], $result['text1'], $result['text2']);
 				}
 				else
 				{
-					unset($result['header_mq'], $result['text1_mq']);
+					unset($result['header_mq'], $result['text1_mq'], $result['text2_mq']);
 				}
 			}
 			
@@ -1888,7 +1894,12 @@
 		
 		function get_questions()
 		{
-			return $this->db->get('rating_questions')->result_array();
+			$result = $this->db->get('rating_questions')->result_array();
+			foreach ($result as $key => $row)
+			{
+				$result[$key]['question_name'] = strtolower($row['question_name']);
+			}
+			return $result;
 		}
 		
 		function questions_save($question)
@@ -1906,7 +1917,7 @@
 				}
 				else
 				{
-					$data_array = array('question_name' => $question['name'],
+					$data_array = array('question_name' => strtolower($question['name']),
 										'question_description' => $question['desc']);
 					$this->db->insert('rating_questions', $data_array);
 					$questions_id = $this->db->insert_id();
@@ -4370,7 +4381,7 @@
 				$questions_list = $this->pub->get_questions();
 				$questions_list = $this->pub->user_questions($questions_list);
 				$q = $questions_list[array_rand($questions_list)];
-				$values[9] = $q['question_name'];
+				$values[9] = strtolower($q['question_name']);
 				$values[10] = 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$q['question_description'];
 			}
 			
@@ -5461,6 +5472,12 @@
 				{
 					$row['locations_info'] = $this->location_info($row['location']);
 				}
+				
+				$row['treatments_info'] = array();
+				if ( ! empty($row['treatment']))
+				{
+					$row['treatments_info'] = $this->treatment_info($row['treatment']);
+				}
 			}
 			
 			return $row;
@@ -6103,7 +6120,7 @@
 				$result = $this->db->get('rating_questions')->result_array();
 				foreach ($result as $row)
 				{
-					$items[] = array('id' => $row['id'], 'name' => $row['question_name']);
+					$items[] = array('id' => $row['id'], 'name' => strtolower($row['question_name']));
 				}
 				$data['question'] = $items;
 			}
@@ -8831,7 +8848,8 @@
 						$data = array('from' => $row['letters_from'].' <'.$row['letters_from_email'].'>', 
 									  'to' => $row['letters_to'], 
 									  'subject' => $row['letters_subject'],
-									  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',							  
+									  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',
+									  'text' => '',
 									  'html' => $row['letters_message']);
 						$attachment = array();
 

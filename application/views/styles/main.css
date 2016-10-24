@@ -3817,10 +3817,6 @@ body .btn-primary.compose-prev:disabled {
 	opacity: 0;
 }
 
-.pricing-table {
-	padding: 10px 5px;
-}
-
 .pricing-table header h2 {
 	text-align: center;
 	margin: 0 0 15px 0;
@@ -3869,4 +3865,10 @@ body .btn-primary.compose-prev:disabled {
 
 .pricing-table > footer {
 	margin-top: 0;
+}
+
+.export-button {
+	vertical-align: middle;
+	margin-left: 10px;
+	margin-top: 1px;
 }

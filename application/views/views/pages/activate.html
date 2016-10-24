@@ -11,42 +11,6 @@
 				<div class="col-md-9">
 					<div class="panel panel-default">
 						<div class="panel-body activity-box" ng-show="step == 1">
-                            <!--p>
-                                U kunt hier kiezen naar welke versie van Patiëntenreview u wilt upgraden. <u>Bekijk de features per pakket</u>
-                            </p>
-                            
-                            <p>
-                                <label class="ui-radio clear-label">
-                                    <input type="radio" id="type_0" name="type[0]" value="0" ng-model="type" />
-                                    <span></span>
-                                </label>
-                                <label for="type_0" class="label-normal">Patiëntenreview Basis</label>
-                                <br />
-                                <span class="help-block clear-help-block">Begin met het verzamelen en publiceren van beoordelingen zonder huisstijl of statistieken.</span>
-                            </p>
-                            
-                            <p>
-                                <label class="ui-radio clear-label">
-                                    <input type="radio" id="type_1" name="type[0]" value="1" ng-model="type" />
-                                    <span></span>
-                                </label>
-                                <label for="type_1" class="label-normal">Patiëntenreview Pro</label>
-                                <br />
-                                <span class="help-block clear-help-block">Professioneel verzamelen van beoordelingen met huisstijl, online widget, statistieken, export-mogelijkheid, gratis 3 zorgverlener-licenties en diverse andere features.</span>
-                            </p>
-                            
-                            <p>
-                                <label class="ui-radio clear-label">
-                                    <input type="radio" id="type_2" name="type[0]" value="2" ng-model="type" />
-                                    <span></span>
-                                </label>
-                                <label for="type_2" class="label-normal">Patiëntenreview Ultimate</label>
-                                <br />
-                                <span class="help-block clear-help-block">Ultieme manier om beoordelingen te verzamelen met veilige 2-staps authenticatie, meervoudige vraagstelling en uitgebreide statistieken-filters. Tevens krijgt u als eerste toegang tot de laatste nieuwe features.</span>
-                            </p>
-
-                                <span class="help-block clear-help-block">&euro;600,00 excl. BTW per jaar</span>
-                            </p-->
 							
 							<div class="row pricing-row">
 								<div class="col-md-4 col-xsm-6" ng-show="user.account == 2">
@@ -102,79 +66,13 @@
 									</section>
 								</div>
 							</div>
+
 						</div>
 
-						<!--div>
-							<div class="row">
-								<div class="col-sm-6">
-									<h4 class="text-center type-header">Patiëntenreview Basis</h4>
-									
-									<p class="text-justify">
-										Patiëntenreview Basis geeft uw praktijk een succesvolle start bij het
-										opbouwen van een sterke online reputatie. U krijgt:
-									</p>
-									
-									<ul class="type-ul">
-										<li class="text-justify">Reviews van uw patiënten op Google, Facebook en Zorgkaart Nederland.</li>
-										<li class="text-justify">De mogelijkheid om uw online reputatie op praktijkniveau te analyseren. U
-										krijgt zowel kwantitatief als kwalitatief inzicht in hoe uw patiëntenkring
-										denkt over uw praktijk.</li>
-									</ul>
-								</div>
-								
-								<div class="col-sm-6">
-									<h4 class="text-center type-header">Patiëntenreview <span class="pro">Pro</span></h4>
-									
-									<p class="text-justify">
-										Patiëntenreview Pro geeft uw praktijk alle middelen in handen om een
-										reputatie op te bouwen die met kop en schouders boven uw concurrenten
-										uitsteekt. U krijgt:
-									</p>
-									
-									<ul class="type-ul">
-										<li class="text-justify">Reviews van uw patiënten op Google, Facebook, Zorgkaart Nederland,
-										Independer en andere kanalen.</li>
-										<li class="text-justify">U kunt desgewenst uw patiënten doorverwijzen naar een pagina voor
-										bijvoorbeeld het afnemen van een branche-enquête.</li>
-										<li class="text-justify">U kunt uw eigen logo tonen in de e-mailuitnodigingen.</li>
-										<li class="text-justify">U kunt uw online reputatie op zowel praktijk- als zorgverlenerniveau
-										analyseren. U krijgt <b>2 gratis zorgverleners</b> welke u kunt toevoegen aan uw
-										account en waarmee u beoordelingen kunt verzamelen.</li>
-										<li class="text-justify">U kunt de NPS-score van uw praktijk en zorgverleners vergelijken met het
-										landelijk gemiddelde.</li>
-									</ul>
-								</div>
-							</div>
-							
-							<div class="row">
-								<div class="col-sm-6">
-									<p class="text-center">
-										<label for="type_0" class="label-normal">Kies Patiëntenreview Basis:</label>
-										&nbsp;
-										<label class="ui-radio clear-label">
-											<input type="radio" id="type_0" name="type[0]" value="0" ng-model="type" />
-											<span></span>
-										</label>
-										<br />
-										<span class="help-block clear-help-block">&euro;275,00 per jaar</span>
-									</p>
-								</div>
-								
-								<div class="col-sm-6">
-									<p class="text-center">
-										<label for="type_1" class="label-normal">Kies Patiëntenreview Pro:</label>
-										&nbsp;
-										<label class="ui-radio clear-label">
-											<input type="radio" id="type_1" name="type[0]" value="1" ng-model="type" />
-											<span></span>
-										</label>
-										<br />
-										<span class="help-block clear-help-block">&euro;450,00 per jaar</span>
-									</p>
-								</div>
-							</div>
-						</div-->
-						
+
+
+						</div>
+		
 						<div class="panel-body" ng-show="step == 2">
 							<p>
 								Als u ervoor kiest uw abonnement te activeren ontvangt u een factuur op het bij ons
@@ -223,7 +121,7 @@
 									
 									<tr>
                                         <td>{{info.days}} ongebruikte dagen Patiëntenreview {{user.account_type == '0' ? 'Basis' : 'Pro'}}</td>
-										<td>&euro;{{info.half_basic.toFixed(2).replace(".", ",")}}-</td>
+										<td>&euro;{{info.half_half.toFixed(2).replace(".", ",")}}-</td>
 									</tr>
 
 									<tr>

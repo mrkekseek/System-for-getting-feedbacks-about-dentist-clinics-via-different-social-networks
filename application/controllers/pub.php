@@ -20,7 +20,7 @@
 			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/aonlines', 'charts/stat');
 		}
 
-		function cron()
+		function cron($code = FALSE)
 		{
 			if (strpos($_SERVER['HTTP_USER_AGENT'], "Wget") === 0)
 			{
@@ -28,7 +28,15 @@
 			}
 			else
 			{
-				exit("error");
+				if ( ! empty($code) && $code == 'test-cron-job')
+				{
+					$this->pub->cron();
+					exit("done");
+				}
+				else
+				{
+					exit("error");
+				}
 			}
 		}
 		

@@ -2712,7 +2712,7 @@
 			var fields = ['subject', 'header', 'text1', 'promo', 'text2', 'footer'];
 			if ($scope.user.rating_questions == '1')
 			{
-				fields = ['subject', 'header_mq', 'text1_mq', 'promo', 'text2', 'footer'];
+				fields = ['subject', 'header_mq', 'text1_mq', 'promo', 'text2_mq', 'footer'];
 			}
 
 			for (var i in fields)
@@ -3864,7 +3864,7 @@
 			$scope.zorgkaart = "none";
 			if ($scope[type].zorgkaart && $scope[type].zorgkaart != '')
 			{
-				if ( ! ($scope[type].zorgkaart.indexOf("https://www.zorgkaartnederland.nl/zorgverlener/") + 1) && ! ($scope[type].zorgkaart.indexOf("http://www.zorgkaartnederland.nl/zorgverlener/") + 1) &&  ! ($scope[type].zorgkaart.indexOf("https://zorgkaartnederland.nl/zorgverlener/") + 1) && ! ($scope[type].zorgkaart.indexOf("http://zorgkaartnederland.nl/zorgverlener/") + 1))
+				if ( ! ($scope[type].zorgkaart.indexOf("https://www.zorgkaartnederland.nl/") + 1) && ! ($scope[type].zorgkaart.indexOf("http://www.zorgkaartnederland.nl/") + 1) &&  ! ($scope[type].zorgkaart.indexOf("https://zorgkaartnederland.nl/") + 1) && ! ($scope[type].zorgkaart.indexOf("http://zorgkaartnederland.nl/") + 1))
 				{
 					$scope.zorgkaart = "invalid";
 				}

@@ -550,3 +550,4 @@ Stack trace:
 #1 /home/cloudrocket/public_html/pr/mailgun-php/vendor/guzzle/guzzle/src/Guzzle/Http/Message/EntityEnclosingRequest.php(199): Guzzle\Http\Message\PostFile->__construct('attachment', '/home/cloudrock...', NULL, NULL)
 #2 /home/cloudrocket/public_html/pr/mailgun-php/vendor/mailgun/mailgun-php/src/Mailgun/Connection/RestClient.php(55): Guzzle\Http\Message\EntityEnclosingRequest->addPostFile('attachment', '/home/cloudrock...')
 #3 /home/cloudrocket/public_html/pr/mailgun-php/vendor/mailgun/mailgun-php/src/Mailgun/Mailgun.php(80): Mailgun\Connection\RestClient in /home/cloudrocket/public_html/pr/mailgun-php/vendor/guzzle/guzzle/src/Guzzle/Http/Message/PostFile.php on line 53
+[19-Oct-2016 19:06:11 Europe/Amsterdam] PHP Notice:  Undefined index: HTTP_HOST in /home/cloudrocket/public_html/patientenreview.nl/app/application/config/config.php on line 17
