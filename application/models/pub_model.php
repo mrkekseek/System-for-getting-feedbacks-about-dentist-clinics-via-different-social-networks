@@ -8201,19 +8201,19 @@
 						$ext = strtolower(array_pop($part));
 						$filename = time().mt_rand(1000, 9999).'.'.$ext;
 
-						if ( ! file_exists($path.'image/'))
+						if ( ! file_exists($path.'img/'))
 						{
-							mkdir($path.'image/', 0755, TRUE);
+							mkdir($path.'img/', 0755, TRUE);
 						}
 						
-						if (rename($file['tmp_name'], $path.'image/'.$filename))
+						if (rename($file['tmp_name'], $path.'img/'.$filename))
 						{
 							if ( ! file_exists($path.'thumb/'))
 							{
 								mkdir($path.'thumb/', 0755, TRUE);
 							}
 							
-							$config['source_image'] = $path.'image/'.$filename;
+							$config['source_image'] = $path.'img/'.$filename;
 							$config['new_image'] = $path.'thumb/'.$filename;
 							$config['width'] = '150';
 							$config['height'] = '150';
@@ -8221,7 +8221,7 @@
 							$this->load->library('image_lib', $config);
 							if ($this->image_lib->resize())
 							{
-								$link['link'] = base_url().'files/'.$folder.'/image/'.$filename;
+								$link['link'] = base_url().'files/'.$folder.'/img/'.$filename;
 							}
 						}
 					}
@@ -8244,12 +8244,12 @@
 					$folder = md5($row['id'].$row['signup']);
 					$path = './files/'.$folder.'/';
 					
-					if (file_exists($path.'image/'))
+					if (file_exists($path.'img/'))
 					{
-						$files = array_diff(scandir($path.'image/'), array('.', '..'));
+						$files = array_diff(scandir($path.'img/'), array('.', '..'));
 						foreach ($files as $file)
 						{
-							$items[] = array('url' => base_url().'files/'.$folder.'/image/'.$file,
+							$items[] = array('url' => base_url().'files/'.$folder.'/img/'.$file,
 											 'thumb' => base_url().'files/'.$folder.'/thumb/'.$file,
 											 'tag' => 'Images');
 						}
@@ -8276,9 +8276,9 @@
 						$folder = md5($row['id'].$row['signup']);
 						$path = './files/'.$folder.'/';
 						
-						if (file_exists($path.'image/'.$file))
+						if (file_exists($path.'img/'.$file))
 						{
-							unlink($path.'image/'.$file);
+							unlink($path.'img/'.$file);
 							if (file_exists($path.'thumb/'.$file))
 							{
 								unlink($path.'thumb/'.$file);
