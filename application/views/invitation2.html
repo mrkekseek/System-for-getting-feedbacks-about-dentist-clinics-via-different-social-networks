@@ -148,7 +148,7 @@
 							
 							<div class="doctors-box step-cont" ng-if="i.treatments.length">
 								<h3 class="sub">Welke behandeling heeft u gehad?</h3>
-								<select class="form-control doctors-list" ng-change="set_treatment()" ng-model="treat.id">
+								<select class="form-control doctors-list" ng-change="set_treatment()" id="treat" ng-model="treat.id">
 									<option value="0">Kies een behandeling...</option>
 									<option ng-repeat="t in i.treatments" value="{{t.id}}" ng-selected="t.id == treat.id">{{t.name}}</option>
 								</select>
