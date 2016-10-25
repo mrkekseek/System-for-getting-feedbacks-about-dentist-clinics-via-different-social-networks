@@ -3270,7 +3270,7 @@
 				{
 					$data_array = array('users_id' => $post['users_id'],
 										'doctor' => $post['doctors_id'],
-										'stars' => $row['questions_id'] == $post['questions_id'] ? $post['stars'] : $row['stars'],
+										'stars' => ( ! empty($row['questions_id']) && ($row['questions_id'] == $post['questions_id'])) ? $post['stars'] : (empty($row['stars']) ? 0 : $row['stars']),
 										'status' => 2,
 										'start' => time(),
 										'date' => time(),
@@ -4797,7 +4797,11 @@
 				if ( ! empty($check))
 				{
 					$return['info'] = $this->check_short_results($check['users_id'], $check['doctors_id']);
-					$return['questions'] = array();
+					if ( ! empty($return['info']['id']))
+					{
+						$check['id'] = $return['info']['id'];
+					}
+					$return['questions'] = $this->rating_questions($check, TRUE);
 					$return['user'] = $this->user_info($check['users_id']);
 					if ( ! empty($return['user']['promo_checked']))
 					{
@@ -4999,10 +5003,10 @@
 			return FALSE;
 		}
 		
-		function rating_questions($info)
+		function rating_questions($info, $short = FALSE)
 		{
 			$items = array();
-			if ( ! empty($info['questions_id']))
+			if ( ! empty($info['questions_id']) || ! empty($short))
 			{
 				$ids = array();
 				$this->db->where('users_id', $info['users_id']);
@@ -5012,7 +5016,8 @@
 					$ids[] = $row['questions_id'];
 				}
 				
-				if (in_array($info['questions_id'], $ids))
+				$main_question = FALSE;
+				if (( ! empty($info['questions_id']) && in_array($info['questions_id'], $ids)) || ! empty($short))
 				{
 					$this->db->where_in('id', $ids);
 					$result = $this->db->get('rating_questions')->result_array();
@@ -5020,18 +5025,25 @@
 					{
 						$row['stars'] = 0;
 
-						$this->db->where('sent_id', $info['id']);
-						$this->db->where('questions_id', $row['id']);
-						$this->db->limit(1);
-						$val = $this->db->get('sent_questions')->row_array();
-						if ( ! empty($val))
+						if ( ! empty($info['id']))
 						{
-							$row['stars'] = $val['stars'];
+							$this->db->where('sent_id', $info['id']);
+							$this->db->where('questions_id', $row['id']);
+							$this->db->limit(1);
+							$val = $this->db->get('sent_questions')->row_array();
+							if ( ! empty($val))
+							{
+								$row['stars'] = $val['stars'];
+							}
 						}
 						
-						if ($row['id'] == $info['questions_id'])
+						if (( ! empty($info['questions_id']) && $row['id'] == $info['questions_id']) || ( ! empty($short) && empty($main_question)))
 						{
 							$items['main'] = $row;
+							if ( ! empty($short))
+							{
+								$main_question = TRUE;
+							}
 						}
 						else
 						{
@@ -5052,6 +5064,7 @@
 			$this->db->or_where("MD5(id) =", $short);
 			$this->db->limit(1);
 			$row = $this->db->get("users")->row_array();
+			
 			if ( ! empty($row))
 			{
 				$result['users_id'] = $row['id'];
@@ -5069,7 +5082,6 @@
 					$result['doctors_id'] = $row['id'];
 				}
 			}
-			
 			return $result;
 		}
 		
@@ -5089,8 +5101,8 @@
 
 			if ( ! empty($row))
 			{
-				if ( ! empty($row['stars']))
-				{
+				/*if ( ! empty($row['stars']))
+				{*/
 					$row['ex'] = FALSE;
 					if ($row['last'] >= (time() - 48 * 3600))
 					{
@@ -5114,7 +5126,7 @@
 							$row['last_time'] = date("H:i", $finish);
 						}
 					}
-				}
+				/*}
 				else
 				{
 					$row = array('stars' => 0,
@@ -5123,7 +5135,7 @@
 								 'last_date' => '',
 								 'last_time' => '',
 								 'ex' => FALSE);
-				}
+				}*/
 			}
 
 			return $row;
