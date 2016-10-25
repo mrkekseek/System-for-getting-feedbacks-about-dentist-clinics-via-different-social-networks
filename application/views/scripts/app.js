@@ -4487,6 +4487,7 @@
 				if (result.doctor)
 				{
 					$scope.i.doctor = result.doctor;
+					$scope.id = result.id;
 				}
 				$scope.rebuild_onlines();
 			});
@@ -4508,6 +4509,7 @@
 				if (result.location)
 				{
 					$scope.i.location = result.location;
+					$scope.id = result.id;
 				}
 				$scope.rebuild_onlines();
 			});
@@ -4529,6 +4531,7 @@
 				if (result.treatment)
 				{
 					$scope.i.treatment = result.treatment;
+					$scope.id = result.id;
 				}
 				$scope.rebuild_onlines();
 			});

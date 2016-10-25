@@ -4816,6 +4816,24 @@
 					{
 						$return['doctors'] = $this->get_doctors($check['users_id']);
 					}
+					
+					if ( ! empty($return['info']['location']))
+					{
+						$return['location'] = $this->location_info($return['info']['location']);
+					}
+					else
+					{
+						$return['locations'] = $this->get_locations($check['users_id']);
+					}
+					
+					if ( ! empty($return['info']['treatment']))
+					{
+						$return['treatment'] = $this->treatment_info($return['info']['treatment']);
+					}
+					else
+					{
+						$return['treatments'] = $this->get_treatments($check['users_id']);
+					}
 				}
 			}
 			else
@@ -5101,8 +5119,8 @@
 
 			if ( ! empty($row))
 			{
-				/*if ( ! empty($row['stars']))
-				{*/
+				if ( ! empty($row['stars']))
+				{
 					$row['ex'] = FALSE;
 					if ($row['last'] >= (time() - 48 * 3600))
 					{
@@ -5126,16 +5144,16 @@
 							$row['last_time'] = date("H:i", $finish);
 						}
 					}
-				/*}
-				else
-				{
-					$row = array('stars' => 0,
-								 'feedback' => '',
-								 'id' => 0,
-								 'last_date' => '',
-								 'last_time' => '',
-								 'ex' => FALSE);
-				}*/
+				}
+			}
+			else
+			{
+				$row = array('stars' => 0,
+							 'feedback' => '',
+							 'id' => 0,
+							 'last_date' => '',
+							 'last_time' => '',
+							 'ex' => FALSE);
 			}
 
 			return $row;
