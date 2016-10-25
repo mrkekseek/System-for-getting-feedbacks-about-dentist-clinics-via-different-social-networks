@@ -8345,25 +8345,34 @@
 
 		function click($post)
 		{
-			if (empty($post['id']))
+			if ( ! empty($post['id']))
 			{
-				$data_array = array('users_id' => $post['users_id'],
-									'doctor' => $post['doctors_id'],
-									'start' => time(),
-									'date' => time(),
-									'last' => time(),
-									'ip' => $_SERVER['REMOTE_ADDR']);
-				$data_array[$post['type']] = TRUE;
-				
-				$this->db->insert("sent", $data_array);
-				return $this->db->insert_id();
-			}
-			else
-			{
+				$check = FALSE;
 				$this->db->where("id", $post['id']);
-				$this->db->update("sent", array($post['type'] => TRUE));
-				return $post['id'];
+				$this->db->where("stars >", 0);
+				if ($this->db->count_all_results('sent'))
+				{
+					$check = TRUE;
+				}
+				else
+				{
+					$this->db->where("sent_id", $post['id']);
+					$this->db->where("stars >", 0);
+					if ($this->db->count_all_results('sent_questions'))
+					{
+						$check = TRUE;
+					}
+				}
+
+				if ($check)
+				{
+					$this->db->update("sent", array($post['type'] => TRUE));
+					return $post['id'];
+				}
 			}
+			
+			$this->errors[] = array("U dient eerst een beoordeling te geven.");
+			return FALSE;
 		}
 
 		function last_dashboard($post)

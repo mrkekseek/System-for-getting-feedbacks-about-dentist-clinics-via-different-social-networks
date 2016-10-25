@@ -4811,13 +4811,24 @@
 		{
 			if ( ! $scope.ex)
 			{
-				type = type || false;
-				if (type)
+				if ($scope.voted != 0)
 				{
-					$http.post("/pub/click/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, type: type}).success(function(data, status, headers, config) {
-						$scope.id = logger.check(data);
-						$window.location.href = url;
-					});
+					type = type || false;
+					if (type)
+					{
+						$http.post("/pub/click/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, type: type}).success(function(data, status, headers, config) {
+							var result = logger.check(data);
+							if (result)
+							{
+								$scope.id = result;
+								$window.location.href = url;
+							}
+						});
+					}
+				}
+				else
+				{
+					logger.check({'errors': [['U dient eerst een beoordeling te geven.']]});
 				}
 			}
 			else
