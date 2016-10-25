@@ -1892,8 +1892,12 @@
 			return $items;
 		}
 		
-		function get_questions()
+		function get_questions($limit = FALSE)
 		{
+			if ( ! empty($limit))
+			{
+				$this->db->limit($limit);
+			}
 			$result = $this->db->get('rating_questions')->result_array();
 			foreach ($result as $key => $row)
 			{
@@ -3812,6 +3816,7 @@
 											$from = time() - ($users['emails_skip'] == 1 ? 7 : ($users['emails_skip'] == 2 ? 30 : 90)) * 24 * 3600;
 											$this->db->where('email', $email);
 											$this->db->where('date >=', $from);
+											$this->db->where('users_id', $users['id']);
 											$this->db->limit(1);
 											if ($this->db->count_all_results('sent') > 0)
 											{
@@ -6522,9 +6527,9 @@
 					}
 
 					$stat['questions'] = array();
-					if (empty($user['account_type']))
+					if (empty($user['account_type']) && $user['account'] != 2)
 					{
-						$stat['questions'] = $this->pub->get_questions();
+						$stat['questions'] = $this->pub->get_questions(4);
 					}
 					else
 					{
