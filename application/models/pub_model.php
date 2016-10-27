@@ -3565,7 +3565,7 @@
 		{
 			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
 			{
-				mkdir($path, 0755, TRUE);
+				mkdir($path, 0775, TRUE);
 			}
 			
 			if ($first)
@@ -3647,7 +3647,7 @@
 		{
 			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
 			{
-				mkdir($path, 0755, TRUE);
+				mkdir($path, 0775, TRUE);
 			}
 
 			$result = array();
@@ -5440,7 +5440,7 @@
 					
 					if ( ! file_exists($path))
 					{
-						mkdir($path, 0755, TRUE);
+						mkdir($path, 0775, TRUE);
 					}
 					
 					delete_files($path, TRUE);
@@ -8158,7 +8158,7 @@
 			{
 				if ( ! file_exists('./logos/tmp/'))
 				{
-					mkdir('./logos/tmp/', 0755, TRUE);
+					mkdir('./logos/tmp/', 0775, TRUE);
 				}
 				
 				$part = explode('.', $tmp_file['name']);
@@ -8191,7 +8191,7 @@
 			{
 				if ( ! file_exists('./avatars/tmp/'))
 				{
-					mkdir('./avatars/tmp/', 0755, TRUE);
+					mkdir('./avatars/tmp/', 0775, TRUE);
 				}
 				
 				$part = explode('.', $tmp_file['name']);
@@ -8238,14 +8238,19 @@
 
 						if ( ! file_exists($path.'full/'))
 						{
-							mkdir($path.'full/', 0755, TRUE);
+							mkdir($path.'full/', 0775, TRUE);
 						}
 						
-						if (rename($file['tmp_name'], $path.'full/'.$filename))
+						if (move_uploaded_file($file['tmp_name'], $path.'full/'.$filename))
 						{
+							if ( ! is_readable($path.'full/'.$filename))
+							{
+								chmod($path.'full/'.$filename, 0644);
+							}
+							
 							if ( ! file_exists($path.'thumb/'))
 							{
-								mkdir($path.'thumb/', 0755, TRUE);
+								mkdir($path.'thumb/', 0775, TRUE);
 							}
 							
 							$config['source_image'] = $path.'full/'.$filename;
