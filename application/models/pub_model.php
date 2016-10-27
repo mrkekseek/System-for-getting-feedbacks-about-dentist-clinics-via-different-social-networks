@@ -3572,16 +3572,16 @@
 				mkdir($path, 0775, TRUE);
 			}
 			
-			if ($first)
+			/*if ($first)
 			{
 				$this->load->helper("file");
 				delete_files($path);
-			}
+			}*/
 			
 			$result = array();
 			mt_srand();
 			$ext = pathinfo($name, PATHINFO_EXTENSION);
-			$dest = $path.time().mt_rand(100, 999).".".$ext;
+			$dest = $path.date('dmY-Hi').'-'.mt_rand(100, 999).".".$ext;
 			if (copy($file, $dest))
 			{
 				$rows = array();
