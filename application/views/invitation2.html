@@ -117,12 +117,16 @@
 							
 							<div class="doctors-box step-cont" ng-if="i.doctors.length">
 								<h3 class="sub">Door wie bent u geholpen?</h3>
-								<!--select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
-									<option value="0">Kies een zorgverlener...</option>
-									<option ng-repeat="d in i.doctors" value="{{d.id}}" ng-selected="d.id == doc.id">{{[d.title, d.firstname, d.lastname].join(' ')}}</option>
-								</select-->
-								<div class="row doctors-items-box">
-									<div class="col-sm-4 col-xs-12" ng-repeat="d in i.doctors">
+								<select class="form-control doctors-list" ng-change="set_cat()" ng-model="cat_name[0]" ng-show="cats_list.length > 0">
+									<option value="">Kies een categorie zorgverlener...</option>
+									<option ng-repeat="c in cats_list" value="{{c}}" ng-selected="c == cat_name[0]">{{c}}</option>
+								</select>
+								
+								<p ng-show="doctors_cats.length > 0">
+								</p>
+								
+								<div class="row doctors-items-box" ng-show="doctors_cats.length > 0">
+									<div class="col-sm-4 col-xs-12" ng-repeat="d in doctors_cats">
 										<div class="panel panel-default" ng-class="{'active': doc.id == d.id}" ng-click="set_doctor($event, d.id)">
 											<div class="panel-body">
 												<div class="doctors-items-avatar">

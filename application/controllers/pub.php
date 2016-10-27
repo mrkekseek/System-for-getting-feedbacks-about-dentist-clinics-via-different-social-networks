@@ -16,6 +16,12 @@
 			/*$this->db->where("MD5(id)", 'f4f3bdcb2c623bae9976a83f8c83dcde');
 			$row = $this->db->get('sent')->row_array();
 			print_r($row);*/
+			
+			$this->load->library('migration');
+			if ( ! $this->migration->current())
+			{
+				//show_error($this->migration->error_string());
+			}
 
 			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/aonlines', 'charts/stat');
 		}

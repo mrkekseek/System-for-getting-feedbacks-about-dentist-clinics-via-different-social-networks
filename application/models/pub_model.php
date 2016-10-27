@@ -923,6 +923,9 @@
 				}
 			}
 			
+			$this->db->where('users_id', $this->session->userdata("id"));
+			$row['doctors_count'] = $this->db->count_all_results("doctors");
+			
 			return $row;
 		}
 		
@@ -1388,6 +1391,7 @@
 										"firstname" => $post['firstname'],
 										"lastname" => $post['lastname'],
 										"title" => ! empty($post['title']) ? $post['title'] : '',
+										"cat" => ! empty($post['cat']) ? ucfirst(strtolower($post['cat'])) : '',
 										"zorgkaart" => ! empty($post['zorgkaart']) ? strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer' : '',
 										"short" => ! empty($post['short']) ? $post['short'] : "",
 										"short_checked" => ! empty($post['short_checked']) ? $post['short_checked'] : 0);
