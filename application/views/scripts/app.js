@@ -2829,6 +2829,10 @@
 					});
 				}
 			}
+			else
+			{
+				$scope.user.emails.subject = $scope.user.emails.subject.replace(/{{Vraagstelling}}/ig, '');
+			}
 		};
 		
 		$scope.check_phone = 'none';

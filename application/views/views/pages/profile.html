@@ -16,6 +16,7 @@
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-show="user.rating_questions == '1'" ng-click="set_var('Vraagstelling')">Vraagstelling</a>
 						</span>
                     </div>
                 </div>
@@ -633,6 +634,7 @@
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Profielfoto Zorgverlener')">Profielfoto Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-show="user.rating_questions == '1'" ng-click="set_var('Vraagstelling')">Vraagstelling</a>
 		</span>
 		
 		<span class="help-block" ng-show="user.account_type == '0' && user.account != '2'" ng-click="cancel()">

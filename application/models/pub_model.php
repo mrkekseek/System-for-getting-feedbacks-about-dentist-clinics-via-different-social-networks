@@ -4378,9 +4378,6 @@
 							'',
 							'<br />');
 			
-			$texts['subject'] = str_replace($tags, $values, $texts['subject']);
-			$values[0] = $texts['subject'];
-			
 			$questions_id = 0;
 			if ( ! empty($post['user']['rating_questions']))
 			{
@@ -4391,6 +4388,9 @@
 				$values[9] = strtolower($q['question_name']);
 				$values[10] = 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$q['question_description'];
 			}
+			
+			$texts['subject'] = str_replace($tags, $values, $texts['subject']);
+			$values[0] = $texts['subject'];
 			
 			foreach ($texts as $key => $text)
 			{
@@ -4466,7 +4466,6 @@
 					$email_data['sname'] = "Klaas";
 					$email_data['stars_type'] = $row['stars_type'];
 					$email_data['stars_text'] = $row['stars_text'];
-					//$email_data['username'] = "Geachte dhr. Klaas";
 					$email_data['texts'] = $this->get_emails_texts($row, array("name" => "Jan", "sname" => "Klaas", "username" => "Geachte dhr. Klaas"));
 					$message = $this->load->view('views/mail/tpl_example.html', $email_data, TRUE);
 
