@@ -4871,7 +4871,7 @@
 							if (result)
 							{
 								$scope.id = result;
-								$window.location.href = url;
+								//$window.location.href = url;
 							}
 						});
 					}
