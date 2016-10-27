@@ -923,6 +923,9 @@
 				}
 			}
 			
+			$this->db->where('users_id', $this->session->userdata("id"));
+			$row['doctors_count'] = $this->db->count_all_results("doctors");
+			
 			return $row;
 		}
 		
@@ -1388,6 +1391,7 @@
 										"firstname" => $post['firstname'],
 										"lastname" => $post['lastname'],
 										"title" => ! empty($post['title']) ? $post['title'] : '',
+										"cat" => ! empty($post['cat']) ? ucfirst(strtolower($post['cat'])) : '',
 										"zorgkaart" => ! empty($post['zorgkaart']) ? strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer' : '',
 										"short" => ! empty($post['short']) ? $post['short'] : "",
 										"short_checked" => ! empty($post['short_checked']) ? $post['short_checked'] : 0);
@@ -3565,19 +3569,19 @@
 		{
 			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
 			{
-				mkdir($path, 0755, TRUE);
+				mkdir($path, 0775, TRUE);
 			}
 			
-			if ($first)
+			/*if ($first)
 			{
 				$this->load->helper("file");
 				delete_files($path);
-			}
+			}*/
 			
 			$result = array();
 			mt_srand();
 			$ext = pathinfo($name, PATHINFO_EXTENSION);
-			$dest = $path.time().mt_rand(100, 999).".".$ext;
+			$dest = $path.date('dmY-Hi').'-'.mt_rand(100, 999).".".$ext;
 			if (copy($file, $dest))
 			{
 				$rows = array();
@@ -3647,7 +3651,7 @@
 		{
 			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
 			{
-				mkdir($path, 0755, TRUE);
+				mkdir($path, 0775, TRUE);
 			}
 
 			$result = array();
@@ -4318,7 +4322,7 @@
 							empty($doc['avatar']) ? '{{EMPTY}}' : '<img src="'.str_replace('./avatars/', base_url().'avatars/', $doc['avatar']).'" style="vertical-align: baseline;" alt="" />',
 							empty($user['username']) ? '{{EMPTY}}' : $user['username'],
 							empty($user['q_name']) ? '{{EMPTY}}' : $user['q_name'],
-							empty($user['q_desc']) ? '{{EMPTY}}' : 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$user['q_desc'],
+							empty($user['q_desc']) ? '{{EMPTY}}' : $user['q_desc'],
 							'<br />');
 			
 			$texts = $this->user_emails($user['id'], TRUE);
@@ -4378,9 +4382,6 @@
 							'',
 							'<br />');
 			
-			$texts['subject'] = str_replace($tags, $values, $texts['subject']);
-			$values[0] = $texts['subject'];
-			
 			$questions_id = 0;
 			if ( ! empty($post['user']['rating_questions']))
 			{
@@ -4389,8 +4390,11 @@
 				$q = $questions_list[array_rand($questions_list)];
 				$questions_id = $q['id'];
 				$values[9] = strtolower($q['question_name']);
-				$values[10] = 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$q['question_description'];
+				$values[10] = $q['question_description'];
 			}
+			
+			$texts['subject'] = str_replace($tags, $values, $texts['subject']);
+			$values[0] = $texts['subject'];
 			
 			foreach ($texts as $key => $text)
 			{
@@ -4466,7 +4470,6 @@
 					$email_data['sname'] = "Klaas";
 					$email_data['stars_type'] = $row['stars_type'];
 					$email_data['stars_text'] = $row['stars_text'];
-					//$email_data['username'] = "Geachte dhr. Klaas";
 					$email_data['texts'] = $this->get_emails_texts($row, array("name" => "Jan", "sname" => "Klaas", "username" => "Geachte dhr. Klaas"));
 					$message = $this->load->view('views/mail/tpl_example.html', $email_data, TRUE);
 
@@ -5440,7 +5443,7 @@
 					
 					if ( ! file_exists($path))
 					{
-						mkdir($path, 0755, TRUE);
+						mkdir($path, 0775, TRUE);
 					}
 					
 					delete_files($path, TRUE);
@@ -8158,7 +8161,7 @@
 			{
 				if ( ! file_exists('./logos/tmp/'))
 				{
-					mkdir('./logos/tmp/', 0755, TRUE);
+					mkdir('./logos/tmp/', 0775, TRUE);
 				}
 				
 				$part = explode('.', $tmp_file['name']);
@@ -8191,7 +8194,7 @@
 			{
 				if ( ! file_exists('./avatars/tmp/'))
 				{
-					mkdir('./avatars/tmp/', 0755, TRUE);
+					mkdir('./avatars/tmp/', 0775, TRUE);
 				}
 				
 				$part = explode('.', $tmp_file['name']);
@@ -8238,14 +8241,19 @@
 
 						if ( ! file_exists($path.'full/'))
 						{
-							mkdir($path.'full/', 0755, TRUE);
+							mkdir($path.'full/', 0775, TRUE);
 						}
 						
-						if (rename($file['tmp_name'], $path.'full/'.$filename))
+						if (move_uploaded_file($file['tmp_name'], $path.'full/'.$filename))
 						{
+							if ( ! is_readable($path.'full/'.$filename))
+							{
+								chmod($path.'full/'.$filename, 0644);
+							}
+							
 							if ( ! file_exists($path.'thumb/'))
 							{
-								mkdir($path.'thumb/', 0755, TRUE);
+								mkdir($path.'thumb/', 0775, TRUE);
 							}
 							
 							$config['source_image'] = $path.'full/'.$filename;

@@ -117,12 +117,16 @@
 							
 							<div class="doctors-box step-cont" ng-if="i.doctors.length">
 								<h3 class="sub">Door wie bent u geholpen?</h3>
-								<!--select class="form-control doctors-list" ng-change="set_doctor()" ng-model="doc.id">
-									<option value="0">Kies een zorgverlener...</option>
-									<option ng-repeat="d in i.doctors" value="{{d.id}}" ng-selected="d.id == doc.id">{{[d.title, d.firstname, d.lastname].join(' ')}}</option>
-								</select-->
-								<div class="row doctors-items-box">
-									<div class="col-sm-4 col-xs-12" ng-repeat="d in i.doctors">
+								<select class="form-control doctors-list" ng-change="set_cat()" ng-model="cat_name[0]" ng-show="cats_list.length > 0">
+									<option value="">Kies een categorie zorgverlener...</option>
+									<option ng-repeat="c in cats_list" value="{{c}}" ng-selected="c == cat_name[0]">{{c}}</option>
+								</select>
+								
+								<p ng-show="doctors_cats.length > 0">
+								</p>
+								
+								<div class="row doctors-items-box" ng-show="doctors_cats.length > 0">
+									<div class="col-sm-4 col-xs-12" ng-repeat="d in doctors_cats">
 										<div class="panel panel-default" ng-class="{'active': doc.id == d.id}" ng-click="set_doctor($event, d.id)">
 											<div class="panel-body">
 												<div class="doctors-items-avatar">
@@ -245,8 +249,12 @@
 						<div class="col-xs-12" ng-class="{'col-md-6': voted < 0}">
 							<div class="cards-box no-bottom-marging" ng-if="onlines_col > 0" ng-class="{active: voted != 0}">
 								<div class="cards-box-content">
-									<div class="cards-number" ng-if="voted >= 0">
+									<div class="cards-number" ng-if="voted >= 0 && ! show_other">
 										Stap <span ng-if="voted == 0">2</span><span ng-if="voted != 0">1</span>
+									</div>
+									
+									<div class="cards-number" ng-if="show_other">
+										Stap 2
 									</div>
 									
 									<h2>Deel uw mening met anderen</h2>
@@ -256,15 +264,15 @@
 									<div class="row rating-row">
 										<div class="col-sm-{{onlines_col}} col-xs-12" ng-repeat="o in onlines">
 											<div class="rating-panel rating-{{o.system}}">
-												<div class="rating-heading" ng-click="click(o.system, o.url)">
-													<div class="rating-logo">
+												<a href="{{o.url}}" target="_blank" class="rating-heading" ng-click="click(o.system, o.url)">
+													<span class="rating-logo">
 														<img src="/application/views/images/online-{{o.system}}.png" alt="" ng-if="o.system != 'own'" />
 														<span ng-if="o.system == 'own' && i.user.own_name != ''">{{i.user.own_name}}</span>
 														<span ng-if="o.system == 'own' && i.user.own_name == ''">Aangepaste doorverwijzing</span>
-													</div>
-												</div>
+													</span>
+												</a>
 												
-												<a href="javascript:void(0);" class="rating-btn" ng-click="click(o.system, o.url)">Schrijf review</a>
+												<a href="{{o.url}}" target="_blank" class="rating-btn" ng-click="click(o.system, o.url)">Schrijf review</a>
 											</div>
 										</div>
 									</div>
