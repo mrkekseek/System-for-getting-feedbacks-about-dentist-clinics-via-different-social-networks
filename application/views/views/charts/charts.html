@@ -94,10 +94,14 @@
 						</div>
 					</div>
 				</div>
+				
+				<div class="col-md-4 col-xs-12 text-right">
+					<button type="button" class="btn btn-primary" ng-click="pdf_export()">Exporteer naar PDF</button>
+				</div>
 			</div>
 		</div>
 		
-		<div class="charts-result-panel" ng-class="{'hide': empty_filter}">
+		<div id="charts" class="charts-result-panel" ng-class="{'hide': empty_filter}">
 			<div class="page page-charts">
 				<section>
 					<div class="row charts2-row">
