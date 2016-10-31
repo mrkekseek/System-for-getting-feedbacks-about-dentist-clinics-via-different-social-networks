@@ -463,7 +463,7 @@
 
 		function send_other()
 		{
-			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply"));
+			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply", "video_review"));
 		}
 
 		function get_post()
@@ -922,6 +922,9 @@
 					$row['name'] = $result['doctors_name'];
 				}
 			}
+			
+			$this->db->where('users_id', $this->session->userdata("id"));
+			$row['doctors_count'] = $this->db->count_all_results("doctors");
 			
 			return $row;
 		}
@@ -1388,6 +1391,7 @@
 										"firstname" => $post['firstname'],
 										"lastname" => $post['lastname'],
 										"title" => ! empty($post['title']) ? $post['title'] : '',
+										"cat" => ! empty($post['cat']) ? ucfirst(strtolower($post['cat'])) : '',
 										"zorgkaart" => ! empty($post['zorgkaart']) ? strpos($post['zorgkaart'], '/waardeer') !== FALSE ? $post['zorgkaart'] : rtrim($post['zorgkaart'], '/').'/waardeer' : '',
 										"short" => ! empty($post['short']) ? $post['short'] : "",
 										"short_checked" => ! empty($post['short_checked']) ? $post['short_checked'] : 0);
@@ -1655,6 +1659,9 @@
 									"own_checked" => $post['own_checked'],
 									"own" => $post['own'],
 									"own_name" => $post['own_name'],
+									"youtube_pos" => $post['youtube_pos'],
+									"youtube_checked" => $post['youtube_checked'],
+									"youtube" => $post['youtube'],
 									"google_pos" => $post['google_pos'],
 									"google_checked" => $post['google_checked'],
 									"google" => $post['google']);
@@ -1892,8 +1899,12 @@
 			return $items;
 		}
 		
-		function get_questions()
+		function get_questions($limit = FALSE)
 		{
+			if ( ! empty($limit))
+			{
+				$this->db->limit($limit);
+			}
 			$result = $this->db->get('rating_questions')->result_array();
 			foreach ($result as $key => $row)
 			{
@@ -3266,7 +3277,7 @@
 				{
 					$data_array = array('users_id' => $post['users_id'],
 										'doctor' => $post['doctors_id'],
-										'stars' => $row['questions_id'] == $post['questions_id'] ? $post['stars'] : $row['stars'],
+										'stars' => ( ! empty($row['questions_id']) && ($row['questions_id'] == $post['questions_id'])) ? $post['stars'] : (empty($row['stars']) ? 0 : $row['stars']),
 										'status' => 2,
 										'start' => time(),
 										'date' => time(),
@@ -3556,24 +3567,108 @@
 				}
 			}
 		}
-
-		function parse_xls($file, $first = FALSE, $name = FALSE)
+		
+		function upload_video($file, $first = FALSE, $name = FALSE)
 		{
-			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
+			if ( ! file_exists($path = "./video/tmp/"))
 			{
-				mkdir($path, 0755, TRUE);
+				mkdir($path, 0775, TRUE);
 			}
 			
 			if ($first)
 			{
 				$this->load->helper("file");
-				delete_files($path);
+				$files = array_diff(scandir($path), array('.', '..'));
+				$limit = 60 * 3;
+				foreach ($files as $f)
+				{
+					$time = filemtime($path.$f);
+					if (time() - $time >= $limit)
+					{
+						unlink($path.$f);
+					}
+				}
 			}
 			
 			$result = array();
 			mt_srand();
 			$ext = pathinfo($name, PATHINFO_EXTENSION);
 			$dest = $path.time().mt_rand(100, 999).".".$ext;
+			if (copy($file, $dest))
+			{
+				return $dest;
+			}
+			
+			return FALSE;
+		}
+		
+		function video_review($post)
+		{
+			mt_srand();
+			$ext = pathinfo($post['file'], PATHINFO_EXTENSION);
+			$dest = './video/'.time().mt_rand(100, 999).".".$ext;
+			if (rename($post['file'], $dest))
+			{
+				if (empty($post['id']))
+				{
+					$data_array = array('users_id' => $post['users_id'],
+										'doctor' => $post['doctors_id'],
+										'start' => time(),
+										'date' => time(),
+										'last' => time(),
+										'video_review' => $dest,
+										'ip' => $_SERVER['REMOTE_ADDR']);
+					
+					$this->db->insert("sent", $data_array);
+					$post['id'] = $this->db->insert_id();
+				}
+				else
+				{
+					$this->db->where("id", $post['id']);
+					$this->db->limit(1);
+					$row = $this->db->get("sent")->row_array();
+					if ( ! empty($row['video_review']))
+					{
+						unlink($row['video_review']);
+					}
+					
+					$this->db->where("id", $post['id']);
+					$this->db->update("sent", array('video_review' => $dest));
+				}
+				
+				$this->db->where('id', $post['users_id']);
+				$this->db->limit(1);
+				$user = $this->db->get('users')->row_array();
+				$post['username'] = $user['username'];
+				
+				$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+				$message = $this->load->view('views/mail/tpl_video_review.html', $post, TRUE);
+				$attach = $dest;
+				$to = "info@patientenreview.nl";
+				$to = "deejayy@yandex.ua";
+				$this->send("video_review", $to, 'Nieuwe video-review voor '.$user['username'], $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl', $attach);
+			}
+			
+			return $post['id'];
+		}
+
+		function parse_xls($file, $first = FALSE, $name = FALSE)
+		{
+			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
+			{
+				mkdir($path, 0775, TRUE);
+			}
+			
+			/*if ($first)
+			{
+				$this->load->helper("file");
+				delete_files($path);
+			}*/
+			
+			$result = array();
+			mt_srand();
+			$ext = pathinfo($name, PATHINFO_EXTENSION);
+			$dest = $path.date('dmY-Hi').'-'.mt_rand(100, 999).".".$ext;
 			if (copy($file, $dest))
 			{
 				$rows = array();
@@ -3643,7 +3738,7 @@
 		{
 			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
 			{
-				mkdir($path, 0755, TRUE);
+				mkdir($path, 0775, TRUE);
 			}
 
 			$result = array();
@@ -3812,6 +3907,7 @@
 											$from = time() - ($users['emails_skip'] == 1 ? 7 : ($users['emails_skip'] == 2 ? 30 : 90)) * 24 * 3600;
 											$this->db->where('email', $email);
 											$this->db->where('date >=', $from);
+											$this->db->where('users_id', $users['id']);
 											$this->db->limit(1);
 											if ($this->db->count_all_results('sent') > 0)
 											{
@@ -4313,7 +4409,7 @@
 							empty($doc['avatar']) ? '{{EMPTY}}' : '<img src="'.str_replace('./avatars/', base_url().'avatars/', $doc['avatar']).'" style="vertical-align: baseline;" alt="" />',
 							empty($user['username']) ? '{{EMPTY}}' : $user['username'],
 							empty($user['q_name']) ? '{{EMPTY}}' : $user['q_name'],
-							empty($user['q_desc']) ? '{{EMPTY}}' : 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$user['q_desc'],
+							empty($user['q_desc']) ? '{{EMPTY}}' : $user['q_desc'],
 							'<br />');
 			
 			$texts = $this->user_emails($user['id'], TRUE);
@@ -4373,9 +4469,6 @@
 							'',
 							'<br />');
 			
-			$texts['subject'] = str_replace($tags, $values, $texts['subject']);
-			$values[0] = $texts['subject'];
-			
 			$questions_id = 0;
 			if ( ! empty($post['user']['rating_questions']))
 			{
@@ -4384,8 +4477,11 @@
 				$q = $questions_list[array_rand($questions_list)];
 				$questions_id = $q['id'];
 				$values[9] = strtolower($q['question_name']);
-				$values[10] = 'Zou u onze praktijk aanbevelen omwille van de manier waarop '.$q['question_description'];
+				$values[10] = $q['question_description'];
 			}
+			
+			$texts['subject'] = str_replace($tags, $values, $texts['subject']);
+			$values[0] = $texts['subject'];
 			
 			foreach ($texts as $key => $text)
 			{
@@ -4461,7 +4557,6 @@
 					$email_data['sname'] = "Klaas";
 					$email_data['stars_type'] = $row['stars_type'];
 					$email_data['stars_text'] = $row['stars_text'];
-					//$email_data['username'] = "Geachte dhr. Klaas";
 					$email_data['texts'] = $this->get_emails_texts($row, array("name" => "Jan", "sname" => "Klaas", "username" => "Geachte dhr. Klaas"));
 					$message = $this->load->view('views/mail/tpl_example.html', $email_data, TRUE);
 
@@ -4792,7 +4887,11 @@
 				if ( ! empty($check))
 				{
 					$return['info'] = $this->check_short_results($check['users_id'], $check['doctors_id']);
-					$return['questions'] = array();
+					if ( ! empty($return['info']['id']))
+					{
+						$check['id'] = $return['info']['id'];
+					}
+					$return['questions'] = $this->rating_questions($check, TRUE);
 					$return['user'] = $this->user_info($check['users_id']);
 					if ( ! empty($return['user']['promo_checked']))
 					{
@@ -4806,6 +4905,24 @@
 					else
 					{
 						$return['doctors'] = $this->get_doctors($check['users_id']);
+					}
+					
+					if ( ! empty($return['info']['location']))
+					{
+						$return['location'] = $this->location_info($return['info']['location']);
+					}
+					else
+					{
+						$return['locations'] = $this->get_locations($check['users_id']);
+					}
+					
+					if ( ! empty($return['info']['treatment']))
+					{
+						$return['treatment'] = $this->treatment_info($return['info']['treatment']);
+					}
+					else
+					{
+						$return['treatments'] = $this->get_treatments($check['users_id']);
 					}
 				}
 			}
@@ -4994,10 +5111,10 @@
 			return FALSE;
 		}
 		
-		function rating_questions($info)
+		function rating_questions($info, $short = FALSE)
 		{
 			$items = array();
-			if ( ! empty($info['questions_id']))
+			if ( ! empty($info['questions_id']) || ! empty($short))
 			{
 				$ids = array();
 				$this->db->where('users_id', $info['users_id']);
@@ -5007,7 +5124,8 @@
 					$ids[] = $row['questions_id'];
 				}
 				
-				if (in_array($info['questions_id'], $ids))
+				$main_question = FALSE;
+				if (( ! empty($info['questions_id']) && in_array($info['questions_id'], $ids)) || ! empty($short))
 				{
 					$this->db->where_in('id', $ids);
 					$result = $this->db->get('rating_questions')->result_array();
@@ -5015,18 +5133,25 @@
 					{
 						$row['stars'] = 0;
 
-						$this->db->where('sent_id', $info['id']);
-						$this->db->where('questions_id', $row['id']);
-						$this->db->limit(1);
-						$val = $this->db->get('sent_questions')->row_array();
-						if ( ! empty($val))
+						if ( ! empty($info['id']))
 						{
-							$row['stars'] = $val['stars'];
+							$this->db->where('sent_id', $info['id']);
+							$this->db->where('questions_id', $row['id']);
+							$this->db->limit(1);
+							$val = $this->db->get('sent_questions')->row_array();
+							if ( ! empty($val))
+							{
+								$row['stars'] = $val['stars'];
+							}
 						}
 						
-						if ($row['id'] == $info['questions_id'])
+						if (( ! empty($info['questions_id']) && $row['id'] == $info['questions_id']) || ( ! empty($short) && empty($main_question)))
 						{
 							$items['main'] = $row;
+							if ( ! empty($short))
+							{
+								$main_question = TRUE;
+							}
 						}
 						else
 						{
@@ -5047,6 +5172,7 @@
 			$this->db->or_where("MD5(id) =", $short);
 			$this->db->limit(1);
 			$row = $this->db->get("users")->row_array();
+			
 			if ( ! empty($row))
 			{
 				$result['users_id'] = $row['id'];
@@ -5064,7 +5190,6 @@
 					$result['doctors_id'] = $row['id'];
 				}
 			}
-			
 			return $result;
 		}
 		
@@ -5110,15 +5235,15 @@
 						}
 					}
 				}
-				else
-				{
-					$row = array('stars' => 0,
-								 'feedback' => '',
-								 'id' => 0,
-								 'last_date' => '',
-								 'last_time' => '',
-								 'ex' => FALSE);
-				}
+			}
+			else
+			{
+				$row = array('stars' => 0,
+							 'feedback' => '',
+							 'id' => 0,
+							 'last_date' => '',
+							 'last_time' => '',
+							 'ex' => FALSE);
 			}
 
 			return $row;
@@ -5405,7 +5530,7 @@
 					
 					if ( ! file_exists($path))
 					{
-						mkdir($path, 0755, TRUE);
+						mkdir($path, 0775, TRUE);
 					}
 					
 					delete_files($path, TRUE);
@@ -6522,9 +6647,9 @@
 					}
 
 					$stat['questions'] = array();
-					if (empty($user['account_type']))
+					if (empty($user['account_type']) && $user['account'] != 2)
 					{
-						$stat['questions'] = $this->pub->get_questions();
+						$stat['questions'] = $this->pub->get_questions(4);
 					}
 					else
 					{
@@ -8123,7 +8248,7 @@
 			{
 				if ( ! file_exists('./logos/tmp/'))
 				{
-					mkdir('./logos/tmp/', 0755, TRUE);
+					mkdir('./logos/tmp/', 0775, TRUE);
 				}
 				
 				$part = explode('.', $tmp_file['name']);
@@ -8156,7 +8281,7 @@
 			{
 				if ( ! file_exists('./avatars/tmp/'))
 				{
-					mkdir('./avatars/tmp/', 0755, TRUE);
+					mkdir('./avatars/tmp/', 0775, TRUE);
 				}
 				
 				$part = explode('.', $tmp_file['name']);
@@ -8201,19 +8326,24 @@
 						$ext = strtolower(array_pop($part));
 						$filename = time().mt_rand(1000, 9999).'.'.$ext;
 
-						if ( ! file_exists($path.'img/'))
+						if ( ! file_exists($path.'full/'))
 						{
-							mkdir($path.'img/', 0755, TRUE);
+							mkdir($path.'full/', 0775, TRUE);
 						}
 						
-						if (rename($file['tmp_name'], $path.'img/'.$filename))
+						if (move_uploaded_file($file['tmp_name'], $path.'full/'.$filename))
 						{
-							if ( ! file_exists($path.'thumb/'))
+							if ( ! is_readable($path.'full/'.$filename))
 							{
-								mkdir($path.'thumb/', 0755, TRUE);
+								chmod($path.'full/'.$filename, 0644);
 							}
 							
-							$config['source_image'] = $path.'img/'.$filename;
+							if ( ! file_exists($path.'thumb/'))
+							{
+								mkdir($path.'thumb/', 0775, TRUE);
+							}
+							
+							$config['source_image'] = $path.'full/'.$filename;
 							$config['new_image'] = $path.'thumb/'.$filename;
 							$config['width'] = '150';
 							$config['height'] = '150';
@@ -8221,7 +8351,7 @@
 							$this->load->library('image_lib', $config);
 							if ($this->image_lib->resize())
 							{
-								$link['link'] = base_url().'files/'.$folder.'/img/'.$filename;
+								$link['link'] = base_url().'files/'.$folder.'/full/'.$filename;
 							}
 						}
 					}
@@ -8244,12 +8374,12 @@
 					$folder = md5($row['id'].$row['signup']);
 					$path = './files/'.$folder.'/';
 					
-					if (file_exists($path.'img/'))
+					if (file_exists($path.'full/'))
 					{
-						$files = array_diff(scandir($path.'img/'), array('.', '..'));
+						$files = array_diff(scandir($path.'full/'), array('.', '..'));
 						foreach ($files as $file)
 						{
-							$items[] = array('url' => base_url().'files/'.$folder.'/img/'.$file,
+							$items[] = array('url' => base_url().'files/'.$folder.'/full/'.$file,
 											 'thumb' => base_url().'files/'.$folder.'/thumb/'.$file,
 											 'tag' => 'Images');
 						}
@@ -8276,9 +8406,9 @@
 						$folder = md5($row['id'].$row['signup']);
 						$path = './files/'.$folder.'/';
 						
-						if (file_exists($path.'img/'.$file))
+						if (file_exists($path.'full/'.$file))
 						{
-							unlink($path.'img/'.$file);
+							unlink($path.'full/'.$file);
 							if (file_exists($path.'thumb/'.$file))
 							{
 								unlink($path.'thumb/'.$file);
@@ -8310,25 +8440,34 @@
 
 		function click($post)
 		{
-			if (empty($post['id']))
+			if ( ! empty($post['id']))
 			{
-				$data_array = array('users_id' => $post['users_id'],
-									'doctor' => $post['doctors_id'],
-									'start' => time(),
-									'date' => time(),
-									'last' => time(),
-									'ip' => $_SERVER['REMOTE_ADDR']);
-				$data_array[$post['type']] = TRUE;
-				
-				$this->db->insert("sent", $data_array);
-				return $this->db->insert_id();
-			}
-			else
-			{
+				$check = FALSE;
 				$this->db->where("id", $post['id']);
-				$this->db->update("sent", array($post['type'] => TRUE));
-				return $post['id'];
+				$this->db->where("stars >", 0);
+				if ($this->db->count_all_results('sent'))
+				{
+					$check = TRUE;
+				}
+				else
+				{
+					$this->db->where("sent_id", $post['id']);
+					$this->db->where("stars >", 0);
+					if ($this->db->count_all_results('sent_questions'))
+					{
+						$check = TRUE;
+					}
+				}
+
+				if ($check)
+				{
+					$this->db->update("sent", array($post['type'] => TRUE));
+					return $post['id'];
+				}
 			}
+			
+			$this->errors[] = array("U dient eerst een beoordeling te geven.");
+			return FALSE;
 		}
 
 		function last_dashboard($post)
