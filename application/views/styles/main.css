@@ -1541,6 +1541,16 @@ section.logo {
 	max-height: 40px;
 }
 
+.online-youtube .panel-heading {
+	background: #E8381E;
+}
+
+.online-youtube .btn {
+	background: #E8381E;
+	border-color: #E8381E;
+	padding: 10px 18px;
+}
+
 .online-google .panel-heading {
 	background: #34A954;
 }
@@ -2378,6 +2388,17 @@ span.pro {
 	margin-bottom: 0;
 }
 
+.cards-box.top-marging {
+	margin-bottom: 0;
+	margin-top: 20px;
+}
+
+.youtube-small-text {
+	font-size: 12px;
+	text-align: center;
+	color: #999;
+}
+
 .cards-box.promo-box {
 	background-color: #FAD200;
 }
@@ -2651,6 +2672,10 @@ span.pro {
 	background: #757575;
 }
 
+.rating-youtube {
+	background: #DF2E28;
+}
+
 .cards-box-content h5 {
 	color: #4d4d4d;
     font-size: 14px;
@@ -2845,7 +2870,7 @@ span.pro {
 	border-radius: 4px;
 }
 
-.drag-area .fa-cloud-upload {
+.drag-area > .inner-upload-box > .fa {
 	font-size: 60px;
 	color: #A3A3A3;
 }
@@ -3562,6 +3587,12 @@ body .btn-primary.compose-prev:disabled {
 	vertical-align: bottom;
 }
 
+.single-message > video{
+	max-width: 100%;
+	display: block;
+	margin: 0 auto;
+}
+
 .single-logo {
 	display: inline-block;
 	vertical-align: bottom;
@@ -3873,4 +3904,12 @@ body .btn-primary.compose-prev:disabled {
 	vertical-align: middle;
 	margin-left: 10px;
 	margin-top: 1px;
+}
+
+.cards-box-content.video-box h3.sub {
+	margin-bottom: 15px;
+}
+
+.video-box .drag-area {
+	padding: 20px 50px 10px;
 }
