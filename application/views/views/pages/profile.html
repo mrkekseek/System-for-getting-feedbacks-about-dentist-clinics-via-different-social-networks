@@ -301,6 +301,9 @@
 											</div>
 										</td>
 										<td class="question_second">
+											<div>
+												<span ng-show="edit_question[q.id] == 0">{{q.question_description}}</span>
+											</div>
 											<input type="text" ng-show="edit_question[q.id] == 1" class="form-control" id="desc_{{q.id}}" ng-model="edit_questions[q.id].desc" placeholder="Typ formulering..." maxlength="200" />
 										</td>
 										<td class="question_third">
