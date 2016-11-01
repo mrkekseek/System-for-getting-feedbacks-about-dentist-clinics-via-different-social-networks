@@ -16,6 +16,7 @@
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Voornaam Zorgverlener')">Voornaam Zorgverlener</a>
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
 							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
+							<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-show="user.rating_questions == '1'" ng-click="set_var('Vraagstelling')">Vraagstelling</a>
 						</span>
                     </div>
                 </div>
@@ -301,7 +302,7 @@
 										</td>
 										<td class="question_second">
 											<div>
-												Zou u onze praktijk aanbevelen omwille van de manier waarop <span ng-show="edit_question[q.id] == 0">{{q.question_description}}</span>
+												<span ng-show="edit_question[q.id] == 0">{{q.question_description}}</span>
 											</div>
 											<input type="text" ng-show="edit_question[q.id] == 1" class="form-control" id="desc_{{q.id}}" ng-model="edit_questions[q.id].desc" placeholder="Typ formulering..." maxlength="200" />
 										</td>
@@ -322,9 +323,6 @@
 											</div>
 										</td>
 										<td class="question_second">
-											<div>
-												Zou u onze praktijk aanbevelen omwille van de manier waarop
-											</div>
 											<input type="text" class="form-control" ng-model="new_question.desc" id="desc_0" placeholder="Typ formulering..." maxlength="200" />
 										</td>
 										<td class="question_third">
@@ -633,6 +631,7 @@
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Achternaam Zorgverlener')">Achternaam Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Profielfoto Zorgverlener')">Profielfoto Zorgverlener</a>
 			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-click="set_var('Naam Praktijk')">Naam Praktijk</a>
+			<a href="javascript:void(0);" class="btn btn-default btn-sm" ng-show="user.rating_questions == '1'" ng-click="set_var('Vraagstelling')">Vraagstelling</a>
 		</span>
 		
 		<span class="help-block" ng-show="user.account_type == '0' && user.account != '2'" ng-click="cancel()">

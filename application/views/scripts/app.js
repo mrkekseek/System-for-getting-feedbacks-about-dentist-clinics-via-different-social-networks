@@ -2829,6 +2829,10 @@
 					});
 				}
 			}
+			else
+			{
+				$scope.user.emails.subject = $scope.user.emails.subject.replace(/{{Vraagstelling}}/ig, '');
+			}
 		};
 		
 		$scope.check_phone = 'none';
@@ -3716,6 +3720,7 @@
 		if ($location.path() == "/pages/doctors_add")
 		{
 			$scope.doctor.avatar = '';
+			$scope.doctors_count = 0;
 			$scope.amount = {};
 			$http.get("/pub/get_amount/").success(function(data, status, headers, config) {
 				var result;
@@ -3725,6 +3730,7 @@
 					{
 						$scope.amount[key] = result[key];
 					}
+					$scope.doctors_count = result.doctors.length;
 				}
 			});
 			
@@ -3802,6 +3808,7 @@
 		if ($location.path().indexOf("/pages/doctors_edit") + 1)
 		{
 			var id = $location.path().split("/").pop();
+			$scope.doctors_count = 0;
 			$scope.redirect_url = "pages/advanced";
 			$http.post("/pub/get_doctor/", {id: id}).success(function(data, status, headers, config) {
 				var result = {};
@@ -3812,6 +3819,7 @@
 						$scope.doctor[key] = result[key];
 					}
 					$scope.doctor.short = $scope.doctor.short == '' ? ($scope.doctor.firstname + '-' + $scope.doctor.lastname).replace(/ /ig, '-').toLowerCase() : $scope.doctor.short;
+					$scope.doctors_count = result.doctors_count;
 				}
 			});
 		}
@@ -4294,6 +4302,12 @@
 		$scope.q_vote = {};
 		$scope.voted = 0;
 		$scope.abc = ['a', 'b', 'c', 'd'];
+		
+		$scope.cat_name = {};
+		$scope.cat_name[0] = '';
+		$scope.doctors_cats = [];
+		$scope.cats_list = [];
+		$scope.cat_empty = 'Without category';
 
 		$scope.init = function()
 		{
@@ -4319,6 +4333,29 @@
 					$scope.ex = $scope.i.info ? $scope.i.info.ex : $scope.ex;
 					$scope.limit = $scope.i.info ? $scope.i.info.limit : $scope.limit;
 					$scope.errors = $scope.i.info ? $scope.i.info.errors : $scope.errors;
+					
+					if ($scope.i && $scope.i.doctors)
+					{
+						$scope.cats_list = [];
+						if ($scope.i.doctors.length > 6)
+						{
+							var keys = {};
+							for (var k in $scope.i.doctors)
+							{
+								keys[$scope.i.doctors[k].cat == '' ? 'zzz[empty]' : $scope.i.doctors[k].cat] = true;
+							}
+							
+							for (var k in keys)
+							{
+								$scope.cats_list.push(k.replace('zzz[empty]', $scope.cat_empty));
+								$scope.cats_list.sort(function(a, b) { return a > b ? 1 : (a < b ? -1 : 0); });
+							}
+						}
+						else
+						{
+							$scope.doctors_cats = $scope.i.doctors;
+						}
+					}
 					
 					$scope.questions = $scope.i.questions;
 					if ($scope.questions.main)
@@ -4379,6 +4416,19 @@
 		};
 		
 		$scope.init();
+		
+		$scope.set_cat = function()
+		{
+			$scope.doctors_cats = [];
+			$scope.cat_name[0] = $scope.cat_name[0] == $scope.cat_empty ? '' : $scope.cat_name[0];
+			for (var k in $scope.i.doctors)
+			{
+				if ($scope.cat_name[0] == $scope.i.doctors[k].cat)
+				{
+					$scope.doctors_cats.push($scope.i.doctors[k]);
+				}
+			}
+		}
 		
 		$scope.is_voted = function()
 		{
@@ -4487,6 +4537,7 @@
 				if (result.doctor)
 				{
 					$scope.i.doctor = result.doctor;
+					$scope.id = result.id;
 				}
 				$scope.rebuild_onlines();
 			});
@@ -4508,6 +4559,7 @@
 				if (result.location)
 				{
 					$scope.i.location = result.location;
+					$scope.id = result.id;
 				}
 				$scope.rebuild_onlines();
 			});
@@ -4529,6 +4581,7 @@
 				if (result.treatment)
 				{
 					$scope.i.treatment = result.treatment;
+					$scope.id = result.id;
 				}
 				$scope.rebuild_onlines();
 			});
@@ -4808,13 +4861,24 @@
 		{
 			if ( ! $scope.ex)
 			{
-				type = type || false;
-				if (type)
+				if ($scope.voted != 0)
 				{
-					$http.post("/pub/click/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, type: type}).success(function(data, status, headers, config) {
-						$scope.id = logger.check(data);
-						$window.location.href = url;
-					});
+					type = type || false;
+					if (type)
+					{
+						$http.post("/pub/click/", {id: $scope.id, users_id: $scope.users_id, doctors_id: $scope.doctors_id, type: type}).success(function(data, status, headers, config) {
+							var result = logger.check(data);
+							if (result)
+							{
+								$scope.id = result;
+								//$window.location.href = url;
+							}
+						});
+					}
+				}
+				else
+				{
+					logger.check({'errors': [['U dient eerst een beoordeling te geven.']]});
 				}
 			}
 			else

@@ -2581,11 +2581,13 @@ span.pro {
 }
 
 .rating-heading {
+	display: block;
 	padding: 20px 20px 80px;
 	cursor: pointer;
 }
 
 .rating-logo {
+	display: block;
 	background-color: white;
     border-radius: 2px;
     height: 80px;
