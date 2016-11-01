@@ -136,7 +136,6 @@
 										  data-ng-class="{active: order == 'stars-desc'}"></span>
 								</div></th>
 								<th></th>
-								<th></th>
 								<th><div class="th">
 									Voornaam
 									<span class="fa fa-angle-up"
@@ -227,7 +226,6 @@
 									<i class="ti-star color-warning pull-left" ng-class="{'color-danger bold': l.stars <= 2}" ng-if="l.stars > 4"></i>
 								</td>
 								<td><i class="ti-comment" ng-if="(l.feedback != '' && l.reply == '') || (l.feedback == '' && l.reply != '')"></i><i class="ti-comments" ng-if="l.feedback != '' && l.reply != ''"></i></td>
-								<td><i class="fa fa-video-camera" ng-if="l.video_review != ''"></i></td>
 								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.name}}</td>
 								<td ng-class="{'color-danger bold': l.stars <= 2}">{{l.sname}}</td>
 								<td>

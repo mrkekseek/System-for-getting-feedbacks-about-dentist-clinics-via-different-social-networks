@@ -272,7 +272,7 @@
 													</span>
 												</a>
 												
-												<a href="{{o.url}}" target="_blank" class="rating-btn" ng-click="click(o.system, o.url)">{{o.system == 'youtube' ? 'Maak video-review' : 'Schrijf review'}}</a>
+												<a href="{{o.url}}" target="_blank" class="rating-btn" ng-click="click(o.system, o.url)">Schrijf review</a>
 											</div>
 										</div>
 									</div>
@@ -280,58 +280,6 @@
 								
 								<div class="cards-lock">
 									<i class="fa fa-lock"></i>
-								</div>
-							</div>
-							
-							<div class="cards-box top-marging" ng-if="onlines_youtube == '1'">
-								<div class="cards-box-content video-box">
-									<div class="cards-number" ng-if="voted >= 0">
-										Stap <span ng-if="voted == 0">3</span><span ng-if="voted != 0">2</span>
-									</div>
-									
-									<h2>Maak je video review</h2>
-									
-									<h3 class="sub">Laat een videoboodschap achter voor je zorgverlener.</h3>
-									
-									<form class="form-horizontal" enctype="multipart/form-data">
-										<div class="drag-area btn-upload text-center">
-											<div class="inner-upload-box" ng-show="status == 0">
-												<i class="fa fa-video-camera"></i><br />
-												Tik hier om een video op te nemen
-											</div>
-											
-											<div class="inner-upload-box" ng-show="status > 0">
-												<div class="top-upload-box">
-												</div>
-												
-												<div class="progress progress-bar-default">
-													<div class="progress-bar" ng-class="{'progress-bar-success': status == 2, 'progress-bar-danger': status == 3}" role="progressbar" aria-valuenow="{{videoFile.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{videoFile.progress}}%;">
-														<i class="fa fa-check"></i>
-														<i class="fa fa-times"></i>
-													</div>
-												</div>
-												
-												<div ng-show="status == 1">
-													<span class="drag-span">Je video wordt geüpload...</span>
-												</div>
-												
-												<div ng-show="status == 2">
-													We hebben je video-review ontvangen. Hartelijk bedankt!
-												</div>
-												
-												<div ng-show="status == 3">
-													Error
-												</div>
-											</div>
-											
-											<input type="file" ng-show="status == 0" ngf-select ng-model="videoFile" ng-change="uploadFile(videoFile)" name="file" required ngf-model-invalid="errorFile" accept="video/*" capture />
-										</div>
-									</form>
-									
-									<div class="youtube-small-text">
-										De door jouw opgenomen video-review wordt mogelijk voor promotiedoeleinden gebruikt door {{i.user.username}}.
-										Door een video te uploaden ga je akkoord met de openbaarmaking van jouw video-review.
-									</div>
 								</div>
 							</div>
 						</div>

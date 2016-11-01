@@ -140,15 +140,6 @@
 										<div class="single-message" ng-bind-html="info.feedback"></div>
 									</div>
 									
-									<div class="single-message-box" ng-show="info.feedback == '' && info.video_review != ''">
-										<div class="single-message">
-											<video controls>
-												<source src="{{info.video_review}}" type="video/mp4">
-												<source src="{{info.video_review}}" type="video/ogg">
-											</video>
-										</div>
-									</div>
-									
 									<div class="single-message-box single-reply" ng-show="info.reply != ''">
 										<div class="single-message" style="background-color: {{user.color}};" ng-bind-html="info.reply"></div>
 										<div class="single-logo" ng-show="user.logo != ''">
