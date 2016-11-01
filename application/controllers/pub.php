@@ -48,6 +48,15 @@
 		
 		function test_data()
 		{
+			$data_array = array('facebook' => 0,
+								'google' => 0,
+								'zorgkaart' => 0,
+								'telefoonboek' => 0,
+								'vergelijkmondzorg' => 0,
+								'independer' => 0,
+								'kliniekoverzicht' => 0,
+								'own' => 0);
+			$this->db->update('sent', $data_array);
 			//$this->pub->set_test_data();
 		}
 		
