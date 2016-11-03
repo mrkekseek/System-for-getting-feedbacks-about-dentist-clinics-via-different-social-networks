@@ -463,7 +463,7 @@
 
 		function send_other()
 		{
-			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply"));
+			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply", "video_review"));
 		}
 
 		function get_post()
@@ -1659,6 +1659,9 @@
 									"own_checked" => $post['own_checked'],
 									"own" => $post['own'],
 									"own_name" => $post['own_name'],
+									"youtube_pos" => $post['youtube_pos'],
+									"youtube_checked" => $post['youtube_checked'],
+									"youtube" => $post['youtube'],
 									"google_pos" => $post['google_pos'],
 									"google_checked" => $post['google_checked'],
 									"google" => $post['google']);
@@ -3563,6 +3566,90 @@
 					$this->db->update('sent', array('reply_sent' => TRUE));
 				}
 			}
+		}
+		
+		function upload_video($file, $first = FALSE, $name = FALSE)
+		{
+			if ( ! file_exists($path = "./video/tmp/"))
+			{
+				mkdir($path, 0775, TRUE);
+			}
+			
+			if ($first)
+			{
+				$this->load->helper("file");
+				$files = array_diff(scandir($path), array('.', '..'));
+				$limit = 60 * 3;
+				foreach ($files as $f)
+				{
+					$time = filemtime($path.$f);
+					if (time() - $time >= $limit)
+					{
+						unlink($path.$f);
+					}
+				}
+			}
+			
+			$result = array();
+			mt_srand();
+			$ext = pathinfo($name, PATHINFO_EXTENSION);
+			$dest = $path.time().mt_rand(100, 999).".".$ext;
+			if (copy($file, $dest))
+			{
+				return $dest;
+			}
+			
+			return FALSE;
+		}
+		
+		function video_review($post)
+		{
+			mt_srand();
+			$ext = pathinfo($post['file'], PATHINFO_EXTENSION);
+			$dest = './video/'.time().mt_rand(100, 999).".".$ext;
+			if (rename($post['file'], $dest))
+			{
+				if (empty($post['id']))
+				{
+					$data_array = array('users_id' => $post['users_id'],
+										'doctor' => $post['doctors_id'],
+										'start' => time(),
+										'date' => time(),
+										'last' => time(),
+										'video_review' => $dest,
+										'ip' => $_SERVER['REMOTE_ADDR']);
+					
+					$this->db->insert("sent", $data_array);
+					$post['id'] = $this->db->insert_id();
+				}
+				else
+				{
+					$this->db->where("id", $post['id']);
+					$this->db->limit(1);
+					$row = $this->db->get("sent")->row_array();
+					if ( ! empty($row['video_review']))
+					{
+						unlink($row['video_review']);
+					}
+					
+					$this->db->where("id", $post['id']);
+					$this->db->update("sent", array('video_review' => $dest));
+				}
+				
+				$this->db->where('id', $post['users_id']);
+				$this->db->limit(1);
+				$user = $this->db->get('users')->row_array();
+				$post['username'] = $user['username'];
+				
+				$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+				$message = $this->load->view('views/mail/tpl_video_review.html', $post, TRUE);
+				$attach = $dest;
+				$to = "info@patientenreview.nl";
+				$to = "deejayy@yandex.ua";
+				$this->send("video_review", $to, 'Nieuwe video-review voor '.$user['username'], $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl', $attach);
+			}
+			
+			return $post['id'];
 		}
 
 		function parse_xls($file, $first = FALSE, $name = FALSE)
