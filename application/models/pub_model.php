@@ -4022,6 +4022,7 @@
 		{
 			if ($this->logged_in())
 			{
+				$post['value'] = trim($post['value']);
 				$post['value'] = str_replace('[2]', '', $post['value']);
 				$this->db->where("users_id", $this->session->userdata("id"));
 				$this->db->where("field", $post['field']);
