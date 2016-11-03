@@ -4145,7 +4145,8 @@
 				{
 					$data_array = array("users_id" => $this->session->userdata("id"),
 										"emails_amount" => count($post['emails']),
-										"sent_date" => time());
+										"sent_date" => time(),
+										"file" => ( ! empty($post['file']) && file_exists($post['file'])) ? $post['file'] : '');
 					$this->db->insert("sent_dates", $data_array);
 					$batches_id = $this->db->insert_id();
 				}
@@ -4279,10 +4280,10 @@
 					}
 				}
 				
-				if ( ! empty($post['file']) && file_exists($post['file']))
+				/*if ( ! empty($post['file']) && file_exists($post['file']))
 				{
-					unlink($post['file']);
-				}
+					u*link($post['file']);
+				}*/
 
 				if ($error)
 				{
@@ -6648,7 +6649,8 @@
 						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
 												   'amount' => $row['emails_amount'],
 												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
-												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0,
+												   'file' => $row['file']);
 					}
 
 					return $stat;
@@ -6906,7 +6908,8 @@
 						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
 												   'amount' => $row['emails_amount'],
 												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
-												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0,
+												   'file' => $row['emails_amount']);
 					}
 
 					return $stat;
@@ -7944,7 +7947,8 @@
 						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
 												   'amount' => $row['emails_amount'],
 												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
-												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0,
+												   'file' => $row['file']);
 					}
 
 					$users = array();
