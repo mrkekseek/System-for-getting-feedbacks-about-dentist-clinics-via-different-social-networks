@@ -3227,11 +3227,11 @@
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
 				
-						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						$this->errors[] = array("Success" => "Uw beoordeling is verwerkt");
 					}
 					else
 					{
-						$this->errors[] = array("Database error");
+						$this->errors[] = array("Uw beoordeling kon niet worden verwerkt");
 					}
 				}
 				else
@@ -3239,7 +3239,7 @@
 					$this->db->where("id", $post['id']);
 					if ($this->db->update("sent", array('stars' => $post['stars'], 'status' => 2, 'last' => time())))
 					{
-						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						$this->errors[] = array("Success" => "Uw beoordeling is verwerkt");
 						$post['last'] = time();
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
