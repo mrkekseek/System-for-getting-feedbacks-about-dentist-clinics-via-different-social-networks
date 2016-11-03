@@ -277,15 +277,25 @@
 </div>
 
 <script type="text/ng-template" id="export_inbox.html">
+	<div class="modal-header">
+		<h3>Exporteer beoordelingen</h3>
+	</div>
+	
 	<div class="modal-body">
+		<br />
+		
 		<div class="progress progress-bar-default">
 			<div class="progress-bar" ng-class="{'progress-bar-success': export_done == '1'}" role="progressbar" aria-valuenow="{{export_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{export_percent}}%;">
 				<i class="fa fa-check"></i>
 			</div>
 		</div>
-
+		
+		<br />
+	</div>
+	
+	<div class="modal-footer">
 		<div class="text-center">
-			<button class="btn btn-default" ng-click="cancel()">Cancel</button>
+			<button class="btn btn-default" ng-click="cancel()">Annuleer</button>
 			<button class="btn btn-primary" ng-click="download()" ng-disabled="export_done == '0'"><i class="ti-download"></i> Download</button>
 		</div>
 	</div>
