@@ -119,7 +119,7 @@
 								<h3 class="sub">Door wie bent u geholpen?</h3>
 								<select class="form-control doctors-list" ng-change="set_cat()" ng-model="cat_name[0]" ng-show="cats_list.length > 0">
 									<option value="">Kies een categorie zorgverlener...</option>
-									<option ng-repeat="c in cats_list" value="{{c}}" ng-selected="c == cat_name[0]">{{c}}</option>
+									<option ng-repeat="c in cats_list" value="{{c}}" ng-selected="c == cat_name[0]">Ik ben bij een {{c}} geweest.</option>
 								</select>
 								
 								<p ng-show="doctors_cats.length > 0">

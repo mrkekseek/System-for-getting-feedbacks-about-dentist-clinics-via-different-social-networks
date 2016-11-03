@@ -4307,7 +4307,7 @@
 		$scope.cat_name[0] = '';
 		$scope.doctors_cats = [];
 		$scope.cats_list = [];
-		$scope.cat_empty = 'Without category';
+		$scope.cat_empty = 'andere soort zorgverlener';
 
 		$scope.init = function()
 		{
