@@ -9298,7 +9298,7 @@
 			
 			if (error)
 			{
-				logger.logError("All fields are required");
+				logger.logError("Alle velden zijn verplicht");
 			}
 			else
 			{

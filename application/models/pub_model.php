@@ -3297,7 +3297,7 @@
 											'date' => time());
 						$this->db->insert('sent_questions', $data_array);
 				
-						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						$this->errors[] = array("Success" => "Uw beoordeling is verwerkt");
 					}
 					else
 					{
@@ -3309,7 +3309,7 @@
 					$this->db->where("id", $post['id']);
 					if ($this->db->update("sent", array('stars' => $row['questions_id'] == $post['questions_id'] ? $post['stars'] : $row['stars'], 'status' => 2, 'last' => time())))
 					{
-						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						$this->errors[] = array("Success" => "Uw beoordeling is verwerkt");
 						$post['last'] = time();
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
