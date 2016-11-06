@@ -1685,7 +1685,7 @@ section.logo {
 	z-index: 0;
 }
 
-.panel-online .row:before {
+.panel-online:not(.online-youtube) .row:before {
 	content: "";
 	display: block;
 	width: 1px;
