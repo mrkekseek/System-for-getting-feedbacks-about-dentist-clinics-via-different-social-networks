@@ -3510,16 +3510,16 @@
 		$scope.blocked = {};
 		
 		$timeout(function() {
-			if ($scope.user.account_type < 1 && $scope.user.account != 2)
+			if ($scope.user.account_type < 1 && $scope.user.account != '2')
 			{
 				$scope.blocked = {'telefoonboek': true, 'vergelijkmondzorg': true, 'kliniekoverzicht': true, 'own': true};
 			}
 			
-			if ($scope.user.organization == 0 && $scope.user.account != 2)
+			if ($scope.user.organization == '0' && $scope.user.account != '2')
 			{
 				$scope.blocked.youtube = true;
 			}
-		}, 500);
+		}, 1000);
 		
 		$scope.order = [];
 		for (var key in $scope.online)
