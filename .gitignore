@@ -1,8 +1,10 @@
+avatars/*
+colors/*
+export/*
+files/*
 invoices/*
 logos/*
-colors/*
+tmp/*
+video/*
 application/config/database.php
 log.txt
-tmp/*
-avatars/*
-files/*
