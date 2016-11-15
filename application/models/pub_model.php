@@ -4179,7 +4179,7 @@
 
 							$email = strtolower($list['text']);
 							$this->db->where("email", $email);
-							if ( ! empty($row) && ! $this->db->count_all_results("unsubscribes"))
+							if ( ! $this->db->count_all_results("unsubscribes") && ! empty($row))
 							{
 								$questions_info = array();
 								if (count($questions))
