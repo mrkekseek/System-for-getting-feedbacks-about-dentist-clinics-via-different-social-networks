@@ -6,12 +6,12 @@
 
 ### How do I get set up? ###
 
-* Database configuration:
+**Database configuration**
 Patiëntenreview web application runs on a MySQL database named cloudroc_pr_production. Contact repo-owner for login details.
-* Emails:
+**Emails**
 Patiëntenreview uses Mailgun for sending emails. In the future we might want a deeper integration of the API to track clicks, unsubscribes and bounces, as well as inbound e-mail address where every user has a unique email address so that we can track conversations right from the Patiëntenreview -> Inbox -> Detail view.
 
-* Deployment instructions
+**Deployment instructions**
 In the near future we'll be using an AWS instance for our production environment.
 
 ### Contribution guidelines ###
