@@ -17,8 +17,9 @@ In the near future we'll be using an AWS instance for our production environment
 
 ### Contribution guidelines ###
 
-If you work locally, please also pull the latest changes to the development version on our test server. It's located at 37.97.132.90 - URL: http://pr.cloudrocket.co
-For SSH login please contact repo owner.
+* If you prefer to work on your own local server, please also pull the latest changes to the development version on our test server. It's located at 37.97.132.90 - URL: http://pr.cloudrocket.co
+* Please always use proper CodeIgniter database migrations so that database schemes keep synchronised across different versions.
+* Do not close issues if you worked on them. Just add a comment so that the project manager can test it. If it is deemed to be good enough to merge to production, we will ask you to do so.
 
 ### Who do I talk to? ###
 
