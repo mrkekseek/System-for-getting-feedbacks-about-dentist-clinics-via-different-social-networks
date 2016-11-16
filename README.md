@@ -1,6 +1,6 @@
 # README #
 
-Patiëntenreview web application allows doctors, dentists and other healthcare providers to easily send email invitations for reviews and feedback to their clients. Unique about this software is that it allows for direct rating from the email message as well as a direct follow through to a number of online review profiles: Facebook, Google, Independer, Zorgkaart and a few others.
+**Patiëntenreview** web application allows doctors, dentists and other healthcare providers to easily send email invitations for reviews and feedback to their clients. Unique about this software is that it allows for direct rating from the email message as well as a direct follow through to a number of online review profiles: Facebook, Google, Independer, Zorgkaart and a few others.
 
 ### How do I get set up? ###
 
