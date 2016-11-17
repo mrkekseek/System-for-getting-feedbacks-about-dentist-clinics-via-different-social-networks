@@ -9005,55 +9005,60 @@
 				{
 					if ( ! empty($row['letters_to']))
 					{
-						$data = array('from' => $row['letters_from'].' <'.$row['letters_from_email'].'>', 
-									  'to' => $row['letters_to'], 
-									  'subject' => $row['letters_subject'],
-									  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',
-									  'text' => '',
-									  'html' => $row['letters_message']);
-						$attachment = array();
-
-						if ($row['letters_type'] == "reminder")
+						$this->db->where('email', $row['letters_to']);
+						if ( ! $this->db->count_all_results("unsubscribes"))
 						{
-							$this->db->where("email", $row['letters_to']);
-							$this->db->limit(1);
-							$val = $this->db->get("users")->row_array();
-							if ($val['account'] == 1 && $val['account_type'] == 0)
+						
+							$data = array('from' => $row['letters_from'].' <'.$row['letters_from_email'].'>', 
+										  'to' => $row['letters_to'], 
+										  'subject' => $row['letters_subject'],
+										  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',
+										  'text' => '',
+										  'html' => $row['letters_message']);
+							$attachment = array();
+
+							if ($row['letters_type'] == "reminder")
 							{
-								$attachment[] = ROOT.'/excel-basis-tpl.xls';
+								$this->db->where("email", $row['letters_to']);
+								$this->db->limit(1);
+								$val = $this->db->get("users")->row_array();
+								if ($val['account'] == 1 && $val['account_type'] == 0)
+								{
+									$attachment[] = ROOT.'/excel-basis-tpl.xls';
+								}
+								else
+								{
+									$attachment[] = ROOT.'/excel-tpl.xls';
+								}
+							}
+							
+							if ( ! empty($row['letters_attach']))
+							{
+								$attach = explode('&&', $row['letters_attach']);
+								foreach ($attach as $file)
+								{
+									$attachment[] = str_replace('./', ROOT.'/', $file);
+								}
+							}
+
+							$result = $mg->sendMessage($domain, $data, array('attachment' => $attachment));
+							$code = $result->http_response_code;
+							
+							if ($code == 200)
+							{
+								$this->db->where("letters_id", $row['letters_id']);
+								$this->db->delete("letters");
 							}
 							else
 							{
-								$attachment[] = ROOT.'/excel-tpl.xls';
+								$content = '';
+								$logItems = $result->http_response_body->items;
+								foreach($logItems as $logItem)
+								{
+									$content .= $logItem->message_id."\n";
+								}
+								file_put_contents("log.txt", $content);
 							}
-						}
-						
-						if ( ! empty($row['letters_attach']))
-						{
-							$attach = explode('&&', $row['letters_attach']);
-							foreach ($attach as $file)
-							{
-								$attachment[] = str_replace('./', ROOT.'/', $file);
-							}
-						}
-
-						$result = $mg->sendMessage($domain, $data, array('attachment' => $attachment));
-						$code = $result->http_response_code;
-						
-						if ($code == 200)
-						{
-							$this->db->where("letters_id", $row['letters_id']);
-							$this->db->delete("letters");
-						}
-						else
-						{
-							$content = '';
-							$logItems = $result->http_response_body->items;
-							foreach($logItems as $logItem)
-							{
-								$content .= $logItem->message_id."\n";
-							}
-							file_put_contents("log.txt", $content);
 						}
 					}
 					else
