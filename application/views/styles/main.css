@@ -3913,3 +3913,7 @@ body .btn-primary.compose-prev:disabled {
 .video-box .drag-area {
 	padding: 20px 50px 10px;
 }
+
+.progress-wrapper {
+	margin-top: 15px;
+}
