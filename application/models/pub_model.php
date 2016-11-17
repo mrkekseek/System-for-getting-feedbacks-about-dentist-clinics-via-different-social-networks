@@ -4799,7 +4799,7 @@
 				$this->db->where('letters_to', $to);
 				$this->db->where('letters_type', $type);
 			
-				if ($this->db->count_all_result("letters"))
+				if ($this->db->count_all_results("letters"))
 				{
 					$check = FALSE;
 				}

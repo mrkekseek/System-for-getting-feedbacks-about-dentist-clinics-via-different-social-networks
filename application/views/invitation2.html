@@ -263,7 +263,19 @@
 									
 									<div class="row rating-row">
 										<div class="col-sm-{{onlines_col}} col-xs-12" ng-repeat="o in onlines">
-											<div class="rating-panel rating-{{o.system}}">
+											<div class="rating-panel rating-{{o.system}}" ng-show="o.system == 'youtube'">
+												<a href="javascript:void(0);" class="rating-heading" ng-click="click(o.system, o.url)">
+													<span class="rating-logo">
+														<img src="/application/views/images/online-{{o.system}}.png" alt="" ng-if="o.system != 'own'" />
+														<span ng-if="o.system == 'own' && i.user.own_name != ''">{{i.user.own_name}}</span>
+														<span ng-if="o.system == 'own' && i.user.own_name == ''">Aangepaste doorverwijzing</span>
+													</span>
+												</a>
+												
+												<a href="javascript:void(0);"  class="rating-btn" ng-click="click(o.system, o.url)">{{o.system == 'youtube' ? 'Maak video-review' : 'Schrijf review'}}</a>
+											</div>
+											
+											<div class="rating-panel rating-{{o.system}}" ng-show="o.system != 'youtube'">
 												<a href="{{o.url}}" target="_blank" class="rating-heading" ng-click="click(o.system, o.url)">
 													<span class="rating-logo">
 														<img src="/application/views/images/online-{{o.system}}.png" alt="" ng-if="o.system != 'own'" />
@@ -283,7 +295,7 @@
 								</div>
 							</div>
 							
-							<div class="cards-box top-marging" ng-if="onlines_youtube == '1'">
+							<div class="cards-box top-marging youtube-box" ng-show="onlines_youtube == '1'">
 								<div class="cards-box-content video-box">
 									<div class="cards-number" ng-if="voted >= 0">
 										Stap <span ng-if="voted == 0">3</span><span ng-if="voted != 0">2</span>

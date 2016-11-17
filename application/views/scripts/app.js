@@ -4954,6 +4954,9 @@
 					else if (type && type == 'youtube')
 					{
 						$scope.onlines_youtube = 1;
+						$timeout(function(){
+							$("html, body").animate({scrollTop: $('.youtube-box').offset().top + 'px'}, "fast");							
+						}, 500);
 					}
 				}
 				else
