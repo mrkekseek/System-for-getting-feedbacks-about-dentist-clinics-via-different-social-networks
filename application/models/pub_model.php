@@ -4792,14 +4792,32 @@
 
 		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'no-reply@mg.patientenreview.nl', $attach = FALSE)
 		{
-			$data_array = array("letters_to" => $to,
-								"letters_subject" => $subject,
-								"letters_message" => $message,
-								"letters_from" => $from,
-								"letters_from_email" => $from_email,
-								"letters_type" => $type,
-								"letters_attach" => $attach);
-			return $this->db->insert("letters", $data_array);
+			$check = TRUE;
+			
+			if ($type == 'mailing')
+			{
+				$this->db->where('letters_to', $to);
+				$this->db->where('letters_type', $type);
+			
+				if ($this->db->count_all_result("letters"))
+				{
+					$check = FALSE;
+				}
+			}
+			
+			if ($check)
+			{
+				$data_array = array("letters_to" => $to,
+									"letters_subject" => $subject,
+									"letters_message" => $message,
+									"letters_from" => $from,
+									"letters_from_email" => $from_email,
+									"letters_type" => $type,
+									"letters_attach" => $attach);
+				return $this->db->insert("letters", $data_array);
+			}
+			
+			return TRUE;
 		}
 
 		function real_send($types = array(), $id = FALSE)
