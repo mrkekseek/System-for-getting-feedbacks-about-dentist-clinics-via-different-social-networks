@@ -193,9 +193,21 @@
 			$this->response($result);
 		}
 		
+		function login_as_child()
+		{
+			$result = $this->pub->login_as_child($this->post);
+			$this->response($result);
+		}
+		
 		function logout_as_user()
 		{
 			$result = $this->pub->logout_as_user();
+			$this->response($result);
+		}
+		
+		function logout_as_child()
+		{
+			$result = $this->pub->logout_as_child();
 			$this->response($result);
 		}
 		
@@ -239,6 +251,12 @@
 		function users()
 		{
 			$result = $this->pub->get_users();
+			$this->response($result);
+		}
+		
+		function child()
+		{
+			$result = $this->pub->get_child($this->post);
 			$this->response($result);
 		}
 		

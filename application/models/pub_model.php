@@ -1694,6 +1694,8 @@
 			$row['intro_step'] = $this->session->userdata("intro_step");
 			$row['intro_online_step'] = $this->session->userdata("intro_online_step");
 			$row['rating'] = $this->get_rating($id);
+			$row['child'] = $this->get_uchild($this->session->userdata("user_id"));
+			$row['user_id'] = $this->session->userdata("user_id");
 			
 			$this->db->where("users_id", $id);
 			$row['login_count'] = $this->db->count_all_results("sessions");
@@ -1722,6 +1724,26 @@
 			}
 			
 			return $row;
+		}
+		
+		function get_uchild($id)
+		{
+			$this->db->select('child_id');
+			$this->db->where("users_id", $id);
+			$childs_ids = array();
+			foreach ($this->db->get("users_child")->result_array() as $row)
+			{
+				$childs_ids[] = $row['child_id'];
+			}
+			
+			$childs = array();
+			$this->db->where_in("id", $childs_ids);
+			foreach ($this->db->get("users")->result_array() as $row)
+			{
+				$childs[] = $row;
+			}
+			
+			return $childs;
 		}
 		
 		function get_rating($id = FALSE)
@@ -2313,9 +2335,14 @@
 												   "email" => $row['email'],
 												   "status" => $row['status'],
 												   "login" => $row['now'],
-												   "first" => (empty($row['login']) ? TRUE : FALSE)));
+												   "first" => (empty($row['login']) ? TRUE : FALSE),
+												   "child" => 0));
 				
-
+				if ($row['status'] == 1)
+				{
+					$this->session->set_userdata("user_id", $row['id']);
+				}
+				
 				if ($row['status'] == 2)
 				{
 					$this->session->set_userdata("admin_id", $row['id']);
@@ -2381,6 +2408,19 @@
 		function login_as_user($post)
 		{
 			$this->session->set_userdata("id", $post['id']);
+			return TRUE;
+		}
+		
+		function login_as_child($post)
+		{
+			$this->session->set_userdata("user_id", $this->session->userdata("user_id"));
+			$this->session->set_userdata("id", $post['id']);
+			return TRUE;
+		}
+		
+		function logout_as_child()
+		{
+			$this->session->set_userdata("id", $this->session->userdata("user_id"));
 			return TRUE;
 		}
 		
@@ -2958,8 +2998,45 @@
 			}
 		}
 		
+		function save_child_user($user)
+		{
+			$this->db->where('users_id', $user['id']);
+			$this->db->delete('users_child');
+			
+			$check = TRUE;
+			$data_array = array();
+			foreach($user['child'] as $items)
+			{
+				if ($items != 0)
+				{
+					$check = $this->db->insert('users_child', array("users_id" => $user['id'], "child_id" => $items));					
+				}
+			}
+			
+			return $check;
+		}
+		
+		function get_child($post)
+		{
+			$this->db->where('users_id', $post['id']);
+			$result = $this->db->get('users_child');
+			
+			$data = array();
+			foreach ($result->result_array() as $row)
+			{
+				$data[] = $row['child_id'];
+			}
+			$data[] = 0;
+			return $data;
+		}
+		
 		function change_user($user)
 		{
+			if( ! empty($user['child']))
+			{
+				$this->save_child_user($user);
+			}
+			
 			$data_array = array('account_type' => $user['account_type'],
 								'organization' => $user['organization'],
 								'use_locations' => $user['use_locations'],

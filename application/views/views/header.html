@@ -80,6 +80,22 @@
 					</span>
                 </a>
             </li>
+        </ul>
+		
+		<ul class="nav-right pull-right list-unstyled" ng-if="user.child && ! user.admin_id">
+			<li class="users_list">
+				<select class="form-control" ng-model="users_list" ng-change="login_as_child(users_list)">
+					<option value="">Selecteer een account</option>
+					<option ng-repeat="u in user.child" value="{{u.id}}" ng-selected="u.id == user.id">{{u.username}}</option>
+				</select>
+			</li>
+            <li ng-show="user.user_id && user.id != user.user_id">
+				<a href="javascript:void(0);" class="top-label-link" ng-click="logout_as_child()">
+					<span class="top-label">
+						Log out
+					</span>
+                </a>
+            </li>
         </ul> 
     </div>
 </header>
