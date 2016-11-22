@@ -3632,6 +3632,11 @@
 						unlink($row['video_review']);
 					}
 					
+					if ( ! empty($row['email']))
+					{
+						$post['email_address_rating'] = $row['email'];
+					}
+					
 					$this->db->where("id", $post['id']);
 					$this->db->update("sent", array('video_review' => $dest));
 				}
@@ -3639,6 +3644,8 @@
 				$this->db->where('id', $post['users_id']);
 				$this->db->limit(1);
 				$user = $this->db->get('users')->row_array();
+				
+				
 				$post['username'] = $user['username'];
 				
 				$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
@@ -3646,7 +3653,9 @@
 				$attach = $dest;
 				$to = "info@patientenreview.nl";
 				$to = "deejayy@yandex.ua";
-				$this->send("video_review", $to, 'Nieuwe video-review voor '.$user['username'], $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl', $attach);
+			
+				//$this->send("video_review", $to, 'Nieuwe video-review voor '.$user['username'], $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl', $attach);
+				$this->send("video_review", $to, 'Nieuwe video-review voor '.$user['username'], $message, 'Patiëntenreview', 'wouter@patientenreview.nl', $attach);
 			}
 			
 			return $post['id'];
