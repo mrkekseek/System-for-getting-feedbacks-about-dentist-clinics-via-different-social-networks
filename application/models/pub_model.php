@@ -463,7 +463,7 @@
 
 		function send_other()
 		{
-			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply"));
+			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply", "video_review"));
 		}
 
 		function get_post()
@@ -1659,6 +1659,9 @@
 									"own_checked" => $post['own_checked'],
 									"own" => $post['own'],
 									"own_name" => $post['own_name'],
+									"youtube_pos" => $post['youtube_pos'],
+									"youtube_checked" => $post['youtube_checked'],
+									"youtube" => $post['youtube'],
 									"google_pos" => $post['google_pos'],
 									"google_checked" => $post['google_checked'],
 									"google" => $post['google']);
@@ -3224,11 +3227,11 @@
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
 				
-						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						$this->errors[] = array("Success" => "Uw beoordeling is verwerkt");
 					}
 					else
 					{
-						$this->errors[] = array("Database error");
+						$this->errors[] = array("Uw beoordeling kon niet worden verwerkt");
 					}
 				}
 				else
@@ -3236,7 +3239,7 @@
 					$this->db->where("id", $post['id']);
 					if ($this->db->update("sent", array('stars' => $post['stars'], 'status' => 2, 'last' => time())))
 					{
-						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						$this->errors[] = array("Success" => "Uw beoordeling is verwerkt");
 						$post['last'] = time();
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
@@ -3294,7 +3297,7 @@
 											'date' => time());
 						$this->db->insert('sent_questions', $data_array);
 				
-						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						$this->errors[] = array("Success" => "Uw beoordeling is verwerkt");
 					}
 					else
 					{
@@ -3306,7 +3309,7 @@
 					$this->db->where("id", $post['id']);
 					if ($this->db->update("sent", array('stars' => $row['questions_id'] == $post['questions_id'] ? $post['stars'] : $row['stars'], 'status' => 2, 'last' => time())))
 					{
-						$this->errors[] = array("Success" => "Uw beoordeling is gewijzigd");
+						$this->errors[] = array("Success" => "Uw beoordeling is verwerkt");
 						$post['last'] = time();
 						$post['last_date'] = date("d-m-Y", $post['last'] + 48 * 3600);
 						$post['last_time'] = date("H:i", $post['last'] + 48 * 3600);
@@ -3563,6 +3566,99 @@
 					$this->db->update('sent', array('reply_sent' => TRUE));
 				}
 			}
+		}
+		
+		function upload_video($file, $first = FALSE, $name = FALSE)
+		{
+			if ( ! file_exists($path = "./video/tmp/"))
+			{
+				mkdir($path, 0775, TRUE);
+			}
+			
+			if ($first)
+			{
+				$this->load->helper("file");
+				$files = array_diff(scandir($path), array('.', '..'));
+				$limit = 60 * 3;
+				foreach ($files as $f)
+				{
+					$time = filemtime($path.$f);
+					if (time() - $time >= $limit)
+					{
+						unlink($path.$f);
+					}
+				}
+			}
+			
+			$result = array();
+			mt_srand();
+			$ext = pathinfo($name, PATHINFO_EXTENSION);
+			$dest = $path.time().mt_rand(100, 999).".".$ext;
+			if (copy($file, $dest))
+			{
+				return $dest;
+			}
+			
+			return FALSE;
+		}
+		
+		function video_review($post)
+		{
+			mt_srand();
+			$ext = pathinfo($post['file'], PATHINFO_EXTENSION);
+			$dest = './video/'.time().mt_rand(100, 999).".".$ext;
+			if (rename($post['file'], $dest))
+			{
+				if (empty($post['id']))
+				{
+					$data_array = array('users_id' => $post['users_id'],
+										'doctor' => $post['doctors_id'],
+										'start' => time(),
+										'date' => time(),
+										'last' => time(),
+										'video_review' => $dest,
+										'ip' => $_SERVER['REMOTE_ADDR']);
+					
+					$this->db->insert("sent", $data_array);
+					$post['id'] = $this->db->insert_id();
+				}
+				else
+				{
+					$this->db->where("id", $post['id']);
+					$this->db->limit(1);
+					$row = $this->db->get("sent")->row_array();
+					if ( ! empty($row['video_review']))
+					{
+						unlink($row['video_review']);
+					}
+					
+					if ( ! empty($row['email']))
+					{
+						$post['email_address_rating'] = $row['email'];
+					}
+					
+					$this->db->where("id", $post['id']);
+					$this->db->update("sent", array('video_review' => $dest));
+				}
+				
+				$this->db->where('id', $post['users_id']);
+				$this->db->limit(1);
+				$user = $this->db->get('users')->row_array();
+				
+				
+				$post['username'] = $user['username'];
+				
+				$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
+				$message = $this->load->view('views/mail/tpl_video_review.html', $post, TRUE);
+				$attach = $dest;
+				$to = "info@patientenreview.nl";
+				$to = "deejayy@yandex.ua";
+			
+				//$this->send("video_review", $to, 'Nieuwe video-review voor '.$user['username'], $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl', $attach);
+				$this->send("video_review", $to, 'Nieuwe video-review voor '.$user['username'], $message, 'Patiëntenreview', 'wouter@patientenreview.nl', $attach);
+			}
+			
+			return $post['id'];
 		}
 
 		function parse_xls($file, $first = FALSE, $name = FALSE)
@@ -4022,7 +4118,6 @@
 		{
 			if ($this->logged_in())
 			{
-				$post['value'] = trim($post['value']);
 				$post['value'] = str_replace('[2]', '', $post['value']);
 				$this->db->where("users_id", $this->session->userdata("id"));
 				$this->db->where("field", $post['field']);
@@ -4145,8 +4240,7 @@
 				{
 					$data_array = array("users_id" => $this->session->userdata("id"),
 										"emails_amount" => count($post['emails']),
-										"sent_date" => time(),
-										"file" => ( ! empty($post['file']) && file_exists($post['file'])) ? $post['file'] : '');
+										"sent_date" => time());
 					$this->db->insert("sent_dates", $data_array);
 					$batches_id = $this->db->insert_id();
 				}
@@ -4179,7 +4273,7 @@
 
 							$email = strtolower($list['text']);
 							$this->db->where("email", $email);
-							if ( ! $this->db->count_all_results("unsubscribes") && ! empty($row))
+							if ( ! empty($row) && ! $this->db->count_all_results("unsubscribes"))
 							{
 								$questions_info = array();
 								if (count($questions))
@@ -4280,10 +4374,10 @@
 					}
 				}
 				
-				/*if ( ! empty($post['file']) && file_exists($post['file']))
+				if ( ! empty($post['file']) && file_exists($post['file']))
 				{
-					u*link($post['file']);
-				}*/
+					unlink($post['file']);
+				}
 
 				if ($error)
 				{
@@ -4707,14 +4801,32 @@
 
 		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'no-reply@mg.patientenreview.nl', $attach = FALSE)
 		{
-			$data_array = array("letters_to" => $to,
-								"letters_subject" => $subject,
-								"letters_message" => $message,
-								"letters_from" => $from,
-								"letters_from_email" => $from_email,
-								"letters_type" => $type,
-								"letters_attach" => $attach);
-			return $this->db->insert("letters", $data_array);
+			$check = TRUE;
+			
+			if ($type == 'mailing')
+			{
+				$this->db->where('letters_to', $to);
+				$this->db->where('letters_type', $type);
+			
+				if ($this->db->count_all_results("letters"))
+				{
+					$check = FALSE;
+				}
+			}
+			
+			if ($check)
+			{
+				$data_array = array("letters_to" => $to,
+									"letters_subject" => $subject,
+									"letters_message" => $message,
+									"letters_from" => $from,
+									"letters_from_email" => $from_email,
+									"letters_type" => $type,
+									"letters_attach" => $attach);
+				return $this->db->insert("letters", $data_array);
+			}
+			
+			return TRUE;
 		}
 
 		function real_send($types = array(), $id = FALSE)
@@ -6649,8 +6761,7 @@
 						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
 												   'amount' => $row['emails_amount'],
 												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
-												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0,
-												   'file' => $row['file']);
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
 					}
 
 					return $stat;
@@ -6908,8 +7019,7 @@
 						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
 												   'amount' => $row['emails_amount'],
 												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
-												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0,
-												   'file' => $row['emails_amount']);
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
 					}
 
 					return $stat;
@@ -7947,8 +8057,7 @@
 						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
 												   'amount' => $row['emails_amount'],
 												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
-												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0,
-												   'file' => $row['file']);
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
 					}
 
 					$users = array();
@@ -8379,7 +8488,6 @@
 
 				if ($check)
 				{
-					$this->db->where("id", $post['id']);
 					$this->db->update("sent", array($post['type'] => TRUE));
 					return $post['id'];
 				}
@@ -8906,55 +9014,60 @@
 				{
 					if ( ! empty($row['letters_to']))
 					{
-						$data = array('from' => $row['letters_from'].' <'.$row['letters_from_email'].'>', 
-									  'to' => $row['letters_to'], 
-									  'subject' => $row['letters_subject'],
-									  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',
-									  'text' => '',
-									  'html' => $row['letters_message']);
-						$attachment = array();
-
-						if ($row['letters_type'] == "reminder")
+						$this->db->where('email', $row['letters_to']);
+						if ( ! $this->db->count_all_results("unsubscribes"))
 						{
-							$this->db->where("email", $row['letters_to']);
-							$this->db->limit(1);
-							$val = $this->db->get("users")->row_array();
-							if ($val['account'] == 1 && $val['account_type'] == 0)
+						
+							$data = array('from' => $row['letters_from'].' <'.$row['letters_from_email'].'>', 
+										  'to' => $row['letters_to'], 
+										  'subject' => $row['letters_subject'],
+										  'h:Reply-To' => $row['letters_from'].' <'.$row['letters_from_email'].'>',
+										  'text' => '',
+										  'html' => $row['letters_message']);
+							$attachment = array();
+
+							if ($row['letters_type'] == "reminder")
 							{
-								$attachment[] = ROOT.'/excel-basis-tpl.xls';
+								$this->db->where("email", $row['letters_to']);
+								$this->db->limit(1);
+								$val = $this->db->get("users")->row_array();
+								if ($val['account'] == 1 && $val['account_type'] == 0)
+								{
+									$attachment[] = ROOT.'/excel-basis-tpl.xls';
+								}
+								else
+								{
+									$attachment[] = ROOT.'/excel-tpl.xls';
+								}
+							}
+							
+							if ( ! empty($row['letters_attach']))
+							{
+								$attach = explode('&&', $row['letters_attach']);
+								foreach ($attach as $file)
+								{
+									$attachment[] = str_replace('./', ROOT.'/', $file);
+								}
+							}
+
+							$result = $mg->sendMessage($domain, $data, array('attachment' => $attachment));
+							$code = $result->http_response_code;
+							
+							if ($code == 200)
+							{
+								$this->db->where("letters_id", $row['letters_id']);
+								$this->db->delete("letters");
 							}
 							else
 							{
-								$attachment[] = ROOT.'/excel-tpl.xls';
+								$content = '';
+								$logItems = $result->http_response_body->items;
+								foreach($logItems as $logItem)
+								{
+									$content .= $logItem->message_id."\n";
+								}
+								file_put_contents("log.txt", $content);
 							}
-						}
-						
-						if ( ! empty($row['letters_attach']))
-						{
-							$attach = explode('&&', $row['letters_attach']);
-							foreach ($attach as $file)
-							{
-								$attachment[] = str_replace('./', ROOT.'/', $file);
-							}
-						}
-
-						$result = $mg->sendMessage($domain, $data, array('attachment' => $attachment));
-						$code = $result->http_response_code;
-						
-						if ($code == 200)
-						{
-							$this->db->where("letters_id", $row['letters_id']);
-							$this->db->delete("letters");
-						}
-						else
-						{
-							$content = '';
-							$logItems = $result->http_response_body->items;
-							foreach($logItems as $logItem)
-							{
-								$content .= $logItem->message_id."\n";
-							}
-							file_put_contents("log.txt", $content);
 						}
 					}
 					else
