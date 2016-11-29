@@ -828,12 +828,13 @@
 			return $result;
 		}
 		
-		function get_locations()
+		function get_locations($id = FALSE)
 		{
-			$this->db->where("users_id", $this->session->userdata("id"));
+			$id = ! empty($id) ? $id : $this->session->userdata("id");
+			$this->db->where("users_id", $id);
 			return $this->db->get("locations")->result_array();
-		}
-		
+		}	
+				
 		function location_info($id)
 		{
 			$this->db->where("id", $id);
@@ -856,9 +857,10 @@
 			return $row;
 		}
 		
-		function get_treatments()
+		function get_treatments($id = FALSE)
 		{
-			$this->db->where("users_id", $this->session->userdata("id"));
+			$id = ! empty($id) ? $id : $this->session->userdata("id");
+			$this->db->where("users_id", $id);				
 			return $this->db->get("treatments")->result_array();
 		}
 		
@@ -4525,7 +4527,7 @@
 									'texts' => $texts);
 
 				$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
-				$this->send("mailing", $post['values']['email'], $texts['subject'], $message, empty($post['user']['username']) ? '' : $post['user']['username'], $post['user']['email']);
+				$this->send("mailing", $post['values']['email'], $texts['subject'], $message, empty($post['user']['username']) ? '' : $post['user']['username'], $post['user']['email'], FALSE, TRUE);
 				$this->errors[] = array("Success" => "Voorbeeldbericht verstuurd");
 				return $this->real_send(array('mailing'), $this->db->insert_id());
 			}
@@ -4799,7 +4801,7 @@
 			return $this->send("renew", $post['email'], 'Uw factuur van Patiëntenreview', $message, 'Patiëntenreview', 'info@patientenreview.nl', $post['attach']);*/
 		}
 
-		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'no-reply@mg.patientenreview.nl', $attach = FALSE)
+		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'no-reply@mg.patientenreview.nl', $attach = FALSE, $repeat_flag = FALSE)
 		{
 			$check = TRUE;
 			
@@ -4814,7 +4816,7 @@
 				}
 			}
 			
-			if ($check)
+			if ($check || $repeat_flag)
 			{
 				$data_array = array("letters_to" => $to,
 									"letters_subject" => $subject,
