@@ -828,12 +828,13 @@
 			return $result;
 		}
 		
-		function get_locations()
+		function get_locations($id = FALSE)
 		{
-			$this->db->where("users_id", $this->session->userdata("id"));
+			$id = ! empty($id) ? $id : $this->session->userdata("id");
+			$this->db->where("users_id", $id);
 			return $this->db->get("locations")->result_array();
-		}
-		
+		}	
+				
 		function location_info($id)
 		{
 			$this->db->where("id", $id);
@@ -856,9 +857,10 @@
 			return $row;
 		}
 		
-		function get_treatments()
+		function get_treatments($id = FALSE)
 		{
-			$this->db->where("users_id", $this->session->userdata("id"));
+			$id = ! empty($id) ? $id : $this->session->userdata("id");
+			$this->db->where("users_id", $id);				
 			return $this->db->get("treatments")->result_array();
 		}
 		
