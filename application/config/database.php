@@ -64,11 +64,9 @@ $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
-if ( ! empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] == 'pr.da'
-	|| $_SERVER['SERVER_NAME'] == '192.168.1.7'
-)
+if ( ! empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] == 'pr.da')
 {
-	$db['default']['hostname'] = '192.168.1.7';
+	$db['default']['hostname'] = 'localhost';
 	$db['default']['username'] = 'root';
 	$db['default']['password'] = '';
 	$db['default']['database'] = 'pr';
