@@ -8490,6 +8490,7 @@
 
 				if ($check)
 				{
+					$this->db->where("id", $post['id']);
 					$this->db->update("sent", array($post['type'] => TRUE));
 					return $post['id'];
 				}
