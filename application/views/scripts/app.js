@@ -591,7 +591,7 @@
 				
 				if ($scope.stat.average_online)
 				{
-					$scope.stat.average = ($scope.stat.average_online * 1).toFixed(1);
+					$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
 				}
 
 				$scope.stat.reviews = [];

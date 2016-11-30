@@ -69,7 +69,7 @@ if ( ! empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] == 'pr.da' || $
 	$db['default']['hostname'] = '192.168.1.7';
 	$db['default']['username'] = 'root';
 	$db['default']['password'] = '';
-	$db['default']['database'] = 'pr';
+	$db['default']['database'] = 'pr_test';
 }
 
 /* End of file database.php */
