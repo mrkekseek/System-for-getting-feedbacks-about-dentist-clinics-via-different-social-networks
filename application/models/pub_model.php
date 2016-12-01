@@ -3665,7 +3665,7 @@
 
 		function parse_xls($file, $first = FALSE, $name = FALSE)
 		{
-			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
+			if ( ! file_exists($path = "./batches/".$this->session->userdata("id")."/"))
 			{
 				mkdir($path, 0775, TRUE);
 			}
@@ -4242,7 +4242,8 @@
 				{
 					$data_array = array("users_id" => $this->session->userdata("id"),
 										"emails_amount" => count($post['emails']),
-										"sent_date" => time());
+										"sent_date" => time(),
+										"file" => $post['file']);
 					$this->db->insert("sent_dates", $data_array);
 					$batches_id = $this->db->insert_id();
 				}
@@ -4378,7 +4379,7 @@
 				
 				if ( ! empty($post['file']) && file_exists($post['file']))
 				{
-					unlink($post['file']);
+					//unlink($post['file']);
 				}
 
 				if ($error)
@@ -6763,7 +6764,8 @@
 						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
 												   'amount' => $row['emails_amount'],
 												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
-												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0,
+												   'file' =>  ! empty($row['file']) && file_exists($row['file']) ? $row['file'] : "");
 					}
 
 					return $stat;
