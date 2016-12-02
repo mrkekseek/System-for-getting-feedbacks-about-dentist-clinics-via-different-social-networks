@@ -4057,6 +4057,7 @@
 
 					$http.post("/pub/change_user/", {user: user}).success(function(data, status, headers, config) {
 						$scope.users = logger.check(data);
+						
 						$scope.order('-date');
 					});
 				}

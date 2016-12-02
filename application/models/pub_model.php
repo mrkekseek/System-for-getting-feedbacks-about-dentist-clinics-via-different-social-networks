@@ -2127,7 +2127,7 @@
 				}
 				else
 				{
-					if ($row['status'] != 2 && ! empty($row['mobile']) && ! empty($row['organization']) && ! empty($row['account_type']))
+					if ($row['status'] != 2 && ! empty($row['mobile']) && ! empty($row['account_type']) && $row['two_step_auth'])
 					{
 						if ( ! empty($row['sms_blocked']))
 						{
@@ -2970,7 +2970,12 @@
 								'account_amount' => $user['account_amount'],
 								'doctors_amount' => $user['doctors_amount'],
 								'doctors_number' => $user['doctors_number']);
-								
+			
+			if (isset($user['two_step_auth']))
+			{
+				$data_array['two_step_auth'] = $user['two_step_auth'];
+			}
+			
 			$this->db->where("id", $user['id']);
 			if ($this->db->update("users", $data_array))
 			{
