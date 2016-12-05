@@ -591,7 +591,7 @@
 				
 				if ($scope.stat.average_online)
 				{
-					$scope.stat.average = ($scope.stat.average_online * 1).toFixed(1);
+					$scope.stat.average_online = ($scope.stat.average_online * 1).toFixed(1);
 				}
 
 				$scope.stat.reviews = [];
@@ -4057,6 +4057,7 @@
 
 					$http.post("/pub/change_user/", {user: user}).success(function(data, status, headers, config) {
 						$scope.users = logger.check(data);
+						
 						$scope.order('-date');
 					});
 				}
