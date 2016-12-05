@@ -409,6 +409,16 @@
 			});
 		};
 		
+		$scope.logout_as_child = function() {
+			$http.get("/pub/logout_as_child/").success(function(data, status, headers, config) {
+				if (logger.check(data))
+				{
+					$window.location.reload();
+				}
+			});
+		};
+		
+		
 		$scope.login_as_user = function(users_id) {
 			$http.post("/pub/login_as_user/", {id: users_id}).success(function(data, status, headers, config) {
 				if (logger.check(data))
@@ -417,6 +427,15 @@
 				}
 			});
 		};
+		
+		$scope.login_as_child = function(users_id) {
+			$http.post("/pub/login_as_child/", {id: users_id}).success(function(data, status, headers, config) {
+				if (logger.check(data))
+				{
+					$window.location.reload();
+				}
+			});
+		}
 		
 		$scope.intro = false;
 		$scope.intro_step = 0;
@@ -8786,15 +8805,79 @@
 		$scope.id = $scope.user.id;
 		$scope.type = $scope.user.account;
 		$scope.stop = $scope.user.admin_stop;
-
+		$scope.user.list = [];
+		$scope.child = [];
+		$scope.child[0] = 0;
+		
 		$scope.date = {};
 		$scope.date.activation = new Date($scope.user.activation * 1000);
 		$scope.date.suspension = new Date($scope.user.suspension * 1000);
 		$scope.date.trial_end = new Date($scope.user.trial_end * 1000);
 		
+		$http.post("/pub/users/").success(function(data, status, headers, config) {
+			$scope.user.list = logger.check(data);
+		});
+		
+		$http.post("/pub/child/", {'id' : $scope.id}).success(function(data, status, headers, config) {
+			$scope.child = logger.check(data);
+		});
+		
 		$scope.fake_type_change = function() {
 			$scope.user.organization = ($scope.user.fake_type == '2' ? '1' : '0');
 			$scope.user.account_type = ($scope.user.fake_type == '2' ? '1' : $scope.user.fake_type);
+		};
+		
+		$scope.check_exist = function(id, index) {
+			for (var i in $scope.child)
+			{
+				if (id == $scope.child[i] && i != index)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		$scope.child_user_add = function(index) {
+			if ($scope.child[index] == "0")
+			{
+				$scope.remove_child(index);
+			}
+
+			if ( ! $scope.check_child())
+			{
+				$scope.child.push("0");
+			}
+		};
+		
+		$scope.check_child = function() {
+			
+			for(var i in $scope.child)
+			{
+				if ($scope.child[i] == "0")
+				{
+					return true;
+				}				
+			}
+			return false;
+		};
+		
+		$scope.remove_child = function(index) {
+			
+			if ($scope.child[index] == 0)
+			{
+				return false;
+			}
+			
+			var new_mass = [];
+			for (var i in $scope.child)
+			{
+				if (i != index)
+				{
+					new_mass.push($scope.child[i]);
+				}				
+			}
+			$scope.child = new_mass;
 		};
 		
 		$scope.organization_change = function() {
@@ -8805,6 +8888,8 @@
 			$scope.user.activation = $scope.date.activation;
 			$scope.user.suspension = $scope.date.suspension;
 			$scope.user.trial_end = $scope.date.trial_end;
+			$scope.user.child = $scope.child;
+			
             $modalInstance.close({user: $scope.user});
         };
 
