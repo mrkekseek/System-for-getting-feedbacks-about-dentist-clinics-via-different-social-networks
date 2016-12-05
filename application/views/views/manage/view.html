@@ -213,7 +213,17 @@
 						</div>
 					</div>
 					
-					<div class="divider divider-dashed divider-lg pull-in"></div>
+					<div class="divider divider-dashed divider-lg pull-in" ng-init="user.two_toggle_show = ( ! (user.account_type == '1' && user.organization == '1') && user.mobile != '') ? 1 : 0" ng-show="user.two_toggle_show"></div>
+					
+					<div class="form-group" ng-show="user.two_toggle_show"> 
+						<label class="col-md-4">Twee-staps authenticatie</label>
+						<div class="col-md-8">
+							<label class="ui-switch ui-switch-lg">
+								<input type="checkbox" name="two_step_auth" ng-model="user.two_step_auth" ng-true-value="1" ng-false-value="0" />
+								<i></i>
+							</label>
+						</div>
+					</div>
 					
 					<table class="table table-bordered">
 						<tbody>

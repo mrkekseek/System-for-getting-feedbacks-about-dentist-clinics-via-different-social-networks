@@ -51,7 +51,7 @@ $active_record = TRUE;
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'cloudroc_dev';
 $db['default']['password'] = 'Helmond$#1906';
-$db['default']['database'] = 'cloudroc_pr_test';
+$db['default']['database'] = 'cloudroc_pr_production';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
@@ -64,14 +64,13 @@ $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
-if ( ! empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] == 'pr.da')
+if ( ! empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] == 'pr.da' )
 {
 	$db['default']['hostname'] = 'localhost';
 	$db['default']['username'] = 'root';
 	$db['default']['password'] = '';
 	$db['default']['database'] = 'pr';
 }
-
 
 /* End of file database.php */
 /* Location: ./application/config/database.php */

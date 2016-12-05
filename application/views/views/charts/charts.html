@@ -94,14 +94,10 @@
 						</div>
 					</div>
 				</div>
-				
-				<div class="col-md-4 col-xs-12 text-right">
-					<button type="button" class="btn btn-primary" ng-click="pdf_export()">Exporteer naar PDF</button>
-				</div>
 			</div>
 		</div>
 		
-		<div id="charts" class="charts-result-panel" ng-class="{'hide': empty_filter}">
+		<div class="charts-result-panel" ng-class="{'hide': empty_filter}">
 			<div class="page page-charts">
 				<section>
 					<div class="row charts2-row">
@@ -495,6 +491,7 @@
 												<th>Aantal uitnodigingen</th>
 												<th>Gereageerd</th>
 												<th>Doorgeklikt</th>
+												<th>Bestandsnaam</th>
 											</tr>
 										</thead>
 										
@@ -504,6 +501,7 @@
 												<td>{{b.amount}}</td>
 												<td>{{b.reply}}%</td>
 												<td>{{b.click}}%</td>
+												<td><a ng-href="{{b.file}}">{{b.file}}</a></td>
 											</tr>
 										</tbody>
 									</table>

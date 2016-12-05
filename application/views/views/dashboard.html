@@ -118,7 +118,6 @@
 									<th>Beoordeling</th>
 									<th>Datum</th>
 									<th></th>
-									<th></th>
 								</tr>
 								<tr ng-class="{'mail-hightlight': l.new_letter == '1', 'mail-unread': l.feedback != '', 'no-stars': l.stars == 0}" ng-repeat="l in letters" ng-click="more(l.id, l.feedback != '', l.email)">
 									<td ng-class="{'color-danger bold': l.email != '' && l.stars <= 2, 'muted': l.email == ''}">{{l.email || 'Anonieme beoordeling'}} <span class="badge badge-primary" ng-show="l.new_letter == '1'">Nieuw</span></td>
@@ -132,7 +131,6 @@
 									</td>
 									<td>{{l.date_time}}</td>
 									<td><i class="ti-comment" ng-if="(l.feedback != '' && l.reply == '') || (l.feedback == '' && l.reply != '')"></i><i class="ti-comments" ng-if="l.feedback != '' && l.reply != ''"></i></td>
-									<td><i class="fa fa-video-camera" ng-if="l.video_review != ''"></i></td>
 								</tr>
 							</table>
 						</div>

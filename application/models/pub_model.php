@@ -828,12 +828,13 @@
 			return $result;
 		}
 		
-		function get_locations()
+		function get_locations($id = FALSE)
 		{
-			$this->db->where("users_id", $this->session->userdata("id"));
+			$id = ! empty($id) ? $id : $this->session->userdata("id");
+			$this->db->where("users_id", $id);
 			return $this->db->get("locations")->result_array();
-		}
-		
+		}	
+				
 		function location_info($id)
 		{
 			$this->db->where("id", $id);
@@ -856,9 +857,10 @@
 			return $row;
 		}
 		
-		function get_treatments()
+		function get_treatments($id = FALSE)
 		{
-			$this->db->where("users_id", $this->session->userdata("id"));
+			$id = ! empty($id) ? $id : $this->session->userdata("id");
+			$this->db->where("users_id", $id);				
 			return $this->db->get("treatments")->result_array();
 		}
 		
@@ -2147,7 +2149,7 @@
 				}
 				else
 				{
-					if ($row['status'] != 2 && ! empty($row['mobile']) && ! empty($row['organization']) && ! empty($row['account_type']))
+					if ($row['status'] != 2 && ! empty($row['mobile']) && ! empty($row['account_type']) && $row['two_step_auth'])
 					{
 						if ( ! empty($row['sms_blocked']))
 						{
@@ -3045,7 +3047,12 @@
 								'account_amount' => $user['account_amount'],
 								'doctors_amount' => $user['doctors_amount'],
 								'doctors_number' => $user['doctors_number']);
-								
+			
+			if (isset($user['two_step_auth']))
+			{
+				$data_array['two_step_auth'] = $user['two_step_auth'];
+			}
+			
 			$this->db->where("id", $user['id']);
 			if ($this->db->update("users", $data_array))
 			{
@@ -3709,6 +3716,11 @@
 						unlink($row['video_review']);
 					}
 					
+					if ( ! empty($row['email']))
+					{
+						$post['email_address_rating'] = $row['email'];
+					}
+					
 					$this->db->where("id", $post['id']);
 					$this->db->update("sent", array('video_review' => $dest));
 				}
@@ -3716,6 +3728,8 @@
 				$this->db->where('id', $post['users_id']);
 				$this->db->limit(1);
 				$user = $this->db->get('users')->row_array();
+				
+				
 				$post['username'] = $user['username'];
 				
 				$post['domain'] = (( ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://").$_SERVER['HTTP_HOST'].'/';
@@ -3723,7 +3737,9 @@
 				$attach = $dest;
 				$to = "info@patientenreview.nl";
 				$to = "deejayy@yandex.ua";
-				$this->send("video_review", $to, 'Nieuwe video-review voor '.$user['username'], $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl', $attach);
+			
+				//$this->send("video_review", $to, 'Nieuwe video-review voor '.$user['username'], $message, 'Patiëntenreview', 'no-reply@mg.patientenreview.nl', $attach);
+				$this->send("video_review", $to, 'Nieuwe video-review voor '.$user['username'], $message, 'Patiëntenreview', 'wouter@patientenreview.nl', $attach);
 			}
 			
 			return $post['id'];
@@ -3731,7 +3747,7 @@
 
 		function parse_xls($file, $first = FALSE, $name = FALSE)
 		{
-			if ( ! file_exists($path = "./tmp/".$this->session->userdata("id")."/"))
+			if ( ! file_exists($path = "./batches/".$this->session->userdata("id")."/"))
 			{
 				mkdir($path, 0775, TRUE);
 			}
@@ -4308,7 +4324,8 @@
 				{
 					$data_array = array("users_id" => $this->session->userdata("id"),
 										"emails_amount" => count($post['emails']),
-										"sent_date" => time());
+										"sent_date" => time(),
+										"file" => $post['file']);
 					$this->db->insert("sent_dates", $data_array);
 					$batches_id = $this->db->insert_id();
 				}
@@ -4444,7 +4461,7 @@
 				
 				if ( ! empty($post['file']) && file_exists($post['file']))
 				{
-					unlink($post['file']);
+					//unlink($post['file']);
 				}
 
 				if ($error)
@@ -4593,7 +4610,7 @@
 									'texts' => $texts);
 
 				$message = $this->load->view('views/mail/tpl_feedback.html', $email_data, TRUE);
-				$this->send("mailing", $post['values']['email'], $texts['subject'], $message, empty($post['user']['username']) ? '' : $post['user']['username'], $post['user']['email']);
+				$this->send("mailing", $post['values']['email'], $texts['subject'], $message, empty($post['user']['username']) ? '' : $post['user']['username'], $post['user']['email'], FALSE, TRUE);
 				$this->errors[] = array("Success" => "Voorbeeldbericht verstuurd");
 				return $this->real_send(array('mailing'), $this->db->insert_id());
 			}
@@ -4867,7 +4884,7 @@
 			return $this->send("renew", $post['email'], 'Uw factuur van Patiëntenreview', $message, 'Patiëntenreview', 'info@patientenreview.nl', $post['attach']);*/
 		}
 
-		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'no-reply@mg.patientenreview.nl', $attach = FALSE)
+		function send($type, $to, $subject = 'Patientenreview.nl', $message = '', $from = 'Patiëntenreview', $from_email = 'no-reply@mg.patientenreview.nl', $attach = FALSE, $repeat_flag = FALSE)
 		{
 			$check = TRUE;
 			
@@ -4882,7 +4899,7 @@
 				}
 			}
 			
-			if ($check)
+			if ($check || $repeat_flag)
 			{
 				$data_array = array("letters_to" => $to,
 									"letters_subject" => $subject,
@@ -6829,7 +6846,8 @@
 						$stat['batches'][] = array('date' => date('d-m-Y', $row['sent_date']),
 												   'amount' => $row['emails_amount'],
 												   'reply' => ! empty($stat['reply_percents'][$row['batches_id']]) ? $stat['reply_percents'][$row['batches_id']] : 0,
-												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0);
+												   'click' => ! empty($stat['reply_clicks'][$row['batches_id']]) ? $stat['reply_clicks'][$row['batches_id']] : 0,
+												   'file' =>  ! empty($row['file']) && file_exists($row['file']) ? $row['file'] : "");
 					}
 
 					return $stat;
@@ -8556,6 +8574,7 @@
 
 				if ($check)
 				{
+					$this->db->where("id", $post['id']);
 					$this->db->update("sent", array($post['type'] => TRUE));
 					return $post['id'];
 				}
