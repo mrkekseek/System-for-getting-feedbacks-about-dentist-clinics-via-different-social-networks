@@ -1739,7 +1739,10 @@
 			}
 			
 			$childs = array();
-			$this->db->where_in("id", $childs_ids);
+			if ( ! empty($childs_ids))
+			{
+				$this->db->where_in("id", $childs_ids);				
+			}
 			foreach ($this->db->get("users")->result_array() as $row)
 			{
 				$childs[] = $row;
