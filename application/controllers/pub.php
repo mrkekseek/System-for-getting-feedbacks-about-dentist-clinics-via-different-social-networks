@@ -79,6 +79,16 @@
 			redirect("/#/dashboard");
 		}
 
+		function clear_send_table()
+		{
+			$this->pub->clear_send_table();
+		}
+		
+		function remote_duplicate()
+		{
+			$this->pub->remote_duplicate();
+		}
+		
 		function page($file = FALSE, $sub_file = FALSE, $id = FALSE)
 		{
 			$path = 'views/pages/404.html';

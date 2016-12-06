@@ -2048,9 +2048,12 @@
 				}
 			}
 			
+			
 			if (empty($this->sents))
 			{
 				$this->sents = array();
+				
+				$this->db->select('users_id');
 				$this->db->where('status <>', 3);
 				$result = $this->db->get("sent")->result_array();
 				foreach ($result as $row)
@@ -2090,6 +2093,42 @@
 			}
 			
 			return $items;
+		}
+		
+		function clear_send_table()
+		{
+			$this->db->where('date <', (time() - 3 * 24 * 3600));
+			$this->db->where('status', 3);
+			
+			$this->db->or_where('date <', (time() - 3 * 24 * 3600));
+			$this->db->where('status', 0);
+			
+			$this->db->or_where('date <', (time() - 3 * 24 * 3600));
+			$this->db->where('last', 0);
+			$this->db->where('status', 1);
+			
+			//$this->db->delete('sent');
+			//echo $this->db->count_all_results('sent');
+		}
+		
+		function remote_duplicate()
+		{
+			$emails = array();
+			$duplicate_ids = array();
+			foreach ($this->db->get('sent')->result_array() as $row)
+			{
+				if ( ! isset($emails[$row['email']]['date'][date("Y:m:d", $row['date'])]))
+				{
+					$emails[$row['email']]['date'][date("Y:m:d", $row['date'])] = $row;
+				}
+				else
+				{
+					$duplicate_ids[] = $row['id'];
+				}
+			}
+		
+			$this->db->where_in('id', $duplicate_ids);
+			$this->db->delete('sent');
 		}
 
 		function check_login_times()
