@@ -64,6 +64,13 @@ $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
+if ( ! empty($_SERVER['SERVER_NAME']) && 
+	($_SERVER['SERVER_NAME'] == '35.165.169.217' ||
+	$_SERVER['SERVER_NAME'] == 'pr.cloudrocket.co'))
+{
+	$db['default']['database'] = 'cloudroc_pr_test';
+}
+
 if ( ! empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] == 'pr.da' )
 {
 	$db['default']['hostname'] = 'localhost';
