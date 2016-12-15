@@ -1732,8 +1732,10 @@
 		{
 			$this->db->select('child_id');
 			$this->db->where("users_id", $id);
+			$result = $this->db->get("users_child")->result_array();
+			
 			$childs_ids = array();
-			foreach ($this->db->get("users_child")->result_array() as $row)
+			foreach ($result as $row)
 			{
 				$childs_ids[] = $row['child_id'];
 			}
@@ -1742,10 +1744,11 @@
 			if ( ! empty($childs_ids))
 			{
 				$this->db->where_in("id", $childs_ids);				
-			}
-			foreach ($this->db->get("users")->result_array() as $row)
-			{
-				$childs[] = $row;
+				$result = $this->db->get("users")->result_array();
+				foreach ($result as $row)
+				{
+					$childs[] = $row;
+				}
 			}
 			
 			return $childs;
@@ -2457,7 +2460,7 @@
 		
 		function login_as_child($post)
 		{
-			$this->session->set_userdata("user_id", $this->session->userdata("user_id"));
+			$this->session->set_userdata("user_id", $this->session->userdata("id"));
 			$this->session->set_userdata("id", $post['id']);
 			return TRUE;
 		}

@@ -82,7 +82,7 @@
             </li>
         </ul>
 		
-		<ul class="nav-right pull-right list-unstyled" ng-if="user.child && ! user.admin_id">
+		<ul class="nav-right pull-right list-unstyled" ng-if="user.child.length && ! user.admin_id">
 			<li class="users_list">
 				<select class="form-control" ng-model="users_list" ng-change="login_as_child(users_list)">
 					<option value="">Selecteer een account</option>
