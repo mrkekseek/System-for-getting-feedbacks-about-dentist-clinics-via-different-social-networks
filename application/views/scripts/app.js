@@ -356,7 +356,6 @@
 		$scope.check_suspended = function() {
 			$http.post("/pub/user/").success(function(data, status, headers, config) {
 				$scope.user = logger.check(data);
-				console.log($scope.user);
 				//$scope.reply.text = "Beste " + ($scope.user.title ? $scope.user.title : "") + " " + ($scope.user.name ? $scope.user.name : "") + " " + ($scope.user.sname ? $scope.user.sname : "") + ",\n\nMet vriendelijke groet,\n\n" + ($scope.user.username ? $scope.user.username : "");
 				
 				$scope.intro = $scope.user.intro;

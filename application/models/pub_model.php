@@ -6445,6 +6445,8 @@
 						}
 					}
 					
+					$this->db->select('last, batches_id, stars, users_id, status, facebook, google, zorgkaart, telefoonboek, vergelijkmondzorg, independer, kliniekoverzicht, own');
+					
 					if ( ! empty($sent_ids))
 					{
 						$this->db->where_in('id', $sent_ids);
