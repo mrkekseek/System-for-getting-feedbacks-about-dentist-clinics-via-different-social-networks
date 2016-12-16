@@ -499,4 +499,37 @@
 			</div>
 		</div>
 	</script>
+
+	<div class="panel panel-default" ng-show="step == 0 && _data.batches.length">
+		<div class="panel-heading">
+			<h3 class="panel-title">Meest recente batches</h3>
+		</div>
+		
+		<div class="table-responsive">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Verzenddatum</th>
+						<th>Aantal uitnodigingen</th>
+						<th>Gereageerd</th>
+						<th>Doorgeklikt</th>
+						<th>Bestandsnaam</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr ng-repeat="b in _data.batches">
+						<td>{{b.date}}</td>
+						<td>{{b.amount}}</td>
+						<td>{{b.reply}}%</td>
+						<td>{{b.click}}%</td>
+						<td><a ng-href="{{b.file}}">{{b.file}}</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
 </div>
+
+		

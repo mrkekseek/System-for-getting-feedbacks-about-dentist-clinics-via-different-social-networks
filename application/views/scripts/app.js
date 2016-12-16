@@ -5845,7 +5845,15 @@
 			
 			$scope.reprint_rows();
 		};
-    }
+		
+		$scope._data = {};
+		$scope.get_email = function() {
+			$http.post("/pub/stat_chart2/", {'filter': ''}).success(function(data, status, headers, config) {
+				$scope._data = logger.check(data);
+			});
+		}
+		$scope.get_email();
+	}
 })();
 ;
 (function () {
