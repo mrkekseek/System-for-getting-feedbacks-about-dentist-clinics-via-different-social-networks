@@ -19,7 +19,7 @@
 		$config['key'] = "key-056af7bb02f60742f81339201aab3741";
 	}
 	
-	if (ENVIRONMENT == 'production')
+	if (1)//ENVIRONMENT == 'production')
 	{
 		/* SMTP Settings */
 		$config['protocol'] = 'smtp';

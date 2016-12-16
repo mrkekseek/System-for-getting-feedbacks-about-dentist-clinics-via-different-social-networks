@@ -463,7 +463,7 @@
 
 		function send_other()
 		{
-			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply", "video_review"));
+			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply", "video_review", "password"));
 		}
 
 		function get_post()
