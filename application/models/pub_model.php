@@ -417,18 +417,21 @@
 		{
 			$time = mktime(0, 0, 0, date("m"), date("j"), date("Y"));
 			$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
-
+			
+			$this->db->select('name, sname, email, id, date, users_id');
 			foreach ($onlines as $o)
 			{
 				$this->db->where($o, 0);
 			}
 			$this->db->where("status <>", 3);
+
 			$this->db->where("date <=", $time - 3 * 24 * 3600);
 			$this->db->where("date >", $time - 4 * 24 * 3600);
 			$result = $this->db->get("sent")->result_array();
 			$post['emails'] = array();
 			foreach ($result as $row)
 			{
+				
 				$this->db->where("date >", $row['date']);
 				$this->db->where("email", $row['email']);
 				$this->db->where("stars", 0);
@@ -443,7 +446,6 @@
 											  "users_id" => $row['users_id']);
 				}
 			}
-
 			$this->send_letters($post, "Herinnering: Hoe was uw behandeling?", TRUE);
 		}
 
