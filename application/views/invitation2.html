@@ -115,7 +115,7 @@
 								</div>
 							</div>
 							
-							<div class="doctors-box step-cont" ng-if="i.doctors.length">
+							<div class="doctors-box step-cont" ng-if="i.doctors.length && cats_list.length > 0">
 								<h3 class="sub">Door wie bent u geholpen?</h3>
 								<select class="form-control doctors-list" ng-change="set_cat()" ng-model="cat_name[0]" ng-show="cats_list.length > 0">
 									<option value="">Kies een categorie zorgverlener...</option>
