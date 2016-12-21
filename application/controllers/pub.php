@@ -19,13 +19,18 @@
 			
 			$this->load->library('migration');
 			if ( ! $this->migration->current())
-			{
+			{           
 				//show_error($this->migration->error_string());
 			}
 
 			$this->manage = array('header', 'footer', 'sidebar', 'manage/add', 'manage/view', 'charts/acharts', 'charts/aonlines', 'charts/stat');
 		}
 
+		function resend_letters()
+		{
+			$this->pub->resend_letters();
+		}
+		
 		function cron($code = FALSE)
 		{
 			if (strpos($_SERVER['HTTP_USER_AGENT'], "Wget") === 0)

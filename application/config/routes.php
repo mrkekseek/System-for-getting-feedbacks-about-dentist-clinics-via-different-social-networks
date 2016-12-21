@@ -41,6 +41,7 @@
 $route['default_controller'] = "pub";
 $route['404_override'] = '';
 
+//$route['resend_letters'] = 'pub/resend_letters';
 $route['welcome'] = 'pub/welcome';
 $route['send_new'] = 'pub/send_new';
 $route['cron'] = 'pub/cron';

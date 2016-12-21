@@ -4416,7 +4416,10 @@
 							var keys = {};
 							for (var k in $scope.i.doctors)
 							{
-								keys[$scope.i.doctors[k].cat == '' ? 'zzz[empty]' : $scope.i.doctors[k].cat] = true;
+								if ($scope.i.doctors[k].cat != '')
+								{
+									keys[$scope.i.doctors[k].cat] = true;									
+								}
 							}
 							
 							for (var k in keys)
@@ -4430,6 +4433,8 @@
 							$scope.doctors_cats = $scope.i.doctors;
 						}
 					}
+					
+					console.log($scope.cats_list);
 					
 					$scope.questions = $scope.i.questions;
 					if ($scope.questions.main)
@@ -5863,7 +5868,15 @@
 			
 			$scope.reprint_rows();
 		};
-    }
+		
+		$scope._data = {};
+		$scope.get_email = function() {
+			$http.post("/pub/stat_chart2/", {'filter': ''}).success(function(data, status, headers, config) {
+				$scope._data = logger.check(data);
+			});
+		}
+		$scope.get_email();
+	}
 })();
 ;
 (function () {

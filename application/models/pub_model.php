@@ -417,18 +417,21 @@
 		{
 			$time = mktime(0, 0, 0, date("m"), date("j"), date("Y"));
 			$onlines = array('facebook', 'google', 'zorgkaart', 'telefoonboek', 'vergelijkmondzorg', 'independer', 'kliniekoverzicht', 'own');
-
+			
+			$this->db->select('name, sname, email, id, date, users_id');
 			foreach ($onlines as $o)
 			{
 				$this->db->where($o, 0);
 			}
 			$this->db->where("status <>", 3);
+
 			$this->db->where("date <=", $time - 3 * 24 * 3600);
 			$this->db->where("date >", $time - 4 * 24 * 3600);
 			$result = $this->db->get("sent")->result_array();
 			$post['emails'] = array();
 			foreach ($result as $row)
 			{
+				
 				$this->db->where("date >", $row['date']);
 				$this->db->where("email", $row['email']);
 				$this->db->where("stars", 0);
@@ -443,7 +446,6 @@
 											  "users_id" => $row['users_id']);
 				}
 			}
-
 			$this->send_letters($post, "Herinnering: Hoe was uw behandeling?", TRUE);
 		}
 
@@ -463,7 +465,7 @@
 
 		function send_other()
 		{
-			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply", "video_review"));
+			$this->real_send(array("signup", "trial", "reminder", "reset", "feedback", "month", "notifications", "renew", "feedback_reply", "video_review", "password"));
 		}
 
 		function get_post()
@@ -1691,6 +1693,7 @@
 					$row['zorgkaart'] = rtrim($row['zorgkaart'], '/').'/waardeer';
 				}
 			}
+			
 			$row['admin_id'] = $this->session->userdata("admin_id");
 			$row['intro'] = $this->session->userdata("intro");
 			$row['intro_step'] = $this->session->userdata("intro_step");
@@ -5043,6 +5046,7 @@
 				$check = $this->check_url(strtolower($segments[0]));
 				if ( ! empty($check))
 				{
+					
 					$return['info'] = $this->check_short_results($check['users_id'], $check['doctors_id']);
 					if ( ! empty($return['info']['id']))
 					{
@@ -5270,6 +5274,7 @@
 		
 		function rating_questions($info, $short = FALSE)
 		{
+			
 			$items = array();
 			if ( ! empty($info['questions_id']) || ! empty($short))
 			{
@@ -5282,42 +5287,47 @@
 				}
 				
 				$main_question = FALSE;
-				if (( ! empty($info['questions_id']) && in_array($info['questions_id'], $ids)) || ! empty($short))
+				if(count($ids))
 				{
-					$this->db->where_in('id', $ids);
-					$result = $this->db->get('rating_questions')->result_array();
-					foreach ($result as $row)
+					if (( ! empty($info['questions_id']) && in_array($info['questions_id'], $ids)) || ! empty($short))
 					{
-						$row['stars'] = 0;
-
-						if ( ! empty($info['id']))
-						{
-							$this->db->where('sent_id', $info['id']);
-							$this->db->where('questions_id', $row['id']);
-							$this->db->limit(1);
-							$val = $this->db->get('sent_questions')->row_array();
-							if ( ! empty($val))
-							{
-								$row['stars'] = $val['stars'];
-							}
-						}
 						
-						if (( ! empty($info['questions_id']) && $row['id'] == $info['questions_id']) || ( ! empty($short) && empty($main_question)))
-						{
-							$items['main'] = $row;
-							if ( ! empty($short))
+							$this->db->where_in('id', $ids);
+							$result = $this->db->get('rating_questions')->result_array();
+							foreach ($result as $row)
 							{
-								$main_question = TRUE;
+								$row['stars'] = 0;
+
+								if ( ! empty($info['id']))
+								{
+									$this->db->where('sent_id', $info['id']);
+									$this->db->where('questions_id', $row['id']);
+									$this->db->limit(1);
+									$val = $this->db->get('sent_questions')->row_array();
+									if ( ! empty($val))
+									{
+										$row['stars'] = $val['stars'];
+									}
+								}
+								
+								if (( ! empty($info['questions_id']) && $row['id'] == $info['questions_id']) || ( ! empty($short) && empty($main_question)))
+								{
+									$items['main'] = $row;
+									if ( ! empty($short))
+									{
+										$main_question = TRUE;
+									}
+								}
+								else
+								{
+									$items['others'][] = $row;
+								}
 							}
-						}
-						else
-						{
-							$items['others'][] = $row;
-						}
+						
 					}
 				}
 			}
-			
+		
 			return $items;
 		}
 		
