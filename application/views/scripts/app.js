@@ -4398,12 +4398,16 @@
 							var keys = {};
 							for (var k in $scope.i.doctors)
 							{
-								keys[$scope.i.doctors[k].cat == '' ? 'zzz[empty]' : $scope.i.doctors[k].cat] = true;
+								if ($scope.i.doctors[k].cat != '')
+								{
+									keys[$scope.i.doctors[k].cat] = true;
+								}
 							}
 							
 							for (var k in keys)
 							{
-								$scope.cats_list.push(k.replace('zzz[empty]', $scope.cat_empty));
+								//$scope.cats_list.push(k.replace('zzz[empty]', $scope.cat_empty));
+								$scope.cats_list.push(k);
 								$scope.cats_list.sort(function(a, b) { return a > b ? 1 : (a < b ? -1 : 0); });
 							}
 						}
@@ -4411,8 +4415,7 @@
 						{
 							$scope.doctors_cats = $scope.i.doctors;
 						}
-					}
-					
+					}	
 					
 					
 					$scope.questions = $scope.i.questions;
